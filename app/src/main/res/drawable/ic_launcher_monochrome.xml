@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Smartphone Body Outer Frame Silhouette -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M42,24 H66 A7,7 0 0,1 73,31 V77 A7,7 0 0,1 66,84 H42 A7,7 0 0,1 35,77 V31 A7,7 0 0,1 42,24 Z"
+        android:strokeWidth="3.5"
+        android:strokeColor="#000000" />
+
+    <!-- Camera Punch Hole / Top Notch -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M54,31 A2,2 0 1,0 54,35 A2,2 0 1,0 54,31 Z" />
+
+    <!-- Active Diagnostic Pulse Wave Line -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M38,54 L44,54 L47,59 L51,39 L55,67 L59,48 L62,54 L70,54"
+        android:strokeWidth="3.2"
+        android:strokeColor="#000000"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- Pulse Peak Accent Node Dot -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M51,36.5 A2.5,2.5 0 1,0 51,41.5 A2.5,2.5 0 1,0 51,36.5 Z" />
+
+    <!-- Screen Bottom Home Bar Indicator -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M50,76 L58,76"
+        android:strokeWidth="2.0"
+        android:strokeColor="#000000"
+        android:strokeLineCap="round" />
+</vector>
