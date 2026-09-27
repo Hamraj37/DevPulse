@@ -47,6 +47,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.model.AppTab
 import com.hamraj37.devpulse.ui.components.DevPulseTabRow
 import com.hamraj37.devpulse.ui.screens.AppsScreen
@@ -172,11 +175,12 @@ fun MainScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
-                            Box(
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                                contentDescription = "App Icon",
                                 modifier = Modifier
-                                    .size(10.dp)
-                                    .clip(CircleShape)
-                                    .background(MaterialTheme.colorScheme.primary)
+                                    .size(28.dp)
+                                    .clip(RoundedCornerShape(8.dp))
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
@@ -192,7 +196,7 @@ fun MainScreen(
                                 color = MaterialTheme.colorScheme.primaryContainer
                             ) {
                                 Text(
-                                    text = uiState.deviceInfo.model.ifEmpty { "Pixel 8 Pro" },
+                                    text = uiState.deviceInfo.deviceName.ifEmpty { uiState.deviceInfo.model.ifEmpty { "Pixel 8 Pro" } },
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer

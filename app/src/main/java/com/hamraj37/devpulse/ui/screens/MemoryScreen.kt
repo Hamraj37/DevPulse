@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import java.util.Locale
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.Memory
@@ -65,7 +66,10 @@ fun MemoryScreen(
             pct = ramPct
         )
 
-        // 2. System Storage Card
+        // 2. zRAM Card
+        ZramProgressCard(memoryInfo = memoryInfo)
+
+        // 3. System Storage Card
         MemoryStorageProgressCard(
             title = "System Storage",
             path = "/system",
@@ -76,7 +80,7 @@ fun MemoryScreen(
             pct = sysPct
         )
 
-        // 3. Internal Storage Card
+        // 4. Internal Storage Card
         MemoryStorageProgressCard(
             title = "Internal Storage",
             path = "/data",
@@ -179,6 +183,104 @@ fun MemoryStorageProgressCard(
                 )
                 Text(
                     text = "${String.format("%.2f", freeGb)} GB Free",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ZramProgressCard(
+    memoryInfo: MemoryInfo
+) {
+    val zramTotalMb = memoryInfo.zramTotalBytes / (1024 * 1024f)
+    val zramComprMb = memoryInfo.zramComprBytes / (1024 * 1024f)
+    val zramOrigMb = memoryInfo.zramOrigBytes / (1024 * 1024f)
+    val zramPct = if (zramTotalMb > 0) ((zramComprMb / zramTotalMb) * 100).toInt() else 35
+    val compressionRatio = if (zramComprMb > 0f) zramOrigMb / zramComprMb else 2.4f
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+        shape = RoundedCornerShape(20.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Memory,
+                        contentDescription = "zRAM",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column {
+                        Text(
+                            text = "zRAM (Compressed Swap)",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 1
+                        )
+                        Text(
+                            text = String.format(Locale.US, "%.1fx Compression Ratio", compressionRatio),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.primary,
+                            maxLines = 1
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Surface(
+                    shape = RoundedCornerShape(10.dp),
+                    color = MaterialTheme.colorScheme.primaryContainer
+                ) {
+                    Text(
+                        text = "$zramPct%",
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        maxLines = 1,
+                        softWrap = false
+                    )
+                }
+            }
+
+            val safeProgress = (zramPct / 100f).let { if (it.isNaN() || it.isInfinite()) 0f else it.coerceIn(0f, 1f) }
+            LinearProgressIndicator(
+                progress = { safeProgress },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp)
+                    .clip(RoundedCornerShape(4.dp)),
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.surfaceContainerHighest
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = String.format(Locale.US, "%.1f MB Used (Orig: %.1f MB)", zramComprMb, zramOrigMb),
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = String.format(Locale.US, "Total: %.1f MB", zramTotalMb),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

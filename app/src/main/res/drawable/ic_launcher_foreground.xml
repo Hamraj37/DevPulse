@@ -8,27 +8,27 @@
     <!-- Smartphone Body Outer Frame Silhouette in deep Monet dark olive green -->
     <path
         android:fillColor="#2D3823"
-        android:pathData="M42,24 H66 A7,7 0 0,1 73,31 V77 A7,7 0 0,1 66,84 H42 A7,7 0 0,1 35,77 V31 A7,7 0 0,1 42,24 Z"
-        android:strokeWidth="2.8"
+        android:pathData="M41,30 H67 A5 5 0 0 1 72 35 V73 A5 5 0 0 1 67 78 H41 A5 5 0 0 1 36 73 V35 A5 5 0 0 1 41 30 Z"
+        android:strokeWidth="2.0"
         android:strokeColor="#4A553D" />
 
     <!-- Smartphone Display Panel in soft Monet olive-tinted surface -->
     <path
         android:fillColor="#EAEFE5"
-        android:pathData="M42,29 H66 A4,4 0 0,1 70,33 V75 A4,4 0 0,1 66,79 H42 A4,4 0 0,1 38,75 V33 A4,4 0 0,1 42,29 Z"
-        android:strokeWidth="1.0"
+        android:pathData="M43,34 H65 A3 3 0 0 1 68 37 V71 A3 3 0 0 1 65 74 H43 A3 3 0 0 1 40 71 V37 A3 3 0 0 1 43 34 Z"
+        android:strokeWidth="0.6"
         android:strokeColor="#4A553D" />
 
     <!-- Camera Punch Hole / Top Notch -->
     <path
         android:fillColor="#2D3823"
-        android:pathData="M54,31 A2,2 0 1,0 54,35 A2,2 0 1,0 54,31 Z" />
+        android:pathData="M54,34 A1.2 1.2 0 1 0 54 36.4 A1.2 1.2 0 1,0 54,34 Z" />
 
     <!-- Diagnostic Telemetry Wave Line Glow Shadow -->
     <path
         android:fillColor="#00000000"
-        android:pathData="M38,54 L44,54 L47,59 L51,39 L55,67 L59,48 L62,54 L70,54"
-        android:strokeWidth="6.0"
+        android:pathData="M43,54 L46,54 L49,57 L52,43 L55,65 L58,50 L61,54 L65,54"
+        android:strokeWidth="4.0"
         android:strokeColor="#204A553D"
         android:strokeLineCap="round"
         android:strokeLineJoin="round" />
@@ -36,37 +36,37 @@
     <!-- Active Diagnostic Pulse Wave Line in deep Monet dark olive -->
     <path
         android:fillColor="#00000000"
-        android:pathData="M38,54 L44,54 L47,59 L51,39 L55,67 L59,48 L62,54 L70,54"
-        android:strokeWidth="3.2"
+        android:pathData="M43,54 L46,54 L49,57 L52,43 L55,65 L58,50 L61,54 L65,54"
+        android:strokeWidth="2.2"
         android:strokeColor="#4A553D"
         android:strokeLineCap="round"
         android:strokeLineJoin="round" />
 
-    <!-- Pulse Peak Halo Ring (at 51, 39) -->
+    <!-- Pulse Peak Halo Ring (at 52, 43) -->
     <path
         android:fillColor="#00000000"
-        android:pathData="M51,33 A6,6 0 1,0 51,45 A6,6 0 1,0 51,33 Z"
-        android:strokeWidth="1.5"
+        android:pathData="M52,39 A4 4 0 1 0 52 47 A4 4 0 1 0 52,39 Z"
+        android:strokeWidth="1.0"
         android:strokeColor="#404A553D" />
 
-    <!-- Pulse Peak Dynamic Green Accent Node Dot (at 51, 39) -->
+    <!-- Pulse Peak Dynamic Green Accent Node Dot (at 52, 43) -->
     <path
         android:fillColor="#2D3823"
-        android:pathData="M51,36.5 A2.5,2.5 0 1,0 51,41.5 A2.5,2.5 0 1,0 51,36.5 Z" />
+        android:pathData="M52,41.5 A1.5 1.5 0 1 0 52 44.5 A1.5 1.5 0 1,0 52,41.5 Z" />
 
     <!-- Telemetry Status Indicators (Top Right inside screen) -->
     <path
         android:fillColor="#4A553D"
-        android:pathData="M62,33 A1.2,1.2 0 1,0 62,35.4 A1.2,1.2 0 1,0 62,33 Z" />
+        android:pathData="M61,36 A0.8 0.8 0 1 0 61 37.6 A0.8 0.8 0 1,0 61,36 Z" />
     <path
         android:fillColor="#2D3823"
-        android:pathData="M66,33 A1.2,1.2 0 1,0 66,35.4 A1.2,1.2 0 1,0 66,33 Z" />
+        android:pathData="M63.5,36 A0.8 0.8 0 1 0 63.5 37.6 A0.8 0.8 0 1,0 63.5,36 Z" />
 
     <!-- Screen Bottom Home Bar Indicator -->
     <path
         android:fillColor="#00000000"
-        android:pathData="M50,76 L58,76"
-        android:strokeWidth="2.0"
+        android:pathData="M49,72 L59,72"
+        android:strokeWidth="1.5"
         android:strokeColor="#4A553D"
         android:strokeLineCap="round" />
 </vector>
