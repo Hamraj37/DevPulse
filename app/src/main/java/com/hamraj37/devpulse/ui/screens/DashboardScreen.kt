@@ -1,5 +1,6 @@
 package com.hamraj37.devpulse.ui.screens
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.rounded.Android
 import androidx.compose.material.icons.rounded.BatteryChargingFull
 import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.CheckCircleOutline
+import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.IosShare
 import androidx.compose.material.icons.rounded.PhoneAndroid
 import androidx.compose.material.icons.rounded.SdStorage
@@ -34,6 +36,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,16 +49,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.data.model.DashboardInfo
+import com.hamraj37.devpulse.data.model.TestItem
+import com.hamraj37.devpulse.data.model.TestStatus
 import com.hamraj37.devpulse.ui.components.CircularRamGauge
 import com.hamraj37.devpulse.ui.components.LiveSparklineChart
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
 import com.hamraj37.devpulse.ui.theme.OliveChipBg
 import com.hamraj37.devpulse.ui.theme.OliveDarkBanner
+import androidx.compose.foundation.clickable
+import androidx.compose.runtime.remember
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun DashboardScreen(
     dashboardInfo: DashboardInfo,
+    testsList: List<TestItem> = emptyList(),
+    onNavigateToTests: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -246,93 +259,186 @@ fun DashboardScreen(
             }
         }
 
-        // 3. Summary Cards Grid (Tests & Display)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        // 3. Hardware Tests Report Card
+        val passedCount = remember(testsList) { testsList.count { it.status == TestStatus.PASSED } }
+        val failedCount = remember(testsList) { testsList.count { it.status == TestStatus.FAILED } }
+        val pendingCount = remember(testsList) { testsList.count { it.status == TestStatus.NOT_TESTED || it.status == TestStatus.RUNNING } }
+        val totalTests = remember(testsList) { testsList.size.coerceAtLeast(dashboardInfo.testsTotal) }
+        val completedTests = remember(testsList, dashboardInfo.testsCompleted) {
+            if (testsList.isNotEmpty()) testsList.count { it.status == TestStatus.PASSED || it.status == TestStatus.FAILED }
+            else dashboardInfo.testsCompleted
+        }
+        val testProgress = if (totalTests > 0) (completedTests.toFloat() / totalTests.toFloat()).coerceIn(0f, 1f) else 0f
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(20.dp))
+                .clickable { onNavigateToTests() },
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+            shape = RoundedCornerShape(20.dp)
         ) {
-            // Tests Card
-            Card(
-                modifier = Modifier.weight(1f),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
-                shape = RoundedCornerShape(20.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Rounded.CheckCircleOutline,
-                            contentDescription = "Tests",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(22.dp)
-                        )
-
                         Surface(
                             shape = CircleShape,
                             color = MaterialTheme.colorScheme.primaryContainer,
-                            modifier = Modifier.size(28.dp)
+                            modifier = Modifier.size(36.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
-                                Text(
-                                    text = "${dashboardInfo.testsCompleted}/${dashboardInfo.testsTotal}",
-                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    fontSize = 10.sp
+                                Icon(
+                                    imageVector = Icons.Rounded.CheckCircleOutline,
+                                    contentDescription = "Hardware Tests Report",
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    modifier = Modifier.size(20.dp)
                                 )
                             }
                         }
+                        Column {
+                            Text(
+                                text = "Hardware Tests Report",
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = "$completedTests of $totalTests Tests Completed",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
 
-                    Text(
-                        text = "Hardware Tests",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = "${dashboardInfo.testsCompleted} / ${dashboardInfo.testsTotal} Done",
-                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = MaterialTheme.colorScheme.primaryContainer
+                    ) {
+                        Text(
+                            text = "${(testProgress * 100).toInt()}%",
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                }
+
+                LinearProgressIndicator(
+                    progress = { testProgress },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                        .clip(RoundedCornerShape(4.dp)),
+                    color = MaterialTheme.colorScheme.primary,
+                    trackColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFF2E7D32))
+                        )
+                        Text(
+                            text = "Passed: $passedCount",
+                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.error)
+                        )
+                        Text(
+                            text = "Failed: $failedCount",
+                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.outline)
+                        )
+                        Text(
+                            text = "Pending: $pendingCount",
+                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             }
+        }
 
-            // Display Card
-            Card(
-                modifier = Modifier.weight(1f),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
-                shape = RoundedCornerShape(20.dp)
+        // 4. Display Spec Card
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+            shape = RoundedCornerShape(20.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.PhoneAndroid,
                         contentDescription = "Display",
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(22.dp)
+                        modifier = Modifier.size(24.dp)
                     )
-
-                    Text(
-                        text = "Display Spec",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = dashboardInfo.displaySummary,
-                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                    Column {
+                        Text(
+                            text = "Display Spec",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = dashboardInfo.displaySummary,
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+                Surface(
+                    shape = RoundedCornerShape(10.dp),
+                    color = MaterialTheme.colorScheme.primaryContainer
+                ) {
                     Text(
                         text = "${dashboardInfo.displaySizeInches}\" | 120 Hz",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
             }
@@ -663,5 +769,36 @@ fun DashboardScreen(
                 }
             }
         }
+    }
+}
+
+fun generateTestsReportText(testsList: List<TestItem>): String {
+    val sb = StringBuilder()
+    sb.append("=== DEVPULSE HARDWARE TESTS REPORT ===\n")
+    sb.append("Date: ${SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(Date())}\n\n")
+    val passed = testsList.count { it.status == TestStatus.PASSED }
+    val failed = testsList.count { it.status == TestStatus.FAILED }
+    val pending = testsList.count { it.status == TestStatus.NOT_TESTED || it.status == TestStatus.RUNNING }
+    sb.append("Summary: $passed Passed, $failed Failed, $pending Pending (Total: ${testsList.size})\n\n")
+    sb.append("Detailed Test Results:\n")
+    testsList.forEach { test ->
+        val statusStr = when (test.status) {
+            TestStatus.PASSED -> "[PASSED]"
+            TestStatus.FAILED -> "[FAILED]"
+            else -> "[PENDING]"
+        }
+        sb.append("- ${test.title}: $statusStr\n")
+    }
+    return sb.toString()
+}
+
+fun saveTestsReport(context: Context, testsList: List<TestItem>) {
+    try {
+        val reportText = generateTestsReportText(testsList)
+        val file = File(context.getExternalFilesDir(null) ?: context.filesDir, "devpulse_hardware_tests_report.txt")
+        file.writeText(reportText)
+        Toast.makeText(context, "Report saved to ${file.name}", Toast.LENGTH_LONG).show()
+    } catch (e: Exception) {
+        Toast.makeText(context, "Failed to save report: ${e.message}", Toast.LENGTH_SHORT).show()
     }
 }

@@ -3,6 +3,7 @@ package com.hamraj37.devpulse.ui
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -149,6 +150,18 @@ fun MainScreen(
         }
     }
 
+    BackHandler(enabled = uiState.selectedTab != AppTab.DASHBOARD) {
+        viewModel.selectTab(AppTab.DASHBOARD)
+        scrollJob?.cancel()
+        scrollJob = coroutineScope.launch {
+            if (pagerState.isScrollInProgress) {
+                pagerState.scrollToPage(0)
+            } else {
+                pagerState.animateScrollToPage(0)
+            }
+        }
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -252,7 +265,11 @@ fun TabContentScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         when (tab) {
-            AppTab.DASHBOARD -> DashboardScreen(uiState.dashboardInfo)
+            AppTab.DASHBOARD -> DashboardScreen(
+                dashboardInfo = uiState.dashboardInfo,
+                testsList = uiState.testsList,
+                onNavigateToTests = { viewModel.selectTab(AppTab.TESTS) }
+            )
             AppTab.DEVICE -> DeviceScreen(uiState.deviceInfo)
             AppTab.SYSTEM -> SystemScreen(uiState.systemInfo)
             AppTab.CPU -> CpuScreen(uiState.cpuInfo)

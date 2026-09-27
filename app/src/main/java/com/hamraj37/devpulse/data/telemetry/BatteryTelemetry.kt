@@ -97,7 +97,7 @@ object BatteryTelemetry {
                 chargeCycles = 142
             }
 
-            val capacitySystemMah = getBatteryCapacity(context)
+            val capacitySystemMah = getBatteryCapacity(context, batteryStatus)
             val capacityChargedMah = (capacitySystemMah * (batteryPct / 100f)).toInt()
             val capacityEstimatedMah = capacitySystemMah
 
@@ -138,7 +138,7 @@ object BatteryTelemetry {
         }
     }
 
-    private fun getBatteryCapacity(context: Context): Int {
+    private fun getBatteryCapacity(context: Context, batteryStatus: Intent?): Int {
         val bm = context.getSystemService(Context.BATTERY_SERVICE) as? BatteryManager
         val chargeCounter = try {
             bm?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER) ?: 0
@@ -146,8 +146,17 @@ object BatteryTelemetry {
             0
         }
         if (chargeCounter > 0) {
-            val calculated = (chargeCounter / 1000f)
-            if (calculated > 1000) return calculated.toInt()
+            val level = batteryStatus?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
+            val scale = batteryStatus?.getIntExtra(BatteryManager.EXTRA_SCALE, -1) ?: -1
+            if (level > 0 && scale > 0) {
+                val pct = level / scale.toFloat()
+                if (pct > 0f) {
+                    val calculated = (chargeCounter / 1000f) / pct
+                    if (calculated in 500f..30000f) {
+                        return calculated.toInt()
+                    }
+                }
+            }
         }
 
         try {

@@ -31,10 +31,23 @@ import kotlinx.coroutines.withContext
 class TelemetryRepository(private val context: Context) {
 
     private val ramHistoryList = Collections.synchronizedList(mutableListOf<Float>())
-    private val _testsState = MutableStateFlow<List<TestItem>>(AppAndTestTelemetry.getInitialTestItems())
+    private val prefs = context.getSharedPreferences("devpulse_test_prefs", Context.MODE_PRIVATE)
+
+    private val _testsState = MutableStateFlow<List<TestItem>>(
+        AppAndTestTelemetry.getInitialTestItems().map { item ->
+            val savedName = prefs.getString("test_status_${item.id}", null)
+            val savedStatus = try {
+                if (savedName != null) TestStatus.valueOf(savedName) else item.status
+            } catch (_: Throwable) {
+                item.status
+            }
+            item.copy(status = savedStatus)
+        }
+    )
     val testsFlow: StateFlow<List<TestItem>> = _testsState.asStateFlow()
 
     fun updateTestStatus(testId: String, status: TestStatus) {
+        prefs.edit().putString("test_status_$testId", status.name).apply()
         _testsState.update { currentList ->
             currentList.map { item ->
                 if (item.id == testId) item.copy(status = status) else item
