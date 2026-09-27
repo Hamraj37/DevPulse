@@ -69,6 +69,7 @@ fun DashboardScreen(
     dashboardInfo: DashboardInfo,
     testsList: List<TestItem> = emptyList(),
     onNavigateToTests: () -> Unit = {},
+    onNavigateToDisplay: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -396,7 +397,10 @@ fun DashboardScreen(
 
         // 4. Display Spec Card
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(20.dp))
+                .clickable { onNavigateToDisplay() },
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
             shape = RoundedCornerShape(20.dp)
         ) {

@@ -272,7 +272,8 @@ fun TabContentScreen(
             AppTab.DASHBOARD -> DashboardScreen(
                 dashboardInfo = uiState.dashboardInfo,
                 testsList = uiState.testsList,
-                onNavigateToTests = { viewModel.selectTab(AppTab.TESTS) }
+                onNavigateToTests = { viewModel.selectTab(AppTab.TESTS) },
+                onNavigateToDisplay = { viewModel.selectTab(AppTab.DISPLAY) }
             )
             AppTab.DEVICE -> DeviceScreen(uiState.deviceInfo)
             AppTab.SYSTEM -> SystemScreen(uiState.systemInfo)
