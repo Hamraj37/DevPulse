@@ -1,3 +1,29 @@
+import java.io.File
+import java.util.Properties
+import java.util.Base64
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
+}
+
+val keystoreBase64 = localProperties.getProperty("KEYSTORE_BASE64")
+val keystorePassword = localProperties.getProperty("KEYSTORE_PASSWORD") ?: "Hamraj37Key"
+val keyAlias = localProperties.getProperty("KEY_ALIAS") ?: "Hamraj37"
+val keyPassword = localProperties.getProperty("KEY_PASSWORD") ?: "Hamraj37Key"
+
+val keystoreFile = file("keystore.jks")
+if (!keystoreBase64.isNullOrEmpty()) {
+    val cleanBase64 = keystoreBase64.replace("\n", "").replace("\r", "").replace(" ", "")
+    try {
+        val decodedBytes = Base64.getDecoder().decode(cleanBase64)
+        keystoreFile.writeBytes(decodedBytes)
+    } catch (e: Exception) {
+        println("Error decoding KEYSTORE_BASE64: ${e.message}")
+    }
+}
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -19,10 +45,29 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            if (keystoreFile.exists()) {
+                storeFile = keystoreFile
+                storePassword = keystorePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
             optimization {
                 enable = false
+            }
+            if (keystoreFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
+        }
+        debug {
+            if (keystoreFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
             }
         }
     }

@@ -1,10 +1,13 @@
 package com.hamraj37.devpulse.data.telemetry
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.media.MediaDrm
 import android.os.Build
 import android.os.SystemClock
 import android.provider.Settings
+import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
 import com.hamraj37.devpulse.data.model.DeviceInfo
 import com.hamraj37.devpulse.data.model.DrmDetails
@@ -38,13 +41,7 @@ object DeviceAndSystemTelemetry {
                 null
             }
 
-            val networkOperator1 = try {
-                tm?.networkOperatorName.takeIf { !it.isNullOrEmpty() } ?: "SIM 1 (Carrier)"
-            } catch (_: Throwable) {
-                "SIM 1 (Carrier)"
-            }
-
-            val networkOperator2 = "SIM 2 (Carrier)"
+            val (sim1Op, sim2Op) = getDualSimOperators(context, tm)
             val esimSupported = isEsimSupported(context)
 
             val deviceType = try {
@@ -71,8 +68,8 @@ object DeviceAndSystemTelemetry {
                 deviceType = deviceType,
                 esimSupported = esimSupported,
                 networkType = getNetworkTypeString(tm),
-                networkOperator1 = networkOperator1,
-                networkOperator2 = networkOperator2
+                networkOperator1 = sim1Op,
+                networkOperator2 = sim2Op
             )
         } catch (_: Throwable) {
             DeviceInfo()
@@ -327,5 +324,63 @@ object DeviceAndSystemTelemetry {
         } catch (_: Throwable) {
             "Cellular / Wi-Fi"
         }
+    }
+
+    private fun getDualSimOperators(context: Context, tm: TelephonyManager?): Pair<String, String> {
+        var op1 = "SIM 1 (Not Inserted)"
+        var op2 = "SIM 2 (Not Inserted)"
+
+        try {
+            val subManager = context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as? SubscriptionManager
+            val hasPermission = context.checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+
+            if (subManager != null) {
+                val activeList = try {
+                    if (hasPermission) subManager.activeSubscriptionInfoList else null
+                } catch (_: Throwable) { null }
+
+                if (!activeList.isNullOrEmpty()) {
+                    for (subInfo in activeList) {
+                        val carrierName = subInfo.carrierName?.toString()?.takeIf { it.isNotBlank() }
+                            ?: subInfo.displayName?.toString()?.takeIf { it.isNotBlank() }
+
+                        if (subInfo.simSlotIndex == 0 && carrierName != null) {
+                            op1 = carrierName
+                        } else if (subInfo.simSlotIndex == 1 && carrierName != null) {
+                            op2 = carrierName
+                        }
+                    }
+                }
+            }
+        } catch (_: Throwable) {}
+
+        if (op1.startsWith("SIM 1")) {
+            val primaryOp = try { tm?.networkOperatorName?.takeIf { it.isNotBlank() } } catch (_: Throwable) { null }
+                ?: try { tm?.simOperatorName?.takeIf { it.isNotBlank() } } catch (_: Throwable) { null }
+            if (primaryOp != null) {
+                op1 = primaryOp
+            }
+        }
+
+        if (op2.startsWith("SIM 2") && tm != null) {
+            try {
+                val subManager = context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as? SubscriptionManager
+                val hasPermission = context.checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+                if (subManager != null && hasPermission) {
+                    val activeList = subManager.activeSubscriptionInfoList
+                    val sim2Sub = activeList?.firstOrNull { it.simSlotIndex == 1 }
+                    if (sim2Sub != null) {
+                        val sim2Tm = tm.createForSubscriptionId(sim2Sub.subscriptionId)
+                        val name2 = sim2Tm.networkOperatorName.takeIf { !it.isNullOrEmpty() }
+                            ?: sim2Tm.simOperatorName.takeIf { !it.isNullOrEmpty() }
+                        if (!name2.isNullOrEmpty()) {
+                            op2 = name2
+                        }
+                    }
+                }
+            } catch (_: Throwable) {}
+        }
+
+        return Pair(op1, op2)
     }
 }
