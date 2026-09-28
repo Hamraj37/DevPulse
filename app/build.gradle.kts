@@ -1,47 +1,34 @@
+import java.io.File
 import java.util.Properties
 import java.util.Base64
-
-val localProperties = Properties()
-val localPropertiesFile = rootProject.file("local.properties")
-if (localPropertiesFile.exists()) {
-    try {
-        localPropertiesFile.inputStream().use { localProperties.load(it) }
-    } catch (_: Exception) {}
-}
-
-val keystoreBase64 = localProperties.getProperty("KEYSTORE_BASE64")?.takeIf { it.isNotBlank() }
-    ?: System.getenv("KEYSTORE_BASE64")?.takeIf { it.isNotBlank() }
-
-val keystorePassword = localProperties.getProperty("KEYSTORE_PASSWORD")?.takeIf { it.isNotBlank() }
-    ?: System.getenv("KEYSTORE_PASSWORD")?.takeIf { it.isNotBlank() }
-    ?: "Hamraj37Key"
-
-val keyAlias = localProperties.getProperty("KEY_ALIAS")?.takeIf { it.isNotBlank() }
-    ?: System.getenv("KEY_ALIAS")?.takeIf { it.isNotBlank() }
-    ?: "Hamraj37"
-
-val keyPassword = localProperties.getProperty("KEY_PASSWORD")?.takeIf { it.isNotBlank() }
-    ?: System.getenv("KEY_PASSWORD")?.takeIf { it.isNotBlank() }
-    ?: "Hamraj37Key"
-
-val keystoreFile = file("keystore.jks")
-if (!keystoreBase64.isNullOrEmpty()) {
-    try {
-        val cleanBase64 = keystoreBase64.replace("\\s+".toRegex(), "")
-        val decodedBytes = Base64.getDecoder().decode(cleanBase64)
-        if (decodedBytes.isNotEmpty()) {
-            keystoreFile.writeBytes(decodedBytes)
-        }
-    } catch (e: Exception) {
-        println("Warning: Failed to decode KEYSTORE_BASE64: ${e.message}")
-    }
-}
+import java.security.KeyStore
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.devtools.ksp)
     alias(libs.plugins.jetbrains.kotlin.plugin.serialization)
+}
+
+fun isValidKeyStore(file: File, storePass: String, alias: String): Boolean {
+    if (!file.exists() || file.length() == 0L) return false
+    return try {
+        val ks = KeyStore.getInstance("JKS")
+        file.inputStream().use { stream ->
+            ks.load(stream, storePass.toCharArray())
+        }
+        ks.containsAlias(alias)
+    } catch (_: Exception) {
+        try {
+            val ks = KeyStore.getInstance("PKCS12")
+            file.inputStream().use { stream ->
+                ks.load(stream, storePass.toCharArray())
+            }
+            ks.containsAlias(alias)
+        } catch (_: Exception) {
+            false
+        }
+    }
 }
 
 android {
@@ -60,13 +47,72 @@ android {
 
     signingConfigs {
         create("release") {
-            val validKeystore = keystoreFile.exists() && keystoreFile.length() > 0
-            val validCreds = !keystorePassword.isNullOrBlank() && !keyAlias.isNullOrBlank() && !keyPassword.isNullOrBlank()
-            if (validKeystore && validCreds) {
-                storeFile = keystoreFile
-                storePassword = keystorePassword
-                this.keyAlias = keyAlias
-                this.keyPassword = keyPassword
+            val localPropsFile = rootProject.file("local.properties")
+            val localProps = Properties()
+            var rawKeystoreBase64: String? = null
+
+            if (localPropsFile.exists()) {
+                try {
+                    localPropsFile.useLines { lines ->
+                        for (line in lines) {
+                            val trimmed = line.trim()
+                            if (trimmed.startsWith("KEYSTORE_BASE64=")) {
+                                rawKeystoreBase64 = trimmed.substringAfter("KEYSTORE_BASE64=")
+                                break
+                            }
+                        }
+                    }
+                    localPropsFile.inputStream().use { localProps.load(it) }
+                } catch (_: Exception) {}
+            }
+
+            val keystoreBase64 = System.getenv("KEYSTORE_BASE64")
+                ?: rawKeystoreBase64
+                ?: localProps.getProperty("KEYSTORE_BASE64")
+                ?: project.findProperty("KEYSTORE_BASE64") as? String
+
+            val storePass = System.getenv("KEYSTORE_PASSWORD")
+                ?: localProps.getProperty("KEYSTORE_PASSWORD")
+                ?: localProps.getProperty("KEYSTORE_PASSWORD:")
+                ?: "Hamraj37Key"
+            val aliasName = System.getenv("KEY_ALIAS")
+                ?: localProps.getProperty("KEY_ALIAS")
+                ?: localProps.getProperty("KEY_ALIAS:")
+                ?: "Hamraj37"
+            val keyPass = System.getenv("KEY_PASSWORD")
+                ?: localProps.getProperty("KEY_PASSWORD")
+                ?: localProps.getProperty("KEY_PASSWORD:")
+                ?: "Hamraj37Key"
+
+            val decodedFile = file("${layout.buildDirectory.get()}/decoded_keystore.jks")
+            val hamrajFile = file("hamraj37.jks")
+
+            if (!keystoreBase64.isNullOrEmpty()) {
+                val cleanBase64 = keystoreBase64.trim().removePrefix("-").replace("\n", "").replace("\r", "").replace(" ", "")
+                val padLength = (4 - (cleanBase64.length % 4)) % 4
+                val paddedBase64 = cleanBase64 + "=".repeat(padLength)
+                val decodedBytes = try {
+                    Base64.getDecoder().decode(paddedBase64)
+                } catch (_: Exception) {
+                    ByteArray(0)
+                }
+                decodedFile.parentFile.mkdirs()
+                if (decodedBytes.isNotEmpty()) {
+                    decodedFile.writeBytes(decodedBytes)
+                }
+            }
+
+            val chosenKeystore = when {
+                isValidKeyStore(decodedFile, storePass, aliasName) -> decodedFile
+                isValidKeyStore(hamrajFile, storePass, aliasName) -> hamrajFile
+                else -> null
+            }
+
+            if (chosenKeystore != null) {
+                storeFile = chosenKeystore
+                storePassword = storePass
+                keyAlias = aliasName
+                keyPassword = keyPass
             } else {
                 initWith(getByName("debug"))
             }
@@ -74,14 +120,14 @@ android {
     }
 
     buildTypes {
+        debug {
+            signingConfig = signingConfigs.getByName("release")
+        }
         release {
+            signingConfig = signingConfigs.getByName("release")
             optimization {
                 enable = false
             }
-            signingConfig = signingConfigs.getByName("release")
-        }
-        debug {
-            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
