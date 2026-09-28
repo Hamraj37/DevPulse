@@ -9,16 +9,19 @@ if (localPropertiesFile.exists()) {
     } catch (_: Exception) {}
 }
 
-val keystoreBase64 = localProperties.getProperty("KEYSTORE_BASE64")
-    ?: System.getenv("KEYSTORE_BASE64")
-val keystorePassword = localProperties.getProperty("KEYSTORE_PASSWORD")
-    ?: System.getenv("KEYSTORE_PASSWORD")
+val keystoreBase64 = localProperties.getProperty("KEYSTORE_BASE64")?.takeIf { it.isNotBlank() }
+    ?: System.getenv("KEYSTORE_BASE64")?.takeIf { it.isNotBlank() }
+
+val keystorePassword = localProperties.getProperty("KEYSTORE_PASSWORD")?.takeIf { it.isNotBlank() }
+    ?: System.getenv("KEYSTORE_PASSWORD")?.takeIf { it.isNotBlank() }
     ?: "Hamraj37Key"
-val keyAlias = localProperties.getProperty("KEY_ALIAS")
-    ?: System.getenv("KEY_ALIAS")
+
+val keyAlias = localProperties.getProperty("KEY_ALIAS")?.takeIf { it.isNotBlank() }
+    ?: System.getenv("KEY_ALIAS")?.takeIf { it.isNotBlank() }
     ?: "Hamraj37"
-val keyPassword = localProperties.getProperty("KEY_PASSWORD")
-    ?: System.getenv("KEY_PASSWORD")
+
+val keyPassword = localProperties.getProperty("KEY_PASSWORD")?.takeIf { it.isNotBlank() }
+    ?: System.getenv("KEY_PASSWORD")?.takeIf { it.isNotBlank() }
     ?: "Hamraj37Key"
 
 val keystoreFile = file("keystore.jks")
@@ -57,7 +60,9 @@ android {
 
     signingConfigs {
         create("release") {
-            if (keystoreFile.exists() && keystoreFile.length() > 0) {
+            val validKeystore = keystoreFile.exists() && keystoreFile.length() > 0
+            val validCreds = !keystorePassword.isNullOrBlank() && !keyAlias.isNullOrBlank() && !keyPassword.isNullOrBlank()
+            if (validKeystore && validCreds) {
                 storeFile = keystoreFile
                 storePassword = keystorePassword
                 this.keyAlias = keyAlias
