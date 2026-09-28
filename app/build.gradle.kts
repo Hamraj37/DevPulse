@@ -1,26 +1,36 @@
-import java.io.File
 import java.util.Properties
 import java.util.Base64
 
 val localProperties = Properties()
 val localPropertiesFile = rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
-    localProperties.load(localPropertiesFile.inputStream())
+    try {
+        localPropertiesFile.inputStream().use { localProperties.load(it) }
+    } catch (_: Exception) {}
 }
 
 val keystoreBase64 = localProperties.getProperty("KEYSTORE_BASE64")
-val keystorePassword = localProperties.getProperty("KEYSTORE_PASSWORD") ?: "Hamraj37Key"
-val keyAlias = localProperties.getProperty("KEY_ALIAS") ?: "Hamraj37"
-val keyPassword = localProperties.getProperty("KEY_PASSWORD") ?: "Hamraj37Key"
+    ?: System.getenv("KEYSTORE_BASE64")
+val keystorePassword = localProperties.getProperty("KEYSTORE_PASSWORD")
+    ?: System.getenv("KEYSTORE_PASSWORD")
+    ?: "Hamraj37Key"
+val keyAlias = localProperties.getProperty("KEY_ALIAS")
+    ?: System.getenv("KEY_ALIAS")
+    ?: "Hamraj37"
+val keyPassword = localProperties.getProperty("KEY_PASSWORD")
+    ?: System.getenv("KEY_PASSWORD")
+    ?: "Hamraj37Key"
 
 val keystoreFile = file("keystore.jks")
 if (!keystoreBase64.isNullOrEmpty()) {
-    val cleanBase64 = keystoreBase64.replace("\n", "").replace("\r", "").replace(" ", "")
     try {
+        val cleanBase64 = keystoreBase64.replace("\\s+".toRegex(), "")
         val decodedBytes = Base64.getDecoder().decode(cleanBase64)
-        keystoreFile.writeBytes(decodedBytes)
+        if (decodedBytes.isNotEmpty()) {
+            keystoreFile.writeBytes(decodedBytes)
+        }
     } catch (e: Exception) {
-        println("Error decoding KEYSTORE_BASE64: ${e.message}")
+        println("Warning: Failed to decode KEYSTORE_BASE64: ${e.message}")
     }
 }
 
@@ -47,11 +57,13 @@ android {
 
     signingConfigs {
         create("release") {
-            if (keystoreFile.exists()) {
+            if (keystoreFile.exists() && keystoreFile.length() > 0) {
                 storeFile = keystoreFile
                 storePassword = keystorePassword
                 this.keyAlias = keyAlias
                 this.keyPassword = keyPassword
+            } else {
+                initWith(getByName("debug"))
             }
         }
     }
@@ -61,14 +73,10 @@ android {
             optimization {
                 enable = false
             }
-            if (keystoreFile.exists()) {
-                signingConfig = signingConfigs.getByName("release")
-            }
+            signingConfig = signingConfigs.getByName("release")
         }
         debug {
-            if (keystoreFile.exists()) {
-                signingConfig = signingConfigs.getByName("release")
-            }
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
