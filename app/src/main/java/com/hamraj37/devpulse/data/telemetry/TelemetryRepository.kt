@@ -98,6 +98,7 @@ class TelemetryRepository(private val context: Context) {
                     storageFreeBytes = memory.internalStorageFreeBytes,
                     batteryChargingStatus = battery.status,
                     batteryLevel = battery.levelPercent,
+                    batteryHealthPercent = battery.healthPercent,
                     batteryVoltage = battery.voltageVolts,
                     batteryTemp = battery.temperatureCelsius,
                     sensorCount = sensors.sensorCount.coerceAtLeast(42),

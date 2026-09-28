@@ -31,7 +31,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
@@ -79,7 +78,7 @@ fun DevPulseTabRow(
 
                 val backgroundColor by animateColorAsState(
                     targetValue = if (isSelected) {
-                        Color(0xFF4A553D)
+                        MaterialTheme.colorScheme.primaryContainer
                     } else {
                         MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                     },
@@ -89,7 +88,7 @@ fun DevPulseTabRow(
 
                 val contentColor by animateColorAsState(
                     targetValue = if (isSelected) {
-                        Color.White
+                        MaterialTheme.colorScheme.onPrimaryContainer
                     } else {
                         MaterialTheme.colorScheme.onSurfaceVariant
                     },

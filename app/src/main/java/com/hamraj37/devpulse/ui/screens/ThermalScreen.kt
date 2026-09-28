@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.data.model.ThermalInfo
 import com.hamraj37.devpulse.data.model.ThermalZone
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
-import com.hamraj37.devpulse.ui.theme.OliveDarkBanner
 import java.util.Locale
 
 @Composable
@@ -47,7 +46,7 @@ fun ThermalScreen(
         // 1. Top Thermal Overview Banner
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = OliveDarkBanner),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
             shape = RoundedCornerShape(20.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
@@ -86,7 +85,7 @@ fun ThermalScreen(
                             Text(
                                 text = "Thermal Zone Monitors",
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                color = Color.White,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 maxLines = 1
                             )
                             Text(
@@ -120,7 +119,7 @@ fun ThermalScreen(
                 Text(
                     text = "Thermal Headroom Capacity",
                     style = MaterialTheme.typography.labelSmall,
-                    color = Color.White.copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Spacer(modifier = Modifier.height(6.dp))
@@ -138,7 +137,7 @@ fun ThermalScreen(
                         .height(8.dp)
                         .clip(RoundedCornerShape(4.dp)),
                     color = OliveActiveBadge,
-                    trackColor = Color.White.copy(alpha = 0.2f)
+                    trackColor = MaterialTheme.colorScheme.surfaceContainerHighest
                 )
             }
         }

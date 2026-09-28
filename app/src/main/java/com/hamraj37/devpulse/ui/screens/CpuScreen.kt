@@ -28,7 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.data.model.CpuInfo
-import com.hamraj37.devpulse.ui.theme.OliveChipBg
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -117,7 +116,7 @@ fun CpuScreen(
                         androidx.compose.runtime.key(speed.coreIndex) {
                             Surface(
                                 shape = RoundedCornerShape(12.dp),
-                                color = OliveChipBg,
+                                color = MaterialTheme.colorScheme.surfaceContainerHighest,
                                 modifier = Modifier.weight(1f, fill = false)
                             ) {
                                 Column(

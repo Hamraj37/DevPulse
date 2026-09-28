@@ -1,16 +1,15 @@
 package com.hamraj37.devpulse.ui.components
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -28,67 +26,97 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
-import com.hamraj37.devpulse.ui.theme.OlivePrimary
 
 @Composable
 fun CircularRamGauge(
     percentage: Int,
     modifier: Modifier = Modifier,
-    size: Dp = 100.dp,
-    strokeWidth: Dp = 10.dp,
-    activeColor: Color = OliveActiveBadge,
-    trackColor: Color = Color(0xFF2C3227)
+    size: Dp = 110.dp,
+    strokeWidth: Dp = 5.dp,
+    activeColor: Color = MaterialTheme.colorScheme.primary,
+    trackColor: Color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
 ) {
     Box(
         modifier = modifier.size(size),
         contentAlignment = Alignment.Center
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val strokePx = strokeWidth.toPx()
-            val arcSize = Size(size.toPx() - strokePx, size.toPx() - strokePx)
-            val topLeft = Offset(strokePx / 2, strokePx / 2)
-            val strokeStyle = Stroke(width = strokePx, cap = StrokeCap.Round)
+            val center = Offset(size.toPx() / 2f, size.toPx() / 2f)
+            val radius = (size.toPx() - strokeWidth.toPx() * 3) / 2f
+            val numScallops = 16
+            val scallopAmplitude = 3.5.dp.toPx()
 
-            // Background Track Arc (260 degrees sweep)
-            drawArc(
+            // 1. Draw Scalloped Wavy Track Path
+            val trackPath = Path()
+            val totalPoints = 120
+            for (i in 0..totalPoints) {
+                val angle = (i.toFloat() / totalPoints) * (2 * Math.PI.toFloat())
+                val wave = scallopAmplitude * Math.sin((numScallops * angle).toDouble()).toFloat()
+                val r = radius + wave
+                val x = center.x + r * Math.cos(angle.toDouble()).toFloat()
+                val y = center.y + r * Math.sin(angle.toDouble()).toFloat()
+
+                if (i == 0) {
+                    trackPath.moveTo(x, y)
+                } else {
+                    trackPath.lineTo(x, y)
+                }
+            }
+            trackPath.close()
+
+            drawPath(
+                path = trackPath,
                 color = trackColor,
-                startAngle = 140f,
-                sweepAngle = 260f,
-                useCenter = false,
-                topLeft = topLeft,
-                size = arcSize,
-                style = strokeStyle
+                style = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round)
             )
 
-            // Active Arc
-            val sweep = (percentage.coerceIn(0, 100) / 100f) * 260f
-            drawArc(
+            // 2. Draw Active Scalloped Arc Path based on percentage
+            val activePath = Path()
+            val activeFraction = (percentage.coerceIn(0, 100) / 100f)
+            val activePoints = (totalPoints * activeFraction).toInt().coerceAtLeast(1)
+
+            for (i in 0..activePoints) {
+                val angle = (-Math.PI / 2) + (i.toFloat() / totalPoints) * (2 * Math.PI.toFloat())
+                val wave = scallopAmplitude * Math.sin((numScallops * angle).toDouble()).toFloat()
+                val r = radius + wave
+                val x = center.x + r * Math.cos(angle.toDouble()).toFloat()
+                val y = center.y + r * Math.sin(angle.toDouble()).toFloat()
+
+                if (i == 0) {
+                    activePath.moveTo(x, y)
+                } else {
+                    activePath.lineTo(x, y)
+                }
+            }
+
+            drawPath(
+                path = activePath,
                 color = activeColor,
-                startAngle = 140f,
-                sweepAngle = sweep,
-                useCenter = false,
-                topLeft = topLeft,
-                size = arcSize,
-                style = strokeStyle
+                style = Stroke(width = (strokeWidth.toPx() * 1.25f), cap = StrokeCap.Round)
             )
         }
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+        // Text inside gauge: Big number + small %
+        Row(
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "$percentage%",
-                style = MaterialTheme.typography.titleLarge.copy(
+                text = "$percentage",
+                style = MaterialTheme.typography.headlineLarge.copy(
                     fontWeight = FontWeight.ExtraBold,
-                    fontSize = 22.sp
+                    fontSize = 32.sp
                 ),
-                color = Color.White
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = "RAM",
-                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium),
-                color = Color.White.copy(alpha = 0.7f)
+                text = "%",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+                ),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 6.dp)
             )
         }
     }
@@ -100,10 +128,10 @@ fun LiveSparklineChart(
     modifier: Modifier = Modifier
         .fillMaxWidth()
         .height(54.dp),
-    lineColor: Color = OliveActiveBadge,
-    fillGradient: Brush = remember {
+    lineColor: Color = MaterialTheme.colorScheme.primary,
+    fillGradient: Brush = remember(lineColor) {
         Brush.verticalGradient(
-            colors = listOf(OliveActiveBadge.copy(alpha = 0.4f), Color.Transparent)
+            colors = listOf(lineColor.copy(alpha = 0.35f), Color.Transparent)
         )
     }
 ) {
@@ -171,7 +199,7 @@ fun LiveSparklineChart(
             center = lastPoint
         )
         drawCircle(
-            color = Color.White,
+            color = lineColor,
             radius = 2.dp.toPx(),
             center = lastPoint
         )

@@ -25,14 +25,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.data.model.BatteryInfo
 import com.hamraj37.devpulse.ui.components.LiveSparklineChart
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
-import com.hamraj37.devpulse.ui.theme.OliveDarkBanner
 
 @Composable
 fun BatteryScreen(
@@ -48,7 +46,7 @@ fun BatteryScreen(
         // 1. Top Banner Card (Battery Gauge Icon, Sparkline & Quick Specs)
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = OliveDarkBanner),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
             shape = RoundedCornerShape(20.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
@@ -87,7 +85,7 @@ fun BatteryScreen(
                             Text(
                                 text = "Battery Power State",
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                color = Color.White,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 maxLines = 1
                             )
                             Text(
@@ -125,6 +123,7 @@ fun BatteryScreen(
                     BatteryMetricChip("Current", "${String.format("%.1f", batteryInfo.currentMa)} mA")
                     BatteryMetricChip("Temp", "${batteryInfo.temperatureCelsius} °C")
                     BatteryMetricChip("Power", "${String.format("%.2f", batteryInfo.powerWatts)} W")
+                    BatteryMetricChip("Health", "${batteryInfo.healthPercent}%")
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -132,7 +131,7 @@ fun BatteryScreen(
                 Text(
                     text = "Live Power Draw Stream",
                     style = MaterialTheme.typography.labelSmall,
-                    color = Color.White.copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -141,7 +140,8 @@ fun BatteryScreen(
                     history = batteryInfo.powerHistory.ifEmpty { listOf(1.8f, 1.9f, 1.85f, 1.92f, 1.88f) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp)
+                        .height(50.dp),
+                    lineColor = MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -176,7 +176,7 @@ fun BatteryScreen(
                 HorizontalDivider(color = dividerColor)
 
                 val batterySpecs = listOf(
-                    "Health" to batteryInfo.health,
+                    "Health" to "${batteryInfo.health} (${batteryInfo.healthPercent}%)",
                     "Level" to "${batteryInfo.levelPercent}%",
                     "Status" to batteryInfo.status,
                     "Power Source" to batteryInfo.powerSource,
@@ -212,12 +212,12 @@ fun BatteryMetricChip(
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,
-            color = Color.White.copy(alpha = 0.6f)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
             text = value,
             style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold, fontSize = 14.sp),
-            color = Color.White
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }

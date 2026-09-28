@@ -54,8 +54,6 @@ import com.hamraj37.devpulse.data.model.TestStatus
 import com.hamraj37.devpulse.ui.components.CircularRamGauge
 import com.hamraj37.devpulse.ui.components.LiveSparklineChart
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
-import com.hamraj37.devpulse.ui.theme.OliveChipBg
-import com.hamraj37.devpulse.ui.theme.OliveDarkBanner
 import androidx.compose.foundation.clickable
 import androidx.compose.runtime.remember
 import java.io.File
@@ -92,78 +90,77 @@ fun DashboardScreen(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // 1. Top Dark Banner Card (RAMGauge + Sparkline Chart)
+        // 1. Top Banner Card (RAM Telemetry)
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = OliveDarkBanner),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
             shape = RoundedCornerShape(20.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp)
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text(
-                    text = "RAM Telemetry",
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp
-                    ),
-                    color = Color.White.copy(alpha = 0.7f)
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
+                // Top Header Row
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "$ramUsedMb MB Used",
-                            style = MaterialTheme.typography.headlineSmall.copy(
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Total: $ramTotalMb MB",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.White.copy(alpha = 0.8f)
-                        )
-                        Text(
-                            text = "Free: $ramFreeMb MB",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = OliveActiveBadge
-                        )
-                    }
+                    Text(
+                        text = "RAM - $ramTotalMb MB Total",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
 
-                    CircularRamGauge(
-                        percentage = ramPct,
-                        size = 96.dp,
-                        strokeWidth = 9.dp
+                    Text(
+                        text = "$ramUsedMb MB Used",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                // Middle Section: Scalloped Circular Gauge on Left + Live Chart & Free MB on Right
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    CircularRamGauge(
+                        percentage = ramPct,
+                        size = 110.dp,
+                        activeColor = MaterialTheme.colorScheme.primary,
+                        trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                    )
 
-                Text(
-                    text = "Real-time Usage Stream",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color.White.copy(alpha = 0.6f)
-                )
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        LiveSparklineChart(
+                            history = dashboardInfo.ramHistory,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(65.dp),
+                            lineColor = MaterialTheme.colorScheme.primary
+                        )
 
-                Spacer(modifier = Modifier.height(4.dp))
-
-                LiveSparklineChart(
-                    history = dashboardInfo.ramHistory,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                )
+                        Text(
+                            text = "$ramFreeMb MB Free",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.align(Alignment.End)
+                        )
+                    }
+                }
             }
         }
 
@@ -233,7 +230,7 @@ fun DashboardScreen(
                     coreFreqs.forEachIndexed { index, mhz ->
                         Surface(
                             shape = RoundedCornerShape(12.dp),
-                            color = OliveChipBg,
+                            color = MaterialTheme.colorScheme.surfaceContainerHighest,
                             modifier = Modifier.weight(1f, fill = false)
                         ) {
                             Column(
@@ -693,7 +690,7 @@ fun DashboardScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "${dashboardInfo.batteryChargingStatus} | ${dashboardInfo.batteryVoltage}V",
+                        text = "${dashboardInfo.batteryChargingStatus} | ${dashboardInfo.batteryVoltage}V | Health ${dashboardInfo.batteryHealthPercent}%",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

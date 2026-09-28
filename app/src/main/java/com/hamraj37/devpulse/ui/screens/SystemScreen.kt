@@ -26,11 +26,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hamraj37.devpulse.data.model.SystemInfo
-import com.hamraj37.devpulse.ui.theme.OliveDarkBanner
 
 @Composable
 fun SystemScreen(
@@ -46,7 +44,7 @@ fun SystemScreen(
         // 1. Header Banner Card (Android OS Badge & Release Details)
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = OliveDarkBanner),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
             shape = RoundedCornerShape(20.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
@@ -78,7 +76,7 @@ fun SystemScreen(
                         text = "Android ${systemInfo.androidVersion} - ${systemInfo.versionLetter}",
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.ExtraBold,
-                            color = Color.White
+                            color = MaterialTheme.colorScheme.onSurface
                         ),
                         maxLines = 1
                     )
@@ -93,7 +91,7 @@ fun SystemScreen(
                     Text(
                         text = "Released : ${systemInfo.releaseDate}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.White.copy(alpha = 0.7f),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1
                     )
                 }

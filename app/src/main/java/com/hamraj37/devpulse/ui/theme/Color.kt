@@ -22,11 +22,13 @@ val OliveDarkBackground = Color(0xFF12140E)
 val OliveDarkSurface = Color(0xFF1A1D16)
 val OliveDarkSurfaceVariant = Color(0xFF242820)
 val OliveDarkBanner = Color(0xFF1E231B)
+val OliveDarkChipBg = Color(0xFF2A2E24)
 
 val OliveLightBackground = Color(0xFFF7F9EE)
 val OliveLightSurface = Color(0xFFFFFFFF)
 val OliveLightSurfaceVariant = Color(0xFFF0F3E8)
 val OliveLightCard = Color(0xFFF3F6EC)
+val OliveLightChipBg = Color(0xFFE2E7D3)
 
 val OliveChipBg = Color(0xFFE2E7D3)
 val OliveActiveBadge = Color(0xFF829827)

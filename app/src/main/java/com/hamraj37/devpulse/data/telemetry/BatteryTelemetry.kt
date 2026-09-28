@@ -98,8 +98,15 @@ object BatteryTelemetry {
             }
 
             val capacitySystemMah = getBatteryCapacity(context, batteryStatus)
-            val capacityChargedMah = (capacitySystemMah * (batteryPct / 100f)).toInt()
-            val capacityEstimatedMah = capacitySystemMah
+            val healthPercent = when (healthStr) {
+                "Good" -> (100 - (chargeCycles / 60)).coerceIn(80, 100)
+                "Overheat", "Cold" -> 90
+                "Over Voltage" -> 85
+                "Dead", "Unspecified Failure" -> 50
+                else -> 98
+            }
+            val capacityEstimatedMah = (capacitySystemMah * (healthPercent / 100f)).toInt()
+            val capacityChargedMah = (capacityEstimatedMah * (batteryPct / 100f)).toInt()
 
             val timeToChargeFormatted = if (isCharging) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -121,6 +128,7 @@ object BatteryTelemetry {
                 temperatureCelsius = tempCelsius,
                 usbStatus = usbStatusStr,
                 health = healthStr,
+                healthPercent = healthPercent,
                 levelPercent = batteryPct,
                 status = statusStr,
                 powerSource = powerSource,
