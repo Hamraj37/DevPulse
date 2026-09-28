@@ -6,6 +6,7 @@ import android.content.IntentFilter
 import android.os.BatteryManager
 import android.os.Build
 import com.hamraj37.devpulse.data.model.BatteryInfo
+import java.io.File
 import java.util.Collections
 import kotlin.math.abs
 
@@ -105,8 +106,31 @@ object BatteryTelemetry {
                 "Dead", "Unspecified Failure" -> 50
                 else -> 98
             }
-            val capacityEstimatedMah = (capacitySystemMah * (healthPercent / 100f)).toInt()
-            val capacityChargedMah = (capacityEstimatedMah * (batteryPct / 100f)).toInt()
+
+            val chargeCounterRaw = try {
+                bm?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER) ?: 0
+            } catch (_: Throwable) {
+                0
+            }
+            val chargeCounterAbs = abs(chargeCounterRaw)
+            val chargedFromPropertyMah = when {
+                chargeCounterAbs > 100000 -> chargeCounterAbs / 1000
+                chargeCounterAbs in 100..30000 -> chargeCounterAbs
+                else -> -1
+            }
+
+            val capacityEstimatedMah = if (chargedFromPropertyMah > 0 && batteryPct > 0) {
+                val estimated = (chargedFromPropertyMah * 100f / batteryPct).toInt()
+                if (estimated in 500..30000) estimated else (capacitySystemMah * (healthPercent / 100f)).toInt()
+            } else {
+                (capacitySystemMah * (healthPercent / 100f)).toInt()
+            }
+
+            val capacityChargedMah = if (chargedFromPropertyMah > 0) {
+                chargedFromPropertyMah
+            } else {
+                (capacityEstimatedMah * (batteryPct / 100f)).toInt()
+            }
 
             val timeToChargeFormatted = if (isCharging) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -147,19 +171,79 @@ object BatteryTelemetry {
     }
 
     private fun getBatteryCapacity(context: Context, batteryStatus: Intent?): Int {
+        // 1. Try PowerProfile via Reflection
+        try {
+            val powerProfileClass = Class.forName("com.android.internal.os.PowerProfile")
+            val powerProfile = try {
+                powerProfileClass.getConstructor(Context::class.java).newInstance(context)
+            } catch (_: Throwable) {
+                try {
+                    powerProfileClass.getConstructor(Context::class.java, Boolean::class.javaPrimitiveType).newInstance(context, false)
+                } catch (_: Throwable) {
+                    null
+                }
+            }
+            if (powerProfile != null) {
+                val capacity = try {
+                    powerProfileClass.getMethod("getBatteryCapacity").invoke(powerProfile) as? Double
+                } catch (_: Throwable) {
+                    try {
+                        powerProfileClass.getMethod("getAveragePower", String::class.java).invoke(powerProfile, "battery.capacity") as? Double
+                    } catch (_: Throwable) {
+                        null
+                    }
+                }
+                if (capacity != null && capacity > 0) {
+                    val capInt = capacity.toInt()
+                    if (capInt in 500..30000) {
+                        return capInt
+                    }
+                }
+            }
+        } catch (_: Throwable) {
+        }
+
+        // 2. Try System sysfs files
+        val sysfsPaths = listOf(
+            "/sys/class/power_supply/battery/charge_full_design",
+            "/sys/class/power_supply/battery/energy_full_design",
+            "/sys/class/power_supply/bms/charge_full_design",
+            "/sys/class/power_supply/battery/charge_full",
+            "/sys/class/power_supply/battery/capacity_nominal"
+        )
+        for (path in sysfsPaths) {
+            try {
+                val file = File(path)
+                if (file.exists() && file.canRead()) {
+                    val text = file.readText().trim()
+                    val value = text.toLongOrNull()
+                    if (value != null && value > 0) {
+                        val mah = if (value > 100000) (value / 1000).toInt() else value.toInt()
+                        if (mah in 500..30000) {
+                            return mah
+                        }
+                    }
+                }
+            } catch (_: Throwable) {
+            }
+        }
+
+        // 3. Fallback: Estimate from charge counter and current battery level
         val bm = context.getSystemService(Context.BATTERY_SERVICE) as? BatteryManager
-        val chargeCounter = try {
+        val chargeCounterRaw = try {
             bm?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER) ?: 0
         } catch (_: Throwable) {
             0
         }
-        if (chargeCounter > 0) {
+        val chargeCounterAbs = abs(chargeCounterRaw)
+        if (chargeCounterAbs > 0) {
             val level = batteryStatus?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
             val scale = batteryStatus?.getIntExtra(BatteryManager.EXTRA_SCALE, -1) ?: -1
             if (level > 0 && scale > 0) {
                 val pct = level / scale.toFloat()
                 if (pct > 0f) {
-                    val calculated = (chargeCounter / 1000f) / pct
+                    val currentMah = if (chargeCounterAbs > 100000) chargeCounterAbs / 1000f else chargeCounterAbs.toFloat()
+                    val calculated = currentMah / pct
                     if (calculated in 500f..30000f) {
                         return calculated.toInt()
                     }
@@ -167,15 +251,6 @@ object BatteryTelemetry {
             }
         }
 
-        try {
-            val powerProfileClass = Class.forName("com.android.internal.os.PowerProfile")
-            val powerProfile = powerProfileClass.getConstructor(Context::class.java).newInstance(context)
-            val capacity = powerProfileClass.getMethod("getBatteryCapacity").invoke(powerProfile) as? Double
-            if (capacity != null && capacity > 0) {
-                return capacity.toInt()
-            }
-        } catch (_: Throwable) {
-        }
         return 5000
     }
 }

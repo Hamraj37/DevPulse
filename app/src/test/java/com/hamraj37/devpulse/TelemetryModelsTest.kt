@@ -46,6 +46,14 @@ class TelemetryModelsTest {
     }
 
     @Test
+    fun batteryInfo_containsCapacityFields() {
+        val battery = BatteryInfo()
+        assertTrue(battery.capacitySystemMah > 0)
+        assertTrue(battery.capacityEstimatedMah > 0)
+        assertTrue(battery.capacityChargedMah > 0)
+    }
+
+    @Test
     fun displayInfo_containsAllRequiredFields() {
         val display = DisplayInfo()
         assertEquals("2414 x 1080 Pixels (FHD+)", display.resolution)
