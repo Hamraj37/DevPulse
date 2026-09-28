@@ -103,34 +103,35 @@ object MemoryTelemetry {
     }
 
     private fun getZramInfo(): Triple<Long, Long, Long> {
+        var diskSize = 0L
+        var origSize = 0L
+        var comprSize = 0L
+
         try {
             val zramDir = File("/sys/block/zram0")
             if (zramDir.exists()) {
-                val diskSize = File(zramDir, "disksize").takeIf { it.exists() }?.readText()?.trim()?.toLongOrNull() ?: 0L
-                val origSize = File(zramDir, "orig_data_size").takeIf { it.exists() }?.readText()?.trim()?.toLongOrNull() ?: 0L
-                val comprSize = File(zramDir, "compr_data_size").takeIf { it.exists() }?.readText()?.trim()?.toLongOrNull() ?: 0L
+                diskSize = File(zramDir, "disksize").takeIf { it.canRead() }?.readText()?.trim()?.toLongOrNull() ?: 0L
+                origSize = File(zramDir, "orig_data_size").takeIf { it.canRead() }?.readText()?.trim()?.toLongOrNull() ?: 0L
+                comprSize = File(zramDir, "compr_data_size").takeIf { it.canRead() }?.readText()?.trim()?.toLongOrNull() ?: 0L
 
                 val mmStatFile = File(zramDir, "mm_stat")
-                if (mmStatFile.exists()) {
+                if (mmStatFile.exists() && mmStatFile.canRead()) {
                     val content = mmStatFile.readText().trim()
                     val parts = content.split("\\s+".toRegex())
                     if (parts.size >= 2) {
-                        val mmOrig = parts[0].toLongOrNull() ?: origSize
-                        val mmCompr = parts[1].toLongOrNull() ?: comprSize
-                        val total = if (diskSize > 0) diskSize else (mmOrig * 2).coerceAtLeast(512L * 1024 * 1024)
-                        return Triple(total, mmOrig, mmCompr)
+                        origSize = parts[0].toLongOrNull() ?: origSize
+                        comprSize = parts[1].toLongOrNull() ?: comprSize
                     }
                 }
-
-                val total = if (diskSize > 0) diskSize else (origSize * 2).coerceAtLeast(512L * 1024 * 1024)
-                return Triple(total, origSize, comprSize)
             }
         } catch (_: Throwable) {}
 
         val swap = getSwapInfoFromMemInfo()
-        val total = if (swap.first > 0) swap.first else 2L * 1024 * 1024 * 1024
-        val used = if (swap.second > 0) swap.second else 512L * 1024 * 1024
-        return Triple(total, used * 2, used)
+        val total = if (diskSize > 0) diskSize else if (swap.first > 0) swap.first else 3L * 1024 * 1024 * 1024
+        val orig = if (origSize > 0) origSize else if (swap.second > 0) swap.second else 1L * 1024 * 1024 * 1024
+        val compr = if (comprSize > 0) comprSize else (orig / 2.3f).toLong().coerceAtLeast(1L)
+
+        return Triple(total, orig, compr)
     }
 
     private fun parseKbValue(line: String): Long {

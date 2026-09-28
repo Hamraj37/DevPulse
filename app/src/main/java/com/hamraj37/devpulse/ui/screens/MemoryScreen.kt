@@ -195,11 +195,15 @@ fun MemoryStorageProgressCard(
 fun ZramProgressCard(
     memoryInfo: MemoryInfo
 ) {
-    val zramTotalMb = memoryInfo.zramTotalBytes / (1024 * 1024f)
-    val zramComprMb = memoryInfo.zramComprBytes / (1024 * 1024f)
-    val zramOrigMb = memoryInfo.zramOrigBytes / (1024 * 1024f)
-    val zramPct = if (zramTotalMb > 0) ((zramComprMb / zramTotalMb) * 100).toInt() else 35
-    val compressionRatio = if (zramComprMb > 0f) zramOrigMb / zramComprMb else 2.4f
+    val zramTotalGb = memoryInfo.zramTotalBytes / (1024 * 1024 * 1024f)
+    val zramOrigGb = memoryInfo.zramOrigBytes / (1024 * 1024 * 1024f)
+    val zramComprGb = memoryInfo.zramComprBytes / (1024 * 1024 * 1024f)
+    val zramPct = if (memoryInfo.zramTotalBytes > 0) {
+        ((memoryInfo.zramOrigBytes.toFloat() / memoryInfo.zramTotalBytes.toFloat()) * 100).toInt().coerceIn(0, 100)
+    } else 35
+    val compressionRatio = if (memoryInfo.zramComprBytes > 0) {
+        memoryInfo.zramOrigBytes.toFloat() / memoryInfo.zramComprBytes.toFloat()
+    } else 2.3f
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -228,13 +232,13 @@ fun ZramProgressCard(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            text = "zRAM (Compressed Swap)",
+                            text = "zRAM (RAM Swap)",
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface,
                             maxLines = 1
                         )
                         Text(
-                            text = String.format(Locale.US, "%.1fx Compression Ratio", compressionRatio),
+                            text = String.format(Locale.US, "%.1fx Compression Saved", compressionRatio),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.primary,
                             maxLines = 1
@@ -275,12 +279,12 @@ fun ZramProgressCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = String.format(Locale.US, "%.1f MB Used (Orig: %.1f MB)", zramComprMb, zramOrigMb),
+                    text = String.format(Locale.US, "%.2f GB Swapped (%.2f GB in RAM)", zramOrigGb, zramComprGb),
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = String.format(Locale.US, "Total: %.1f MB", zramTotalMb),
+                    text = String.format(Locale.US, "Total: %.2f GB", zramTotalGb),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
