@@ -15,3 +15,4 @@
 local.properties
 *.jks
 *.keystore
+/.kotlin/errors/errors-1790660382458.log

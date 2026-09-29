@@ -101,7 +101,7 @@ class TelemetryRepository(private val context: Context) {
                     batteryHealthPercent = battery.healthPercent,
                     batteryVoltage = battery.voltageVolts,
                     batteryTemp = battery.temperatureCelsius,
-                    sensorCount = sensors.sensorCount.coerceAtLeast(42),
+                    sensorCount = sensors.sensorCount,
                     appCount = apps.totalApps.coerceAtLeast(128)
                 )
 

@@ -2,57 +2,39 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/widget_background"
+    android:background="?attr/colorSurfaceContainer"
+    android:theme="@style/Theme.Material3.DynamicColors.DayNight"
     android:orientation="vertical"
-    android:padding="16.dp"
+    android:padding="16dp"
     android:gravity="center_vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="12.dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="DevPulse Monitor"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/widget_battery_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="⚡ 85%"
-            android:textColor="#00E676"
-            android:textSize="13sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+        android:text="DevPulse Status"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="8.dp">
-
+        android:layout_marginBottom="6dp">
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="RAM Usage"
-            android:textColor="#AAAAAA"
+            android:text="Storage Used"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="12sp" />
-
         <TextView
-            android:id="@+id/widget_ram_text"
+            android:id="@+id/widget_medium_storage_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="4.92GB (68%)"
-            android:textColor="#64B5F6"
+            android:text="33.56GB Used"
+            android:textColor="?attr/colorPrimary"
             android:textSize="12sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -61,21 +43,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Storage"
-            android:textColor="#AAAAAA"
+            android:text="RAM Used"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="12sp" />
-
         <TextView
-            android:id="@+id/widget_storage_text"
+            android:id="@+id/widget_medium_ram_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="90.55GB (90%)"
-            android:textColor="#FFB74D"
+            android:text="5.43GB Used"
+            android:textColor="?attr/colorSecondary"
             android:textSize="12sp"
             android:textStyle="bold" />
     </LinearLayout>
