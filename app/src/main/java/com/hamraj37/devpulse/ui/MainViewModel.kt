@@ -21,12 +21,23 @@ import com.hamraj37.devpulse.data.model.TestStatus
 import com.hamraj37.devpulse.data.model.ThermalInfo
 import com.hamraj37.devpulse.data.telemetry.AppCategoryFilter
 import com.hamraj37.devpulse.data.telemetry.TelemetryRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.HttpURLConnection
+import java.net.URL
+
+data class GithubReleaseInfo(
+    val tagName: String,
+    val name: String,
+    val body: String,
+    val htmlUrl: String
+)
 
 data class MainUiState(
     val selectedTab: AppTab = AppTab.DASHBOARD,
@@ -48,7 +59,9 @@ data class MainUiState(
     val appSearchQuery: String = "",
     val appCategoryFilter: String = AppCategoryFilter.USER.displayName, // "User" default
     val isToolsPageOpen: Boolean = false,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val updateInfo: GithubReleaseInfo? = null,
+    val showUpdateDialog: Boolean = false
 )
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -61,6 +74,32 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     init {
         loadStaticTelemetry()
         observeDynamicTelemetry()
+        checkForUpdate()
+    }
+
+    fun dismissUpdateDialog() {
+        _uiState.update { it.copy(showUpdateDialog = false) }
+    }
+
+    private fun checkForUpdate() {
+        viewModelScope.launch {
+            try {
+                val release = checkForGitHubUpdate()
+                if (release != null) {
+                    val currentVersion = try {
+                        val pInfo = getApplication<Application>().packageManager.getPackageInfo(getApplication<Application>().packageName, 0)
+                        pInfo.versionName?.trim() ?: "1.0.0"
+                    } catch (_: Throwable) {
+                        "1.0.0"
+                    }
+                    val cleanTag = release.tagName.removePrefix("v").trim()
+                    if (cleanTag.isNotEmpty() && cleanTag != currentVersion) {
+                        _uiState.update { it.copy(updateInfo = release, showUpdateDialog = true) }
+                    }
+                }
+            } catch (_: Throwable) {
+            }
+        }
     }
 
     fun selectTab(tab: AppTab) {
@@ -226,5 +265,33 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     _uiState.update { it.copy(testsList = tests) }
                 }
         }
+    }
+
+    private suspend fun checkForGitHubUpdate(): GithubReleaseInfo? = withContext(Dispatchers.IO) {
+        try {
+            val url = URL("https://api.github.com/repos/Hamraj37/DevPulse/releases/latest")
+            val connection = url.openConnection() as HttpURLConnection
+            connection.requestMethod = "GET"
+            connection.setRequestProperty("User-Agent", "DevPulse-App")
+            connection.connectTimeout = 5000
+            connection.readTimeout = 5000
+            if (connection.responseCode == 200) {
+                val response = connection.inputStream.bufferedReader().use { it.readText() }
+                val tagName = extractJsonField(response, "tag_name") ?: return@withContext null
+                val name = extractJsonField(response, "name") ?: tagName
+                val body = extractJsonField(response, "body") ?: "Bug fixes and performance improvements."
+                val htmlUrl = extractJsonField(response, "html_url") ?: "https://github.com/Hamraj37/DevPulse/releases"
+                return@withContext GithubReleaseInfo(tagName, name, body, htmlUrl)
+            }
+            null
+        } catch (_: Throwable) {
+            null
+        }
+    }
+
+    private fun extractJsonField(json: String, field: String): String? {
+        val pattern = "\"$field\"\\s*:\\s*\"([^\"]*)\"".toRegex()
+        val match = pattern.find(json)
+        return match?.groupValues?.get(1)?.replace("\\n", "\n")
     }
 }

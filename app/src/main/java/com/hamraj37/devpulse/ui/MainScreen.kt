@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -26,6 +27,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.Refresh
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.material.icons.rounded.SystemUpdate
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -154,6 +161,67 @@ fun MainScreen(
                     }
                 }
             }
+        }
+    }
+
+    if (uiState.showUpdateDialog) {
+        uiState.updateInfo?.let { release ->
+            AlertDialog(
+                onDismissRequest = { viewModel.dismissUpdateDialog() },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Rounded.SystemUpdate,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                },
+                title = {
+                    Text(text = "Update Available (${release.tagName})")
+                },
+                text = {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.verticalScroll(rememberScrollState())
+                    ) {
+                        Text(
+                            text = "A new version of DevPulse is available on GitHub!",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Changelog:",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = release.body,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            try {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(release.htmlUrl))
+                                context.startActivity(intent)
+                            } catch (_: Exception) {}
+                            viewModel.dismissUpdateDialog()
+                        }
+                    ) {
+                        Text("Download Update")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { viewModel.dismissUpdateDialog() }
+                    ) {
+                        Text("Later")
+                    }
+                }
+            )
         }
     }
 
