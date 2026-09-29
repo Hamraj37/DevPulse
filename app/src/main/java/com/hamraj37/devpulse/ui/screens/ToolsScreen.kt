@@ -270,124 +270,185 @@ fun ToolsScreen(
         )
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 4.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        // Top Header
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            ),
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+    if (selectedTool != null) {
+        BackHandler {
+            selectedTool = null
+        }
+
+        Surface(
+            modifier = modifier
+                .fillMaxSize()
+                .statusBarsPadding(),
+            color = MaterialTheme.colorScheme.background
         ) {
-            Row(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxSize()
+                    .padding(horizontal = 4.dp, vertical = 8.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+                // Top Header with Back Arrow for active tool page
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    shape = RoundedCornerShape(20.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                 ) {
-                    if (onBack != null) {
-                        IconButton(onClick = onBack) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = { selectedTool = null }) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                                contentDescription = "Back",
+                                contentDescription = "Back to Tools List",
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
-                        Spacer(modifier = Modifier.width(4.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = when (selectedTool) {
+                                ToolType.FLOATING_MONITORS -> "Floating Monitors"
+                                ToolType.PERMISSIONS -> "Permissions"
+                                ToolType.WIFI_ANALYZER -> "Wi-Fi Analyzer"
+                                ToolType.DATA_USAGE -> "Data Usage"
+                                ToolType.SCREEN_TIME -> "Screen Time"
+                                ToolType.WIDGETS -> "Widgets"
+                                ToolType.COMPASS -> "Compass"
+                                ToolType.EXPORT -> "Export"
+                                else -> "Tool"
+                            },
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 24.sp
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
                     }
-                    Text(
-                        text = "Tools",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 24.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
                 }
 
-                Box {
-                    IconButton(onClick = { showMenu = !showMenu }) {
-                        Icon(
-                            imageVector = Icons.Rounded.MoreVert,
-                            contentDescription = "Options",
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
+                Spacer(modifier = Modifier.height(8.dp))
 
-                    DropdownMenu(
-                        expanded = showMenu,
-                        onDismissRequest = { showMenu = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("Refresh Tools") },
-                            onClick = {
-                                showMenu = false
-                                Toast.makeText(context, "Tools refreshed", Toast.LENGTH_SHORT).show()
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    when (selectedTool) {
+                        ToolType.FLOATING_MONITORS -> FloatingMonitorsSheet(context = context)
+                        ToolType.PERMISSIONS -> PermissionsSheet(uiState = uiState)
+                        ToolType.WIFI_ANALYZER -> WifiAnalyzerSheet(
+                            uiState = uiState,
+                            onNavigateToNetwork = {
+                                selectedTool = null
+                                onNavigateToTab(AppTab.NETWORK)
                             }
                         )
-                        DropdownMenuItem(
-                            text = { Text("Export Full System Report") },
-                            onClick = {
-                                showMenu = false
-                                selectedTool = ToolType.EXPORT
-                            }
-                        )
+                        ToolType.DATA_USAGE -> DataUsageSheet(uiState = uiState)
+                        ToolType.SCREEN_TIME -> ScreenTimeSheet(context = context)
+                        ToolType.WIDGETS -> WidgetsSheet()
+                        ToolType.COMPASS -> CompassSheet(context = context)
+                        ToolType.EXPORT -> ExportSheet(uiState = uiState, context = context)
+                        else -> {}
                     }
                 }
             }
         }
-
-        // Tools List Cards
+    } else {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .verticalScroll(rememberScrollState()),
+            modifier = modifier
+                .fillMaxSize()
+                .padding(horizontal = 4.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            toolsList.forEach { tool ->
-                ToolCardItem(
-                    tool = tool,
-                    onClick = { selectedTool = tool.type }
-                )
-            }
-        }
-    }
-
-    // Modal Bottom Sheet / Full Screen for active tool
-    if (selectedTool != null) {
-        ModalBottomSheet(
-            onDismissRequest = { selectedTool = null },
-            sheetState = sheetState,
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-            shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
-        ) {
-            when (selectedTool) {
-                ToolType.FLOATING_MONITORS -> FloatingMonitorsSheet(context = context)
-                ToolType.PERMISSIONS -> PermissionsSheet(uiState = uiState)
-                ToolType.WIFI_ANALYZER -> WifiAnalyzerSheet(
-                    uiState = uiState,
-                    onNavigateToNetwork = {
-                        selectedTool = null
-                        onNavigateToTab(AppTab.NETWORK)
+            // Top Header
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
+                shape = RoundedCornerShape(20.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (onBack != null) {
+                            IconButton(onClick = onBack) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                                    contentDescription = "Back",
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(4.dp))
+                        }
+                        Text(
+                            text = "Tools",
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 24.sp
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
                     }
-                )
-                ToolType.DATA_USAGE -> DataUsageSheet(uiState = uiState)
-                ToolType.SCREEN_TIME -> ScreenTimeSheet(context = context)
-                ToolType.WIDGETS -> WidgetsSheet()
-                ToolType.COMPASS -> CompassSheet(context = context)
-                ToolType.EXPORT -> ExportSheet(uiState = uiState, context = context)
-                else -> {}
+
+                    Box {
+                        IconButton(onClick = { showMenu = !showMenu }) {
+                            Icon(
+                                imageVector = Icons.Rounded.MoreVert,
+                                contentDescription = "Options",
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Refresh Tools") },
+                                onClick = {
+                                    showMenu = false
+                                    Toast.makeText(context, "Tools refreshed", Toast.LENGTH_SHORT).show()
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Export Full System Report") },
+                                onClick = {
+                                    showMenu = false
+                                    selectedTool = ToolType.EXPORT
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Tools List Cards
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                toolsList.forEach { tool ->
+                    ToolCardItem(
+                        tool = tool,
+                        onClick = { selectedTool = tool.type }
+                    )
+                }
             }
         }
     }
