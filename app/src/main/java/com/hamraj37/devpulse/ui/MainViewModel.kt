@@ -47,6 +47,7 @@ data class MainUiState(
     val selectedCameraId: String = "0",
     val appSearchQuery: String = "",
     val appCategoryFilter: String = AppCategoryFilter.USER.displayName, // "User" default
+    val isToolsPageOpen: Boolean = false,
     val isLoading: Boolean = false
 )
 
@@ -64,6 +65,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun selectTab(tab: AppTab) {
         _uiState.update { it.copy(selectedTab = tab) }
+    }
+
+    fun setToolsPageOpen(isOpen: Boolean) {
+        _uiState.update { it.copy(isToolsPageOpen = isOpen) }
     }
 
     fun selectCamera(cameraId: String) {

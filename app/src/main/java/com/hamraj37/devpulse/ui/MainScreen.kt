@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -23,6 +24,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.compose.foundation.Image
+import androidx.compose.runtime.key
 import androidx.compose.ui.res.painterResource
 import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.model.AppTab
@@ -58,6 +61,7 @@ import com.hamraj37.devpulse.ui.screens.CameraScreen
 import com.hamraj37.devpulse.ui.screens.ConnectivityScreen
 import com.hamraj37.devpulse.ui.screens.CpuScreen
 import com.hamraj37.devpulse.ui.screens.DashboardScreen
+import com.hamraj37.devpulse.ui.screens.ToolsScreen
 import com.hamraj37.devpulse.ui.screens.DeviceScreen
 import com.hamraj37.devpulse.ui.screens.DisplayScreen
 import com.hamraj37.devpulse.ui.screens.MemoryScreen
@@ -153,103 +157,132 @@ fun MainScreen(
         }
     }
 
-    BackHandler(enabled = uiState.selectedTab != AppTab.DASHBOARD) {
-        viewModel.selectTab(AppTab.DASHBOARD)
-        scrollJob?.cancel()
-        scrollJob = coroutineScope.launch {
-            if (pagerState.isScrollInProgress) {
-                pagerState.scrollToPage(0)
-            } else {
-                pagerState.animateScrollToPage(0)
+    BackHandler(enabled = uiState.selectedTab != AppTab.DASHBOARD || uiState.isToolsPageOpen) {
+        if (uiState.isToolsPageOpen) {
+            viewModel.setToolsPageOpen(false)
+        } else {
+            viewModel.selectTab(AppTab.DASHBOARD)
+            scrollJob?.cancel()
+            scrollJob = coroutineScope.launch {
+                if (pagerState.isScrollInProgress) {
+                    pagerState.scrollToPage(0)
+                } else {
+                    pagerState.animateScrollToPage(0)
+                }
             }
         }
     }
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        topBar = {
-            Column {
-                CenterAlignedTopAppBar(
-                    title = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                                contentDescription = "App Icon",
-                                modifier = Modifier
-                                    .size(28.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "DevPulse",
-                                style = MaterialTheme.typography.titleLarge.copy(
-                                    fontWeight = FontWeight.Bold,
-                                    letterSpacing = 0.5.sp
-                                )
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Surface(
-                                shape = RoundedCornerShape(12.dp),
-                                color = MaterialTheme.colorScheme.primaryContainer
+    if (uiState.isToolsPageOpen) {
+        Surface(
+            modifier = modifier
+                .fillMaxSize()
+                .statusBarsPadding(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            ToolsScreen(
+                uiState = uiState,
+                onBack = { viewModel.setToolsPageOpen(false) },
+                onNavigateToTab = { tab ->
+                    viewModel.selectTab(tab)
+                    viewModel.setToolsPageOpen(false)
+                },
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp)
+            )
+        }
+    } else {
+        Scaffold(
+            modifier = modifier.fillMaxSize(),
+            topBar = {
+                Column {
+                    CenterAlignedTopAppBar(
+                        title = {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
                             ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                                    contentDescription = "App Icon",
+                                    modifier = Modifier
+                                        .size(28.dp)
+                                        .clip(RoundedCornerShape(8.dp))
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = uiState.deviceInfo.deviceName.ifEmpty { uiState.deviceInfo.model.ifEmpty { "Pixel 8 Pro" } },
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    text = "DevPulse",
+                                    style = MaterialTheme.typography.titleLarge.copy(
+                                        fontWeight = FontWeight.Bold,
+                                        letterSpacing = 0.5.sp
+                                    )
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Surface(
+                                    shape = RoundedCornerShape(12.dp),
+                                    color = MaterialTheme.colorScheme.primaryContainer
+                                ) {
+                                    Text(
+                                        text = uiState.deviceInfo.deviceName.ifEmpty { uiState.deviceInfo.model.ifEmpty { "Pixel 8 Pro" } },
+                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                }
+                            }
+                        },
+                        actions = {
+                            IconButton(onClick = { viewModel.setToolsPageOpen(true) }) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Build,
+                                    contentDescription = "Tools Page"
                                 )
                             }
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = { viewModel.refreshTelemetry() }) {
-                            Icon(
-                                imageVector = Icons.Rounded.Refresh,
-                                contentDescription = "Refresh Telemetry"
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surface
+                            IconButton(onClick = { viewModel.refreshTelemetry() }) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Refresh,
+                                    contentDescription = "Refresh Telemetry"
+                                )
+                            }
+                        },
+                        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.surface
+                        )
                     )
-                )
 
-                DevPulseTabRow(
-                    selectedTab = uiState.selectedTab,
-                    onTabSelected = { tab ->
-                        val index = tabs.indexOf(tab)
-                        if (index in tabs.indices) {
-                            viewModel.selectTab(tab)
-                            scrollJob?.cancel()
-                            scrollJob = coroutineScope.launch {
-                                if (pagerState.isScrollInProgress) {
-                                    pagerState.scrollToPage(index)
-                                } else {
-                                    pagerState.animateScrollToPage(index)
+                    DevPulseTabRow(
+                        selectedTab = uiState.selectedTab,
+                        onTabSelected = { tab ->
+                            val index = tabs.indexOf(tab)
+                            if (index in tabs.indices) {
+                                viewModel.selectTab(tab)
+                                scrollJob?.cancel()
+                                scrollJob = coroutineScope.launch {
+                                    if (pagerState.isScrollInProgress) {
+                                        pagerState.scrollToPage(index)
+                                    } else {
+                                        pagerState.animateScrollToPage(index)
+                                    }
                                 }
                             }
                         }
-                    }
-                )
+                    )
+                }
             }
-        }
-    ) { innerPadding ->
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) { pageIndex ->
-            val currentTab = tabs[pageIndex]
-            androidx.compose.runtime.key(currentTab) {
-                TabContentScreen(
-                    tab = currentTab,
-                    uiState = uiState,
-                    viewModel = viewModel
-                )
+        ) { innerPadding ->
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) { pageIndex ->
+                val currentTab = tabs[pageIndex]
+                key(currentTab) {
+                    TabContentScreen(
+                        tab = currentTab,
+                        uiState = uiState,
+                        viewModel = viewModel
+                    )
+                }
             }
         }
     }
@@ -273,7 +306,8 @@ fun TabContentScreen(
                 dashboardInfo = uiState.dashboardInfo,
                 testsList = uiState.testsList,
                 onNavigateToTests = { viewModel.selectTab(AppTab.TESTS) },
-                onNavigateToDisplay = { viewModel.selectTab(AppTab.DISPLAY) }
+                onNavigateToDisplay = { viewModel.selectTab(AppTab.DISPLAY) },
+                onNavigateToTools = { viewModel.setToolsPageOpen(true) }
             )
             AppTab.DEVICE -> DeviceScreen(uiState.deviceInfo)
             AppTab.SYSTEM -> SystemScreen(uiState.systemInfo)

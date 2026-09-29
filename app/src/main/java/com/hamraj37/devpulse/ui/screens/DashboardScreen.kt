@@ -68,6 +68,7 @@ fun DashboardScreen(
     testsList: List<TestItem> = emptyList(),
     onNavigateToTests: () -> Unit = {},
     onNavigateToDisplay: () -> Unit = {},
+    onNavigateToTools: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -459,7 +460,7 @@ fun DashboardScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(
-                    onClick = { Toast.makeText(context, "Opening System Tools...", Toast.LENGTH_SHORT).show() },
+                    onClick = onNavigateToTools,
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
                     shape = RoundedCornerShape(12.dp),
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 6.dp, vertical = 8.dp),
