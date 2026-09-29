@@ -1,5 +1,9 @@
 package com.hamraj37.devpulse.ui.screens
 
+import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -37,6 +41,7 @@ import androidx.core.content.ContextCompat
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.BarChart
+import androidx.compose.material.icons.rounded.BatteryChargingFull
 import androidx.compose.material.icons.rounded.Bluetooth
 import androidx.compose.material.icons.rounded.BluetoothSearching
 import androidx.compose.material.icons.rounded.CalendarToday
@@ -54,6 +59,7 @@ import androidx.compose.material.icons.rounded.Layers
 import androidx.compose.material.icons.rounded.LibraryMusic
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.LocationSearching
+import androidx.compose.material.icons.rounded.Memory
 import androidx.compose.material.icons.rounded.Message
 import androidx.compose.material.icons.rounded.Mic
 import androidx.compose.material.icons.rounded.Movie
@@ -66,6 +72,8 @@ import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Send
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Sms
+import androidx.compose.material.icons.rounded.Storage
+import androidx.compose.material.icons.rounded.Thermostat
 import androidx.compose.material.icons.rounded.Wifi
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
@@ -175,6 +183,7 @@ import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.data.model.AppTab
 import com.hamraj37.devpulse.ui.MainUiState
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
+import com.hamraj37.devpulse.widget.DevPulseWidgetProvider
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.Locale
@@ -349,7 +358,7 @@ fun ToolsScreen(
                         )
                         ToolType.DATA_USAGE -> DataUsageSheet(uiState = uiState)
                         ToolType.SCREEN_TIME -> ScreenTimeSheet(context = context)
-                        ToolType.WIDGETS -> WidgetsSheet()
+                        ToolType.WIDGETS -> WidgetsSheet(uiState = uiState)
                         ToolType.COMPASS -> CompassSheet(context = context)
                         ToolType.EXPORT -> ExportSheet(uiState = uiState, context = context)
                         else -> {}
@@ -2199,7 +2208,30 @@ fun ScreenTimeSheet(context: Context) {
 // 7. Widgets Sheet
 // ---------------------------------------------------------------------------
 @Composable
-fun WidgetsSheet() {
+fun WidgetsSheet(uiState: MainUiState) {
+    val context = LocalContext.current
+    val ramUsedBytes = uiState.dashboardInfo.ramUsedBytes.coerceAtLeast(0L)
+    val ramTotalBytes = uiState.dashboardInfo.ramTotalBytes.coerceAtLeast(1L)
+    val ramUsedGb = String.format(Locale.US, "%.2fGB", ramUsedBytes / (1024.0 * 1024.0 * 1024.0))
+    val ramTotalGb = String.format(Locale.US, "%.2fGB", ramTotalBytes / (1024.0 * 1024.0 * 1024.0))
+    val ramPercent = ((ramUsedBytes.toFloat() / ramTotalBytes.toFloat()) * 100).toInt().coerceIn(0, 100)
+
+    val storageUsedBytes = uiState.dashboardInfo.storageUsedBytes.coerceAtLeast(0L)
+    val storageTotalBytes = uiState.dashboardInfo.storageTotalBytes.coerceAtLeast(1L)
+    val storageUsedGb = String.format(Locale.US, "%.2fGB", storageUsedBytes / (1024.0 * 1024.0 * 1024.0))
+    val storageTotalGb = String.format(Locale.US, "%.2fGB", storageTotalBytes / (1024.0 * 1024.0 * 1024.0))
+    val storagePercent = ((storageUsedBytes.toFloat() / storageTotalBytes.toFloat()) * 100).toInt().coerceIn(0, 100)
+
+    val batteryTemp = uiState.batteryInfo.temperatureCelsius
+    val batteryLevel = uiState.batteryInfo.levelPercent
+    val batteryStatus = uiState.batteryInfo.status
+    val deviceModel = uiState.deviceInfo.model.ifEmpty { "OnePlus Nord 4" }
+    val processorName = uiState.cpuInfo.processorName.ifEmpty { "Qualcomm Snapdragon 7+ Gen 3" }
+
+    val currentTimeStr = remember {
+        SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.US).format(Date())
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -2207,74 +2239,364 @@ fun WidgetsSheet() {
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        // Top Banner Title Box
+        Surface(
+            shape = RoundedCornerShape(18.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Icon(
-                imageVector = Icons.Rounded.GridView,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(32.dp)
-            )
-            Column {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 16.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
                 Text(
-                    text = "Available Widgets",
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                )
-                Text(
-                    text = "Preview home screen widgets provided by DevPulse",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = "Widgets",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 20.sp
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
 
-        HorizontalDivider()
-
-        val widgets = listOf(
-            Triple("CPU & RAM Live Monitor", "2x2 Widget - Real-time core speeds & RAM gauge", "28% CPU | 4.2 GB"),
-            Triple("Battery Health & Temp", "2x1 Widget - Level, current mA & voltage", "88% | 31.4°C"),
-            Triple("Quick Hardware Specs", "4x2 Widget - Device, OS, Storage & IP summary", "Pixel 8 Pro | Android 14")
+        Text(
+            text = "Preview of all the widgets available for you. Use your launcher to add widgets",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
         )
 
-        widgets.forEach { (title, subtitle, preview) ->
-            Surface(
-                shape = RoundedCornerShape(16.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
-                modifier = Modifier.fillMaxWidth()
+        // Showcase Container
+        Surface(
+            shape = RoundedCornerShape(24.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.6f),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                // Widget 1: RAM Pill Widget
+                Surface(
+                    shape = RoundedCornerShape(16.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 14.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Memory,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Text(
+                                text = "RAM - $ramUsedGb Used",
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
+                            )
+                        }
                         Text(
-                            text = title,
-                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
-                        )
-                        Text(
-                            text = subtitle,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Preview: $preview",
-                            style = MaterialTheme.typography.labelSmall,
+                            text = "$ramPercent%",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.primary
                         )
                     }
-                    Icon(
-                        imageVector = Icons.Rounded.Widgets,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(28.dp)
-                    )
                 }
+
+                // Widget 2: Storage Pill Widget
+                Surface(
+                    shape = RoundedCornerShape(16.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 14.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Storage,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.secondary,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Text(
+                                text = "Storage - $storageUsedGb Used",
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
+                            )
+                        }
+                        Text(
+                            text = "$storagePercent%",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                }
+
+                // Widget 3: Temperature Pill Widget
+                Surface(
+                    shape = RoundedCornerShape(16.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 14.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Thermostat,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.tertiary,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Text(
+                                text = "Temperature - ",
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
+                            )
+                        }
+                        Text(
+                            text = "$batteryTemp °C",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
+                    }
+                }
+
+                // Widget 4: Battery Pill Widget
+                Surface(
+                    shape = RoundedCornerShape(16.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 14.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.BatteryChargingFull,
+                                contentDescription = null,
+                                tint = Color(0xFF2E7D32),
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Text(
+                                text = "Battery - $batteryStatus",
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
+                            )
+                        }
+                        Text(
+                            text = "$batteryLevel%",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = Color(0xFF2E7D32)
+                        )
+                    }
+                }
+
+                // Widget 5: Medium Dashboard Widget
+                Surface(
+                    shape = RoundedCornerShape(18.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = deviceModel,
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                        )
+                        Text(
+                            text = processorName,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                        HorizontalDivider()
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Icon(Icons.Rounded.Memory, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                                    Text("RAM", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold))
+                                }
+                                Text("$ramUsedGb Used", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                LinearProgressIndicator(progress = { ramPercent / 100f }, modifier = Modifier.fillMaxWidth().padding(top = 4.dp).height(6.dp).clip(CircleShape))
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Icon(Icons.Rounded.Storage, null, tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.size(18.dp))
+                                    Text("Storage", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold))
+                                }
+                                Text("$storageUsedGb Used", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                LinearProgressIndicator(progress = { storagePercent / 100f }, modifier = Modifier.fillMaxWidth().padding(top = 4.dp).height(6.dp).clip(CircleShape))
+                            }
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Icon(Icons.Rounded.Thermostat, null, tint = MaterialTheme.colorScheme.tertiary, modifier = Modifier.size(18.dp))
+                                    Text("Temperature", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold))
+                                }
+                                Text("$batteryTemp °C", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                LinearProgressIndicator(progress = { (batteryTemp / 60f).coerceIn(0f, 1f) }, modifier = Modifier.fillMaxWidth().padding(top = 4.dp).height(6.dp).clip(CircleShape))
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Icon(Icons.Rounded.BatteryChargingFull, null, tint = Color(0xFF2E7D32), modifier = Modifier.size(18.dp))
+                                    Text("Battery", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold))
+                                }
+                                Text("$batteryLevel%", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                LinearProgressIndicator(progress = { batteryLevel / 100f }, modifier = Modifier.fillMaxWidth().padding(top = 4.dp).height(6.dp).clip(CircleShape))
+                            }
+                        }
+
+                        Text(
+                            text = "Last Updated $currentTimeStr",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+                }
+
+                // Widget 6: Wide RAM Gauge Widget
+                Surface(
+                    shape = RoundedCornerShape(16.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Icon(Icons.Rounded.Memory, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+                                Text("RAM", style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold))
+                            }
+                            Text("$ramPercent%", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.primary)
+                        }
+                        LinearProgressIndicator(progress = { ramPercent / 100f }, modifier = Modifier.fillMaxWidth().height(8.dp).clip(CircleShape))
+                        Text("Used: $ramUsedGb, Total: $ramTotalGb", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+
+                // Widget 7: Two Square Cards Row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(16.dp),
+                        color = MaterialTheme.colorScheme.surface,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text("RAM Used", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(ramUsedGb, style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold, fontSize = 22.sp), color = MaterialTheme.colorScheme.primary)
+                        }
+                    }
+                    Surface(
+                        shape = RoundedCornerShape(16.dp),
+                        color = MaterialTheme.colorScheme.surface,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text("Storage Used", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(storageUsedGb, style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold, fontSize = 22.sp), color = MaterialTheme.colorScheme.secondary)
+                        }
+                    }
+                }
+            }
+        }
+
+        Button(
+            onClick = {
+                try {
+                    val appWidgetManager = AppWidgetManager.getInstance(context)
+                    val myWidget = ComponentName(context, DevPulseWidgetProvider::class.java)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        if (appWidgetManager.isRequestPinAppWidgetSupported) {
+                            val successCallback = PendingIntent.getBroadcast(
+                                context,
+                                0,
+                                Intent(context, DevPulseWidgetProvider::class.java),
+                                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                            )
+                            appWidgetManager.requestPinAppWidget(myWidget, null, successCallback)
+                            Toast.makeText(context, "Widget pin request sent to launcher", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, "Please long-press your home screen and select Widgets to add DevPulse", Toast.LENGTH_LONG).show()
+                        }
+                    } else {
+                        Toast.makeText(context, "Please add the widget from your home screen widget picker", Toast.LENGTH_LONG).show()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Unable to request widget pin: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(14.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(imageVector = Icons.Rounded.Add, contentDescription = null, modifier = Modifier.size(18.dp))
+                Text("Add Widget to Home Screen")
             }
         }
 
