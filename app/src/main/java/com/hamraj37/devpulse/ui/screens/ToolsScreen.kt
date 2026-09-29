@@ -1,5 +1,24 @@
 package com.hamraj37.devpulse.ui.screens
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Download
+import androidx.core.content.FileProvider
+import android.graphics.pdf.PdfDocument
+import android.graphics.Paint
+import android.graphics.Color as AndroidColor
+import androidx.compose.foundation.Canvas
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.foundation.layout.offset
+import androidx.compose.ui.text.TextStyle
+import kotlin.math.roundToInt
 import android.app.usage.UsageStatsManager
 import android.graphics.drawable.Drawable
 import coil.compose.rememberAsyncImagePainter
@@ -2202,6 +2221,186 @@ fun WidgetsSheet() {
     }
 }
 
+@Composable
+private fun CompassDialView(
+    azimuthDegree: Float,
+    modifier: Modifier = Modifier
+) {
+    val animatedAzimuth by animateFloatAsState(
+        targetValue = azimuthDegree,
+        animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing),
+        label = "azimuthRotation"
+    )
+
+    Box(
+        modifier = modifier.size(310.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        // Rotatable Dial (Outer Ring + Ticks + Concentric Circles)
+        Canvas(
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer {
+                    rotationZ = -animatedAzimuth
+                }
+        ) {
+            val center = Offset(size.width / 2f, size.height / 2f)
+            val radius = size.width / 2f - 30f
+
+            // Outer Circle Ring
+            drawCircle(
+                color = Color(0xFF6B6E5F),
+                radius = radius,
+                center = center,
+                style = Stroke(width = 2.dp.toPx())
+            )
+
+            // Inner Concentric Ring 1
+            drawCircle(
+                color = Color(0xFF6B6E5F),
+                radius = radius * 0.75f,
+                center = center,
+                style = Stroke(width = 1.5.dp.toPx())
+            )
+
+            // Inner Dashed Ring 2
+            drawCircle(
+                color = Color(0xFF6B6E5F),
+                radius = radius * 0.55f,
+                center = center,
+                style = Stroke(
+                    width = 1.5.dp.toPx(),
+                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+                )
+            )
+
+            // Inner Solid Ring 3
+            drawCircle(
+                color = Color(0xFF6B6E5F),
+                radius = radius * 0.32f,
+                center = center,
+                style = Stroke(width = 2.dp.toPx())
+            )
+
+            // Ticks around outer edge
+            for (i in 0 until 360 step 2) {
+                val angleRad = Math.toRadians(i.toDouble() - 90)
+                val isMajor30 = i % 30 == 0
+                val isMedium10 = i % 10 == 0
+
+                val tickLength = when {
+                    isMajor30 -> 16.dp.toPx()
+                    isMedium10 -> 10.dp.toPx()
+                    else -> 6.dp.toPx()
+                }
+
+                val strokeWidth = when {
+                    isMajor30 -> 2.dp.toPx()
+                    isMedium10 -> 1.5.dp.toPx()
+                    else -> 1.dp.toPx()
+                }
+
+                val startX = center.x + (radius - tickLength) * Math.cos(angleRad).toFloat()
+                val startY = center.y + (radius - tickLength) * Math.sin(angleRad).toFloat()
+                val endX = center.x + radius * Math.cos(angleRad).toFloat()
+                val endY = center.y + radius * Math.sin(angleRad).toFloat()
+
+                drawLine(
+                    color = Color(0xFF6B6E5F),
+                    start = Offset(startX, startY),
+                    end = Offset(endX, endY),
+                    strokeWidth = strokeWidth
+                )
+            }
+        }
+
+        // Cardinal & Intercardinal Text Labels rotating with dial
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer {
+                    rotationZ = -animatedAzimuth
+                }
+        ) {
+            val directions = listOf(
+                "N" to 0f, "NE" to 45f, "E" to 90f, "SE" to 135f,
+                "S" to 180f, "SW" to 225f, "W" to 270f, "NW" to 315f
+            )
+
+            directions.forEach { (label, angle) ->
+                val angleRad = Math.toRadians(angle.toDouble() - 90)
+                val offsetX = (130 * Math.cos(angleRad)).dp
+                val offsetY = (130 * Math.sin(angleRad)).dp
+
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .offset(x = offsetX, y = offsetY)
+                ) {
+                    Text(
+                        text = label,
+                        style = TextStyle(
+                            fontSize = if (label.length == 1) 16.sp else 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF53564A)
+                        )
+                    )
+                }
+            }
+        }
+
+        // Center Dual Pointer Needle (Red North / Blue South)
+        Canvas(
+            modifier = Modifier.size(230.dp)
+        ) {
+            val c = Offset(size.width / 2f, size.height / 2f)
+            val needleLength = size.width / 2f - 22f
+            val needleWidth = 16f
+
+            // Blue Pointer
+            val northPath = Path().apply {
+                moveTo(c.x - needleLength, c.y)
+                lineTo(c.x, c.y - needleWidth)
+                lineTo(c.x, c.y + needleWidth)
+                close()
+            }
+            drawPath(
+                path = northPath,
+                color = Color(0xFF0288D1)
+            )
+
+            // Red Pointer
+            val southPath = Path().apply {
+                moveTo(c.x + needleLength, c.y)
+                lineTo(c.x, c.y - needleWidth)
+                lineTo(c.x, c.y + needleWidth)
+                close()
+            }
+            drawPath(
+                path = southPath,
+                color = Color(0xFFD32F2F)
+            )
+
+            // Center Pivot Ring
+            drawCircle(
+                color = Color(0xFF53564A),
+                radius = 16f,
+                center = c
+            )
+            drawCircle(
+                color = Color(0xFFE0E0E0),
+                radius = 10f,
+                center = c
+            )
+            drawCircle(
+                color = Color(0xFF424242),
+                radius = 5f,
+                center = c
+            )
+        }
+    }
+}
+
 // ---------------------------------------------------------------------------
 // 8. Compass Sheet
 // ---------------------------------------------------------------------------
@@ -2265,11 +2464,244 @@ fun CompassSheet(context: Context) {
         }
     }
 
-    val animatedRotation by animateFloatAsState(
-        targetValue = -azimuthDegree,
-        animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing),
-        label = "compassRotation"
-    )
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
+        // Top Banner Title Box
+        Surface(
+            shape = RoundedCornerShape(18.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 16.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Text(
+                    text = "Compass",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 20.sp
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+
+        // Degree and Direction Heading Text
+        Text(
+            text = "${azimuthDegree.roundToInt()}° $cardinalDirection",
+            style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
+            color = Color(0xFF53564A)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Compass Dial Canvas View
+        CompassDialView(azimuthDegree = azimuthDegree)
+
+        Spacer(modifier = Modifier.height(24.dp))
+    }
+}
+
+private fun generatePdfReportFile(context: Context, reportContent: String): Uri? {
+    return try {
+        val pdfDocument = PdfDocument()
+        val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
+        val page = pdfDocument.startPage(pageInfo)
+        val canvas = page.canvas
+
+        val titlePaint = Paint().apply {
+            color = AndroidColor.parseColor("#1A237E")
+            textSize = 18f
+            isFakeBoldText = true
+        }
+
+        val textPaint = Paint().apply {
+            color = AndroidColor.BLACK
+            textSize = 11f
+        }
+
+        canvas.drawText("DevPulse System Telemetry Report", 40f, 50f, titlePaint)
+
+        var y = 85f
+        val lines = reportContent.split("\n")
+        for (line in lines) {
+            if (y > 800f) break
+            canvas.drawText(line, 40f, y, textPaint)
+            y += 16f
+        }
+
+        pdfDocument.finishPage(page)
+
+        val file = File(context.cacheDir, "DevPulse_System_Report.pdf")
+        file.outputStream().use { out ->
+            pdfDocument.writeTo(out)
+        }
+        pdfDocument.close()
+
+        FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            file
+        )
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
+private fun generateTextReportFile(context: Context, reportContent: String): Uri? {
+    return try {
+        val file = File(context.cacheDir, "DevPulse_System_Report.txt")
+        file.writeText(reportContent)
+        FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            file
+        )
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 9. Export Sheet
+// ---------------------------------------------------------------------------
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun ExportSheet(
+    uiState: MainUiState,
+    context: Context
+) {
+    var reportType by remember { mutableStateOf("Text") } // "Text" or "PDF"
+
+    val allCategories = remember {
+        listOf(
+            "Device", "System", "CPU", "Battery",
+            "Network", "Connectivity", "Display", "Memory",
+            "Camera", "Thermal", "Sensors", "Apps"
+        )
+    }
+
+    val selectedCategories = remember {
+        mutableStateListOf<String>().apply { addAll(allCategories) }
+    }
+
+    fun buildCustomReport(): String {
+        return buildString {
+            appendLine("=== DevPulse System Telemetry Report ===")
+            val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.US)
+            appendLine("Generated: ${sdf.format(Date())}")
+            appendLine()
+
+            if (selectedCategories.contains("Device")) {
+                appendLine("[Device Info]")
+                appendLine("Manufacturer: ${uiState.deviceInfo.manufacturer}")
+                appendLine("Model: ${uiState.deviceInfo.model}")
+                appendLine("Brand: ${uiState.deviceInfo.brand}")
+                appendLine("Board: ${uiState.deviceInfo.board}")
+                appendLine("Hardware: ${uiState.deviceInfo.hardware}")
+                appendLine()
+            }
+
+            if (selectedCategories.contains("System")) {
+                appendLine("[System Info]")
+                appendLine("Android Version: ${uiState.systemInfo.androidVersion} (API ${uiState.systemInfo.apiLevel})")
+                appendLine("Security Patch: ${uiState.systemInfo.securityPatch}")
+                appendLine("Build Number: ${uiState.systemInfo.buildNumber}")
+                appendLine("Kernel Version: ${uiState.systemInfo.kernelVersion}")
+                appendLine()
+            }
+
+            if (selectedCategories.contains("CPU")) {
+                appendLine("[CPU Info]")
+                appendLine("Processor: ${uiState.cpuInfo.processorName}")
+                appendLine("Architecture: ${uiState.cpuInfo.architecture}")
+                appendLine("Cores: ${uiState.cpuInfo.totalCores}")
+                appendLine("Governor: ${uiState.cpuInfo.governor}")
+                appendLine("GPU Renderer: ${uiState.cpuInfo.gpuRenderer}")
+                appendLine()
+            }
+
+            if (selectedCategories.contains("Battery")) {
+                appendLine("[Battery Info]")
+                appendLine("Level: ${uiState.batteryInfo.levelPercent}%")
+                appendLine("Health: ${uiState.batteryInfo.health}")
+                appendLine("Status: ${uiState.batteryInfo.status}")
+                appendLine("Temperature: ${uiState.batteryInfo.temperatureCelsius}°C")
+                appendLine("Voltage: ${uiState.batteryInfo.voltageVolts} V")
+                appendLine()
+            }
+
+            if (selectedCategories.contains("Network")) {
+                appendLine("[Network Info]")
+                appendLine("SSID: ${uiState.networkInfo.ssid}")
+                appendLine("IP Address: ${uiState.networkInfo.ipAddress}")
+                appendLine("Gateway: ${uiState.networkInfo.gateway}")
+                appendLine("Link Speed: ${uiState.networkInfo.linkSpeed}")
+                appendLine()
+            }
+
+            if (selectedCategories.contains("Connectivity")) {
+                appendLine("[Connectivity Info]")
+                appendLine("Connection Type: ${uiState.networkInfo.activeConnectionType}")
+                appendLine("Wi-Fi Direct: ${uiState.connectivityInfo.wifiDirectSupported}")
+                appendLine("Bluetooth: ${uiState.connectivityInfo.bluetoothSupported}")
+                appendLine()
+            }
+
+            if (selectedCategories.contains("Display")) {
+                appendLine("[Display Info]")
+                appendLine("Resolution: ${uiState.displayInfo.resolution}")
+                appendLine("Refresh Rate: ${uiState.displayInfo.refreshRate}")
+                appendLine("Density: ${uiState.displayInfo.densityDpi} DPI")
+                appendLine()
+            }
+
+            if (selectedCategories.contains("Memory")) {
+                appendLine("[Memory & Storage]")
+                appendLine("RAM Total: ${uiState.dashboardInfo.ramTotalBytes / (1024 * 1024 * 1024)} GB")
+                appendLine("RAM Used: ${uiState.dashboardInfo.ramUsedBytes / (1024 * 1024 * 1024)} GB")
+                appendLine()
+            }
+
+            if (selectedCategories.contains("Camera")) {
+                appendLine("[Camera Info]")
+                appendLine("Total Cameras: ${uiState.cameraInfo.cameras.size}")
+                appendLine("Active ID: ${uiState.selectedCameraId}")
+                appendLine()
+            }
+
+            if (selectedCategories.contains("Thermal")) {
+                appendLine("[Thermal Info]")
+                appendLine("Thermal Status: ${uiState.thermalInfo.overallStatus}")
+                appendLine()
+            }
+
+            if (selectedCategories.contains("Sensors")) {
+                appendLine("[Sensors Info]")
+                appendLine("Total Sensors: ${uiState.sensorInfo.sensors.size}")
+                appendLine()
+            }
+
+            if (selectedCategories.contains("Apps")) {
+                appendLine("[Apps Summary]")
+                appendLine("Total Apps: ${uiState.appInfo.totalApps}")
+                appendLine("User Apps: ${uiState.appInfo.userAppsCount}")
+                appendLine("System Apps: ${uiState.appInfo.systemAppsCount}")
+                appendLine()
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -2277,178 +2709,270 @@ fun CompassSheet(context: Context) {
             .verticalScroll(rememberScrollState())
             .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.Explore,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(32.dp)
-            )
-            Column {
-                Text(
-                    text = "Digital Compass",
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                )
-                Text(
-                    text = "Real-time orientation and direction sensor",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-
-        HorizontalDivider()
-
-        // Compass Graphic
-        Box(
-            modifier = Modifier
-                .size(200.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.CompassCalibration,
-                contentDescription = "Compass Dial",
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .size(160.dp)
-                    .rotate(animatedRotation)
-            )
-
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = "${azimuthDegree.toInt()}°",
-                    style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = cardinalDirection,
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-    }
-}
-
-// ---------------------------------------------------------------------------
-// 9. Export Sheet
-// ---------------------------------------------------------------------------
-@Composable
-fun ExportSheet(
-    uiState: MainUiState,
-    context: Context
-) {
-    val reportText = remember(uiState) {
-        buildString {
-            appendLine("=== DevPulse System Telemetry Report ===")
-            appendLine("Device: ${uiState.deviceInfo.manufacturer} ${uiState.deviceInfo.model}")
-            appendLine("Android OS: ${uiState.systemInfo.androidVersion} (API ${uiState.systemInfo.apiLevel})")
-            appendLine("Security Patch: ${uiState.systemInfo.securityPatch}")
-            appendLine("CPU: ${uiState.cpuInfo.processorName} (${uiState.cpuInfo.totalCores} Cores)")
-            appendLine("RAM Total: ${uiState.dashboardInfo.ramTotalBytes / (1024 * 1024 * 1024)} GB")
-            appendLine("Battery Level: ${uiState.batteryInfo.levelPercent}% | Temp: ${uiState.batteryInfo.temperatureCelsius}°C")
-            appendLine("Wi-Fi SSID: ${uiState.networkInfo.ssid}")
-            appendLine("IP Address: ${uiState.networkInfo.ipAddress}")
-        }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.PictureAsPdf,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(32.dp)
-            )
-            Column {
-                Text(
-                    text = "Export Report",
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                )
-                Text(
-                    text = "Export detailed device specifications and telemetry",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-
-        HorizontalDivider()
-
+        // Top Banner Title Box
         Surface(
-            shape = RoundedCornerShape(14.dp),
+            shape = RoundedCornerShape(18.dp),
             color = MaterialTheme.colorScheme.surfaceContainerLow,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(
-                text = reportText,
-                modifier = Modifier.padding(14.dp),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 16.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Text(
+                    text = "Export",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 20.sp
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
         }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        // Export Data Intro Card
+        Surface(
+            shape = RoundedCornerShape(20.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Button(
-                onClick = {
-                    val sendIntent = Intent().apply {
-                        action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_TEXT, reportText)
-                        type = "text/plain"
-                    }
-                    val shareIntent = Intent.createChooser(sendIntent, "Share DevPulse Telemetry")
-                    context.startActivity(shareIntent)
-                },
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(14.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
+                Text(
+                    text = "Export Data",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 22.sp
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = "Save your device information to a PDF or Text document by customizing the information you need",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+
+        // Report Type Card
+        Surface(
+            shape = RoundedCornerShape(20.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                Text(
+                    text = "Report Type",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = "Select the type of the report you want to export",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center
+                )
+
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Rounded.IosShare,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Text("Share Text")
+                    val types = listOf("Text", "PDF")
+                    types.forEach { typeName ->
+                        val isSelected = reportType == typeName
+                        Surface(
+                            shape = CircleShape,
+                            color = if (isSelected) MaterialTheme.colorScheme.surfaceContainerHigh else Color.Transparent,
+                            border = if (isSelected) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                            modifier = Modifier.clickable { reportType = typeName }
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                if (isSelected) {
+                                    Surface(
+                                        shape = CircleShape,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.size(20.dp)
+                                    ) {
+                                        Box(contentAlignment = Alignment.Center) {
+                                            Icon(
+                                                imageVector = Icons.Rounded.Check,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.surface,
+                                                modifier = Modifier.size(14.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                                Text(
+                                    text = typeName,
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                                    ),
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        }
+                    }
                 }
             }
+        }
 
-            OutlinedButton(
-                onClick = {
-                    Toast.makeText(context, "Telemetry report saved to Downloads", Toast.LENGTH_SHORT).show()
-                },
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(14.dp)
+        // Categories Selection Card
+        Surface(
+            shape = RoundedCornerShape(20.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
-                Text("Save Report")
+                Text(
+                    text = "Categories",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = "Select the categories of data you want to export",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center
+                )
+
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    allCategories.forEach { categoryName ->
+                        val isSelected = selectedCategories.contains(categoryName)
+                        Surface(
+                            shape = CircleShape,
+                            color = if (isSelected) MaterialTheme.colorScheme.surfaceContainerHigh else Color.Transparent,
+                            border = if (isSelected) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                            modifier = Modifier.clickable {
+                                if (isSelected) {
+                                    if (selectedCategories.size > 1) {
+                                        selectedCategories.remove(categoryName)
+                                    }
+                                } else {
+                                    selectedCategories.add(categoryName)
+                                }
+                            }
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                if (isSelected) {
+                                    Surface(
+                                        shape = CircleShape,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.size(18.dp)
+                                    ) {
+                                        Box(contentAlignment = Alignment.Center) {
+                                            Icon(
+                                                imageVector = Icons.Rounded.Check,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.surface,
+                                                modifier = Modifier.size(12.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                                Text(
+                                    text = categoryName,
+                                    style = MaterialTheme.typography.labelLarge.copy(
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                                    ),
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        // Export Action Button at bottom
+        Button(
+            onClick = {
+                val reportContent = buildCustomReport()
+                val fileUri = if (reportType == "PDF") {
+                    generatePdfReportFile(context, reportContent)
+                } else {
+                    generateTextReportFile(context, reportContent)
+                }
+
+                if (fileUri != null) {
+                    val sendIntent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_STREAM, fileUri)
+                        putExtra(Intent.EXTRA_TEXT, reportContent)
+                        type = if (reportType == "PDF") "application/pdf" else "text/plain"
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                    val shareIntent = Intent.createChooser(sendIntent, "Export DevPulse $reportType Report")
+                    context.startActivity(shareIntent)
+                } else {
+                    Toast.makeText(context, "Failed to generate report", Toast.LENGTH_SHORT).show()
+                }
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF52564A)),
+            shape = RoundedCornerShape(14.dp),
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 24.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Download,
+                    contentDescription = "Export",
+                    tint = Color.White,
+                    modifier = Modifier.size(20.dp)
+                )
+                Text(
+                    text = "Export",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = Color.White
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
