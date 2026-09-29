@@ -3399,17 +3399,27 @@ fun AppAnalyzerCardItem(item: AnalyzerItem, total: Int) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Surface(
-                        shape = RoundedCornerShape(8.dp),
-                        color = item.color.copy(alpha = 0.2f),
-                        modifier = Modifier.size(36.dp)
-                    ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Surface(
-                                shape = CircleShape,
-                                color = item.color,
-                                modifier = Modifier.size(12.dp)
-                            ) {}
+                    if (item.subLabel.isNotEmpty() && item.subLabel.contains('.')) {
+                        AppIconImage(
+                            packageName = item.subLabel,
+                            modifier = Modifier
+                                .size(38.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                        )
+                    } else {
+                        Surface(
+                            shape = RoundedCornerShape(10.dp),
+                            color = item.color.copy(alpha = 0.2f),
+                            modifier = Modifier.size(38.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Android,
+                                    contentDescription = null,
+                                    tint = item.color,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
                         }
                     }
                     Column {
