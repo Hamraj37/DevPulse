@@ -746,10 +746,15 @@ h1, h2, h3, h4 {
   gap: 16px;
 }
 
-/* Responsive */
+/* Responsive Mobile Optimization */
 @media (max-width: 900px) {
   .details-grid, .download-card {
     grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .download-card {
+    padding: 32px 24px;
   }
   
   .hero-app-header {
@@ -763,5 +768,126 @@ h1, h2, h3, h4 {
 
   .hero-download-bar {
     justify-content: center;
+  }
+
+  .specs-table-card, .features-summary-card {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .section {
+    padding: 36px 16px;
+  }
+
+  .hero-section {
+    padding-top: calc(var(--header-height) + 16px);
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .hero-card {
+    padding: 24px 16px;
+    gap: 24px;
+    border-radius: var(--radius-lg);
+  }
+
+  .hero-app-icon {
+    width: 72px;
+    height: 72px;
+  }
+
+  .hero-app-title {
+    font-size: 2.1rem;
+  }
+
+  .hero-app-tagline {
+    font-size: 1.0rem;
+    text-align: center;
+  }
+
+  .release-pill {
+    padding: 4px 10px;
+    font-size: 0.78rem;
+    text-align: center;
+  }
+
+  .release-text {
+    font-size: 0.78rem;
+  }
+
+  .hero-download-bar {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .hero-download-bar .btn {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+  }
+
+  .section-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .specs-table-card, .features-summary-card, .release-notes-box {
+    padding: 20px 16px;
+    border-radius: var(--radius-lg);
+  }
+
+  .spec-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 10px 0;
+  }
+
+  .spec-val {
+    text-align: left;
+    word-break: break-word;
+    font-size: 0.9rem;
+  }
+
+  .checksum-box {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .checksum-box .copy-btn {
+    align-self: flex-end;
+    padding: 6px 12px;
+    background: rgba(168, 196, 138, 0.12);
+  }
+
+  .qr-download-box {
+    padding: 20px 14px;
+  }
+
+  .changelog-list li {
+    align-items: flex-start;
+  }
+
+  .changelog-tag {
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .footer {
+    padding: 24px 16px;
+    margin-top: 40px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+    gap: 12px;
   }
 }
