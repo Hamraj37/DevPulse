@@ -46,9 +46,7 @@
     <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-devpulse-500 flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-devpulse-500/30">
-                    ⚡
-                </div>
+                <img src="assets/app_icon.png" alt="DevPulse App Icon" class="w-10 h-10 rounded-xl object-cover shadow-lg shadow-devpulse-500/30">
                 <div>
                     <span class="text-2xl font-extrabold tracking-tight text-slate-900">DevPulse</span>
                     <span class="hidden sm:inline-block ml-2 px-2.5 py-0.5 text-xs font-semibold bg-devpulse-100 text-devpulse-700 rounded-full">v2.0</span>
@@ -58,6 +56,7 @@
                 <a href="#features" class="hover:text-devpulse-600 transition">Features</a>
                 <a href="#showcase" class="hover:text-devpulse-600 transition">App Showcase</a>
                 <a href="#tech" class="hover:text-devpulse-600 transition">Tech Stack</a>
+                <a href="#privacy" class="hover:text-devpulse-600 transition">Privacy</a>
             </nav>
             <div class="flex items-center space-x-4">
                 <a href="https://github.com/Hamraj37/DevPulse" target="_blank" class="hidden sm:inline-flex items-center px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 rounded-xl hover:bg-slate-200 transition">
@@ -311,10 +310,57 @@
         </div>
     </section>
 
+    <!-- Privacy Policy Section -->
+    <section id="privacy" class="py-20 bg-slate-50 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto space-y-4 mb-16">
+                <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-devpulse-100 text-devpulse-800 text-xs font-bold uppercase tracking-wider">
+                    <span>🛡️ Privacy & Transparency</span>
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                    Privacy First Philosophy
+                </h2>
+                <p class="text-lg text-slate-600">
+                    Your hardware telemetry and system diagnostics stay 100% private on your device.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="p-8 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-devpulse-100 text-devpulse-600 flex items-center justify-center text-2xl font-bold">🔒</div>
+                    <h3 class="font-bold text-slate-900 text-lg">100% On-Device</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">All sensor readings, CPU stats, and telemetry metrics remain strictly local on your device.</p>
+                </div>
+                <div class="p-8 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-devpulse-100 text-devpulse-600 flex items-center justify-center text-2xl font-bold">🚫</div>
+                    <h3 class="font-bold text-slate-900 text-lg">Zero Data Tracking</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">No user tracking, no analytics SDKs, no ad frameworks, and no background telemetry uploading.</p>
+                </div>
+                <div class="p-8 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-devpulse-100 text-devpulse-600 flex items-center justify-center text-2xl font-bold">💾</div>
+                    <h3 class="font-bold text-slate-900 text-lg">Local Diagnostics</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">Test history and hardware results are stored locally in your app's private DataStore sandbox.</p>
+                </div>
+                <div class="p-8 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-devpulse-100 text-devpulse-600 flex items-center justify-center text-2xl font-bold">📖</div>
+                    <h3 class="font-bold text-slate-900 text-lg">Open Source Audit</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">Completely open source under MIT License. Publicly inspectable codebase on GitHub.</p>
+                </div>
+            </div>
+
+            <div class="mt-12 text-center">
+                <a href="privacy.html" class="inline-flex items-center space-x-2 font-bold text-devpulse-600 hover:text-devpulse-700 transition">
+                    <span>Read Full Privacy Policy Document</span>
+                    <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
     <!-- Download Section -->
     <section id="download" class="py-20 bg-devpulse-900 text-white">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
-            <div class="inline-block p-4 rounded-3xl bg-devpulse-800 text-4xl shadow-xl">⚡</div>
+            <img src="assets/app_icon.png" alt="DevPulse App Icon" class="w-20 h-20 rounded-3xl mx-auto shadow-2xl border-2 border-devpulse-700">
             <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight">Get DevPulse Today</h2>
             <p class="text-devpulse-200 max-w-xl mx-auto text-lg">
                 Experience real-time hardware telemetry and comprehensive diagnostic testing on your Android device.
@@ -334,7 +380,7 @@
     <footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
             <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 rounded-lg bg-devpulse-500 flex items-center justify-center text-white font-bold text-sm">⚡</div>
+                <img src="assets/app_icon.png" alt="DevPulse Logo" class="w-8 h-8 rounded-lg object-cover">
                 <span class="text-white font-bold text-lg">DevPulse</span>
             </div>
             <p class="text-sm">Copyright © 2026 Hamraj. Open source under MIT License.</p>
@@ -342,6 +388,7 @@
                 <a href="https://github.com/Hamraj37/DevPulse" target="_blank" class="hover:text-white transition">GitHub</a>
                 <a href="#features" class="hover:text-white transition">Features</a>
                 <a href="#showcase" class="hover:text-white transition">Screenshots</a>
+                <a href="privacy.html" class="hover:text-white transition">Privacy Policy</a>
             </div>
         </div>
     </footer>

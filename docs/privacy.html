@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - DevPulse Telemetry & Hardware Diagnostics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        devpulse: {
+                            50: '#f2f8f3',
+                            100: '#e1efe4',
+                            200: '#c5e0ca',
+                            300: '#9ecaa5',
+                            400: '#72af7a',
+                            500: '#4e8752',
+                            600: '#3d6e41',
+                            700: '#335836',
+                            800: '#2b472e',
+                            900: '#253b27',
+                            950: '#112013',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-devpulse-500 selection:text-white">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center space-x-3">
+                <img src="assets/app_icon.png" alt="DevPulse App Icon" class="w-10 h-10 rounded-xl object-cover shadow-lg shadow-devpulse-500/30">
+                <div>
+                    <span class="text-2xl font-extrabold tracking-tight text-slate-900">DevPulse</span>
+                    <span class="hidden sm:inline-block ml-2 px-2.5 py-0.5 text-xs font-semibold bg-devpulse-100 text-devpulse-700 rounded-full">v2.0</span>
+                </div>
+            </a>
+            <nav class="flex items-center space-x-6 text-sm font-semibold text-slate-600">
+                <a href="index.html" class="hover:text-devpulse-600 transition">Home</a>
+                <a href="index.html#features" class="hover:text-devpulse-600 transition">Features</a>
+                <a href="https://github.com/Hamraj37/DevPulse" target="_blank" class="px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 rounded-xl hover:bg-slate-200 transition">
+                    GitHub Repo
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Privacy Policy Main Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="bg-white rounded-3xl p-8 sm:p-12 shadow-sm border border-slate-200 space-y-8">
+            <div class="border-b border-slate-100 pb-6">
+                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-devpulse-100 text-devpulse-800 text-xs font-bold uppercase tracking-wider mb-4">
+                    <span>🛡️ Privacy & Transparency</span>
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900">Privacy Policy</h1>
+                <p class="text-sm text-slate-500 mt-2">Last updated: March 2026</p>
+            </div>
+
+            <!-- Overview Box -->
+            <div class="p-6 rounded-2xl bg-devpulse-50 border border-devpulse-200 text-devpulse-900 leading-relaxed">
+                <strong>Summary:</strong> DevPulse is engineered with a strict <strong>Privacy-First</strong> philosophy. All hardware telemetry, diagnostic test results, sensor readings, and system metrics are processed <strong>100% locally on your device</strong>. No data is collected, stored remotely, or transmitted to any external server.
+            </div>
+
+            <!-- Section 1 -->
+            <div class="space-y-3">
+                <h2 class="text-xl font-bold text-slate-900">1. Information We Collect (Or Don't Collect)</h2>
+                <p class="text-slate-600 leading-relaxed">
+                    DevPulse does <strong>not</strong> collect, store, transmit, or share any personal data, identifiers, location tracking data, or usage metrics with third parties.
+                </p>
+                <ul class="list-disc list-inside text-slate-600 space-y-2 pl-2">
+                    <li><strong>No Personal Identifiers:</strong> We do not log names, email addresses, phone numbers, or device serial numbers.</li>
+                    <li><strong>No External Telemetry:</strong> System metrics (CPU frequencies, RAM usage, battery health, thermal zone readings) stay entirely in device RAM during runtime.</li>
+                    <li><strong>No Analytics SDKs:</strong> DevPulse does not integrate Firebase Analytics, Google Analytics, Mixpanel, or any third-party tracking scripts.</li>
+                    <li><strong>No Advertising SDKs:</strong> DevPulse contains zero advertisements and zero ad-tracking frameworks.</li>
+                </ul>
+            </div>
+
+            <!-- Section 2 -->
+            <div class="space-y-3">
+                <h2 class="text-xl font-bold text-slate-900">2. Local Storage & App Permissions</h2>
+                <p class="text-slate-600 leading-relaxed">
+                    DevPulse requires specific system permissions solely to read hardware state and execute diagnostic tests on-device:
+                </p>
+                <ul class="list-disc list-inside text-slate-600 space-y-2 pl-2">
+                    <li><strong>Hardware Diagnostic Tests:</strong> Hardware test results (e.g. Passed/Failed status) are saved strictly locally using Android <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">SharedPreferences</code> and <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">DataStore Preferences</code>.</li>
+                    <li><strong>Camera & Microphone Diagnostics:</strong> Access is used strictly during interactive test execution (e.g. camera spec inspection & microphone sound meter) and is never recorded or transmitted.</li>
+                    <li><strong>Connectivity & SIM State:</strong> Network capabilities, Wi-Fi 6E checks, and SIM carrier names are queried via standard Android APIs locally.</li>
+                </ul>
+            </div>
+
+            <!-- Section 3 -->
+            <div class="space-y-3">
+                <h2 class="text-xl font-bold text-slate-900">3. Third-Party Services</h2>
+                <p class="text-slate-600 leading-relaxed">
+                    DevPulse is a fully standalone native application. The app does not communicate with external API endpoints, except when checking for app updates directly via the public GitHub Releases API (<code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono">api.github.com</code>).
+                </p>
+            </div>
+
+            <!-- Section 4 -->
+            <div class="space-y-3">
+                <h2 class="text-xl font-bold text-slate-900">4. Open Source Transparency</h2>
+                <p class="text-slate-600 leading-relaxed">
+                    DevPulse is open-source under the MIT license. Anyone can inspect, build, or audit the source code directly on GitHub:
+                </p>
+                <a href="https://github.com/Hamraj37/DevPulse" target="_blank" class="inline-flex items-center space-x-2 text-devpulse-600 font-bold hover:underline">
+                    <span>View DevPulse Source Code on GitHub</span> &rarr;
+                </a>
+            </div>
+
+            <!-- Section 5 -->
+            <div class="space-y-3 border-t border-slate-100 pt-6">
+                <h2 class="text-xl font-bold text-slate-900">5. Contact Information</h2>
+                <p class="text-slate-600 leading-relaxed">
+                    If you have any questions or concerns regarding this Privacy Policy or DevPulse's data handling practices, please open an issue on our GitHub repository.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+            <div class="flex items-center space-x-3">
+                <img src="assets/app_icon.png" alt="DevPulse Logo" class="w-8 h-8 rounded-lg object-cover">
+                <span class="text-white font-bold text-lg">DevPulse</span>
+            </div>
+            <p class="text-sm">Copyright © 2026 Hamraj. Open source under MIT License.</p>
+            <div class="flex space-x-6 text-sm">
+                <a href="index.html" class="hover:text-white transition">Home</a>
+                <a href="https://github.com/Hamraj37/DevPulse" target="_blank" class="hover:text-white transition">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
