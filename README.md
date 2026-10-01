@@ -4,6 +4,8 @@
 
 Designed for developers, power users, and QA engineers, DevPulse offers real-time hardware telemetry streams, live per-core CPU monitoring, zRAM swap analytics, dual-SIM network inspection, and a comprehensive hardware diagnostic test suite with persistent test reports.
 
+> 🌐 **Web Landing Page & Showcase**: Check out the modern web landing page ([`docs/index.html`](file:///C:/Users/Administrator/AndroidStudioProjects/DevPulse2/docs/index.html)) created for DevPulse (GitHub Pages) featuring all app screenshots across Dashboard, System, CPU, Battery, Connectivity, Display, Memory, and Thermal subsystems!
+
 ---
 
 ## ✨ Features & Capabilities
