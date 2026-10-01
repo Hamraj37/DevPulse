@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="108"
+     height="108"
+     viewBox="0 0 108 108">
+
+  <!-- Smartphone Body Outer Frame Silhouette -->
+  <path
+    fill="#2D3823"
+    stroke="#4A553D"
+    stroke-width="2.0"
+    d="M41,30 H67 A5 5 0 0 1 72 35 V73 A5 5 0 0 1 67 78 H41 A5 5 0 0 1 36 73 V35 A5 5 0 0 1 41 30 Z"/>
+
+  <!-- Smartphone Display Panel -->
+  <path
+    fill="#EAEFE5"
+    stroke="#4A553D"
+    stroke-width="0.6"
+    d="M43,34 H65 A3 3 0 0 1 68 37 V71 A3 3 0 0 1 65 74 H43 A3 3 0 0 1 40 71 V37 A3 3 0 0 1 43 34 Z"/>
+
+  <!-- Camera Punch Hole -->
+  <path
+    fill="#2D3823"
+    d="M54,34 A1.2 1.2 0 1 0 54 36.4 A1.2 1.2 0 1,0 54,34 Z"/>
+
+  <!-- Diagnostic Telemetry Wave Line Glow Shadow -->
+  <path
+    fill="none"
+    stroke="#4A553D"
+    stroke-width="4.0"
+    stroke-opacity="0.13"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    d="M43,54 L46,54 L49,57 L52,43 L55,65 L58,50 L61,54 L65,54"/>
+
+  <!-- Active Diagnostic Pulse Wave Line -->
+  <path
+    fill="none"
+    stroke="#4A553D"
+    stroke-width="2.2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    d="M43,54 L46,54 L49,57 L52,43 L55,65 L58,50 L61,54 L65,54"/>
+
+  <!-- Pulse Peak Halo Ring -->
+  <path
+    fill="none"
+    stroke="#4A553D"
+    stroke-width="1.0"
+    stroke-opacity="0.25"
+    d="M52,39 A4 4 0 1 0 52 47 A4 4 0 1 0 52,39 Z"/>
+
+  <!-- Pulse Peak Dynamic Node Dot -->
+  <path
+    fill="#2D3823"
+    d="M52,41.5 A1.5 1.5 0 1 0 52 44.5 A1.5 1.5 0 1,0 52,41.5 Z"/>
+
+  <!-- Telemetry Status Indicator Dots -->
+  <path fill="#4A553D" d="M61,36 A0.8 0.8 0 1 0 61 37.6 A0.8 0.8 0 1,0 61,36 Z"/>
+  <path fill="#2D3823" d="M63.5,36 A0.8 0.8 0 1 0 63.5 37.6 A0.8 0.8 0 1,0 63.5,36 Z"/>
+
+  <!-- Screen Bottom Home Bar -->
+  <path
+    fill="none"
+    stroke="#4A553D"
+    stroke-width="1.5"
+    stroke-linecap="round"
+    d="M49,72 L59,72"/>
+</svg>
