@@ -1,83 +1,347 @@
 <!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevPulse - Modern Android Telemetry & Hardware Diagnostics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        devpulse: {
+                            50: '#f2f8f3',
+                            100: '#e1efe4',
+                            200: '#c5e0ca',
+                            300: '#9ecaa5',
+                            400: '#72af7a',
+                            500: '#4e8752',
+                            600: '#3d6e41',
+                            700: '#335836',
+                            800: '#2b472e',
+                            900: '#253b27',
+                            950: '#112013',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .phone-mockup {
+            box-shadow: 0 25px 50px -12px rgba(78, 135, 82, 0.25), 0 0 0 12px #1e293b, 0 0 0 14px #334155;
+        }
+    </style>
 </head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-devpulse-500 selection:text-white">
 
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-devpulse-500 flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-devpulse-500/30">
+                    ⚡
+                </div>
+                <div>
+                    <span class="text-2xl font-extrabold tracking-tight text-slate-900">DevPulse</span>
+                    <span class="hidden sm:inline-block ml-2 px-2.5 py-0.5 text-xs font-semibold bg-devpulse-100 text-devpulse-700 rounded-full">v2.0</span>
                 </div>
             </div>
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-600">
+                <a href="#features" class="hover:text-devpulse-600 transition">Features</a>
+                <a href="#showcase" class="hover:text-devpulse-600 transition">App Showcase</a>
+                <a href="#tech" class="hover:text-devpulse-600 transition">Tech Stack</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <a href="https://github.com/Hamraj37/DevPulse" target="_blank" class="hidden sm:inline-flex items-center px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 rounded-xl hover:bg-slate-200 transition">
+                    GitHub Repo
+                </a>
+                <a href="#download" class="px-5 py-2.5 text-sm font-bold text-white bg-devpulse-500 rounded-xl shadow-lg shadow-devpulse-500/30 hover:bg-devpulse-600 transition">
+                    Download APK
                 </a>
             </div>
+        </div>
     </header>
 
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden pt-16 pb-24 lg:pt-24 lg:pb-32 bg-gradient-to-b from-devpulse-50/50 via-white to-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+                <div class="lg:col-span-7 text-center lg:text-left space-y-6">
+                    <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-devpulse-100 text-devpulse-800 text-xs font-bold uppercase tracking-wider">
+                        <span>⚡ Built for Android Developers & Power Users</span>
                     </div>
+                    <h1 class="text-4xl sm:text-6xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                        Real-Time Telemetry & <span class="text-devpulse-600">Hardware Diagnostics</span>
+                    </h1>
+                    <p class="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto lg:mx-0 font-normal">
+                        Monitor live CPU core frequencies, RAM usage, zRAM swap compression, thermal zones, battery power state, and execute rigorous hardware diagnostic tests with persistent reports.
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
+                        <a href="#download" class="w-full sm:w-auto px-8 py-4 text-base font-bold text-white bg-devpulse-500 rounded-2xl shadow-xl shadow-devpulse-500/30 hover:bg-devpulse-600 transition text-center">
+                            Download DevPulse v2.0
                         </a>
+                        <a href="#showcase" class="w-full sm:w-auto px-8 py-4 text-base font-bold text-slate-700 bg-white border border-slate-200 rounded-2xl hover:bg-slate-100 transition text-center">
+                            Explore Screenshots
                         </a>
                     </div>
+                    <div class="pt-6 grid grid-cols-3 gap-4 border-t border-slate-200 max-w-lg mx-auto lg:mx-0">
+                        <div>
+                            <div class="text-2xl font-extrabold text-slate-900">14+</div>
+                            <div class="text-xs text-slate-500 font-medium">Telemetry Tabs</div>
                         </div>
+                        <div>
+                            <div class="text-2xl font-extrabold text-slate-900">100%</div>
+                            <div class="text-xs text-slate-500 font-medium">Native Jetpack Compose</div>
                         </div>
+                        <div>
+                            <div class="text-2xl font-extrabold text-slate-900">55+</div>
+                            <div class="text-xs text-slate-500 font-medium">Thermal Zones</div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Hero Phone Mockup Preview -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="relative w-[300px] h-[610px] rounded-[40px] bg-slate-900 phone-mockup overflow-hidden border-4 border-slate-800">
+                        <!-- Simulated Status Bar -->
+                        <div class="absolute top-0 inset-x-0 h-7 bg-slate-900 z-20 flex items-center justify-between px-6 text-white text-xs">
+                            <span>9:59</span>
+                            <div class="w-20 h-4 bg-black rounded-full mx-auto"></div>
+                            <span>28%</span>
                         </div>
+                        <img src="screenshots/dashboard.png" alt="DevPulse Dashboard" class="w-full h-full object-cover pt-7">
                     </div>
                 </div>
             </div>
         </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto space-y-4 mb-16">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                    Comprehensive System & Hardware Insight
+                </h2>
+                <p class="text-lg text-slate-600">
+                    Engineered with Jetpack Compose and Material 3, DevPulse delivers high-performance monitoring across all hardware subsystems.
+                </p>
             </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-devpulse-300 transition group">
+                    <div class="w-14 h-14 rounded-2xl bg-devpulse-100 text-devpulse-600 flex items-center justify-center text-2xl font-bold mb-6 group-hover:scale-110 transition">
+                        📊
                     </div>
-                </div>
-                    </div>
-                </div>
-                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Real-Time Dashboard</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Circular RAM usage gauge, live per-core CPU frequency streams (MHz), storage metrics, and interactive hardware test summary cards.
+                    </p>
                 </div>
 
+                <!-- Feature 2 -->
+                <div class="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-devpulse-300 transition group">
+                    <div class="w-14 h-14 rounded-2xl bg-devpulse-100 text-devpulse-600 flex items-center justify-center text-2xl font-bold mb-6 group-hover:scale-110 transition">
+                        🔋
                     </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Power & Battery Analytics</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Live power draw stream (mA / W), USB charging detector, health percentage (84%), temperature (°C), and battery chemistry details.
+                    </p>
                 </div>
 
+                <!-- Feature 3 -->
+                <div class="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-devpulse-300 transition group">
+                    <div class="w-14 h-14 rounded-2xl bg-devpulse-100 text-devpulse-600 flex items-center justify-center text-2xl font-bold mb-6 group-hover:scale-110 transition">
+                        🧠
                     </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Memory & zRAM Swap</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Detailed volatile RAM usage, zRAM compressed swap statistics with real-time compression saved ratios, and system/internal storage gauges.
+                    </p>
                 </div>
 
+                <!-- Feature 4 -->
+                <div class="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-devpulse-300 transition group">
+                    <div class="w-14 h-14 rounded-2xl bg-devpulse-100 text-devpulse-600 flex items-center justify-center text-2xl font-bold mb-6 group-hover:scale-110 transition">
+                        📡
                     </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Connectivity & Wi-Fi 6E</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Wi-Fi 6E capabilities, Bluetooth 5.3/LE feature support checks, dual-SIM carrier inspection, and cellular signal strength metrics.
+                    </p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-devpulse-300 transition group">
+                    <div class="w-14 h-14 rounded-2xl bg-devpulse-100 text-devpulse-600 flex items-center justify-center text-2xl font-bold mb-6 group-hover:scale-110 transition">
+                        🌡️
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Thermal Zones & Sensors</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Monitor 55+ hardware thermal zones across CPU, GPU, and DDR memory with elevated status and thermal headroom capacity indicators.
+                    </p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-devpulse-300 transition group">
+                    <div class="w-14 h-14 rounded-2xl bg-devpulse-100 text-devpulse-600 flex items-center justify-center text-2xl font-bold mb-6 group-hover:scale-110 transition">
+                        📱
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Display & Graphics Specs</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        FHD+ resolution (2414 x 1080), dynamic 120 Hz refresh rate selection, HDR10+ support, physical size, density (480 dpi), and brightness level.
+                    </p>
                 </div>
             </div>
         </div>
+    </section>
+
+    <!-- App Showcase Gallery (Screenshots) -->
+    <section id="showcase" class="py-20 bg-slate-100/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto space-y-4 mb-16">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                    Explore DevPulse in Action
+                </h2>
+                <p class="text-lg text-slate-600">
+                    A visual walkthrough of DevPulse's core telemetry screens running on Android 16.
+                </p>
             </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Screenshot 1: Dashboard -->
+                <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200 flex flex-col items-center">
+                    <div class="w-[240px] h-[500px] rounded-[30px] bg-slate-900 phone-mockup overflow-hidden my-4">
+                        <img src="screenshots/dashboard.png" alt="Dashboard Screen" class="w-full h-full object-cover">
                     </div>
+                    <h4 class="font-bold text-slate-900 text-lg mt-2">1. Dashboard</h4>
+                    <p class="text-xs text-slate-500 text-center mt-1">RAM, CPU cores & hardware test status</p>
                 </div>
 
+                <!-- Screenshot 2: System -->
+                <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200 flex flex-col items-center">
+                    <div class="w-[240px] h-[500px] rounded-[30px] bg-slate-900 phone-mockup overflow-hidden my-4">
+                        <img src="screenshots/system.png" alt="System Screen" class="w-full h-full object-cover">
                     </div>
+                    <h4 class="font-bold text-slate-900 text-lg mt-2">2. System OS</h4>
+                    <p class="text-xs text-slate-500 text-center mt-1">Android 16 Baklava & API Level 36</p>
                 </div>
 
+                <!-- Screenshot 3: CPU -->
+                <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200 flex flex-col items-center">
+                    <div class="w-[240px] h-[500px] rounded-[30px] bg-slate-900 phone-mockup overflow-hidden my-4">
+                        <img src="screenshots/cpu.png" alt="CPU Frequencies Screen" class="w-full h-full object-cover">
                     </div>
-                </div>
-                    </div>
-                </div>
-
-                    </div>
-                </div>
-                    </div>
-                </div>
-
-                    </div>
+                    <h4 class="font-bold text-slate-900 text-lg mt-2">3. CPU Frequencies</h4>
+                    <p class="text-xs text-slate-500 text-center mt-1">Live per-core frequencies & SM7675</p>
                 </div>
 
+                <!-- Screenshot 4: Battery -->
+                <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200 flex flex-col items-center">
+                    <div class="w-[240px] h-[500px] rounded-[30px] bg-slate-900 phone-mockup overflow-hidden my-4">
+                        <img src="screenshots/battery.png" alt="Battery State Screen" class="w-full h-full object-cover">
                     </div>
+                    <h4 class="font-bold text-slate-900 text-lg mt-2">4. Battery Power</h4>
+                    <p class="text-xs text-slate-500 text-center mt-1">AC Charging, health & live power draw</p>
+                </div>
+
+                <!-- Screenshot 5: Connectivity -->
+                <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200 flex flex-col items-center">
+                    <div class="w-[240px] h-[500px] rounded-[30px] bg-slate-900 phone-mockup overflow-hidden my-4">
+                        <img src="screenshots/connectivity.png" alt="Connectivity Screen" class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-lg mt-2">5. Connectivity</h4>
+                    <p class="text-xs text-slate-500 text-center mt-1">Wi-Fi 6E & Bluetooth 5.3 capabilities</p>
+                </div>
+
+                <!-- Screenshot 6: Display -->
+                <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200 flex flex-col items-center">
+                    <div class="w-[240px] h-[500px] rounded-[30px] bg-slate-900 phone-mockup overflow-hidden my-4">
+                        <img src="screenshots/display.png" alt="Display Screen" class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-lg mt-2">6. Display Specs</h4>
+                    <p class="text-xs text-slate-500 text-center mt-1">FHD+ 120Hz, HDR10+ & density</p>
+                </div>
+
+                <!-- Screenshot 7: Memory -->
+                <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200 flex flex-col items-center">
+                    <div class="w-[240px] h-[500px] rounded-[30px] bg-slate-900 phone-mockup overflow-hidden my-4">
+                        <img src="screenshots/memory.png" alt="Memory Screen" class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-lg mt-2">7. Memory & Storage</h4>
+                    <p class="text-xs text-slate-500 text-center mt-1">Volatile RAM, zRAM swap & internal data</p>
+                </div>
+
+                <!-- Screenshot 8: Thermal -->
+                <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200 flex flex-col items-center">
+                    <div class="w-[240px] h-[500px] rounded-[30px] bg-slate-900 phone-mockup overflow-hidden my-4">
+                        <img src="screenshots/thermal.png" alt="Thermal Screen" class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-lg mt-2">8. Thermal Zones</h4>
+                    <p class="text-xs text-slate-500 text-center mt-1">55+ zones, CPU/DDR temps & headroom</p>
                 </div>
             </div>
         </div>
+    </section>
 
+    <!-- Tech Stack Section -->
+    <section id="tech" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-extrabold text-slate-900 mb-6">Modern Architecture & Tech Stack</h2>
+            <p class="text-slate-600 max-w-2xl mx-auto mb-12">
+                Built strictly following modern Android best practices and Google's recommended architecture guidelines.
             </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <span class="px-5 py-3 rounded-2xl bg-slate-100 font-semibold text-slate-800 border border-slate-200">Kotlin & Coroutines</span>
+                <span class="px-5 py-3 rounded-2xl bg-slate-100 font-semibold text-slate-800 border border-slate-200">Jetpack Compose & Material 3</span>
+                <span class="px-5 py-3 rounded-2xl bg-slate-100 font-semibold text-slate-800 border border-slate-200">MVVM Architecture</span>
+                <span class="px-5 py-3 rounded-2xl bg-slate-100 font-semibold text-slate-800 border border-slate-200">StateFlow & Flows</span>
+                <span class="px-5 py-3 rounded-2xl bg-slate-100 font-semibold text-slate-800 border border-slate-200">Gradle Kotlin DSL</span>
             </div>
         </div>
+    </section>
 
+    <!-- Download Section -->
+    <section id="download" class="py-20 bg-devpulse-900 text-white">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
+            <div class="inline-block p-4 rounded-3xl bg-devpulse-800 text-4xl shadow-xl">⚡</div>
+            <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight">Get DevPulse Today</h2>
+            <p class="text-devpulse-200 max-w-xl mx-auto text-lg">
+                Experience real-time hardware telemetry and comprehensive diagnostic testing on your Android device.
             </p>
+            <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <a href="https://github.com/Hamraj37/DevPulse/releases" target="_blank" class="w-full sm:w-auto px-8 py-4 font-bold text-devpulse-950 bg-white rounded-2xl hover:bg-devpulse-100 transition shadow-lg">
+                    Download APK from GitHub
+                </a>
+                <a href="https://github.com/Hamraj37/DevPulse" target="_blank" class="w-full sm:w-auto px-8 py-4 font-bold text-white bg-devpulse-800 border border-devpulse-700 rounded-2xl hover:bg-devpulse-700 transition">
+                    View Source Code
+                </a>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
+    <footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-devpulse-500 flex items-center justify-center text-white font-bold text-sm">⚡</div>
+                <span class="text-white font-bold text-lg">DevPulse</span>
             </div>
+            <p class="text-sm">Copyright © 2026 Hamraj. Open source under MIT License.</p>
+            <div class="flex space-x-6 text-sm">
+                <a href="https://github.com/Hamraj37/DevPulse" target="_blank" class="hover:text-white transition">GitHub</a>
+                <a href="#features" class="hover:text-white transition">Features</a>
+                <a href="#showcase" class="hover:text-white transition">Screenshots</a>
             </div>
         </div>
     </footer>
