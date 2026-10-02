@@ -71,6 +71,8 @@ fun DashboardScreen(
     onNavigateToTests: () -> Unit = {},
     onNavigateToDisplay: () -> Unit = {},
     onNavigateToTools: () -> Unit = {},
+    onNavigateToApps: () -> Unit = {},
+    onNavigateToSensors: () -> Unit = {},
     onNavigateToAppAnalyzer: () -> Unit = {},
     onNavigateToExport: () -> Unit = {},
     modifier: Modifier = Modifier
@@ -714,7 +716,9 @@ fun DashboardScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Card(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { onNavigateToSensors() },
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
                 shape = RoundedCornerShape(20.dp)
             ) {
@@ -745,7 +749,9 @@ fun DashboardScreen(
             }
 
             Card(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { onNavigateToApps() },
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
                 shape = RoundedCornerShape(20.dp)
             ) {

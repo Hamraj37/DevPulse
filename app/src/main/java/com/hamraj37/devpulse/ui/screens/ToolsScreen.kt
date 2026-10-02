@@ -154,6 +154,14 @@ fun ToolsScreen(
         )
     }
 
+    val handleToolBack: () -> Unit = {
+        if (initialTool != null) {
+            onBack?.invoke()
+        } else {
+            selectedTool = null
+        }
+    }
+
     if (selectedTool != null) {
         Surface(
             modifier = modifier
@@ -164,11 +172,11 @@ fun ToolsScreen(
             when (selectedTool) {
                 ToolType.FLOATING_MONITORS -> FloatingMonitorsScreen(
                     context = context,
-                    onBack = { selectedTool = null }
+                    onBack = handleToolBack
                 )
                 ToolType.PERMISSIONS -> PermissionsScreen(
                     uiState = uiState,
-                    onBack = { selectedTool = null }
+                    onBack = handleToolBack
                 )
                 ToolType.WIFI_ANALYZER -> WifiAnalyzerScreen(
                     uiState = uiState,
@@ -176,32 +184,32 @@ fun ToolsScreen(
                         selectedTool = null
                         onNavigateToTab(AppTab.NETWORK)
                     },
-                    onBack = { selectedTool = null }
+                    onBack = handleToolBack
                 )
                 ToolType.DATA_USAGE -> DataUsageScreen(
                     uiState = uiState,
-                    onBack = { selectedTool = null }
+                    onBack = handleToolBack
                 )
                 ToolType.SCREEN_TIME -> ScreenTimeScreen(
                     context = context,
-                    onBack = { selectedTool = null }
+                    onBack = handleToolBack
                 )
                 ToolType.WIDGETS -> WidgetsScreen(
                     uiState = uiState,
-                    onBack = { selectedTool = null }
+                    onBack = handleToolBack
                 )
                 ToolType.APP_ANALYZER -> AppAnalyzerScreen(
                     uiState = uiState,
-                    onBack = { selectedTool = null }
+                    onBack = handleToolBack
                 )
                 ToolType.COMPASS -> CompassScreen(
                     context = context,
-                    onBack = { selectedTool = null }
+                    onBack = handleToolBack
                 )
                 ToolType.EXPORT -> ExportScreen(
                     uiState = uiState,
                     context = context,
-                    onBack = { selectedTool = null }
+                    onBack = handleToolBack
                 )
                 else -> {}
             }

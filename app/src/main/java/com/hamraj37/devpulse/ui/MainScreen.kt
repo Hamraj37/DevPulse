@@ -387,6 +387,8 @@ fun TabContentScreen(
                 onNavigateToTests = { onSelectTab(AppTab.TESTS) },
                 onNavigateToDisplay = { onSelectTab(AppTab.DISPLAY) },
                 onNavigateToTools = { onSetToolsPageOpen(true) },
+                onNavigateToApps = { onSelectTab(AppTab.APPS) },
+                onNavigateToSensors = { onSelectTab(AppTab.SENSORS) },
                 onNavigateToAppAnalyzer = { onOpenTool(ToolType.APP_ANALYZER) },
                 onNavigateToExport = { onOpenTool(ToolType.EXPORT) }
             )
