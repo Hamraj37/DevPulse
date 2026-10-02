@@ -117,7 +117,7 @@ object DisplayTelemetry {
 
             val isWideGamut = try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    display?.isWideColorGamut == true
+                    display?.isWideColorGamut == true || config.isScreenWideColorGamut
                 } else {
                     true
                 }
