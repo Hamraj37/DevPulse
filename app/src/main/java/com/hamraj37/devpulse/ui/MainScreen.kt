@@ -26,6 +26,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Build
+import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material.icons.rounded.PictureAsPdf
 import androidx.compose.material.icons.rounded.Refresh
 import android.content.Intent
 import android.net.Uri
@@ -33,6 +35,8 @@ import androidx.compose.material.icons.rounded.SystemUpdate
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -40,6 +44,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import com.hamraj37.devpulse.ui.screens.ToolType
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -90,7 +95,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hamraj37.devpulse.ui.screens.ToolType
 
 fun getRequiredPermissions(): Array<String> {
     val permissions = mutableListOf(
@@ -145,6 +149,7 @@ fun MainScreen(
         pageCount = { tabs.size }
     )
     var scrollJob by remember { mutableStateOf<Job?>(null) }
+    var showTopMenu by remember { mutableStateOf(false) }
 
     // Sync selected tab with pager state
     LaunchedEffect(pagerState.currentPage) {
@@ -313,20 +318,67 @@ fun MainScreen(
                                     contentDescription = "Tools Page"
                                 )
                             }
-                            IconButton(
-                                onClick = { viewModel.refreshTelemetry() },
-                                enabled = !uiState.isLoading
-                            ) {
-                                if (uiState.isLoading) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(20.dp),
-                                        strokeWidth = 2.5.dp,
-                                        color = MaterialTheme.colorScheme.primary
+                            Box {
+                                IconButton(onClick = { showTopMenu = !showTopMenu }) {
+                                    if (uiState.isLoading) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(20.dp),
+                                            strokeWidth = 2.5.dp,
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
+                                    } else {
+                                        Icon(
+                                            imageVector = Icons.Rounded.MoreVert,
+                                            contentDescription = "Menu Options"
+                                        )
+                                    }
+                                }
+
+                                DropdownMenu(
+                                    expanded = showTopMenu,
+                                    onDismissRequest = { showTopMenu = false }
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text("Refresh Telemetry") },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = Icons.Rounded.Refresh,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        },
+                                        onClick = {
+                                            showTopMenu = false
+                                            viewModel.refreshTelemetry()
+                                        }
                                     )
-                                } else {
-                                    Icon(
-                                        imageVector = Icons.Rounded.Refresh,
-                                        contentDescription = "Refresh Telemetry"
+                                    DropdownMenuItem(
+                                        text = { Text("Tools Page") },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = Icons.Rounded.Build,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        },
+                                        onClick = {
+                                            showTopMenu = false
+                                            viewModel.setToolsPageOpen(true)
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Export System Report") },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = Icons.Rounded.PictureAsPdf,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        },
+                                        onClick = {
+                                            showTopMenu = false
+                                            viewModel.openTool(ToolType.EXPORT)
+                                        }
                                     )
                                 }
                             }
