@@ -73,12 +73,10 @@ fun SettingsScreen(
     var useSystemColors by remember { mutableStateOf(true) }
     var selectedThemeColor by remember { mutableStateOf("Blue") }
     var selectedLanguage by remember { mutableStateOf("System default") }
-    var selectedTempUnit by remember { mutableStateOf("Celsius") }
 
     var showThemeDialog by remember { mutableStateOf(false) }
     var showColorDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
-    var showTempDialog by remember { mutableStateOf(false) }
     var showClearDataDialog by remember { mutableStateOf(false) }
     var showDonateDialog by remember { mutableStateOf(false) }
     var showPrivacyDialog by remember { mutableStateOf(false) }
@@ -225,13 +223,6 @@ fun SettingsScreen(
             )
 
             SettingsItemRow(
-                icon = Icons.Rounded.Thermostat,
-                title = "Temperature Unit",
-                subtitle = selectedTempUnit,
-                onClick = { showTempDialog = true }
-            )
-
-            SettingsItemRow(
                 icon = Icons.Rounded.Download,
                 title = "Export Data",
                 subtitle = "Save your device information to a text file",
@@ -261,20 +252,6 @@ fun SettingsScreen(
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                 modifier = Modifier.padding(start = 56.dp, bottom = 4.dp)
-            )
-
-            SettingsItemRow(
-                icon = Icons.Rounded.Star,
-                title = "Rate Us",
-                subtitle = "Enjoying Device Info? Would you mind giving us some feedback on Google Play Store",
-                onClick = {
-                    try {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=${context.packageName}"))
-                        context.startActivity(intent)
-                    } catch (_: Exception) {
-                        Toast.makeText(context, "Opening Play Store...", Toast.LENGTH_SHORT).show()
-                    }
-                }
             )
 
             SettingsItemRow(
@@ -434,45 +411,6 @@ fun SettingsScreen(
             },
             confirmButton = {
                 TextButton(onClick = { showLanguageDialog = false }) {
-                    Text("Cancel")
-                }
-            }
-        )
-    }
-
-    if (showTempDialog) {
-        val tempOptions = listOf("Celsius", "Fahrenheit")
-        AlertDialog(
-            onDismissRequest = { showTempDialog = false },
-            title = { Text(text = "Temperature Unit", fontWeight = FontWeight.Bold) },
-            text = {
-                Column {
-                    tempOptions.forEach { option ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    selectedTempUnit = option
-                                    showTempDialog = false
-                                }
-                                .padding(vertical = 8.dp)
-                        ) {
-                            RadioButton(
-                                selected = selectedTempUnit == option,
-                                onClick = {
-                                    selectedTempUnit = option
-                                    showTempDialog = false
-                                }
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(text = option)
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showTempDialog = false }) {
                     Text("Cancel")
                 }
             }
