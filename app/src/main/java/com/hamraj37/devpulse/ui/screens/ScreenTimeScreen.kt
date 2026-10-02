@@ -1,6 +1,7 @@
 package com.hamraj37.devpulse.ui.screens
 
 import android.app.AppOpsManager
+import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
@@ -69,6 +70,7 @@ import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -93,6 +95,7 @@ data class AppScreenTimeItem(
 )
 
 fun formatDuration(ms: Long): String {
+    if (ms <= 0) return "0s"
     val totalSeconds = ms / 1000
     val hours = totalSeconds / 3600
     val minutes = (totalSeconds % 3600) / 60
@@ -102,7 +105,7 @@ fun formatDuration(ms: Long): String {
         hours > 0 && minutes > 0 -> "${hours}h ${minutes}m"
         hours > 0 -> "${hours}h"
         minutes > 0 -> "${minutes}m"
-        else -> "${seconds.coerceAtLeast(1)}s"
+        else -> "${seconds}s"
     }
 }
 
@@ -134,19 +137,8 @@ fun ScreenTimeScreen(
     var searchQuery by remember { mutableStateOf("") }
     var selectedTimeFilter by remember { mutableStateOf(0) } // 0: Today, 1: Last 7 Days, 2: Last 30 Days
     var screenTimeList by remember { mutableStateOf<List<AppScreenTimeItem>>(emptyList()) }
+    var totalUnlocks by remember { mutableStateOf(0) }
     var isLoading by remember { mutableStateOf(true) }
-
-    val currentDateStr = remember {
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.US)
-        sdf.format(Date())
-    }
-
-    val multiplier = when (selectedTimeFilter) {
-        0 -> 1.0f
-        1 -> 6.5f
-        2 -> 28.0f
-        else -> 1.0f
-    }
 
     val daysDivider = when (selectedTimeFilter) {
         0 -> 1
@@ -155,48 +147,206 @@ fun ScreenTimeScreen(
         else -> 1
     }
 
-    LaunchedEffect(Unit, hasPermission) {
+    val displayDateStr = remember(selectedTimeFilter) {
+        val now = System.currentTimeMillis()
+        val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.US)
+        when (selectedTimeFilter) {
+            0 -> "Today, ${dateFormat.format(Date(now))}"
+            1 -> {
+                val cal = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -6) }
+                "${SimpleDateFormat("dd MMM", Locale.US).format(cal.time)} - ${dateFormat.format(Date(now))}"
+            }
+            2 -> {
+                val cal = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -29) }
+                "${SimpleDateFormat("dd MMM", Locale.US).format(cal.time)} - ${dateFormat.format(Date(now))}"
+            }
+            else -> dateFormat.format(Date(now))
+        }
+    }
+
+    LaunchedEffect(selectedTimeFilter, hasPermission) {
+        isLoading = true
         withContext(Dispatchers.IO) {
             val pm = context.packageManager
-            val packages = try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    pm.getInstalledPackages(PackageManager.PackageInfoFlags.of(0))
-                } else {
-                    @Suppress("DEPRECATION")
-                    pm.getInstalledPackages(0)
-                }
-            } catch (_: Throwable) {
-                emptyList()
-            }
-
             val usageStatsManager = context.getSystemService(Context.USAGE_STATS_SERVICE) as? UsageStatsManager
             val endTime = System.currentTimeMillis()
-            val startTime = endTime - 24 * 60 * 60 * 1000L
 
-            val usageStatsList = try {
-                @Suppress("SecurityException", "UseCheckPermission")
-                usageStatsManager?.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, startTime, endTime)
-            } catch (_: Throwable) {
-                null
+            val startTime = when (selectedTimeFilter) {
+                0 -> {
+                    Calendar.getInstance().apply {
+                        set(Calendar.HOUR_OF_DAY, 0)
+                        set(Calendar.MINUTE, 0)
+                        set(Calendar.SECOND, 0)
+                        set(Calendar.MILLISECOND, 0)
+                    }.timeInMillis
+                }
+                1 -> {
+                    Calendar.getInstance().apply {
+                        add(Calendar.DAY_OF_YEAR, -6)
+                        set(Calendar.HOUR_OF_DAY, 0)
+                        set(Calendar.MINUTE, 0)
+                        set(Calendar.SECOND, 0)
+                        set(Calendar.MILLISECOND, 0)
+                    }.timeInMillis
+                }
+                2 -> {
+                    Calendar.getInstance().apply {
+                        add(Calendar.DAY_OF_YEAR, -29)
+                        set(Calendar.HOUR_OF_DAY, 0)
+                        set(Calendar.MINUTE, 0)
+                        set(Calendar.SECOND, 0)
+                        set(Calendar.MILLISECOND, 0)
+                    }.timeInMillis
+                }
+                else -> endTime - 24 * 60 * 60 * 1000L
             }
 
+            class AccurateUsage(
+                var totalTimeMs: Long = 0L,
+                var lastTimeUsedMs: Long = 0L,
+                var launchCount: Int = 0
+            )
+
+            val rawUsageMap = mutableMapOf<String, AccurateUsage>()
+            var exactUnlocksCount = 0
+
+            if (hasPermission && usageStatsManager != null) {
+                try {
+                    @Suppress("SecurityException", "UseCheckPermission")
+                    val events = usageStatsManager.queryEvents(startTime, endTime)
+                    if (events != null) {
+                        val event = UsageEvents.Event()
+                        val lastResumeMap = mutableMapOf<String, Long>()
+
+                        while (events.hasNextEvent()) {
+                            events.getNextEvent(event)
+                            val pkg = event.packageName
+                            val eventType = event.eventType
+                            val timeStamp = event.timeStamp
+
+                            if (eventType == 16 /* KEYGUARD_DISMISSED */ || eventType == 15 /* SCREEN_INTERACTIVE */) {
+                                exactUnlocksCount++
+                            }
+
+                            if (pkg.isNullOrEmpty()) continue
+
+                            if (eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
+                                if (!lastResumeMap.containsKey(pkg)) {
+                                    lastResumeMap[pkg] = timeStamp
+                                    val entry = rawUsageMap.getOrPut(pkg) { AccurateUsage() }
+                                    entry.launchCount++
+                                    if (timeStamp > entry.lastTimeUsedMs) {
+                                        entry.lastTimeUsedMs = timeStamp
+                                    }
+                                }
+                            } else if (eventType == UsageEvents.Event.ACTIVITY_PAUSED) {
+                                val lastResume = lastResumeMap.remove(pkg)
+                                if (lastResume != null && timeStamp > lastResume) {
+                                    val duration = timeStamp - lastResume
+                                    if (duration in 1..86_400_000L) {
+                                        val entry = rawUsageMap.getOrPut(pkg) { AccurateUsage() }
+                                        entry.totalTimeMs += duration
+                                        if (timeStamp > entry.lastTimeUsedMs) {
+                                            entry.lastTimeUsedMs = timeStamp
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // Close ongoing sessions
+                        for ((pkg, lastResume) in lastResumeMap) {
+                            if (endTime > lastResume) {
+                                val duration = endTime - lastResume
+                                if (duration in 1..86_400_000L) {
+                                    val entry = rawUsageMap.getOrPut(pkg) { AccurateUsage() }
+                                    entry.totalTimeMs += duration
+                                    if (endTime > entry.lastTimeUsedMs) {
+                                        entry.lastTimeUsedMs = endTime
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (_: Throwable) {}
+
+                // Fallback to queryUsageStats if queryEvents produced no results
+                if (rawUsageMap.isEmpty()) {
+                    try {
+                        @Suppress("SecurityException", "UseCheckPermission")
+                        val usageStatsList = usageStatsManager.queryUsageStats(
+                            UsageStatsManager.INTERVAL_DAILY,
+                            startTime,
+                            endTime
+                        )
+                        if (!usageStatsList.isNullOrEmpty()) {
+                            for (stats in usageStatsList) {
+                                if (stats.totalTimeInForeground > 0) {
+                                    val entry = rawUsageMap.getOrPut(stats.packageName) { AccurateUsage() }
+                                    entry.totalTimeMs += stats.totalTimeInForeground
+                                    if (stats.lastTimeUsed > entry.lastTimeUsedMs) {
+                                        entry.lastTimeUsedMs = stats.lastTimeUsed
+                                    }
+                                    if (entry.launchCount == 0) {
+                                        entry.launchCount = (stats.totalTimeInForeground / (5 * 60 * 1000L)).toInt().coerceIn(1, 100)
+                                    }
+                                }
+                            }
+                        }
+                    } catch (_: Throwable) {}
+                }
+            }
+
+            totalUnlocks = exactUnlocksCount
             val realList = mutableListOf<AppScreenTimeItem>()
 
-            if (!usageStatsList.isNullOrEmpty()) {
-                val statsMap = usageStatsList.filter { it.totalTimeInForeground > 0 }.associateBy { it.packageName }
-                for (pkg in packages) {
-                    val stats = statsMap[pkg.packageName] ?: continue
-                    val appInfo = pkg.applicationInfo ?: continue
-                    val label = try { appInfo.loadLabel(pm).toString() } catch (_: Throwable) { pkg.packageName }
-                    val icon = try { appInfo.loadIcon(pm) } catch (_: Throwable) { null }
+            if (rawUsageMap.isNotEmpty()) {
+                val packages = try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        pm.getInstalledPackages(PackageManager.PackageInfoFlags.of(0))
+                    } else {
+                        @Suppress("DEPRECATION")
+                        pm.getInstalledPackages(0)
+                    }
+                } catch (_: Throwable) {
+                    emptyList()
+                }
+
+                val pkgInfoMap = packages.associateBy { it.packageName }
+
+                for ((pkgName, usage) in rawUsageMap) {
+                    if (usage.totalTimeMs < 1000L) continue
+
+                    val pkgInfo = pkgInfoMap[pkgName]
+                    val appInfo = pkgInfo?.applicationInfo
+
+                    val label = if (appInfo != null) {
+                        try { appInfo.loadLabel(pm).toString() } catch (_: Throwable) { pkgName }
+                    } else {
+                        try {
+                            val info = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                pm.getApplicationInfo(pkgName, PackageManager.ApplicationInfoFlags.of(0))
+                            } else {
+                                @Suppress("DEPRECATION")
+                                pm.getApplicationInfo(pkgName, 0)
+                            }
+                            pm.getApplicationLabel(info).toString()
+                        } catch (_: Throwable) { pkgName }
+                    }
+
+                    val icon = if (appInfo != null) {
+                        try { appInfo.loadIcon(pm) } catch (_: Throwable) { null }
+                    } else {
+                        try { pm.getApplicationIcon(pkgName) } catch (_: Throwable) { null }
+                    }
 
                     realList.add(
                         AppScreenTimeItem(
                             appName = label,
-                            packageName = pkg.packageName,
-                            totalTimeMs = stats.totalTimeInForeground,
-                            launchCount = (stats.totalTimeInForeground / (60 * 1000L)).toInt().coerceIn(1, 15),
-                            lastTimeUsedMs = stats.lastTimeUsed,
+                            packageName = pkgName,
+                            totalTimeMs = usage.totalTimeMs,
+                            launchCount = usage.launchCount.coerceAtLeast(1),
+                            lastTimeUsedMs = usage.lastTimeUsedMs,
                             iconDrawable = icon
                         )
                     )
@@ -205,14 +355,15 @@ fun ScreenTimeScreen(
 
             if (realList.isEmpty()) {
                 val now = System.currentTimeMillis()
+                val factor = daysDivider.toFloat()
                 val sampleList = listOf(
-                    AppScreenTimeItem("DevPulse", context.packageName, 8 * 60 * 1000L, 4, now - 2 * 60 * 1000L),
-                    AppScreenTimeItem("Device Info", context.packageName, 3 * 60 * 1000L, 3, now - 10 * 60 * 1000L),
-                    AppScreenTimeItem("System Launcher", "com.android.launcher", 49 * 1000L, 3, now - 3 * 60 * 1000L),
-                    AppScreenTimeItem("Settings", "com.android.settings", 31 * 1000L, 1, now - 12 * 60 * 1000L),
-                    AppScreenTimeItem("Chrome", "com.android.chrome", 12 * 60 * 1000L, 5, now - 25 * 60 * 1000L),
-                    AppScreenTimeItem("WhatsApp", "com.whatsapp", 6 * 60 * 1000L, 8, now - 40 * 60 * 1000L),
-                    AppScreenTimeItem("YouTube", "com.google.android.youtube", 18 * 60 * 1000L, 2, now - 60 * 60 * 1000L)
+                    AppScreenTimeItem("DevPulse", context.packageName, (8 * 60 * 1000L * factor).toLong(), (4 * factor).toInt(), now - 2 * 60 * 1000L),
+                    AppScreenTimeItem("Device Info", context.packageName, (15 * 60 * 1000L * factor).toLong(), (6 * factor).toInt(), now - 10 * 60 * 1000L),
+                    AppScreenTimeItem("System Launcher", "com.android.launcher", (12 * 60 * 1000L * factor).toLong(), (14 * factor).toInt(), now - 3 * 60 * 1000L),
+                    AppScreenTimeItem("Settings", "com.android.settings", (5 * 60 * 1000L * factor).toLong(), (3 * factor).toInt(), now - 12 * 60 * 1000L),
+                    AppScreenTimeItem("Chrome", "com.android.chrome", (28 * 60 * 1000L * factor).toLong(), (12 * factor).toInt(), now - 25 * 60 * 1000L),
+                    AppScreenTimeItem("WhatsApp", "com.whatsapp", (45 * 60 * 1000L * factor).toLong(), (25 * factor).toInt(), now - 40 * 60 * 1000L),
+                    AppScreenTimeItem("YouTube", "com.google.android.youtube", (52 * 60 * 1000L * factor).toLong(), (8 * factor).toInt(), now - 60 * 60 * 1000L)
                 )
 
                 for (item in sampleList) {
@@ -226,22 +377,18 @@ fun ScreenTimeScreen(
         }
     }
 
-    val filteredList = remember(searchQuery, screenTimeList, multiplier) {
-        val list = if (searchQuery.isBlank()) screenTimeList
+    val filteredList = remember(searchQuery, screenTimeList) {
+        if (searchQuery.isBlank()) screenTimeList
         else screenTimeList.filter { it.appName.contains(searchQuery, ignoreCase = true) || it.packageName.contains(searchQuery, ignoreCase = true) }
-
-        list.map { item ->
-            item.copy(
-                totalTimeMs = (item.totalTimeMs * multiplier).toLong(),
-                launchCount = (item.launchCount * multiplier).toInt().coerceAtLeast(1)
-            )
-        }
     }
 
     val totalTimeMs = remember(filteredList) { filteredList.sumOf { it.totalTimeMs } }
     val totalOpens = remember(filteredList) { filteredList.sumOf { it.launchCount } }
     val totalAppsUsed = filteredList.size
-    val unlocksCount = (totalOpens / 3).coerceAtLeast(1)
+    val unlocksCount = remember(filteredList, totalUnlocks) {
+        if (totalUnlocks > 0) totalUnlocks
+        else (totalOpens / 2).coerceAtLeast(if (totalTimeMs > 0) 1 else 0)
+    }
     val dailyAverageMs = totalTimeMs / daysDivider
 
     val timeFormat = remember { SimpleDateFormat("hh:mm a", Locale.US) }
@@ -375,7 +522,7 @@ fun ScreenTimeScreen(
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text(
-                    text = currentDateStr,
+                    text = displayDateStr,
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
