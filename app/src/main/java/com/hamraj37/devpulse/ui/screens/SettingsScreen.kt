@@ -299,7 +299,14 @@ fun SettingsScreen(
             SettingsItemRow(
                 icon = Icons.Rounded.PrivacyTip,
                 title = "Privacy Policy",
-                onClick = { showPrivacyDialog = true }
+                onClick = {
+                    try {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://hamraj37.github.io/DevPulse/privacy.html"))
+                        context.startActivity(intent)
+                    } catch (_: Exception) {
+                        Toast.makeText(context, "Unable to open Privacy Policy URL", Toast.LENGTH_SHORT).show()
+                    }
+                }
             )
 
             SettingsItemRow(
