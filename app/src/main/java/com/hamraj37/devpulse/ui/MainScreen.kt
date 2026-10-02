@@ -440,7 +440,9 @@ fun MainScreen(
         Scaffold(
             modifier = modifier.fillMaxSize(),
             topBar = {
-                Column {
+                Column(
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                ) {
                     CenterAlignedTopAppBar(
                         title = {
                             Row(

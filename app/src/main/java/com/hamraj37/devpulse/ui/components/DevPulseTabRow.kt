@@ -65,7 +65,7 @@ fun DevPulseTabRow(
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 2.dp
+        tonalElevation = 0.dp
     ) {
         LazyRow(
             state = listState,
@@ -80,7 +80,7 @@ fun DevPulseTabRow(
                     targetValue = if (isSelected) {
                         MaterialTheme.colorScheme.primaryContainer
                     } else {
-                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                        MaterialTheme.colorScheme.surfaceContainerHigh
                     },
                     animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing),
                     label = "pillBgColor"
