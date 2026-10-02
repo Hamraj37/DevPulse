@@ -63,6 +63,7 @@ fun SettingsScreen(
     uiState: MainUiState = MainUiState(),
     onThemeModeChange: (String) -> Unit = {},
     onUseSystemColorsChange: (Boolean) -> Unit = {},
+    onThemeColorChange: (String) -> Unit = {},
     onBack: (() -> Unit)? = null,
     onNavigateToExport: (() -> Unit)? = null,
     modifier: Modifier = Modifier
@@ -73,7 +74,6 @@ fun SettingsScreen(
 
     val context = LocalContext.current
 
-    var selectedThemeColor by remember { mutableStateOf("Blue") }
     var selectedLanguage by remember { mutableStateOf("System default") }
 
     var showThemeDialog by remember { mutableStateOf(false) }
@@ -196,7 +196,7 @@ fun SettingsScreen(
             SettingsItemRow(
                 icon = Icons.Rounded.ColorLens,
                 title = "Theme color",
-                subtitle = if (uiState.useSystemColors) "Dynamic Material You" else selectedThemeColor,
+                subtitle = if (uiState.useSystemColors) "Dynamic Material You" else uiState.themeColor,
                 enabled = !uiState.useSystemColors,
                 onClick = {
                     if (!uiState.useSystemColors) {
@@ -354,15 +354,15 @@ fun SettingsScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    selectedThemeColor = option
+                                    onThemeColorChange(option)
                                     showColorDialog = false
                                 }
                                 .padding(vertical = 8.dp)
                         ) {
                             RadioButton(
-                                selected = selectedThemeColor == option,
+                                selected = uiState.themeColor == option,
                                 onClick = {
-                                    selectedThemeColor = option
+                                    onThemeColorChange(option)
                                     showColorDialog = false
                                 }
                             )

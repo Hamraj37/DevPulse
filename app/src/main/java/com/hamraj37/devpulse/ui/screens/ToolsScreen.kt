@@ -89,6 +89,7 @@ fun ToolsScreen(
     initialTool: ToolType? = null,
     onThemeModeChange: (String) -> Unit = {},
     onUseSystemColorsChange: (Boolean) -> Unit = {},
+    onThemeColorChange: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     if (onBack != null) {
@@ -219,6 +220,7 @@ fun ToolsScreen(
                     uiState = uiState,
                     onThemeModeChange = onThemeModeChange,
                     onUseSystemColorsChange = onUseSystemColorsChange,
+                    onThemeColorChange = onThemeColorChange,
                     onBack = handleToolBack,
                     onNavigateToExport = { selectedTool = ToolType.EXPORT }
                 )
