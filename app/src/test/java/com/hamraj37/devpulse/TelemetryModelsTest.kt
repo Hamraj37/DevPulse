@@ -111,6 +111,11 @@ class TelemetryModelsTest {
         assertEquals("WPA/WPA2", networkInfo.securityType)
         assertEquals("157.32.184.92", networkInfo.publicIp)
         assertEquals("New Delhi, Delhi, India", networkInfo.location)
+        assertEquals("0 KB/s", networkInfo.downloadSpeed)
+        assertEquals("0 KB/s", networkInfo.uploadSpeed)
+        assertEquals(0L, networkInfo.downloadSpeedBytesPerSec)
+        assertEquals(0L, networkInfo.uploadSpeedBytesPerSec)
+        assertNotNull(networkInfo.speedHistory)
     }
 
     @Test

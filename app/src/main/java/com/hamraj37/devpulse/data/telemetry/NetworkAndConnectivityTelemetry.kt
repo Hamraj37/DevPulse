@@ -8,6 +8,7 @@ import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
+import android.net.TrafficStats
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.nfc.NfcAdapter
@@ -19,9 +20,80 @@ import com.hamraj37.devpulse.data.model.NetworkInfo
 import java.net.Inet4Address
 import java.net.Inet6Address
 import java.net.NetworkInterface
+import java.util.Collections
 import java.util.Locale
 
 object NetworkAndConnectivityTelemetry {
+
+    private var lastRxBytes: Long = -1L
+    private var lastTxBytes: Long = -1L
+    private var lastTimeMs: Long = -1L
+    private val networkSpeedHistoryList = Collections.synchronizedList(mutableListOf<Float>())
+
+    data class RealTimeNetworkSpeed(
+        val downloadSpeedFormatted: String,
+        val uploadSpeedFormatted: String,
+        val downloadBytesPerSec: Long,
+        val uploadBytesPerSec: Long,
+        val speedHistory: List<Float>
+    )
+
+    @Synchronized
+    private fun calculateRealTimeSpeed(): RealTimeNetworkSpeed {
+        val currentTimeMs = System.currentTimeMillis()
+        val currentRxBytes = TrafficStats.getTotalRxBytes()
+        val currentTxBytes = TrafficStats.getTotalTxBytes()
+
+        var downloadBytesPerSec = 0L
+        var uploadBytesPerSec = 0L
+
+        if (lastTimeMs > 0L && currentTimeMs > lastTimeMs &&
+            currentRxBytes != TrafficStats.UNSUPPORTED.toLong() && currentTxBytes != TrafficStats.UNSUPPORTED.toLong()
+        ) {
+            val deltaTimeSec = (currentTimeMs - lastTimeMs) / 1000.0
+            if (deltaTimeSec > 0.1) {
+                val rxDelta = if (lastRxBytes >= 0L && currentRxBytes >= lastRxBytes) currentRxBytes - lastRxBytes else 0L
+                val txDelta = if (lastTxBytes >= 0L && currentTxBytes >= lastTxBytes) currentTxBytes - lastTxBytes else 0L
+
+                downloadBytesPerSec = (rxDelta / deltaTimeSec).toLong()
+                uploadBytesPerSec = (txDelta / deltaTimeSec).toLong()
+            }
+        }
+
+        lastRxBytes = currentRxBytes
+        lastTxBytes = currentTxBytes
+        lastTimeMs = currentTimeMs
+
+        val downloadKbps = downloadBytesPerSec / 1024f
+        val historySnapshot = synchronized(networkSpeedHistoryList) {
+            networkSpeedHistoryList.add(downloadKbps)
+            if (networkSpeedHistoryList.size > 20) {
+                networkSpeedHistoryList.removeAt(0)
+            }
+            networkSpeedHistoryList.toList()
+        }
+
+        return RealTimeNetworkSpeed(
+            downloadSpeedFormatted = formatSpeed(downloadBytesPerSec),
+            uploadSpeedFormatted = formatSpeed(uploadBytesPerSec),
+            downloadBytesPerSec = downloadBytesPerSec,
+            uploadBytesPerSec = uploadBytesPerSec,
+            speedHistory = historySnapshot
+        )
+    }
+
+    private fun formatSpeed(bytesPerSec: Long): String {
+        if (bytesPerSec <= 0L) return "0 KB/s"
+        val kbs = bytesPerSec / 1024f
+        return if (kbs >= 1024f) {
+            val mbs = kbs / 1024f
+            String.format(Locale.US, "%.1f MB/s", mbs)
+        } else if (kbs >= 1f) {
+            String.format(Locale.US, "%.1f KB/s", kbs)
+        } else {
+            "$bytesPerSec B/s"
+        }
+    }
 
     fun getNetworkInfo(context: Context): NetworkInfo {
         return try {
@@ -229,6 +301,7 @@ object NetworkAndConnectivityTelemetry {
         val is5G = networkTypeStr.contains("5G") || networkTypeStr.contains("NR")
         val badgePill = if (is5G) "5G" else "4G LTE"
         val geoLoc = getGeographicalLocation(context)
+        val speed = calculateRealTimeSpeed()
 
         return NetworkInfo(
             activeConnectionType = "CELLULAR",
@@ -256,7 +329,12 @@ object NetworkAndConnectivityTelemetry {
             roamingState = roamingStr,
             mccMnc = mccMncStr,
             countryMcc = countryMccStr,
-            mobileSignal = "Strong (-82 dBm)"
+            mobileSignal = "Strong (-82 dBm)",
+            downloadSpeed = speed.downloadSpeedFormatted,
+            uploadSpeed = speed.uploadSpeedFormatted,
+            downloadSpeedBytesPerSec = speed.downloadBytesPerSec,
+            uploadSpeedBytesPerSec = speed.uploadBytesPerSec,
+            speedHistory = speed.speedHistory
         )
     }
 
@@ -451,6 +529,7 @@ object NetworkAndConnectivityTelemetry {
         }
 
         val geoLoc = getGeographicalLocation(context)
+        val speed = calculateRealTimeSpeed()
 
         return NetworkInfo(
             activeConnectionType = "WIFI",
@@ -474,7 +553,12 @@ object NetworkAndConnectivityTelemetry {
             publicIp = "157.32.184.92",
             location = geoLoc,
             wifiBadge = wifiBadge,
-            isConnected = true
+            isConnected = true,
+            downloadSpeed = speed.downloadSpeedFormatted,
+            uploadSpeed = speed.uploadSpeedFormatted,
+            downloadSpeedBytesPerSec = speed.downloadBytesPerSec,
+            uploadSpeedBytesPerSec = speed.uploadBytesPerSec,
+            speedHistory = speed.speedHistory
         )
     }
 
@@ -506,7 +590,12 @@ object NetworkAndConnectivityTelemetry {
             roamingState = "Off",
             mccMnc = "None",
             countryMcc = "None",
-            mobileSignal = "No Signal"
+            mobileSignal = "No Signal",
+            downloadSpeed = "0 KB/s",
+            uploadSpeed = "0 KB/s",
+            downloadSpeedBytesPerSec = 0L,
+            uploadSpeedBytesPerSec = 0L,
+            speedHistory = emptyList()
         )
     }
 

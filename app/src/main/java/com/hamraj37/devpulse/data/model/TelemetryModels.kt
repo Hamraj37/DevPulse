@@ -158,7 +158,12 @@ data class NetworkInfo(
     val roamingState: String = "Not Roaming",
     val mccMnc: String = "405 / 854",
     val countryMcc: String = "India (405)",
-    val mobileSignal: String = "Strong (-85 dBm)"
+    val mobileSignal: String = "Strong (-85 dBm)",
+    val downloadSpeed: String = "0 KB/s",
+    val uploadSpeed: String = "0 KB/s",
+    val downloadSpeedBytesPerSec: Long = 0L,
+    val uploadSpeedBytesPerSec: Long = 0L,
+    val speedHistory: List<Float> = emptyList()
 )
 
 // 7. Connectivity Info

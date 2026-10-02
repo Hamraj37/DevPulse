@@ -151,7 +151,7 @@ class TelemetryRepository(private val context: Context) {
         }
     }.flowOn(Dispatchers.IO)
 
-    // 5. Network Info Flow (updates every 1500ms with live IP, link speed, signal strength, and TrafficStats bytes)
+    // 5. Network Info Flow (updates every 1000ms with live IP, real-time speed, link speed, signal strength)
     fun getNetworkInfoFlow(): Flow<NetworkInfo> = flow {
         while (true) {
             try {
@@ -159,7 +159,7 @@ class TelemetryRepository(private val context: Context) {
             } catch (_: Throwable) {
                 emit(NetworkInfo())
             }
-            delay(1500)
+            delay(1000)
         }
     }.flowOn(Dispatchers.IO)
 
