@@ -33,6 +33,7 @@ import com.hamraj37.devpulse.data.model.BatteryInfo
 import com.hamraj37.devpulse.ui.components.LiveSparklineChart
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
+import java.util.Locale
 
 @Composable
 fun BatteryScreen(
@@ -122,9 +123,9 @@ fun BatteryScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    BatteryMetricChip("Current", "${String.format("%.1f", batteryInfo.currentMa)} mA")
+                    BatteryMetricChip("Current", "${String.format(Locale.US, "%.1f", batteryInfo.currentMa)} mA")
                     BatteryMetricChip("Temp", "${batteryInfo.temperatureCelsius} °C")
-                    BatteryMetricChip("Power", "${String.format("%.2f", batteryInfo.powerWatts)} W")
+                    BatteryMetricChip("Power", "${String.format(Locale.US, "%.2f", batteryInfo.powerWatts)} W")
                     BatteryMetricChip("Health", "${batteryInfo.healthPercent}%")
                 }
 
@@ -184,9 +185,9 @@ fun BatteryScreen(
                     "Power Source" to batteryInfo.powerSource,
                     "Technology" to batteryInfo.technology,
                     "Temperature" to "${batteryInfo.temperatureCelsius} °C",
-                    "Current" to "${String.format("%.1f", batteryInfo.currentMa)} mA",
-                    "Power" to "${String.format("%.2f", batteryInfo.powerWatts)} W",
-                    "Voltage" to "${batteryInfo.voltageVolts} V",
+                    "Current" to "${String.format(Locale.US, "%.1f", batteryInfo.currentMa)} mA",
+                    "Power" to "${String.format(Locale.US, "%.2f", batteryInfo.powerWatts)} W",
+                    "Voltage" to "${String.format(Locale.US, "%.2f", batteryInfo.voltageVolts)} V",
                     "Time to charge" to batteryInfo.timeToChargeFormatted,
                     "Charge Cycles" to "${batteryInfo.chargeCycles}",
                     "Capacity (Charged)" to "${batteryInfo.capacityChargedMah} mAh",

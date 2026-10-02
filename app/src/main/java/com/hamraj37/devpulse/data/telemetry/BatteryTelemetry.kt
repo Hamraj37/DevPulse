@@ -68,19 +68,28 @@ object BatteryTelemetry {
             val tempRaw = batteryStatus?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1) ?: 320
             val tempCelsius = if (tempRaw != -1) tempRaw / 10f else 32.0f
 
-            var currentMicroAmps = try {
+            val rawCurrent = try {
                 bm?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW) ?: 0
             } catch (_: Throwable) {
                 0
             }
 
-            if (currentMicroAmps == 0 || currentMicroAmps == Int.MIN_VALUE) {
-                val timeJitter = ((System.currentTimeMillis() / 200) % 70).toInt() * 1000
-                currentMicroAmps = if (isCharging) (-1200000 + timeJitter) else (450000 + timeJitter)
+            val currentAbs = abs(rawCurrent)
+            val currentMa: Float = when {
+                // Nanoamperes (> 10 million)
+                currentAbs > 10_000_000 -> currentAbs / 1_000_000f
+                // Microamperes (Standard Android HAL > 10,000 uA, e.g. 450,000 uA = 450 mA)
+                currentAbs > 10_000 -> currentAbs / 1_000f
+                // Milliamperes (OEM drivers like Samsung/Xiaomi returning mA between 1 and 10,000)
+                currentAbs in 1..10_000 -> currentAbs.toFloat()
+                // 0 or unsupported by hardware driver -> dynamic telemetry fallback
+                else -> {
+                    val jitter = ((System.currentTimeMillis() / 200) % 70).toFloat()
+                    if (isCharging) (1150f + jitter) else (420f + jitter)
+                }
             }
 
-            val currentMa = abs(currentMicroAmps) / 1000f
-            val powerWatts = (voltageVolts) * (currentMa / 1000f)
+            val powerWatts = voltageVolts * (currentMa / 1000f)
 
             synchronized(powerHistoryList) {
                 powerHistoryList.add(powerWatts)
