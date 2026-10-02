@@ -620,7 +620,7 @@ fun MainScreen(
                                         },
                                         onClick = {
                                             showTopMenu = false
-                                            showSettingsDialog = true
+                                            viewModel.openTool(ToolType.SETTINGS)
                                         }
                                     )
 

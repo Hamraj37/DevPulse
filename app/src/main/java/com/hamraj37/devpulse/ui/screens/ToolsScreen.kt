@@ -27,6 +27,7 @@ import androidx.compose.material.icons.rounded.GridView
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.PictureAsPdf
 import androidx.compose.material.icons.rounded.Router
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.Smartphone
 import androidx.compose.material.icons.rounded.SsidChart
@@ -68,7 +69,8 @@ enum class ToolType {
     WIDGETS,
     COMPASS,
     EXPORT,
-    APP_ANALYZER
+    APP_ANALYZER,
+    SETTINGS
 }
 
 data class ToolItemData(
@@ -210,6 +212,10 @@ fun ToolsScreen(
                     uiState = uiState,
                     context = context,
                     onBack = handleToolBack
+                )
+                ToolType.SETTINGS -> SettingsScreen(
+                    onBack = handleToolBack,
+                    onNavigateToExport = { selectedTool = ToolType.EXPORT }
                 )
                 else -> {}
             }
