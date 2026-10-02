@@ -44,21 +44,26 @@ fun CircularRamGauge(
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val center = Offset(size.toPx() / 2f, size.toPx() / 2f)
-            val radius = (size.toPx() - strokeWidth.toPx() * 3) / 2f
-            val numScallops = 16
-            val scallopAmplitude = 3.5.dp.toPx()
+            val strokePx = strokeWidth.toPx()
+            val waveAmplitude = 4.dp.toPx()
+            val radius = (size.toPx() - strokePx * 2 - waveAmplitude * 2) / 2f
+            val numWaves = 8
+            val totalSteps = 360
+            val startAngle = -Math.PI / 2 // -90 degrees (12 o'clock)
 
-            // 1. Draw Scalloped Wavy Track Path
+            // 1. Draw smooth circular wavy track (full 360 degrees)
             val trackPath = Path()
-            val totalPoints = 120
-            for (i in 0..totalPoints) {
-                val angle = (i.toFloat() / totalPoints) * (2 * Math.PI.toFloat())
-                val wave = scallopAmplitude * Math.sin((numScallops * angle).toDouble()).toFloat()
-                val r = radius + wave
-                val x = center.x + r * Math.cos(angle.toDouble()).toFloat()
-                val y = center.y + r * Math.sin(angle.toDouble()).toFloat()
+            for (step in 0..totalSteps) {
+                val progress = step.toFloat() / totalSteps
+                val angle = startAngle + progress * 2 * Math.PI
+                val wavePhase = progress * 2 * Math.PI * numWaves
+                val waveOffset = waveAmplitude * Math.sin(wavePhase).toFloat()
+                val currentRadius = radius + waveOffset
 
-                if (i == 0) {
+                val x = center.x + currentRadius * Math.cos(angle).toFloat()
+                val y = center.y + currentRadius * Math.sin(angle).toFloat()
+
+                if (step == 0) {
                     trackPath.moveTo(x, y)
                 } else {
                     trackPath.lineTo(x, y)
@@ -69,33 +74,52 @@ fun CircularRamGauge(
             drawPath(
                 path = trackPath,
                 color = trackColor,
-                style = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round)
+                style = Stroke(width = strokePx, cap = StrokeCap.Round)
             )
 
-            // 2. Draw Active Scalloped Arc Path based on percentage
-            val activePath = Path()
-            val activeFraction = (percentage.coerceIn(0, 100) / 100f)
-            val activePoints = (totalPoints * activeFraction).toInt().coerceAtLeast(1)
+            // 2. Draw active wavy progress arc
+            val activeFraction = percentage.coerceIn(0, 100) / 100f
+            if (activeFraction > 0f) {
+                val activeSteps = (totalSteps * activeFraction).toInt().coerceAtLeast(1)
+                val activePath = Path()
+                var endPoint: Offset? = null
 
-            for (i in 0..activePoints) {
-                val angle = (-Math.PI / 2) + (i.toFloat() / totalPoints) * (2 * Math.PI.toFloat())
-                val wave = scallopAmplitude * Math.sin((numScallops * angle).toDouble()).toFloat()
-                val r = radius + wave
-                val x = center.x + r * Math.cos(angle.toDouble()).toFloat()
-                val y = center.y + r * Math.sin(angle.toDouble()).toFloat()
+                for (step in 0..activeSteps) {
+                    val progress = step.toFloat() / totalSteps
+                    val angle = startAngle + progress * 2 * Math.PI
+                    val wavePhase = progress * 2 * Math.PI * numWaves
+                    val waveOffset = waveAmplitude * Math.sin(wavePhase).toFloat()
+                    val currentRadius = radius + waveOffset
 
-                if (i == 0) {
-                    activePath.moveTo(x, y)
-                } else {
-                    activePath.lineTo(x, y)
+                    val x = center.x + currentRadius * Math.cos(angle).toFloat()
+                    val y = center.y + currentRadius * Math.sin(angle).toFloat()
+
+                    if (step == 0) {
+                        activePath.moveTo(x, y)
+                    } else {
+                        activePath.lineTo(x, y)
+                    }
+
+                    if (step == activeSteps) {
+                        endPoint = Offset(x, y)
+                    }
+                }
+
+                drawPath(
+                    path = activePath,
+                    color = activeColor,
+                    style = Stroke(width = strokePx * 1.25f, cap = StrokeCap.Round)
+                )
+
+                // 3. Draw active tip accent dot
+                endPoint?.let { tip ->
+                    drawCircle(
+                        color = activeColor,
+                        radius = strokePx * 0.9f,
+                        center = tip
+                    )
                 }
             }
-
-            drawPath(
-                path = activePath,
-                color = activeColor,
-                style = Stroke(width = (strokeWidth.toPx() * 1.25f), cap = StrokeCap.Round)
-            )
         }
 
         // Text inside gauge: Big number + small %
