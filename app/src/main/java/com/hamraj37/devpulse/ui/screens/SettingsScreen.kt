@@ -1,5 +1,6 @@
 package com.hamraj37.devpulse.ui.screens
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -25,7 +26,6 @@ import androidx.compose.material.icons.rounded.DeleteOutline
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Info
-import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.NightsStay
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.PrivacyTip
@@ -75,11 +75,8 @@ fun SettingsScreen(
 
     val context = LocalContext.current
 
-    var selectedLanguage by remember { mutableStateOf("System default") }
-
     var showThemeDialog by remember { mutableStateOf(false) }
     var showColorDialog by remember { mutableStateOf(false) }
-    var showLanguageDialog by remember { mutableStateOf(false) }
     var showClearDataDialog by remember { mutableStateOf(false) }
     var showDonateDialog by remember { mutableStateOf(false) }
     var showPrivacyDialog by remember { mutableStateOf(false) }
@@ -216,13 +213,6 @@ fun SettingsScreen(
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                 modifier = Modifier.padding(start = 56.dp, bottom = 4.dp)
-            )
-
-            SettingsItemRow(
-                icon = Icons.Rounded.Language,
-                title = "Language",
-                subtitle = selectedLanguage,
-                onClick = { showLanguageDialog = true }
             )
 
             SettingsItemRow(
@@ -385,45 +375,6 @@ fun SettingsScreen(
         )
     }
 
-    if (showLanguageDialog) {
-        val languageOptions = listOf("System default", "English", "Spanish", "Hindi", "French", "German")
-        AlertDialog(
-            onDismissRequest = { showLanguageDialog = false },
-            title = { Text(text = "App Language", fontWeight = FontWeight.Bold) },
-            text = {
-                Column {
-                    languageOptions.forEach { option ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    selectedLanguage = option
-                                    showLanguageDialog = false
-                                }
-                                .padding(vertical = 8.dp)
-                        ) {
-                            RadioButton(
-                                selected = selectedLanguage == option,
-                                onClick = {
-                                    selectedLanguage = option
-                                    showLanguageDialog = false
-                                }
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(text = option)
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showLanguageDialog = false }) {
-                    Text("Cancel")
-                }
-            }
-        )
-    }
-
     if (showClearDataDialog) {
         AlertDialog(
             onDismissRequest = { showClearDataDialog = false },
@@ -435,6 +386,8 @@ fun SettingsScreen(
                 TextButton(
                     onClick = {
                         showClearDataDialog = false
+                        context.getSharedPreferences("devpulse_prefs", Context.MODE_PRIVATE).edit().clear().apply()
+                        context.getSharedPreferences("devpulse_test_prefs", Context.MODE_PRIVATE).edit().clear().apply()
                         Toast.makeText(context, "App data & preferences cleared", Toast.LENGTH_SHORT).show()
                     }
                 ) {
