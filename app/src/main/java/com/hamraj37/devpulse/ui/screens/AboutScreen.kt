@@ -212,7 +212,7 @@ fun AboutScreen(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Remove Ads Button
+                // Donate Button
                 Button(
                     onClick = { showDonateDialog = true },
                     shape = CircleShape,
@@ -233,7 +233,7 @@ fun AboutScreen(
                             modifier = Modifier.size(18.dp)
                         )
                         Text(
-                            text = "Remove Ads",
+                            text = "Donate",
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                         )
                     }
@@ -397,9 +397,9 @@ fun AboutScreen(
     if (showDonateDialog) {
         AlertDialog(
             onDismissRequest = { showDonateDialog = false },
-            title = { Text(text = "DevPulse Ad-Free", fontWeight = FontWeight.Bold) },
+            title = { Text(text = "Donate & Support", fontWeight = FontWeight.Bold) },
             text = {
-                Text("DevPulse is 100% ad-free and open source! Enjoy clean hardware telemetry without interruptions.")
+                Text("DevPulse is completely ad-free and open source! Thank you for supporting the project.")
             },
             confirmButton = {
                 TextButton(onClick = { showDonateDialog = false }) {

@@ -259,7 +259,7 @@ fun SettingsScreen(
 
             SettingsItemRow(
                 icon = Icons.Rounded.Favorite,
-                title = "Donate (Remove Ads)",
+                title = "Donate",
                 subtitle = "You can show your appreciation for my work by making a small donation",
                 onClick = { showDonateDialog = true }
             )
