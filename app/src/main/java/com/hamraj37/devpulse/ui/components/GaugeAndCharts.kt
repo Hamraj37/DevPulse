@@ -3,7 +3,6 @@ package com.hamraj37.devpulse.ui.components
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +26,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 
@@ -39,6 +47,25 @@ fun CircularRamGauge(
     activeColor: Color = MaterialTheme.colorScheme.primary,
     trackColor: Color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
 ) {
+    // Smooth progress sweep transition whenever RAM usage percentage updates
+    val animatedPercentage by animateFloatAsState(
+        targetValue = percentage.coerceIn(0, 100).toFloat(),
+        animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing),
+        label = "ramGaugeProgress"
+    )
+
+    // Continuous subtle wave rotation flow animation
+    val infiniteTransition = rememberInfiniteTransition(label = "ramGaugeWave")
+    val waveOffsetPhase by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = (2 * Math.PI).toFloat(),
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 4000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "ramGaugeWavePhase"
+    )
+
     Box(
         modifier = modifier.size(size),
         contentAlignment = Alignment.Center
@@ -57,7 +84,7 @@ fun CircularRamGauge(
             for (step in 0..totalSteps) {
                 val progress = step.toFloat() / totalSteps
                 val angle = startAngle + progress * 2 * Math.PI
-                val wavePhase = progress * 2 * Math.PI * numWaves
+                val wavePhase = progress * 2 * Math.PI * numWaves + waveOffsetPhase
                 val waveOffset = waveAmplitude * Math.sin(wavePhase).toFloat()
                 val currentRadius = radius + waveOffset
 
@@ -79,7 +106,7 @@ fun CircularRamGauge(
             )
 
             // 2. Draw active wavy progress arc
-            val activeFraction = percentage.coerceIn(0, 100) / 100f
+            val activeFraction = animatedPercentage / 100f
             if (activeFraction > 0f) {
                 val activeSteps = (totalSteps * activeFraction).toInt().coerceAtLeast(1)
                 val activePath = Path()
@@ -88,7 +115,7 @@ fun CircularRamGauge(
                 for (step in 0..activeSteps) {
                     val progress = step.toFloat() / totalSteps
                     val angle = startAngle + progress * 2 * Math.PI
-                    val wavePhase = progress * 2 * Math.PI * numWaves
+                    val wavePhase = progress * 2 * Math.PI * numWaves + waveOffsetPhase
                     val waveOffset = waveAmplitude * Math.sin(wavePhase).toFloat()
                     val currentRadius = radius + waveOffset
 
@@ -123,13 +150,13 @@ fun CircularRamGauge(
             }
         }
 
-        // Text inside gauge: Big number + small %
+        // Text inside gauge: Animated big number + small %
         Row(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "$percentage",
+                text = animatedPercentage.toInt().toString(),
                 style = MaterialTheme.typography.headlineLarge.copy(
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 32.sp
