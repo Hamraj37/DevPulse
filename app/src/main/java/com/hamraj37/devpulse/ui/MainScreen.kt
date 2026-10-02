@@ -397,7 +397,10 @@ fun TabContentScreen(
             AppTab.CPU -> CpuScreen(uiState.cpuInfo)
             AppTab.BATTERY -> BatteryScreen(uiState.batteryInfo)
             AppTab.MEMORY -> MemoryScreen(uiState.memoryInfo)
-            AppTab.NETWORK -> NetworkScreen(uiState.networkInfo)
+            AppTab.NETWORK -> NetworkScreen(
+                networkInfo = uiState.networkInfo,
+                onNavigateToDataUsage = { onOpenTool(ToolType.DATA_USAGE) }
+            )
             AppTab.CONNECTIVITY -> ConnectivityScreen(uiState.connectivityInfo)
             AppTab.DISPLAY -> DisplayScreen(uiState.displayInfo)
             AppTab.THERMAL -> ThermalScreen(uiState.thermalInfo)

@@ -54,6 +54,7 @@ import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
 @Composable
 fun NetworkScreen(
     networkInfo: NetworkInfo,
+    onNavigateToDataUsage: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -315,7 +316,7 @@ fun NetworkScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Button(
-                        onClick = { showUsageDialog = true },
+                        onClick = onNavigateToDataUsage,
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
