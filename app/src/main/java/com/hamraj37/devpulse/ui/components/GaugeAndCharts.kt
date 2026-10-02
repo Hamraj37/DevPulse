@@ -211,74 +211,90 @@ fun LiveSparklineChart(
             pathEffect = strokeDashed.pathEffect
         )
 
-        // 2. Compute smooth Bezier path
+        // 2. Map data to screen coordinates
         val stepX = width / (rawData.size - 1).coerceAtLeast(1)
-        val path = Path()
-        val fillPath = Path()
-
-        var lastX = 0f
-        var lastY = 0f
-
-        rawData.forEachIndexed { index, valPct ->
+        val points = rawData.mapIndexed { index, valPct ->
             val x = index * stepX
             val normalizedY = (valPct - minVal) / range
             val y = height - (normalizedY * height * 0.82f) - (height * 0.09f)
+            Offset(x, y)
+        }
 
-            if (index == 0) {
-                path.moveTo(x, y)
-                fillPath.moveTo(x, height)
-                fillPath.lineTo(x, y)
-            } else {
-                val cx = (lastX + x) / 2f
-                val cy = (lastY + y) / 2f
-                path.quadraticTo(lastX, lastY, cx, cy)
-                fillPath.quadraticTo(lastX, lastY, cx, cy)
+        val path = Path()
+        val fillPath = Path()
+
+        if (points.isNotEmpty()) {
+            path.moveTo(points[0].x, points[0].y)
+            fillPath.moveTo(points[0].x, height)
+            fillPath.lineTo(points[0].x, points[0].y)
+
+            // Smooth Catmull-Rom / Cubic Hermite Spline interpolation
+            val smoothness = 0.35f
+            for (i in 0 until points.size - 1) {
+                val p0 = points[i]
+                val p3 = points[i + 1]
+                val dx = p3.x - p0.x
+
+                // Compute smooth tangent slopes at start and end points
+                val m0 = if (i == 0) {
+                    (p3.y - p0.y) / dx
+                } else {
+                    (p3.y - points[i - 1].y) / (p3.x - points[i - 1].x)
+                }
+
+                val m1 = if (i + 1 == points.lastIndex) {
+                    (p3.y - p0.y) / dx
+                } else {
+                    (points[i + 2].y - p0.y) / (points[i + 2].x - p0.x)
+                }
+
+                val p1X = p0.x + dx * smoothness
+                val p1Y = (p0.y + m0 * dx * smoothness).coerceIn(0f, height)
+
+                val p2X = p3.x - dx * smoothness
+                val p2Y = (p3.y - m1 * dx * smoothness).coerceIn(0f, height)
+
+                path.cubicTo(p1X, p1Y, p2X, p2Y, p3.x, p3.y)
+                fillPath.cubicTo(p1X, p1Y, p2X, p2Y, p3.x, p3.y)
             }
-            lastX = x
-            lastY = y
+
+            fillPath.lineTo(points.last().x, height)
+            fillPath.close()
+
+            // 3. Draw Area Fill
+            drawPath(
+                path = fillPath,
+                brush = fillGradient
+            )
+
+            // 4. Draw Smooth Sparkline Path
+            drawPath(
+                path = path,
+                color = lineColor,
+                style = Stroke(width = 3.dp.toPx(), cap = StrokeCap.Round)
+            )
+
+            // 5. Draw Glowing / Pulsing Target Point Dot at Latest Data Reading
+            val lastPoint = points.last()
+            // Outer glowing halo
+            drawCircle(
+                color = lineColor.copy(alpha = 0.25f),
+                radius = 8.dp.toPx(),
+                center = lastPoint
+            )
+            // Inner ring
+            drawCircle(
+                color = lineColor,
+                radius = 4.5.dp.toPx(),
+                center = lastPoint
+            )
+            // Core center dot
+            drawCircle(
+                color = Color.White,
+                radius = 2.dp.toPx(),
+                center = lastPoint
+            )
         }
-
-        if (rawData.size > 1) {
-            path.lineTo(lastX, lastY)
-            fillPath.lineTo(lastX, lastY)
-        }
-
-        fillPath.lineTo(lastX, height)
-        fillPath.close()
-
-        // 3. Draw Area Fill
-        drawPath(
-            path = fillPath,
-            brush = fillGradient
-        )
-
-        // 4. Draw Vibrant Sparkline Path
-        drawPath(
-            path = path,
-            color = lineColor,
-            style = Stroke(width = 3.dp.toPx(), cap = StrokeCap.Round)
-        )
-
-        // 5. Draw Glowing / Pulsing Target Point Dot at Latest Data Reading
-        val lastPoint = Offset(lastX, lastY)
-        // Outer glowing halo
-        drawCircle(
-            color = lineColor.copy(alpha = 0.25f),
-            radius = 8.dp.toPx(),
-            center = lastPoint
-        )
-        // Inner ring
-        drawCircle(
-            color = lineColor,
-            radius = 4.5.dp.toPx(),
-            center = lastPoint
-        )
-        // Core center dot
-        drawCircle(
-            color = Color.White,
-            radius = 2.dp.toPx(),
-            center = lastPoint
-        )
     }
 }
 
