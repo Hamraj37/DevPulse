@@ -21,6 +21,7 @@ import com.hamraj37.devpulse.data.model.TestStatus
 import com.hamraj37.devpulse.data.model.ThermalInfo
 import com.hamraj37.devpulse.data.telemetry.AppCategoryFilter
 import com.hamraj37.devpulse.data.telemetry.TelemetryRepository
+import com.hamraj37.devpulse.ui.screens.ToolType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -59,6 +60,7 @@ data class MainUiState(
     val appSearchQuery: String = "",
     val appCategoryFilter: String = AppCategoryFilter.USER.displayName, // "User" default
     val isToolsPageOpen: Boolean = false,
+    val initialTool: ToolType? = null,
     val isLoading: Boolean = false,
     val updateInfo: GithubReleaseInfo? = null,
     val showUpdateDialog: Boolean = false
@@ -107,7 +109,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun setToolsPageOpen(isOpen: Boolean) {
-        _uiState.update { it.copy(isToolsPageOpen = isOpen) }
+        _uiState.update { it.copy(isToolsPageOpen = isOpen, initialTool = if (!isOpen) null else it.initialTool) }
+    }
+
+    fun openTool(toolType: ToolType? = null) {
+        _uiState.update { it.copy(isToolsPageOpen = true, initialTool = toolType) }
     }
 
     fun selectCamera(cameraId: String) {

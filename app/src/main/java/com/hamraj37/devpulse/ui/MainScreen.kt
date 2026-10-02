@@ -87,6 +87,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hamraj37.devpulse.ui.screens.ToolType
 
 fun getRequiredPermissions(): Array<String> {
     val permissions = mutableListOf(
@@ -253,6 +254,7 @@ fun MainScreen(
         ) {
             ToolsScreen(
                 uiState = uiState,
+                initialTool = uiState.initialTool,
                 onBack = { viewModel.setToolsPageOpen(false) },
                 onNavigateToTab = { tab ->
                     viewModel.selectTab(tab)
@@ -365,6 +367,7 @@ fun TabContentScreen(
     uiState: MainUiState,
     onSelectTab: (AppTab) -> Unit = {},
     onSetToolsPageOpen: (Boolean) -> Unit = {},
+    onOpenTool: (ToolType) -> Unit = {},
     onSelectCamera: (String) -> Unit = {},
     onAppSearchQueryChange: (String) -> Unit = {},
     onAppCategoryFilterChange: (String) -> Unit = {},
@@ -383,7 +386,9 @@ fun TabContentScreen(
                 testsList = uiState.testsList,
                 onNavigateToTests = { onSelectTab(AppTab.TESTS) },
                 onNavigateToDisplay = { onSelectTab(AppTab.DISPLAY) },
-                onNavigateToTools = { onSetToolsPageOpen(true) }
+                onNavigateToTools = { onSetToolsPageOpen(true) },
+                onNavigateToAppAnalyzer = { onOpenTool(ToolType.APP_ANALYZER) },
+                onNavigateToExport = { onOpenTool(ToolType.EXPORT) }
             )
             AppTab.DEVICE -> DeviceScreen(uiState.deviceInfo)
             AppTab.SYSTEM -> SystemScreen(uiState.systemInfo)
@@ -426,6 +431,7 @@ fun TabContentScreen(
         uiState = uiState,
         onSelectTab = { viewModel.selectTab(it) },
         onSetToolsPageOpen = { viewModel.setToolsPageOpen(it) },
+        onOpenTool = { viewModel.openTool(it) },
         onSelectCamera = { viewModel.selectCamera(it) },
         onAppSearchQueryChange = { viewModel.setAppSearchQuery(it) },
         onAppCategoryFilterChange = { viewModel.setAppCategoryFilter(it) },

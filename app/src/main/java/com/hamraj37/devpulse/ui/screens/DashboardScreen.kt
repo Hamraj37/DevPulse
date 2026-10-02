@@ -71,6 +71,8 @@ fun DashboardScreen(
     onNavigateToTests: () -> Unit = {},
     onNavigateToDisplay: () -> Unit = {},
     onNavigateToTools: () -> Unit = {},
+    onNavigateToAppAnalyzer: () -> Unit = {},
+    onNavigateToExport: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -493,7 +495,7 @@ fun DashboardScreen(
                 }
 
                 Button(
-                    onClick = { Toast.makeText(context, "Running System Analysis...", Toast.LENGTH_SHORT).show() },
+                    onClick = onNavigateToAppAnalyzer,
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
                     shape = RoundedCornerShape(12.dp),
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 6.dp, vertical = 8.dp),
@@ -524,7 +526,7 @@ fun DashboardScreen(
                 }
 
                 Button(
-                    onClick = { Toast.makeText(context, "Exporting Specs Summary...", Toast.LENGTH_SHORT).show() },
+                    onClick = onNavigateToExport,
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
                     shape = RoundedCornerShape(12.dp),
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 6.dp, vertical = 8.dp),
