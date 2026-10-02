@@ -137,7 +137,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun loadStaticTelemetry() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+            _uiState.update { it.copy(isLoading = true) }
             val device = repository.getDeviceInfo()
             val system = repository.getSystemInfo()
             val network = repository.getNetworkInfo()
@@ -161,7 +162,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     sensorInfo = sensors,
                     appInfo = apps,
                     testsList = tests,
-                    selectedCameraId = defaultCameraId
+                    selectedCameraId = defaultCameraId,
+                    isLoading = false
                 )
             }
         }
