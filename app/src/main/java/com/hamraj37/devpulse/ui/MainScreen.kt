@@ -25,10 +25,17 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.BarChart
 import androidx.compose.material.icons.rounded.Build
+import androidx.compose.material.icons.rounded.GridView
+import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.PictureAsPdf
 import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material.icons.rounded.Router
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.Shield
+import androidx.compose.material.icons.rounded.SwapHoriz
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.material.icons.rounded.SystemUpdate
@@ -37,7 +44,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.Switch
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -237,6 +246,159 @@ fun MainScreen(
         }
     }
 
+    var showAboutDialog by remember { mutableStateOf(false) }
+    var showSettingsDialog by remember { mutableStateOf(false) }
+
+    if (showAboutDialog) {
+        val appVersion = remember {
+            try {
+                val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+                pInfo.versionName ?: "2.8"
+            } catch (_: Throwable) {
+                "2.8"
+            }
+        }
+
+        AlertDialog(
+            onDismissRequest = { showAboutDialog = false },
+            icon = {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                    contentDescription = "DevPulse Logo",
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                )
+            },
+            title = {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(text = "DevPulse", fontWeight = FontWeight.Bold)
+                    Text(
+                        text = "Version $appVersion",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            },
+            text = {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.verticalScroll(rememberScrollState())
+                ) {
+                    Text(
+                        text = "Real-time hardware telemetry, system diagnostics, and developer tools for Android.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                    Text(
+                        text = "Features:",
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "• System, CPU, RAM & Battery Gauges\n• Floating Performance Overlays\n• Wi-Fi & Network Signal Analyzer\n• App Permission & Target SDK Inspector\n• Hardware Sensor & Camera Directory\n• Custom Telemetry Report Exporter",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            },
+            confirmButton = {
+                Button(onClick = { showAboutDialog = false }) {
+                    Text("Close")
+                }
+            }
+        )
+    }
+
+    if (showSettingsDialog) {
+        var autoRefresh by remember { mutableStateOf(true) }
+        var celsiusUnit by remember { mutableStateOf(true) }
+
+        AlertDialog(
+            onDismissRequest = { showSettingsDialog = false },
+            icon = {
+                Icon(
+                    imageVector = Icons.Rounded.Settings,
+                    contentDescription = "Settings",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            },
+            title = {
+                Text(text = "App Settings", fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.verticalScroll(rememberScrollState())
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Auto-Refresh Telemetry",
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
+                            )
+                            Text(
+                                text = "Continuously poll live CPU, RAM & Network stats",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Switch(
+                            checked = autoRefresh,
+                            onCheckedChange = { autoRefresh = it }
+                        )
+                    }
+
+                    HorizontalDivider()
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Temperature Unit (°C)",
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
+                            )
+                            Text(
+                                text = "Use Celsius for battery & thermal sensors",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Switch(
+                            checked = celsiusUnit,
+                            onCheckedChange = { celsiusUnit = it }
+                        )
+                    }
+
+                    HorizontalDivider()
+
+                    Button(
+                        onClick = {
+                            showSettingsDialog = false
+                            viewModel.openTool(ToolType.FLOATING_MONITORS)
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Text("Configure Floating Monitors")
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showSettingsDialog = false }) {
+                    Text("Done")
+                }
+            }
+        )
+    }
+
     BackHandler(enabled = uiState.selectedTab != AppTab.DASHBOARD || uiState.isToolsPageOpen) {
         if (uiState.isToolsPageOpen) {
             viewModel.setToolsPageOpen(false)
@@ -352,20 +514,84 @@ fun MainScreen(
                                             viewModel.refreshTelemetry()
                                         }
                                     )
+
+                                    HorizontalDivider()
+
                                     DropdownMenuItem(
-                                        text = { Text("Tools Page") },
+                                        text = { Text("App Analyzer") },
                                         leadingIcon = {
                                             Icon(
-                                                imageVector = Icons.Rounded.Build,
+                                                imageVector = Icons.Rounded.BarChart,
                                                 contentDescription = null,
                                                 modifier = Modifier.size(20.dp)
                                             )
                                         },
                                         onClick = {
                                             showTopMenu = false
-                                            viewModel.setToolsPageOpen(true)
+                                            viewModel.openTool(ToolType.APP_ANALYZER)
                                         }
                                     )
+
+                                    DropdownMenuItem(
+                                        text = { Text("Wi-Fi Analyzer") },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = Icons.Rounded.Router,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        },
+                                        onClick = {
+                                            showTopMenu = false
+                                            viewModel.openTool(ToolType.WIFI_ANALYZER)
+                                        }
+                                    )
+
+                                    DropdownMenuItem(
+                                        text = { Text("Permissions") },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = Icons.Rounded.Shield,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        },
+                                        onClick = {
+                                            showTopMenu = false
+                                            viewModel.openTool(ToolType.PERMISSIONS)
+                                        }
+                                    )
+
+                                    DropdownMenuItem(
+                                        text = { Text("Data Usage") },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = Icons.Rounded.SwapHoriz,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        },
+                                        onClick = {
+                                            showTopMenu = false
+                                            viewModel.openTool(ToolType.DATA_USAGE)
+                                        }
+                                    )
+
+                                    DropdownMenuItem(
+                                        text = { Text("Widgets") },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = Icons.Rounded.GridView,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        },
+                                        onClick = {
+                                            showTopMenu = false
+                                            viewModel.openTool(ToolType.WIDGETS)
+                                        }
+                                    )
+
                                     DropdownMenuItem(
                                         text = { Text("Export System Report") },
                                         leadingIcon = {
@@ -378,6 +604,38 @@ fun MainScreen(
                                         onClick = {
                                             showTopMenu = false
                                             viewModel.openTool(ToolType.EXPORT)
+                                        }
+                                    )
+
+                                    HorizontalDivider()
+
+                                    DropdownMenuItem(
+                                        text = { Text("Settings") },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = Icons.Rounded.Settings,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        },
+                                        onClick = {
+                                            showTopMenu = false
+                                            showSettingsDialog = true
+                                        }
+                                    )
+
+                                    DropdownMenuItem(
+                                        text = { Text("About DevPulse") },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = Icons.Rounded.Info,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        },
+                                        onClick = {
+                                            showTopMenu = false
+                                            showAboutDialog = true
                                         }
                                     )
                                 }
