@@ -425,6 +425,8 @@ fun MainScreen(
             ToolsScreen(
                 uiState = uiState,
                 initialTool = uiState.initialTool,
+                onThemeModeChange = { viewModel.setThemeMode(it) },
+                onUseSystemColorsChange = { viewModel.setUseSystemColors(it) },
                 onBack = { viewModel.setToolsPageOpen(false) },
                 onNavigateToTab = { tab ->
                     viewModel.selectTab(tab)

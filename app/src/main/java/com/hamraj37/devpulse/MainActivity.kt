@@ -5,10 +5,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hamraj37.devpulse.ui.MainScreen
 import com.hamraj37.devpulse.ui.MainViewModel
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
@@ -22,7 +25,18 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            DevPulseTheme {
+            val uiState by mainViewModel.uiState.collectAsStateWithLifecycle()
+            val systemDark = isSystemInDarkTheme()
+            val darkTheme = when (uiState.themeMode) {
+                "Light" -> false
+                "Dark" -> true
+                else -> systemDark
+            }
+
+            DevPulseTheme(
+                darkTheme = darkTheme,
+                dynamicColor = uiState.useSystemColors
+            ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

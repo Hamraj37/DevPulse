@@ -1,6 +1,7 @@
 package com.hamraj37.devpulse.ui
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.hamraj37.devpulse.data.model.AppInfo
@@ -62,6 +63,8 @@ data class MainUiState(
     val isToolsPageOpen: Boolean = false,
     val initialTool: ToolType? = null,
     val isLoading: Boolean = false,
+    val themeMode: String = "System default", // "System default", "Light", "Dark"
+    val useSystemColors: Boolean = true,
     val updateInfo: GithubReleaseInfo? = null,
     val showUpdateDialog: Boolean = false
 )
@@ -69,14 +72,33 @@ data class MainUiState(
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository = TelemetryRepository(application)
+    private val prefs = application.getSharedPreferences("devpulse_prefs", Context.MODE_PRIVATE)
 
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
     init {
+        val savedTheme = prefs.getString("theme_mode", "System default") ?: "System default"
+        val savedSystemColors = prefs.getBoolean("use_system_colors", true)
+        _uiState.update {
+            it.copy(
+                themeMode = savedTheme,
+                useSystemColors = savedSystemColors
+            )
+        }
         loadStaticTelemetry()
         observeDynamicTelemetry()
         checkForUpdate()
+    }
+
+    fun setThemeMode(mode: String) {
+        prefs.edit().putString("theme_mode", mode).apply()
+        _uiState.update { it.copy(themeMode = mode) }
+    }
+
+    fun setUseSystemColors(use: Boolean) {
+        prefs.edit().putBoolean("use_system_colors", use).apply()
+        _uiState.update { it.copy(useSystemColors = use) }
     }
 
     fun dismissUpdateDialog() {

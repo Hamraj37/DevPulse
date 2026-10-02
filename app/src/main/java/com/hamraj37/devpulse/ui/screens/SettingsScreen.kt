@@ -44,6 +44,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import com.hamraj37.devpulse.ui.MainUiState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,6 +60,9 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun SettingsScreen(
+    uiState: MainUiState = MainUiState(),
+    onThemeModeChange: (String) -> Unit = {},
+    onUseSystemColorsChange: (Boolean) -> Unit = {},
     onBack: (() -> Unit)? = null,
     onNavigateToExport: (() -> Unit)? = null,
     modifier: Modifier = Modifier
@@ -69,8 +73,6 @@ fun SettingsScreen(
 
     val context = LocalContext.current
 
-    var selectedTheme by remember { mutableStateOf("System default") }
-    var useSystemColors by remember { mutableStateOf(true) }
     var selectedThemeColor by remember { mutableStateOf("Blue") }
     var selectedLanguage by remember { mutableStateOf("System default") }
 
@@ -175,7 +177,7 @@ fun SettingsScreen(
             SettingsItemRow(
                 icon = Icons.Rounded.NightsStay,
                 title = "Theme",
-                subtitle = selectedTheme,
+                subtitle = uiState.themeMode,
                 onClick = { showThemeDialog = true }
             )
 
@@ -185,8 +187,8 @@ fun SettingsScreen(
                 subtitle = "Match the colors from your wallpaper",
                 trailing = {
                     Switch(
-                        checked = useSystemColors,
-                        onCheckedChange = { useSystemColors = it }
+                        checked = uiState.useSystemColors,
+                        onCheckedChange = { onUseSystemColorsChange(it) }
                     )
                 }
             )
@@ -194,10 +196,10 @@ fun SettingsScreen(
             SettingsItemRow(
                 icon = Icons.Rounded.ColorLens,
                 title = "Theme color",
-                subtitle = if (useSystemColors) "Dynamic Material You" else selectedThemeColor,
-                enabled = !useSystemColors,
+                subtitle = if (uiState.useSystemColors) "Dynamic Material You" else selectedThemeColor,
+                enabled = !uiState.useSystemColors,
                 onClick = {
-                    if (!useSystemColors) {
+                    if (!uiState.useSystemColors) {
                         showColorDialog = true
                     }
                 }
@@ -313,15 +315,15 @@ fun SettingsScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    selectedTheme = option
+                                    onThemeModeChange(option)
                                     showThemeDialog = false
                                 }
                                 .padding(vertical = 8.dp)
                         ) {
                             RadioButton(
-                                selected = selectedTheme == option,
+                                selected = uiState.themeMode == option,
                                 onClick = {
-                                    selectedTheme = option
+                                    onThemeModeChange(option)
                                     showThemeDialog = false
                                 }
                             )
