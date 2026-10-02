@@ -70,7 +70,8 @@ enum class ToolType {
     COMPASS,
     EXPORT,
     APP_ANALYZER,
-    SETTINGS
+    SETTINGS,
+    ABOUT
 }
 
 data class ToolItemData(
@@ -222,7 +223,11 @@ fun ToolsScreen(
                     onUseSystemColorsChange = onUseSystemColorsChange,
                     onThemeColorChange = onThemeColorChange,
                     onBack = handleToolBack,
-                    onNavigateToExport = { selectedTool = ToolType.EXPORT }
+                    onNavigateToExport = { selectedTool = ToolType.EXPORT },
+                    onNavigateToAbout = { selectedTool = ToolType.ABOUT }
+                )
+                ToolType.ABOUT -> AboutScreen(
+                    onBack = handleToolBack
                 )
                 else -> {}
             }

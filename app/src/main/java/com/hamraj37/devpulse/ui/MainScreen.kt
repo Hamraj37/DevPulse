@@ -638,7 +638,7 @@ fun MainScreen(
                                         },
                                         onClick = {
                                             showTopMenu = false
-                                            showAboutDialog = true
+                                            viewModel.openTool(ToolType.ABOUT)
                                         }
                                     )
                                 }

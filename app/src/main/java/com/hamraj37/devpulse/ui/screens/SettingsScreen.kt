@@ -66,6 +66,7 @@ fun SettingsScreen(
     onThemeColorChange: (String) -> Unit = {},
     onBack: (() -> Unit)? = null,
     onNavigateToExport: (() -> Unit)? = null,
+    onNavigateToAbout: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     if (onBack != null) {
@@ -293,7 +294,11 @@ fun SettingsScreen(
                 title = "App Version",
                 subtitle = appVersionText,
                 onClick = {
-                    Toast.makeText(context, "DevPulse $appVersionText is up to date", Toast.LENGTH_SHORT).show()
+                    if (onNavigateToAbout != null) {
+                        onNavigateToAbout()
+                    } else {
+                        Toast.makeText(context, "DevPulse $appVersionText is up to date", Toast.LENGTH_SHORT).show()
+                    }
                 }
             )
         }
