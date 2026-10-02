@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hamraj37.devpulse.data.model.DisplayInfo
+import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
 
 @Composable
@@ -289,7 +290,7 @@ fun DisplayItemRow(
 @Preview(showBackground = true)
 @Composable
 fun DisplayScreenPreview() {
-    MaterialTheme {
+    DevPulseTheme {
         DisplayScreen(displayInfo = DisplayInfo())
     }
 }

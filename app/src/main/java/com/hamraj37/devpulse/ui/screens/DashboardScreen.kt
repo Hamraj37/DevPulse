@@ -46,8 +46,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.data.model.DashboardInfo
 import com.hamraj37.devpulse.data.model.TestItem
 import com.hamraj37.devpulse.data.model.TestStatus
@@ -802,5 +804,28 @@ fun saveTestsReport(context: Context, testsList: List<TestItem>) {
         Toast.makeText(context, "Report saved to ${file.name}", Toast.LENGTH_LONG).show()
     } catch (e: Exception) {
         Toast.makeText(context, "Failed to save report: ${e.message}", Toast.LENGTH_SHORT).show()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DashboardScreenPreview() {
+    DevPulseTheme {
+        DashboardScreen(
+            dashboardInfo = DashboardInfo(
+                ramTotalBytes = 12L * 1024 * 1024 * 1024,
+                ramUsedBytes = 5L * 1024 * 1024 * 1024,
+                ramHistory = listOf(30f, 45f, 40f, 55f, 50f, 65f, 60f),
+                cpuCoreFrequencies = listOf(1800, 1800, 1800, 1800, 2400, 2400, 2400, 3200),
+                storageTotalBytes = 256L * 1024 * 1024 * 1024,
+                storageUsedBytes = 100L * 1024 * 1024 * 1024,
+                batteryLevel = 85,
+                batteryChargingStatus = "Discharging"
+            ),
+            testsList = emptyList(),
+            onNavigateToTests = {},
+            onNavigateToDisplay = {},
+            onNavigateToTools = {}
+        )
     }
 }

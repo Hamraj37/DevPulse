@@ -25,9 +25,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hamraj37.devpulse.data.model.CpuCoreSpeed
 import com.hamraj37.devpulse.data.model.CpuInfo
+import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -219,6 +222,27 @@ fun CpuItemRow(
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(1.3f)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CpuScreenPreview() {
+    DevPulseTheme {
+        CpuScreen(
+            cpuInfo = CpuInfo(
+                coreFrequencies = listOf(
+                    CpuCoreSpeed(0, 1800, 800, 3200),
+                    CpuCoreSpeed(1, 1800, 800, 3200),
+                    CpuCoreSpeed(2, 1800, 800, 3200),
+                    CpuCoreSpeed(3, 1800, 800, 3200),
+                    CpuCoreSpeed(4, 2400, 800, 3200),
+                    CpuCoreSpeed(5, 2400, 800, 3200),
+                    CpuCoreSpeed(6, 2400, 800, 3200),
+                    CpuCoreSpeed(7, 3200, 800, 3200)
+                )
+            )
         )
     }
 }

@@ -27,8 +27,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hamraj37.devpulse.data.model.SystemInfo
+import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 
 @Composable
 fun SystemScreen(
@@ -229,6 +231,16 @@ fun SystemItemRow(
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(1.3f)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SystemScreenPreview() {
+    DevPulseTheme {
+        SystemScreen(
+            systemInfo = SystemInfo()
         )
     }
 }

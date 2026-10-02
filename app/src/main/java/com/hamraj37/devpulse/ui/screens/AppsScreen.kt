@@ -54,11 +54,13 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.data.model.AppInfo
 import com.hamraj37.devpulse.data.model.AppSpec
 import com.hamraj37.devpulse.data.telemetry.AppCategoryFilter
+import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -631,4 +633,44 @@ fun formatTime(timeMs: Long): String {
     if (timeMs <= 0) return "System Default"
     val sdf = java.text.SimpleDateFormat("MMM dd, yyyy", java.util.Locale.getDefault())
     return sdf.format(java.util.Date(timeMs))
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AppsScreenPreview() {
+    DevPulseTheme {
+        AppsScreen(
+            appInfo = AppInfo(
+                totalApps = 128,
+                userAppsCount = 48,
+                systemAppsCount = 80,
+                appsList = listOf(
+                    AppSpec(
+                        appName = "DevPulse",
+                        packageName = "com.hamraj37.devpulse",
+                        versionName = "1.0.0",
+                        versionCode = 1,
+                        appSizeBytes = 25 * 1024 * 1024L,
+                        isSystemApp = false,
+                        installedTimeMs = System.currentTimeMillis(),
+                        updatedTimeMs = System.currentTimeMillis()
+                    ),
+                    AppSpec(
+                        appName = "Android System",
+                        packageName = "android",
+                        versionName = "14.0",
+                        versionCode = 34,
+                        appSizeBytes = 120 * 1024 * 1024L,
+                        isSystemApp = true,
+                        installedTimeMs = System.currentTimeMillis(),
+                        updatedTimeMs = System.currentTimeMillis()
+                    )
+                )
+            ),
+            searchQuery = "",
+            categoryFilter = "User",
+            onSearchQueryChange = {},
+            onCategoryFilterChange = {}
+        )
+    }
 }

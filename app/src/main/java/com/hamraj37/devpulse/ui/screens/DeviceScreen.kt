@@ -22,8 +22,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hamraj37.devpulse.data.model.DeviceInfo
+import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 
 @Composable
 fun DeviceScreen(
@@ -173,6 +175,31 @@ fun DeviceItemRow(
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(1.3f)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DeviceScreenPreview() {
+    DevPulseTheme {
+        DeviceScreen(
+            deviceInfo = DeviceInfo(
+                deviceName = "Pixel 8 Pro",
+                model = "Pixel 8 Pro",
+                manufacturer = "Google",
+                brand = "google",
+                board = "husky",
+                hardware = "zuma",
+                deviceCode = "husky",
+                androidDeviceId = "a1b2c3d4e5f6g7h8",
+                buildFingerprint = "google/husky/husky:14/UD1A.230803.041/10800000:user/release-keys",
+                deviceType = "Smartphone",
+                esimSupported = true,
+                networkType = "5G NR / LTE Advanced",
+                networkOperator1 = "Jio 5G",
+                networkOperator2 = "Airtel"
+            )
         )
     }
 }

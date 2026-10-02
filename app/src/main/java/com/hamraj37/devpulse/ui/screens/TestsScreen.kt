@@ -79,11 +79,13 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.hamraj37.devpulse.data.model.TestItem
 import com.hamraj37.devpulse.data.model.TestStatus
+import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -1003,4 +1005,20 @@ fun GpsTestContent(context: Context) {
 @Composable
 fun GenericTestContent() {
     Text("Hardware test active. Verify function and record status.")
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TestsScreenPreview() {
+    DevPulseTheme {
+        TestsScreen(
+            testsList = listOf(
+                TestItem("screen", "Display Touch", "Interactive", "Test multi-touch and display digitizer", TestStatus.PASSED),
+                TestItem("vibration", "Vibration Motor", "Interactive", "Verify haptic feedback motor", TestStatus.PASSED),
+                TestItem("speaker", "Loudspeaker & Audio", "Interactive", "Play stereo audio tone test", TestStatus.NOT_TESTED),
+                TestItem("flashlight", "Camera Flashlight", "Automatic", "Test LED flash hardware toggle", TestStatus.FAILED)
+            ),
+            onUpdateTestStatus = { _, _ -> }
+        )
+    }
 }

@@ -35,10 +35,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.data.model.CameraInfo
 import com.hamraj37.devpulse.data.model.CameraSpec
+import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -387,6 +389,31 @@ fun CameraSpecRow(
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(1.2f)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CameraScreenPreview() {
+    DevPulseTheme {
+        CameraScreen(
+            cameraInfo = CameraInfo(
+                cameras = listOf(
+                    CameraSpec(
+                        cameraId = "0",
+                        facing = "Back Camera",
+                        resolutionMp = "50 MP - Back 8192 x 6144"
+                    ),
+                    CameraSpec(
+                        cameraId = "1",
+                        facing = "Front Camera",
+                        resolutionMp = "12 MP - Front 4000 x 3000"
+                    )
+                )
+            ),
+            selectedCameraId = "0",
+            onSelectCamera = {}
         )
     }
 }

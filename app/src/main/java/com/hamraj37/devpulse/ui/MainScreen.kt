@@ -61,6 +61,9 @@ import androidx.compose.runtime.key
 import androidx.compose.ui.res.painterResource
 import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.model.AppTab
+import com.hamraj37.devpulse.data.model.DashboardInfo
+import com.hamraj37.devpulse.data.model.DeviceInfo
+import com.hamraj37.devpulse.data.model.TestStatus
 import com.hamraj37.devpulse.ui.components.DevPulseTabRow
 import com.hamraj37.devpulse.ui.screens.AppsScreen
 import com.hamraj37.devpulse.ui.screens.BatteryScreen
@@ -360,7 +363,12 @@ fun MainScreen(
 fun TabContentScreen(
     tab: AppTab,
     uiState: MainUiState,
-    viewModel: MainViewModel
+    onSelectTab: (AppTab) -> Unit = {},
+    onSetToolsPageOpen: (Boolean) -> Unit = {},
+    onSelectCamera: (String) -> Unit = {},
+    onAppSearchQueryChange: (String) -> Unit = {},
+    onAppCategoryFilterChange: (String) -> Unit = {},
+    onUpdateTestStatus: (String, TestStatus) -> Unit = { _, _ -> }
 ) {
     Column(
         modifier = Modifier
@@ -373,9 +381,9 @@ fun TabContentScreen(
             AppTab.DASHBOARD -> DashboardScreen(
                 dashboardInfo = uiState.dashboardInfo,
                 testsList = uiState.testsList,
-                onNavigateToTests = { viewModel.selectTab(AppTab.TESTS) },
-                onNavigateToDisplay = { viewModel.selectTab(AppTab.DISPLAY) },
-                onNavigateToTools = { viewModel.setToolsPageOpen(true) }
+                onNavigateToTests = { onSelectTab(AppTab.TESTS) },
+                onNavigateToDisplay = { onSelectTab(AppTab.DISPLAY) },
+                onNavigateToTools = { onSetToolsPageOpen(true) }
             )
             AppTab.DEVICE -> DeviceScreen(uiState.deviceInfo)
             AppTab.SYSTEM -> SystemScreen(uiState.systemInfo)
@@ -390,21 +398,39 @@ fun TabContentScreen(
             AppTab.CAMERA -> CameraScreen(
                 cameraInfo = uiState.cameraInfo,
                 selectedCameraId = uiState.selectedCameraId,
-                onSelectCamera = { viewModel.selectCamera(it) }
+                onSelectCamera = onSelectCamera
             )
             AppTab.APPS -> AppsScreen(
                 appInfo = uiState.appInfo,
                 searchQuery = uiState.appSearchQuery,
                 categoryFilter = uiState.appCategoryFilter,
-                onSearchQueryChange = { viewModel.setAppSearchQuery(it) },
-                onCategoryFilterChange = { viewModel.setAppCategoryFilter(it) }
+                onSearchQueryChange = onAppSearchQueryChange,
+                onCategoryFilterChange = onAppCategoryFilterChange
             )
             AppTab.TESTS -> TestsScreen(
                 testsList = uiState.testsList,
-                onUpdateTestStatus = { testId, status -> viewModel.updateTestStatus(testId, status) }
+                onUpdateTestStatus = onUpdateTestStatus
             )
         }
     }
+}
+
+@Composable
+fun TabContentScreen(
+    tab: AppTab,
+    uiState: MainUiState,
+    viewModel: MainViewModel
+) {
+    TabContentScreen(
+        tab = tab,
+        uiState = uiState,
+        onSelectTab = { viewModel.selectTab(it) },
+        onSetToolsPageOpen = { viewModel.setToolsPageOpen(it) },
+        onSelectCamera = { viewModel.selectCamera(it) },
+        onAppSearchQueryChange = { viewModel.setAppSearchQuery(it) },
+        onAppCategoryFilterChange = { viewModel.setAppCategoryFilter(it) },
+        onUpdateTestStatus = { testId, status -> viewModel.updateTestStatus(testId, status) }
+    )
 }
 
 fun getTabDescription(tab: AppTab): String {
@@ -426,12 +452,26 @@ fun getTabDescription(tab: AppTab): String {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
     DevPulseTheme {
-        Surface {
-            Text(text = "MainScreen Preview")
+        Surface(modifier = Modifier.fillMaxSize()) {
+            TabContentScreen(
+                tab = AppTab.DASHBOARD,
+                uiState = MainUiState(
+                    deviceInfo = DeviceInfo(deviceName = "Pixel 8 Pro", model = "Pixel 8 Pro"),
+                    dashboardInfo = DashboardInfo(
+                        ramTotalBytes = 12L * 1024 * 1024 * 1024,
+                        ramUsedBytes = 5L * 1024 * 1024 * 1024,
+                        ramHistory = listOf(30f, 45f, 40f, 55f, 50f, 65f, 60f),
+                        storageTotalBytes = 256L * 1024 * 1024 * 1024,
+                        storageUsedBytes = 100L * 1024 * 1024 * 1024,
+                        batteryLevel = 85,
+                        batteryChargingStatus = "Discharging"
+                    )
+                )
+            )
         }
     }
 }

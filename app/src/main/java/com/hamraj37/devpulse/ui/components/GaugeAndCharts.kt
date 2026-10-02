@@ -23,9 +23,11 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 
 @Composable
 fun CircularRamGauge(
@@ -202,6 +204,27 @@ fun LiveSparklineChart(
             color = lineColor,
             radius = 2.dp.toPx(),
             center = lastPoint
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CircularRamGaugePreview() {
+    DevPulseTheme {
+        CircularRamGauge(percentage = 65)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LiveSparklineChartPreview() {
+    DevPulseTheme {
+        LiveSparklineChart(
+            history = listOf(10f, 25f, 18f, 40f, 35f, 60f, 52f, 80f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp)
         )
     }
 }

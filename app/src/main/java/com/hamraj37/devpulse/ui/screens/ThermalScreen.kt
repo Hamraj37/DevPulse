@@ -27,10 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.data.model.ThermalInfo
 import com.hamraj37.devpulse.data.model.ThermalZone
+import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
 import java.util.Locale
 
@@ -249,5 +251,24 @@ fun ThermalCardItem(
                 color = tempColor
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ThermalScreenPreview() {
+    DevPulseTheme {
+        ThermalScreen(
+            thermalInfo = ThermalInfo(
+                overallStatus = "Normal",
+                thermalHeadroom = 1.0f,
+                thermalZones = listOf(
+                    ThermalZone("CPU Thermal", 36.5f, "CPU"),
+                    ThermalZone("GPU Thermal", 38.0f, "GPU"),
+                    ThermalZone("Battery Temp", 32.5f, "Battery"),
+                    ThermalZone("Modem", 42.0f, "Cellular")
+                )
+            )
+        )
     }
 }

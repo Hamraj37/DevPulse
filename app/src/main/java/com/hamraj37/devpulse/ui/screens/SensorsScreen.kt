@@ -52,10 +52,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.data.model.SensorInfo
 import com.hamraj37.devpulse.data.model.SensorSpec
+import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
 import java.util.Locale
 
@@ -430,5 +432,40 @@ fun getSensorIcon(sensorType: Int): ImageVector {
         Sensor.TYPE_PROXIMITY -> Icons.Rounded.CompassCalibration
         Sensor.TYPE_STEP_COUNTER, Sensor.TYPE_STEP_DETECTOR -> Icons.AutoMirrored.Rounded.DirectionsWalk
         else -> Icons.Rounded.Sensors
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SensorsScreenPreview() {
+    DevPulseTheme {
+        SensorsScreen(
+            sensorInfo = SensorInfo(
+                sensorCount = 42,
+                sensors = listOf(
+                    SensorSpec(
+                        name = "LSM6DSO Accelerometer",
+                        vendor = "STMicroelectronics",
+                        type = Sensor.TYPE_ACCELEROMETER,
+                        typeName = "Accelerometer",
+                        powerMa = 0.17f
+                    ),
+                    SensorSpec(
+                        name = "LSM6DSO Gyroscope",
+                        vendor = "STMicroelectronics",
+                        type = Sensor.TYPE_GYROSCOPE,
+                        typeName = "Gyroscope",
+                        powerMa = 0.55f
+                    ),
+                    SensorSpec(
+                        name = "TMD2755 Light & Proximity",
+                        vendor = "AMS",
+                        type = Sensor.TYPE_LIGHT,
+                        typeName = "Light Sensor",
+                        powerMa = 0.05f
+                    )
+                )
+            )
+        )
     }
 }

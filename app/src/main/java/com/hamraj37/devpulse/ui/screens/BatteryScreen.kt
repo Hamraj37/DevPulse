@@ -26,10 +26,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.data.model.BatteryInfo
 import com.hamraj37.devpulse.ui.components.LiveSparklineChart
+import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
 
 @Composable
@@ -243,6 +245,18 @@ fun BatteryItemRow(
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(1.3f)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BatteryScreenPreview() {
+    DevPulseTheme {
+        BatteryScreen(
+            batteryInfo = BatteryInfo(
+                powerHistory = listOf(3.8f, 3.9f, 4.0f, 4.1f, 4.15f, 4.12f, 4.15f)
+            )
         )
     }
 }

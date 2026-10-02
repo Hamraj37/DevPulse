@@ -28,8 +28,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hamraj37.devpulse.data.model.MemoryInfo
+import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 
 @Composable
 fun MemoryScreen(
@@ -290,5 +292,15 @@ fun ZramProgressCard(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MemoryScreenPreview() {
+    DevPulseTheme {
+        MemoryScreen(
+            memoryInfo = MemoryInfo()
+        )
     }
 }
