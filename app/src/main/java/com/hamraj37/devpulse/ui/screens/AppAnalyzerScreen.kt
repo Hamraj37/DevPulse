@@ -22,7 +22,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Android
 import androidx.compose.material.icons.rounded.Apps
 import androidx.compose.material.icons.rounded.BugReport
@@ -36,12 +35,15 @@ import androidx.compose.material.icons.rounded.Storefront
 import androidx.compose.material.icons.rounded.SystemUpdate
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,6 +60,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hamraj37.devpulse.data.model.AppSpec
 import com.hamraj37.devpulse.ui.MainUiState
 import java.util.Locale
 
@@ -118,9 +121,15 @@ fun DonutChart(
 }
 
 @Composable
-fun AppAnalyzerCardItem(item: AnalyzerItem, total: Int) {
+fun AppAnalyzerCardItem(
+    item: AnalyzerItem,
+    total: Int,
+    onClick: () -> Unit
+) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
@@ -240,6 +249,9 @@ fun AppAnalyzerScreen(
     var selectedTab by remember { mutableStateOf("Installer") }
     val tabs = listOf("Installer", "Target", "Minimum", "Signature", "Permissions")
 
+    var selectedCategoryItem by remember { mutableStateOf<AnalyzerItem?>(null) }
+    var selectedAppForDetail by remember { mutableStateOf<AppSpec?>(null) }
+
     val apps = uiState.appInfo.appsList
     val systemCount = apps.count { it.isSystemApp }
     val userCount = apps.count { !it.isSystemApp }
@@ -319,6 +331,24 @@ fun AppAnalyzerScreen(
 
     val sumTotal = items.sumOf { it.count }.coerceAtLeast(1)
 
+    if (selectedCategoryItem != null) {
+        CategoryAppListBottomSheet(
+            categoryItem = selectedCategoryItem!!,
+            allApps = apps,
+            onSelectApp = { app ->
+                selectedAppForDetail = app
+            },
+            onDismissRequest = { selectedCategoryItem = null }
+        )
+    }
+
+    if (selectedAppForDetail != null) {
+        AppDetailBottomSheet(
+            app = selectedAppForDetail!!,
+            onDismissRequest = { selectedAppForDetail = null }
+        )
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -338,99 +368,253 @@ fun AppAnalyzerScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-        // Top Filter Tabs Row
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            tabs.forEach { tab ->
-                val isSelected = selectedTab == tab
-                Surface(
-                    shape = RoundedCornerShape(14.dp),
-                    color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
+            // Top Filter Tabs Row
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                tabs.forEach { tab ->
+                    val isSelected = selectedTab == tab
+                    Surface(
+                        shape = RoundedCornerShape(14.dp),
+                        color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(14.dp))
+                            .clickable { selectedTab = tab }
+                    ) {
+                        Text(
+                            text = tab,
+                            modifier = Modifier.padding(horizontal = 18.dp, vertical = 10.dp),
+                            style = MaterialTheme.typography.labelLarge.copy(
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                fontSize = 14.5.sp
+                            ),
+                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+            }
+
+            // Distribution Card (Legend + Donut Chart)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                ),
+                shape = RoundedCornerShape(24.dp)
+            ) {
+                Row(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(14.dp))
-                        .clickable { selectedTab = tab }
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = tab,
-                        modifier = Modifier.padding(horizontal = 18.dp, vertical = 10.dp),
-                        style = MaterialTheme.typography.labelLarge.copy(
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                            fontSize = 14.5.sp
-                        ),
-                        color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+                    // Legend list on left
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        items.forEach { item ->
+                            val percentage = if (sumTotal > 0) (item.count.toFloat() / sumTotal.toFloat()) * 100f else 0f
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(9.dp)
+                                        .background(item.color, CircleShape)
+                                )
+                                Text(
+                                    text = "${String.format(Locale.US, "%.1f", percentage)}% - ${item.label}",
+                                    style = MaterialTheme.typography.bodySmall.copy(
+                                        fontWeight = FontWeight.Medium,
+                                        fontSize = 11.5.sp
+                                    ),
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    // Donut Chart on right
+                    DonutChart(
+                        items = items,
+                        total = sumTotal,
+                        modifier = Modifier.size(150.dp)
+                    )
+                }
+            }
+
+            // Breakdown Item Cards List
+            Column(
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                items.forEach { item ->
+                    AppAnalyzerCardItem(
+                        item = item,
+                        total = sumTotal,
+                        onClick = { selectedCategoryItem = item }
                     )
                 }
             }
         }
+    }
+}
 
-        // Distribution Card (Legend + Donut Chart)
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-            ),
-            shape = RoundedCornerShape(24.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Legend list on left
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    items.forEach { item ->
-                        val percentage = if (sumTotal > 0) (item.count.toFloat() / sumTotal.toFloat()) * 100f else 0f
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(9.dp)
-                                    .background(item.color, CircleShape)
-                            )
-                            Text(
-                                text = "${String.format(Locale.US, "%.1f", percentage)}% - ${item.label}",
-                                style = MaterialTheme.typography.bodySmall.copy(
-                                    fontWeight = FontWeight.Medium,
-                                    fontSize = 11.5.sp
-                                ),
-                                color = MaterialTheme.colorScheme.onSurface,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                    }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CategoryAppListBottomSheet(
+    categoryItem: AnalyzerItem,
+    allApps: List<AppSpec>,
+    onSelectApp: (AppSpec) -> Unit,
+    onDismissRequest: () -> Unit
+) {
+    val categoryApps = remember(categoryItem, allApps) {
+        when {
+            categoryItem.label.contains("Pre-Installed", ignoreCase = true) ->
+                allApps.filter { it.isSystemApp }
+            categoryItem.label.contains("Play Store", ignoreCase = true) ->
+                allApps.filter { !it.isSystemApp && (it.installSource.contains("Play Store", true) || it.packageName.startsWith("com.google.")) }
+            categoryItem.label.contains("Package installer", ignoreCase = true) ->
+                allApps.filter { !it.isSystemApp }
+            categoryItem.label.contains("User", ignoreCase = true) ->
+                allApps.filter { !it.isSystemApp }
+            else -> {
+                val filtered = if (categoryItem.label.contains("System", ignoreCase = true)) {
+                    allApps.filter { it.isSystemApp }
+                } else {
+                    allApps.filter { !it.isSystemApp }
                 }
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                // Donut Chart on right
-                DonutChart(
-                    items = items,
-                    total = sumTotal,
-                    modifier = Modifier.size(150.dp)
-                )
-            }
-        }
-
-        // Breakdown Item Cards List
-        Column(
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            items.forEach { item ->
-                AppAnalyzerCardItem(item = item, total = sumTotal)
+                filtered.ifEmpty { allApps.take(20) }
             }
         }
     }
-}
+
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest,
+        sheetState = rememberModalBottomSheetState()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = categoryItem.color.copy(alpha = 0.15f),
+                        modifier = Modifier.size(44.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = getIconForLabel(categoryItem.label),
+                                contentDescription = null,
+                                tint = categoryItem.color,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+
+                    Column {
+                        Text(
+                            text = categoryItem.label,
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                        )
+                        Text(
+                            text = "${categoryApps.size} Applications",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+
+            HorizontalDivider()
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(380.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                if (categoryApps.isNotEmpty()) {
+                    categoryApps.forEach { app ->
+                        Surface(
+                            shape = RoundedCornerShape(16.dp),
+                            color = MaterialTheme.colorScheme.surfaceContainerLow,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onSelectApp(app) }
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                AppIconImage(
+                                    packageName = app.packageName,
+                                    modifier = Modifier
+                                        .size(42.dp)
+                                        .clip(RoundedCornerShape(10.dp))
+                                )
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = app.appName,
+                                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    Text(
+                                        text = app.packageName,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                                Surface(
+                                    shape = RoundedCornerShape(8.dp),
+                                    color = MaterialTheme.colorScheme.surfaceContainerHigh
+                                ) {
+                                    Text(
+                                        text = formatApkSize(app.appSizeBytes),
+                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    Text(
+                        text = "No apps found in this category.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(vertical = 24.dp)
+                    )
+                }
+            }
+        }
+    }
 }
