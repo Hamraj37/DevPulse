@@ -173,6 +173,7 @@ data class ConnectivityInfo(
     val wifi5GhzSupported: Boolean = true,
     val wifi6GhzSupported: Boolean = true,
     val bluetoothSupported: Boolean = true,
+    val bluetoothEnabled: Boolean = true,
     val bluetoothVersion: String = "Bluetooth 5.3",
     val multipleAdvertisementsSupported: Boolean = true,
     val offloadedFilteringSupported: Boolean = true,

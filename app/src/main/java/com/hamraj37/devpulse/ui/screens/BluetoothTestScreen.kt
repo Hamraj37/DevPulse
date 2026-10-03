@@ -2,6 +2,8 @@ package com.hamraj37.devpulse.ui.screens
 
 import android.bluetooth.BluetoothManager
 import android.content.Context
+import android.content.Intent
+import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Bluetooth
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -42,7 +45,7 @@ fun BluetoothTestGraphic(context: Context) {
     ) {
         Surface(
             shape = RoundedCornerShape(100.dp),
-            color = if (hasHardware) Color(0xFF1565C0) else Color.Gray,
+            color = if (hasHardware && isEnabled) Color(0xFF1565C0) else Color.Gray,
             modifier = Modifier.size(140.dp, 200.dp)
         ) {
             Box(contentAlignment = Alignment.Center) {
@@ -58,9 +61,26 @@ fun BluetoothTestGraphic(context: Context) {
         Text(
             text = if (!hasHardware) "Bluetooth Hardware Not Supported" else if (isEnabled) "Bluetooth Hardware Active & Enabled" else "Bluetooth Radio Ready (Disabled)",
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-            color = if (hasHardware) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+            color = if (hasHardware && isEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
             textAlign = TextAlign.Center
         )
+
+        if (hasHardware && !isEnabled) {
+            Button(
+                onClick = {
+                    try {
+                        val intent = Intent(Settings.ACTION_BLUETOOTH_SETTINGS)
+                        context.startActivity(intent)
+                    } catch (_: Throwable) {}
+                },
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    text = "Enable Bluetooth",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
+                )
+            }
+        }
     }
 }
 

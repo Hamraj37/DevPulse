@@ -661,6 +661,7 @@ object NetworkAndConnectivityTelemetry {
                 wifi6GhzSupported = true,
 
                 bluetoothSupported = hasBt,
+                bluetoothEnabled = btAdapter?.isEnabled == true,
                 bluetoothVersion = if (hasBtLe) "Bluetooth 5.3 / LE" else "Bluetooth",
                 multipleAdvertisementsSupported = multiAdv,
                 offloadedFilteringSupported = offloadedFilter,
