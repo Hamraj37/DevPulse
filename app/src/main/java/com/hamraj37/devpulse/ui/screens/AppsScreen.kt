@@ -1,9 +1,12 @@
 package com.hamraj37.devpulse.ui.screens
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Environment
 import android.provider.Settings
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -27,8 +30,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Analytics
 import androidx.compose.material.icons.rounded.Android
 import androidx.compose.material.icons.rounded.Clear
+import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.OpenInNew
+import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.Storefront
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,6 +45,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
@@ -47,6 +56,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,7 +74,9 @@ import com.hamraj37.devpulse.data.model.AppSpec
 import com.hamraj37.devpulse.data.telemetry.AppCategoryFilter
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,6 +89,7 @@ fun AppsScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     var selectedAppForSheet by remember { mutableStateOf<AppSpec?>(null) }
     var isSearchExpanded by remember { mutableStateOf(searchQuery.isNotEmpty()) }
 
@@ -300,44 +313,213 @@ fun AppsScreen(
                     }
                 }
 
-                Surface(
-                    shape = RoundedCornerShape(16.dp),
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(16.dp))
-                        .clickable {
-                            try {
-                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                    data = Uri.fromParts("package", app.packageName, null)
-                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                }
-                                context.startActivity(intent)
-                            } catch (_: Exception) {
-                            }
-                            selectedAppForSheet = null
-                        }
+                Text(
+                    text = "Quick Actions",
+                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                // Actions Grid
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
+                    // Row 1: Launch App & Extract APK
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Rounded.OpenInNew,
-                            contentDescription = "Open System App Info",
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Open System App Settings",
-                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
+                        // Launch App
+                        Button(
+                            onClick = {
+                                try {
+                                    val launchIntent = context.packageManager.getLaunchIntentForPackage(app.packageName)
+                                    if (launchIntent != null) {
+                                        context.startActivity(launchIntent)
+                                        selectedAppForSheet = null
+                                    } else {
+                                        Toast.makeText(context, "No launch activity found for ${app.appName}", Toast.LENGTH_SHORT).show()
+                                    }
+                                } catch (e: Exception) {
+                                    Toast.makeText(context, "Cannot launch app: ${e.message}", Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.PlayArrow,
+                                    contentDescription = "Launch App",
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Text(
+                                    text = "Launch App",
+                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
+                                )
+                            }
+                        }
+
+                        // Extract APK
+                        Button(
+                            onClick = {
+                                coroutineScope.launch {
+                                    extractApkFile(context, app)
+                                }
+                            },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Download,
+                                    contentDescription = "Extract App",
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Text(
+                                    text = "Extract APK",
+                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
+                                )
+                            }
+                        }
                     }
+
+                    // Row 2: Google Play & App Settings
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        // Google Play
+                        OutlinedButton(
+                            onClick = {
+                                try {
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=${app.packageName}")).apply {
+                                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    }
+                                    context.startActivity(intent)
+                                } catch (_: Exception) {
+                                    try {
+                                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=${app.packageName}")).apply {
+                                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        }
+                                        context.startActivity(intent)
+                                    } catch (e: Exception) {
+                                        Toast.makeText(context, "Could not open Play Store", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Storefront,
+                                    contentDescription = "Google Play",
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Text(
+                                    text = "Google Play",
+                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
+                                )
+                            }
+                        }
+
+                        // App Settings
+                        OutlinedButton(
+                            onClick = {
+                                try {
+                                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                        data = Uri.fromParts("package", app.packageName, null)
+                                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    }
+                                    context.startActivity(intent)
+                                } catch (_: Exception) {
+                                }
+                                selectedAppForSheet = null
+                            },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.OpenInNew,
+                                    contentDescription = "App Settings",
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Text(
+                                    text = "App Settings",
+                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+private suspend fun extractApkFile(context: Context, app: AppSpec) {
+    withContext(Dispatchers.IO) {
+        try {
+            val appInfo = context.packageManager.getApplicationInfo(app.packageName, 0)
+            val srcFile = File(appInfo.sourceDir)
+            val sanitizedName = app.appName.replace("[^a-zA-Z0-9._-]".toRegex(), "_")
+            val fileName = "${sanitizedName}_v${app.versionName}.apk"
+
+            val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            if (!downloadsDir.exists()) {
+                downloadsDir.mkdirs()
+            }
+            val destFile = File(downloadsDir, fileName)
+
+            srcFile.inputStream().use { input ->
+                destFile.outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
+
+            withContext(Dispatchers.Main) {
+                Toast.makeText(context, "APK extracted to Downloads/$fileName", Toast.LENGTH_LONG).show()
+            }
+        } catch (e: Exception) {
+            try {
+                val appInfo = context.packageManager.getApplicationInfo(app.packageName, 0)
+                val srcFile = File(appInfo.sourceDir)
+                val sanitizedName = app.appName.replace("[^a-zA-Z0-9._-]".toRegex(), "_")
+                val fileName = "${sanitizedName}_v${app.versionName}.apk"
+                val fallbackDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: context.filesDir
+                val destFile = File(fallbackDir, fileName)
+
+                srcFile.inputStream().use { input ->
+                    destFile.outputStream().use { output ->
+                        input.copyTo(output)
+                    }
+                }
+
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "APK extracted to ${destFile.name}", Toast.LENGTH_LONG).show()
+                }
+            } catch (ex: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Failed to extract APK: ${ex.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
