@@ -8,6 +8,7 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,22 +25,23 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Router
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Wifi
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,6 +53,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -179,6 +183,7 @@ fun WifiAnalyzerScreen(
     val context = LocalContext.current
     var searchQuery by remember { mutableStateOf("") }
     var scanResults by remember { mutableStateOf<List<WifiScanItem>>(emptyList()) }
+    var selectedWifiItem by remember { mutableStateOf<WifiScanItem?>(null) }
 
     fun refreshScan() {
         val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as? WifiManager
@@ -224,6 +229,13 @@ fun WifiAnalyzerScreen(
         }
     }
 
+    if (selectedWifiItem != null) {
+        WifiDetailBottomSheet(
+            item = selectedWifiItem!!,
+            onDismissRequest = { selectedWifiItem = null }
+        )
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -244,192 +256,319 @@ fun WifiAnalyzerScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
             Row(
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Icon(
-                    imageVector = Icons.Rounded.Router,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(32.dp)
-                )
-                Column {
-                    Text(
-                        text = "Wi-Fi Analyzer",
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Router,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(32.dp)
                     )
-                    Text(
-                        text = "Nearby networks & signal strength",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-            IconButton(onClick = { refreshScan() }) {
-                Icon(
-                    imageVector = Icons.Rounded.Refresh,
-                    contentDescription = "Refresh Scan",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
-
-        OutlinedTextField(
-            value = searchQuery,
-            onValueChange = { searchQuery = it },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Search Wi-Fi networks...") },
-            leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
-            trailingIcon = if (searchQuery.isNotEmpty()) {
-                {
-                    IconButton(onClick = { searchQuery = "" }) {
-                        Icon(Icons.Rounded.Close, contentDescription = "Clear")
+                    Column {
+                        Text(
+                            text = "Wi-Fi Analyzer",
+                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                        )
+                        Text(
+                            text = "Nearby networks & signal strength",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
-            } else null,
-            singleLine = true,
-            shape = RoundedCornerShape(24.dp),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
-            )
-        )
-
-        HorizontalDivider()
-
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            filteredResults.forEach { item ->
-                val badgeColor = when (item.signalQuality) {
-                    "Best" -> Color(0xFF2E7D32)
-                    "Fair" -> Color(0xFFF57F17)
-                    else -> Color(0xFFD32F2F)
+                IconButton(onClick = { refreshScan() }) {
+                    Icon(
+                        imageVector = Icons.Rounded.Refresh,
+                        contentDescription = "Refresh Scan",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
                 }
+            }
 
-                Surface(
-                    shape = RoundedCornerShape(18.dp),
-                    color = MaterialTheme.colorScheme.surfaceContainerLow,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text("Search Wi-Fi networks...") },
+                leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
+                trailingIcon = if (searchQuery.isNotEmpty()) {
+                    {
+                        IconButton(onClick = { searchQuery = "" }) {
+                            Icon(Icons.Rounded.Close, contentDescription = "Clear")
+                        }
+                    }
+                } else null,
+                singleLine = true,
+                shape = RoundedCornerShape(24.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
+                )
+            )
+
+            HorizontalDivider()
+
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                filteredResults.forEach { item ->
+                    val badgeColor = when (item.signalQuality) {
+                        "Best" -> Color(0xFF2E7D32)
+                        "Fair" -> Color(0xFFF57F17)
+                        else -> Color(0xFFD32F2F)
+                    }
+
+                    Surface(
+                        shape = RoundedCornerShape(18.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerLow,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.Top,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                            .clickable { selectedWifiItem = item }
                     ) {
                         Row(
-                            modifier = Modifier.weight(1f),
-                            horizontalArrangement = Arrangement.spacedBy(14.dp)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.Top,
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Wifi,
-                                contentDescription = null,
-                                tint = badgeColor,
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .padding(top = 4.dp)
-                            )
-
-                            Column {
-                                Text(
-                                    text = item.ssid,
-                                    style = MaterialTheme.typography.titleMedium.copy(
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 16.sp
-                                    ),
-                                    maxLines = 2
-                                )
-                                Spacer(modifier = Modifier.height(2.dp))
-                                Text(
-                                    text = item.bssid,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                Text(
-                                    text = item.wifiStandardText,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                Text(
-                                    text = "CH ${item.channelNumber} | ${item.bandText} (${item.channelWidthMhz} MHz)",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                Text(
-                                    text = item.capabilities,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        Column(
-                            horizontalAlignment = Alignment.End,
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            Surface(
-                                shape = RoundedCornerShape(8.dp),
-                                color = badgeColor
+                            Row(
+                                modifier = Modifier.weight(1f),
+                                horizontalArrangement = Arrangement.spacedBy(14.dp)
                             ) {
-                                Text(
-                                    text = "${item.rssiDbm} dBm",
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
-                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                    color = Color.White
-                                )
-                            }
-
-                            Text(
-                                text = item.signalQuality,
-                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                                color = badgeColor
-                            )
-
-                            Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     imageVector = Icons.Rounded.Wifi,
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.size(26.dp)
+                                    tint = badgeColor,
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .padding(top = 4.dp)
                                 )
-                                Surface(
-                                    shape = CircleShape,
-                                    color = MaterialTheme.colorScheme.surfaceContainerLowest,
-                                    modifier = Modifier.size(14.dp)
-                                ) {
-                                    Box(contentAlignment = Alignment.Center) {
-                                        Text(
-                                            text = "${item.wifiGenNumber}",
-                                            style = MaterialTheme.typography.labelSmall.copy(
-                                                fontSize = 9.sp,
-                                                fontWeight = FontWeight.Bold
-                                            ),
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                    }
+
+                                Column {
+                                    Text(
+                                        text = item.ssid,
+                                        style = MaterialTheme.typography.titleMedium.copy(
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 16.sp
+                                        ),
+                                        maxLines = 2
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = item.bssid,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = item.wifiStandardText,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = "CH ${item.channelNumber} | ${item.bandText} (${item.channelWidthMhz} MHz)",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = item.capabilities,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
                                 }
                             }
 
-                            Text(
-                                text = "~${String.format(Locale.US, "%.1f", item.distanceMeters)}m",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            Column(
+                                horizontalAlignment = Alignment.End,
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Surface(
+                                    shape = RoundedCornerShape(8.dp),
+                                    color = badgeColor
+                                ) {
+                                    Text(
+                                        text = "${item.rssiDbm} dBm",
+                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                        color = Color.White
+                                    )
+                                }
+
+                                Text(
+                                    text = item.signalQuality,
+                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                                    color = badgeColor
+                                )
+
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Wifi,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.size(26.dp)
+                                    )
+                                    Surface(
+                                        shape = CircleShape,
+                                        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                                        modifier = Modifier.size(14.dp)
+                                    ) {
+                                        Box(contentAlignment = Alignment.Center) {
+                                            Text(
+                                                text = "${item.wifiGenNumber}",
+                                                style = MaterialTheme.typography.labelSmall.copy(
+                                                    fontSize = 9.sp,
+                                                    fontWeight = FontWeight.Bold
+                                                ),
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                        }
+                                    }
+                                }
+
+                                Text(
+                                    text = "~${String.format(Locale.US, "%.1f", item.distanceMeters)}m",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     }
                 }
             }
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun WifiDetailBottomSheet(
+    item: WifiScanItem,
+    onDismissRequest: () -> Unit
+) {
+    val badgeColor = when (item.signalQuality) {
+        "Best" -> Color(0xFF2E7D32)
+        "Fair" -> Color(0xFFF57F17)
+        else -> Color(0xFFD32F2F)
+    }
+
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest,
+        sheetState = rememberModalBottomSheetState()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(16.dp),
+                    color = badgeColor.copy(alpha = 0.15f),
+                    modifier = Modifier.size(56.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Rounded.Wifi,
+                            contentDescription = null,
+                            tint = badgeColor,
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = item.ssid,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = item.bssid,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = badgeColor
+                ) {
+                    Text(
+                        text = "${item.rssiDbm} dBm",
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                        color = Color.White
+                    )
+                }
+            }
+
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerHigh
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    WifiDetailRow("SSID (Network Name)", item.ssid)
+                    WifiDetailRow("BSSID (MAC Address)", item.bssid)
+                    WifiDetailRow("Signal Strength", "${item.rssiDbm} dBm (${item.signalQuality})")
+                    WifiDetailRow("Wi-Fi Standard", item.wifiStandardText)
+                    WifiDetailRow("Frequency Band", "${item.bandText} (${item.frequencyMhz} MHz)")
+                    WifiDetailRow("Channel", "Channel ${item.channelNumber} (${item.channelWidthMhz} MHz Width)")
+                    WifiDetailRow("Security & Capabilities", item.capabilities)
+                    WifiDetailRow("Est. Distance", "~${String.format(Locale.US, "%.1f", item.distanceMeters)} meters")
+                }
+            }
+
+            Button(
+                onClick = onDismissRequest,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(14.dp)
+            ) {
+                Text("Close")
+            }
+        }
+    }
+}
+
+@Composable
+fun WifiDetailRow(
+    label: String,
+    value: String
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Top
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.weight(1f)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.weight(1.3f)
+        )
     }
 }
