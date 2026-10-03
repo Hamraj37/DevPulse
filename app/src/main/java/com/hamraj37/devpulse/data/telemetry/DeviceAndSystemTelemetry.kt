@@ -131,7 +131,7 @@ object DeviceAndSystemTelemetry {
                 releaseDate = getReleaseDate(sdkInt),
                 apiLevel = sdkInt,
                 securityPatch = securityPatch,
-                bootloader = Build.BOOTLOADER.ifEmpty { "unknown" },
+                bootloader = getBootloaderVersion(),
                 buildNumber = Build.DISPLAY.ifEmpty { Build.ID.ifEmpty { "unknown" } },
                 basebandVersion = getBasebandVersion(),
                 javaVm = (System.getProperty("java.vm.name") ?: "ART") + " " + (System.getProperty("java.vm.version") ?: "2.1.0"),
@@ -151,6 +151,41 @@ object DeviceAndSystemTelemetry {
             )
         } catch (_: Throwable) {
             SystemInfo()
+        }
+    }
+
+    private fun getSystemProperty(key: String): String? {
+        return try {
+            val clazz = Class.forName("android.os.SystemProperties")
+            val getMethod = clazz.getMethod("get", String::class.java)
+            val value = getMethod.invoke(null, key) as? String
+            if (value.isNullOrBlank() || value.equals("unknown", ignoreCase = true)) null else value
+        } catch (_: Throwable) {
+            null
+        }
+    }
+
+    private fun getBootloaderVersion(): String {
+        val b1 = Build.BOOTLOADER
+        if (b1.isNotEmpty() && !b1.equals("unknown", ignoreCase = true)) {
+            return b1
+        }
+        val b2 = getSystemProperty("ro.bootloader")
+        if (!b2.isNullOrBlank()) {
+            return b2
+        }
+        val b3 = getSystemProperty("ro.boot.bootloader")
+        if (!b3.isNullOrBlank()) {
+            return b3
+        }
+        val b4 = getSystemProperty("ro.boot.bootloader.version")
+        if (!b4.isNullOrBlank()) {
+            return b4
+        }
+        return if (Build.BOARD.isNotEmpty() && !Build.BOARD.equals("unknown", ignoreCase = true)) {
+            "Stock Bootloader (${Build.BOARD})"
+        } else {
+            "Stock Bootloader"
         }
     }
 
