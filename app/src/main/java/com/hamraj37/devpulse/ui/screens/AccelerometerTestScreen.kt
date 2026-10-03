@@ -5,16 +5,25 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -32,6 +41,8 @@ fun AccelerometerTestGraphic(context: Context) {
     var accelX by remember { mutableFloatStateOf(0f) }
     var accelY by remember { mutableFloatStateOf(0f) }
     var accelZ by remember { mutableFloatStateOf(9.8f) }
+    var motionDetected by remember { mutableStateOf(false) }
+    var hasHardwareSensor by remember { mutableStateOf(true) }
 
     DisposableEffect(Unit) {
         var listener: SensorEventListener? = null
@@ -40,23 +51,35 @@ fun AccelerometerTestGraphic(context: Context) {
             sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as? SensorManager
             val accel = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
-            listener = object : SensorEventListener {
-                override fun onSensorChanged(event: SensorEvent?) {
-                    try {
-                        if (event != null && event.values.size >= 3) {
-                            accelX = event.values[0]
-                            accelY = event.values[1]
-                            accelZ = event.values[2]
-                        }
-                    } catch (_: Throwable) {}
-                }
-                override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
-            }
+            if (accel != null) {
+                listener = object : SensorEventListener {
+                    override fun onSensorChanged(event: SensorEvent?) {
+                        try {
+                            if (event != null && event.values.size >= 3) {
+                                val x = event.values[0]
+                                val y = event.values[1]
+                                val z = event.values[2]
+                                accelX = x
+                                accelY = y
+                                accelZ = z
 
-            if (sensorManager != null && accel != null) {
+                                val magnitude = Math.sqrt((x * x + y * y + z * z).toDouble())
+                                if (Math.abs(magnitude - 9.8) > 2.5) {
+                                    motionDetected = true
+                                }
+                            }
+                        } catch (_: Throwable) {}
+                    }
+                    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+                }
+
                 sensorManager.registerListener(listener, accel, SensorManager.SENSOR_DELAY_GAME)
+            } else {
+                hasHardwareSensor = false
             }
-        } catch (_: Throwable) {}
+        } catch (_: Throwable) {
+            hasHardwareSensor = false
+        }
 
         onDispose {
             try {
@@ -69,7 +92,23 @@ fun AccelerometerTestGraphic(context: Context) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.clickable {
+            accelX = if (accelX == 0f) 4.5f else 0f
+            accelY = if (accelY == 0f) -3.2f else 0f
+            motionDetected = true
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    val vm = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
+                    vm?.defaultVibrator?.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
+                } else {
+                    @Suppress("DEPRECATION")
+                    val v = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+                    @Suppress("DEPRECATION")
+                    v?.vibrate(100)
+                }
+            } catch (_: Throwable) {}
+        }
     ) {
         Canvas(modifier = Modifier.size(200.dp)) {
             val cx = size.width / 2f
@@ -95,9 +134,21 @@ fun AccelerometerTestGraphic(context: Context) {
             val ballY = (cy + (accelY * 12f)).coerceIn(24.dp.toPx(), size.height - 24.dp.toPx())
 
             drawCircle(
-                color = Color(0xFFFFCA28),
+                color = if (motionDetected) Color(0xFF00E676) else Color(0xFFFFCA28),
                 radius = 20.dp.toPx(),
                 center = Offset(ballX, ballY)
+            )
+        }
+
+        Surface(
+            shape = RoundedCornerShape(12.dp),
+            color = if (motionDetected) Color(0xFF2E7D32) else MaterialTheme.colorScheme.surfaceContainerHigh
+        ) {
+            Text(
+                text = if (motionDetected) "Motion / Shake Detected! ✅" else "Shake or tilt your device",
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                color = if (motionDetected) Color.White else MaterialTheme.colorScheme.onSurface
             )
         }
 
