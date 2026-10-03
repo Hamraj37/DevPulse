@@ -47,13 +47,48 @@
                     <span class="hidden sm:inline-block ml-2 px-2.5 py-0.5 text-xs font-semibold bg-devpulse-100 text-devpulse-700 rounded-full">v2.0</span>
                 </div>
             </a>
-            <nav class="flex items-center space-x-6 text-sm font-semibold text-slate-600">
+            <!-- Desktop Navigation Links (Visible on desktop/md+ screens) -->
+            <nav class="hidden md:flex items-center space-x-6 text-sm font-semibold text-slate-600">
                 <a href="index.html" class="hover:text-devpulse-600 transition">Home</a>
                 <a href="index.html#features" class="hover:text-devpulse-600 transition">Features</a>
                 <a href="https://github.com/Hamraj37/DevPulse" target="_blank" class="px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 rounded-xl hover:bg-slate-200 transition">
                     GitHub Repo
                 </a>
             </nav>
+
+            <!-- Mobile Navigation Dropdown Menu (Visible on mobile, hidden on md+ screens) -->
+            <div class="md:hidden relative inline-block text-left" id="menuDropdownContainer">
+                <button id="menuDropdownBtn" type="button" class="inline-flex items-center space-x-2 px-3.5 py-2 text-sm font-bold text-slate-700 bg-slate-100 rounded-xl hover:bg-slate-200 active:bg-slate-300 transition focus:outline-none focus:ring-2 focus:ring-devpulse-500 shadow-sm">
+                    <span>Menu</span>
+                    <svg id="menuDropdownIcon" class="w-4 h-4 text-slate-500 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                <div id="menuDropdownPanel" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 z-50 p-2 space-y-1">
+                    <a href="index.html" class="flex items-center space-x-2.5 px-3 py-2 text-sm font-medium text-slate-700 rounded-xl hover:bg-devpulse-50 hover:text-devpulse-700 transition">
+                        <span>🏠</span> <span>Home</span>
+                    </a>
+                    <a href="index.html#features" class="flex items-center space-x-2.5 px-3 py-2 text-sm font-medium text-slate-700 rounded-xl hover:bg-devpulse-50 hover:text-devpulse-700 transition">
+                        <span>⚡</span> <span>Features</span>
+                    </a>
+                    <a href="index.html#showcase" class="flex items-center space-x-2.5 px-3 py-2 text-sm font-medium text-slate-700 rounded-xl hover:bg-devpulse-50 hover:text-devpulse-700 transition">
+                        <span>📱</span> <span>Showcase</span>
+                    </a>
+                    <a href="index.html#tech" class="flex items-center space-x-2.5 px-3 py-2 text-sm font-medium text-slate-700 rounded-xl hover:bg-devpulse-50 hover:text-devpulse-700 transition">
+                        <span>🛠️</span> <span>Tech Stack</span>
+                    </a>
+                    <a href="privacy.html" class="flex items-center space-x-2.5 px-3 py-2 text-sm font-semibold text-devpulse-700 bg-devpulse-50 rounded-xl transition">
+                        <span>🛡️</span> <span>Privacy Policy</span>
+                    </a>
+                    <div class="border-t border-slate-100 my-1"></div>
+                    <a href="https://github.com/Hamraj37/DevPulse" target="_blank" class="flex items-center space-x-2.5 px-3 py-2 text-sm font-medium text-slate-700 rounded-xl hover:bg-slate-100 transition">
+                        <span>📦</span> <span>GitHub Repo</span>
+                    </a>
+                    <a href="https://github.com/Hamraj37/DevPulse/releases/latest" target="_blank" class="flex items-center justify-center space-x-2 px-3 py-2 text-sm font-bold text-white bg-devpulse-500 rounded-xl hover:bg-devpulse-600 transition shadow-md shadow-devpulse-500/20">
+                        <span>⬇️</span> <span>Download APK</span>
+                    </a>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -143,6 +178,28 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        const btn = document.getElementById('menuDropdownBtn');
+        const panel = document.getElementById('menuDropdownPanel');
+        const icon = document.getElementById('menuDropdownIcon');
+        const container = document.getElementById('menuDropdownContainer');
+
+        if (btn && panel) {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                panel.classList.toggle('hidden');
+                icon.classList.toggle('rotate-180');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!container.contains(e.target)) {
+                    panel.classList.add('hidden');
+                    icon.classList.remove('rotate-180');
+                }
+            });
+        }
+    </script>
 
 </body>
 </html>
