@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -290,7 +291,15 @@ fun AboutScreen(
                     modifier = Modifier.size(68.dp)
                 ) {
                     Image(
-                        painter = rememberAsyncImagePainter("https://github.com/hamraj37.png"),
+                        painter = rememberAsyncImagePainter(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data("https://github.com/hamraj37.png")
+                                .placeholder(R.drawable.devavatar)
+                                .error(R.drawable.devavatar)
+                                .fallback(R.drawable.devavatar)
+                                .crossfade(true)
+                                .build()
+                        ),
                         contentDescription = "Developer Profile Photo",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -300,7 +309,7 @@ fun AboutScreen(
                 }
 
                 Text(
-                    text = "Hamraj",
+                    text = "Hamraj37",
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -395,18 +404,7 @@ fun AboutScreen(
     }
 
     if (showDonateDialog) {
-        AlertDialog(
-            onDismissRequest = { showDonateDialog = false },
-            title = { Text(text = "Donate & Support", fontWeight = FontWeight.Bold) },
-            text = {
-                Text("DevPulse is completely ad-free and open source! Thank you for supporting the project.")
-            },
-            confirmButton = {
-                TextButton(onClick = { showDonateDialog = false }) {
-                    Text("OK")
-                }
-            }
-        )
+        DonateDialog(onDismissRequest = { showDonateDialog = false })
     }
 }
 

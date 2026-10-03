@@ -104,10 +104,18 @@ Interactive and automated hardware diagnostic tests with persistent results save
 
 ---
 
+## 💖 Support & Donate
+
+DevPulse is 100% ad-free, open-source, and free to use. If you find this project useful, consider supporting development:
+
+* **UPI ID**: `hamraj37@ybl`
+
+---
+
 ## 📄 License
 
 ```text
-Copyright (c) 2026 Hamraj
+Copyright (c) 2026 Hamraj37
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

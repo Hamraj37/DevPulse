@@ -403,18 +403,7 @@ fun SettingsScreen(
     }
 
     if (showDonateDialog) {
-        AlertDialog(
-            onDismissRequest = { showDonateDialog = false },
-            title = { Text(text = "Donate & Support", fontWeight = FontWeight.Bold) },
-            text = {
-                Text("DevPulse is completely ad-free and open source! Thank you for supporting the project.")
-            },
-            confirmButton = {
-                TextButton(onClick = { showDonateDialog = false }) {
-                    Text("OK")
-                }
-            }
-        )
+        DonateDialog(onDismissRequest = { showDonateDialog = false })
     }
 
     if (showPrivacyDialog) {
