@@ -122,28 +122,7 @@ fun WidgetsScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-        // Top Banner Title Box
-        Surface(
-            shape = RoundedCornerShape(18.dp),
-            color = MaterialTheme.colorScheme.surfaceContainerLow,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 16.dp),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                Text(
-                    text = "Widgets",
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 20.sp
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-        }
+
 
         Text(
             text = "Preview of all the widgets available for you. Use your launcher to add widgets",
