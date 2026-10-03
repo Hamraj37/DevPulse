@@ -1,6 +1,7 @@
 package com.hamraj37.devpulse.ui.screens
 
 import android.app.AppOpsManager
+import com.hamraj37.devpulse.data.model.AppSpec
 import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
@@ -136,6 +137,7 @@ fun ScreenTimeScreen(
 
     var searchQuery by remember { mutableStateOf("") }
     var selectedTimeFilter by remember { mutableStateOf(0) } // 0: Today, 1: Last 7 Days, 2: Last 30 Days
+    var selectedAppForSheet by remember { mutableStateOf<AppSpec?>(null) }
     var screenTimeList by remember { mutableStateOf<List<AppScreenTimeItem>>(emptyList()) }
     var totalUnlocks by remember { mutableStateOf(0) }
     var isLoading by remember { mutableStateOf(true) }
@@ -607,7 +609,11 @@ fun ScreenTimeScreen(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 6.dp),
+                                .clip(RoundedCornerShape(12.dp))
+                                .clickable {
+                                    selectedAppForSheet = getAppSpecForPackage(context, item.packageName, item.appName)
+                                }
+                                .padding(vertical = 6.dp, horizontal = 4.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             // App Icon
@@ -703,5 +709,12 @@ fun ScreenTimeScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+    }
+
+    selectedAppForSheet?.let { app ->
+        AppDetailBottomSheet(
+            app = app,
+            onDismissRequest = { selectedAppForSheet = null }
+        )
     }
 }

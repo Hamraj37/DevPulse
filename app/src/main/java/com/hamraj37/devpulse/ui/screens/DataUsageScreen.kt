@@ -1,6 +1,7 @@
 package com.hamraj37.devpulse.ui.screens
 
 import android.app.AppOpsManager
+import com.hamraj37.devpulse.data.model.AppSpec
 import android.app.usage.NetworkStats
 import android.app.usage.NetworkStatsManager
 import android.content.Context
@@ -189,6 +190,7 @@ fun DataUsageScreen(
 
     var searchQuery by remember { mutableStateOf("") }
     var selectedTimeFilter by remember { mutableStateOf(0) } // 0: Today, 1: Last 7 Days, 2: Last 30 Days
+    var selectedAppForSheet by remember { mutableStateOf<AppSpec?>(null) }
     var appUsageList by remember { mutableStateOf<List<AppDataUsageItem>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
 
@@ -585,7 +587,11 @@ fun DataUsageScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 4.dp),
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable {
+                                selectedAppForSheet = getAppSpecForPackage(context, item.packageName, item.appName)
+                            }
+                            .padding(vertical = 4.dp, horizontal = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         // App Icon
@@ -669,5 +675,12 @@ fun DataUsageScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+    }
+
+    selectedAppForSheet?.let { app ->
+        AppDetailBottomSheet(
+            app = app,
+            onDismissRequest = { selectedAppForSheet = null }
+        )
     }
 }
