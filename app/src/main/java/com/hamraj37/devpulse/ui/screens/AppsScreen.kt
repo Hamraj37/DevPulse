@@ -261,7 +261,7 @@ fun AppsScreen(
         }
     }
 
-    // Modal Bottom Sheet for App Details
+    // .0
     selectedAppForSheet?.let { app ->
         AppDetailBottomSheet(
             app = app,
