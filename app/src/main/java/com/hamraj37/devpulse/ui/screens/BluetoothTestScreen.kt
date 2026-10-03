@@ -1,0 +1,85 @@
+package com.hamraj37.devpulse.ui.screens
+
+import android.bluetooth.BluetoothManager
+import android.content.Context
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Bluetooth
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun BluetoothTestGraphic(context: Context) {
+    val bluetoothManager = remember(context) {
+        try {
+            context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
+        } catch (_: Throwable) {
+            null
+        }
+    }
+    val adapter = bluetoothManager?.adapter
+    val isEnabled = adapter?.isEnabled == true
+    val hasHardware = adapter != null
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Surface(
+            shape = RoundedCornerShape(100.dp),
+            color = if (hasHardware) Color(0xFF1565C0) else Color.Gray,
+            modifier = Modifier.size(140.dp, 200.dp)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.Rounded.Bluetooth,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(80.dp)
+                )
+            }
+        }
+
+        Text(
+            text = if (!hasHardware) "Bluetooth Hardware Not Supported" else if (isEnabled) "Bluetooth Hardware Active & Enabled" else "Bluetooth Radio Ready (Disabled)",
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+            color = if (hasHardware) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+fun BluetoothTestScreen(
+    onBack: () -> Unit,
+    onPass: () -> Unit,
+    onFail: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    StandardTestScreen(
+        title = "Bluetooth Radio",
+        testId = "test_bluetooth",
+        onBack = onBack,
+        onPass = onPass,
+        onFail = onFail,
+        modifier = modifier
+    ) {
+        BluetoothTestGraphic(context)
+    }
+}

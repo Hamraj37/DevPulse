@@ -6,18 +6,27 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Payment
@@ -80,6 +89,171 @@ fun DevPulseTopAppBar(
         ),
         modifier = modifier
     )
+}
+
+fun getQuestionForTest(testId: String): String {
+    return when (testId) {
+        "test_touch" -> "Does the screen detects multiple fingers?"
+        "test_display" -> "Were the screen one solid color?"
+        "test_flashlight" -> "Is the flashlight working?"
+        "test_speaker" -> "Audio is playing. Can you hear it?"
+        "test_earspeaker" -> "Audio is playing. Can you hear it?"
+        "test_mic" -> "Speak to the microphone. Is the progress changing?"
+        "test_proximity" -> "Cover the area above the display or place your palm on the display. do you get any feedback?"
+        "test_light" -> "Cover the area above the display. Is the value changing?"
+        "test_accel" -> "Shake your device. Did you feel the vibration?"
+        "test_charging" -> "Is it charging?"
+        "test_vibration" -> "Can you feel the phone vibrating?"
+        "test_bluetooth" -> "Is Bluetooth hardware working?"
+        "test_fingerprint" -> "Is the fingerprint / biometric sensor working?"
+        "test_gps" -> "Is location / GPS fix detected?"
+        "test_volume" -> "Press the volume up or down key, do you get any feedback?"
+        else -> "Is the test working properly?"
+    }
+}
+
+@Composable
+fun StandardTestScreen(
+    title: String,
+    testId: String,
+    onBack: () -> Unit,
+    onPass: () -> Unit,
+    onFail: () -> Unit,
+    modifier: Modifier = Modifier,
+    isDarkBackground: Boolean = false,
+    content: @Composable () -> Unit
+) {
+    BackHandler { onBack() }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(if (isDarkBackground) Color.Black else MaterialTheme.colorScheme.background)
+    ) {
+        DevPulseTopAppBar(
+            title = title,
+            onBack = onBack
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                content()
+            }
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                Text(
+                    text = getQuestionForTest(testId),
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Medium
+                    ),
+                    color = if (isDarkBackground) Color.White else MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(50.dp),
+                        color = Color(0xFF455345),
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable { onFail() }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(vertical = 12.dp, horizontal = 20.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Surface(
+                                shape = CircleShape,
+                                color = Color.Transparent,
+                                border = BorderStroke(1.5.dp, Color.White),
+                                modifier = Modifier.size(20.dp)
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Close,
+                                        contentDescription = "No",
+                                        tint = Color.White,
+                                        modifier = Modifier.size(12.dp)
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(
+                                text = "No",
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp
+                                ),
+                                color = Color.White
+                            )
+                        }
+                    }
+
+                    Surface(
+                        shape = RoundedCornerShape(50.dp),
+                        color = Color(0xFF455345),
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable { onPass() }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(vertical = 12.dp, horizontal = 20.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Surface(
+                                shape = CircleShape,
+                                color = Color.Transparent,
+                                border = BorderStroke(1.5.dp, Color.White),
+                                modifier = Modifier.size(20.dp)
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Check,
+                                        contentDescription = "Yes",
+                                        tint = Color.White,
+                                        modifier = Modifier.size(12.dp)
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(
+                                text = "Yes",
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp
+                                ),
+                                color = Color.White
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable

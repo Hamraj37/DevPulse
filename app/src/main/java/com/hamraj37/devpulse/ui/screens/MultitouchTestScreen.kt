@@ -1,0 +1,81 @@
+package com.hamraj37.devpulse.ui.screens
+
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.font.FontWeight
+
+@Composable
+fun MultitouchTestContent() {
+    val pointers = remember { mutableStateMapOf<Int, Offset>() }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                try {
+                    awaitPointerEventScope {
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            pointers.clear()
+                            event.changes.forEach { change ->
+                                if (change.pressed) {
+                                    pointers[change.id.value.toInt()] = change.position
+                                }
+                            }
+                        }
+                    }
+                } catch (_: Throwable) {}
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            pointers.values.forEachIndexed { i, pos ->
+                val colors = listOf(
+                    Color(0xFF2196F3), Color(0xFFE91E63), Color(0xFF4CAF50),
+                    Color(0xFFFF9800), Color(0xFF9C27B0), Color(0xFF00BCD4)
+                )
+                val color = colors[i % colors.size]
+                drawCircle(color = color.copy(alpha = 0.3f), radius = 100f, center = pos)
+                drawCircle(color = color, radius = 50f, center = pos)
+            }
+        }
+        if (pointers.isEmpty()) {
+            Text(
+                text = "Touch screen with multiple fingers",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium),
+                color = Color.White.copy(alpha = 0.6f)
+            )
+        }
+    }
+}
+
+@Composable
+fun MultitouchTestScreen(
+    onBack: () -> Unit,
+    onPass: () -> Unit,
+    onFail: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    StandardTestScreen(
+        title = "Display Touch Screen",
+        testId = "test_touch",
+        onBack = onBack,
+        onPass = onPass,
+        onFail = onFail,
+        modifier = modifier,
+        isDarkBackground = true
+    ) {
+        MultitouchTestContent()
+    }
+}
