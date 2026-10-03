@@ -279,6 +279,14 @@ fun AppDetailBottomSheet(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
+    val installSource = remember(app.packageName, app.installSource) {
+        if (app.installSource.isNotEmpty()) {
+            app.installSource
+        } else {
+            com.hamraj37.devpulse.data.telemetry.AppAndTestTelemetry.getInstallSourceLabel(context, app.packageName)
+        }
+    }
+
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = rememberModalBottomSheetState()
@@ -327,6 +335,7 @@ fun AppDetailBottomSheet(
                     AppDetailRow("Version", "${app.versionName} (${app.versionCode})")
                     AppDetailRow("APK Size", formatApkSize(app.appSizeBytes))
                     AppDetailRow("App Type", if (app.isSystemApp) "System Application" else "User Installed Application")
+                    AppDetailRow("Install Source", installSource)
                     AppDetailRow("First Installed", formatTime(app.installedTimeMs))
                     AppDetailRow("Last Updated", formatTime(app.updatedTimeMs))
                 }
@@ -530,6 +539,7 @@ fun getAppSpecForPackage(context: Context, packageName: String, fallbackAppName:
         val isSystem = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
         val installedTime = packageInfo?.firstInstallTime ?: 0L
         val updatedTime = packageInfo?.lastUpdateTime ?: 0L
+        val installSource = com.hamraj37.devpulse.data.telemetry.AppAndTestTelemetry.getInstallSourceLabel(context, packageName)
 
         AppSpec(
             appName = label,
@@ -539,7 +549,8 @@ fun getAppSpecForPackage(context: Context, packageName: String, fallbackAppName:
             appSizeBytes = appSize,
             isSystemApp = isSystem,
             installedTimeMs = installedTime,
-            updatedTimeMs = updatedTime
+            updatedTimeMs = updatedTime,
+            installSource = installSource
         )
     } catch (_: Throwable) {
         AppSpec(

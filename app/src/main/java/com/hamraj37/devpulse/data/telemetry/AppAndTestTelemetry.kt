@@ -28,6 +28,63 @@ object AppAndTestTelemetry {
     @Volatile
     private var lastFetchTimeMs: Long = 0L
 
+    fun getInstallSourceLabel(context: Context, packageName: String): String {
+        return try {
+            val pm = context.packageManager
+            val installerPackage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val info = pm.getInstallSourceInfo(packageName)
+                info.installingPackageName ?: info.initiatingPackageName
+            } else {
+                @Suppress("DEPRECATION")
+                pm.getInstallerPackageName(packageName)
+            }
+
+            when (installerPackage) {
+                "com.android.vending" -> "Google Play Store"
+                "com.google.android.packageinstaller", "com.android.packageinstaller" -> "Package Installer"
+                "com.amazon.venezia" -> "Amazon Appstore"
+                "com.sec.android.app.samsungapps" -> "Samsung Galaxy Store"
+                "com.huawei.appmarket" -> "Huawei AppGallery"
+                "com.xiaomi.mipicks" -> "Xiaomi GetApps"
+                "com.oppo.market" -> "OPPO App Market"
+                "com.vivo.appstore" -> "Vivo App Store"
+                "adb" -> "ADB / Side-loaded"
+                null -> {
+                    try {
+                        val appInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            pm.getApplicationInfo(packageName, PackageManager.ApplicationInfoFlags.of(0))
+                        } else {
+                            @Suppress("DEPRECATION")
+                            pm.getApplicationInfo(packageName, 0)
+                        }
+                        if ((appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0) {
+                            "Pre-installed System App"
+                        } else {
+                            "Side-loaded / Unknown"
+                        }
+                    } catch (_: Exception) {
+                        "Side-loaded / Unknown"
+                    }
+                }
+                else -> {
+                    try {
+                        val appInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            pm.getApplicationInfo(installerPackage, PackageManager.ApplicationInfoFlags.of(0))
+                        } else {
+                            @Suppress("DEPRECATION")
+                            pm.getApplicationInfo(installerPackage, 0)
+                        }
+                        pm.getApplicationLabel(appInfo).toString()
+                    } catch (_: Exception) {
+                        installerPackage
+                    }
+                }
+            }
+        } catch (_: Exception) {
+            "Unknown"
+        }
+    }
+
     fun getAppInfo(context: Context): AppInfo {
         val now = System.currentTimeMillis()
         val cached = cachedAppInfo
@@ -71,6 +128,8 @@ object AppAndTestTelemetry {
                         1L
                     }
 
+                    val source = getInstallSourceLabel(context, pkg.packageName)
+
                     appSpecs.add(
                         AppSpec(
                             appName = label,
@@ -81,6 +140,7 @@ object AppAndTestTelemetry {
                             isSystemApp = isSystem,
                             installedTimeMs = pkg.firstInstallTime,
                             updatedTimeMs = pkg.lastUpdateTime,
+                            installSource = source
                         )
                     )
                 } catch (_: Throwable) {
@@ -100,6 +160,7 @@ object AppAndTestTelemetry {
                         isSystemApp = false,
                         installedTimeMs = System.currentTimeMillis() - 86400000,
                         updatedTimeMs = System.currentTimeMillis(),
+                        installSource = "Side-loaded / Local Build"
                     )
                 )
             }

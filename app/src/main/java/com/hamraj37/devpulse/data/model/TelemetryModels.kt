@@ -341,7 +341,8 @@ data class AppSpec(
     val appSizeBytes: Long,
     val isSystemApp: Boolean,
     val installedTimeMs: Long,
-    val updatedTimeMs: Long
+    val updatedTimeMs: Long,
+    val installSource: String = ""
 )
 
 // 14. Tests Info
