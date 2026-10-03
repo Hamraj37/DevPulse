@@ -322,49 +322,22 @@ fun AppAnalyzerScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        // Top Header Card
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-            ),
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (onBack != null) {
-                    IconButton(
-                        onClick = onBack,
-                        modifier = Modifier.size(36.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                }
-                Text(
-                    text = "App Analyzer",
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 22.sp
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
+        if (onBack != null) {
+            DevPulseTopAppBar(
+                title = "App Analyzer",
+                onBack = onBack
+            )
         }
 
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
         // Top Filter Tabs Row
         Row(
             modifier = Modifier
@@ -459,4 +432,5 @@ fun AppAnalyzerScreen(
             }
         }
     }
+}
 }

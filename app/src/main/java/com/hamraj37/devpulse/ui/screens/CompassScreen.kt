@@ -10,6 +10,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -306,70 +307,24 @@ fun CompassScreen(
 
     Column(
         modifier = modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
         if (onBack != null) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
-                shape = RoundedCornerShape(20.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Compass",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 24.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
+            DevPulseTopAppBar(
+                title = "Compass",
+                onBack = onBack
+            )
         }
 
-        // Top Banner Title Box
-        Surface(
-            shape = RoundedCornerShape(18.dp),
-            color = MaterialTheme.colorScheme.surfaceContainerLow,
-            modifier = Modifier.fillMaxWidth()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 16.dp),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                Text(
-                    text = "Compass",
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 20.sp
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-        }
-
         // Degree and Direction Heading Text
         Text(
             text = "${azimuthDegree.roundToInt()}° $cardinalDirection",
@@ -383,5 +338,6 @@ fun CompassScreen(
         CompassDialView(azimuthDegree = azimuthDegree)
 
         Spacer(modifier = Modifier.height(24.dp))
+        }
     }
 }

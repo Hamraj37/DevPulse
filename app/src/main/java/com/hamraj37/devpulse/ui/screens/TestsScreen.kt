@@ -292,10 +292,22 @@ fun AutomaticTestsScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .background(MaterialTheme.colorScheme.background)
     ) {
+        if (onBack != null) {
+            DevPulseTopAppBar(
+                title = "Automatic Diagnostics",
+                onBack = onBack
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
         // Status Mascot / Banner
         Column(
             modifier = Modifier
@@ -412,6 +424,7 @@ fun AutomaticTestsScreen(
             }
         }
     }
+}
 }
 
 @Composable

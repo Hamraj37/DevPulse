@@ -8,6 +8,7 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,11 +17,11 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -257,71 +258,25 @@ fun ExportScreen(
 
     Column(
         modifier = modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(18.dp)
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
         if (onBack != null) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
-                shape = RoundedCornerShape(20.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Export",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 24.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
+            DevPulseTopAppBar(
+                title = "Export Report",
+                onBack = onBack
+            )
         }
 
-        // Top Banner Title Box
-        Surface(
-            shape = RoundedCornerShape(18.dp),
-            color = MaterialTheme.colorScheme.surfaceContainerLow,
-            modifier = Modifier.fillMaxWidth()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 16.dp),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                Text(
-                    text = "Export",
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 20.sp
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-        }
-
-        // Export Data Intro Card
+            // Export Data Intro Card
         Surface(
             shape = RoundedCornerShape(20.dp),
             color = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -561,4 +516,5 @@ fun ExportScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
     }
+}
 }

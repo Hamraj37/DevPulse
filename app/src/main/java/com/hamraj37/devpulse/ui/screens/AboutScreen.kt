@@ -113,46 +113,24 @@ fun AboutScreen(
 
     Column(
         modifier = modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
         if (onBack != null) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
-                shape = RoundedCornerShape(20.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "About",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 24.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
+            DevPulseTopAppBar(
+                title = "About DevPulse",
+                onBack = onBack
+            )
         }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
 
         // Card 1: Main App Branding & Info
         Card(
@@ -401,6 +379,7 @@ fun AboutScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+        }
     }
 
     if (showDonateDialog) {

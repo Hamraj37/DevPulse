@@ -2,6 +2,7 @@ package com.hamraj37.devpulse.ui.screens
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -236,48 +237,12 @@ fun ToolsScreen(
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(horizontal = 4.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            // Top Header
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
-                shape = RoundedCornerShape(20.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        if (onBack != null) {
-                            IconButton(onClick = onBack) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                                    contentDescription = "Back",
-                                    tint = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(4.dp))
-                        }
-                        Text(
-                            text = "Tools",
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 24.sp
-                            ),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-
+            DevPulseTopAppBar(
+                title = "Developer Tools",
+                onBack = onBack,
+                actions = {
                     Box {
                         IconButton(onClick = { showMenu = !showMenu }) {
                             Icon(
@@ -308,14 +273,14 @@ fun ToolsScreen(
                         }
                     }
                 }
-            }
+            )
 
             // Tools List Cards
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState()),
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 toolsList.forEach { tool ->

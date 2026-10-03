@@ -7,10 +7,12 @@ import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -104,45 +106,23 @@ fun FloatingMonitorsScreen(
 
     Column(
         modifier = modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
         if (onBack != null) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
-                shape = RoundedCornerShape(20.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Floating Monitors",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 24.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
+            DevPulseTopAppBar(
+                title = "Floating Monitors",
+                onBack = onBack
+            )
         }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -323,5 +303,6 @@ fun FloatingMonitorsScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+        }
     }
 }
