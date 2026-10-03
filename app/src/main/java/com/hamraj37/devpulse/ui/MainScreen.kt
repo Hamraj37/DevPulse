@@ -721,6 +721,7 @@ fun TabContentScreen(
                 testsList = uiState.testsList,
                 onNavigateToTests = { onSelectTab(AppTab.TESTS) },
                 onNavigateToDisplay = { onSelectTab(AppTab.DISPLAY) },
+                onNavigateToBattery = { onSelectTab(AppTab.BATTERY) },
                 onNavigateToTools = { onSetToolsPageOpen(true) },
                 onNavigateToApps = { onSelectTab(AppTab.APPS) },
                 onNavigateToSensors = { onSelectTab(AppTab.SENSORS) },

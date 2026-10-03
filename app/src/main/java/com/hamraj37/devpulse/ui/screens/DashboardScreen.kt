@@ -73,6 +73,7 @@ fun DashboardScreen(
     testsList: List<TestItem> = emptyList(),
     onNavigateToTests: () -> Unit = {},
     onNavigateToDisplay: () -> Unit = {},
+    onNavigateToBattery: () -> Unit = {},
     onNavigateToTools: () -> Unit = {},
     onNavigateToApps: () -> Unit = {},
     onNavigateToSensors: () -> Unit = {},
@@ -647,7 +648,10 @@ fun DashboardScreen(
 
         // 6. Battery Card
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(20.dp))
+                .clickable { onNavigateToBattery() },
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
             shape = RoundedCornerShape(20.dp)
         ) {
