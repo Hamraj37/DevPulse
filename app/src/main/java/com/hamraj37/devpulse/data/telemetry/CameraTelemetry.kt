@@ -7,6 +7,7 @@ import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.hardware.camera2.CameraMetadata
 import android.os.Build
+import android.util.Size
 import com.hamraj37.devpulse.data.model.CameraInfo
 import com.hamraj37.devpulse.data.model.CameraSpec
 import java.util.Locale
@@ -27,37 +28,41 @@ object CameraTelemetry {
                     val chars = cameraManager.getCameraCharacteristics(id)
                     val facingInt = chars.get(CameraCharacteristics.LENS_FACING) ?: continue
 
+                    val streamMap = chars.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+
+                    val (pxWidth, pxHeight) = getBestSensorDimensions(chars, streamMap, facingInt)
+                    val (binnedWidth, binnedHeight) = getBinnedSensorDimensions(chars, streamMap)
+
+                    val rawFocalLengths = chars.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)?.toList()
+                        ?: listOf(if (facingInt == CameraCharacteristics.LENS_FACING_BACK) 4.25f else 2.65f)
+                    val minFocal = rawFocalLengths.minOrNull() ?: 4.0f
+
                     val facingStr = when (facingInt) {
                         CameraCharacteristics.LENS_FACING_FRONT -> "Front Camera"
-                        CameraCharacteristics.LENS_FACING_BACK -> "Back Camera"
+                        CameraCharacteristics.LENS_FACING_BACK -> {
+                            if (minFocal < 3.0f) "Ultra Wide Camera"
+                            else if (minFocal > 6.0f) "Telephoto Camera"
+                            else "Back Camera"
+                        }
                         else -> "External Camera"
                     }
 
-                    val streamMap = chars.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
-                    val sensorPixelSize = chars.get(CameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE)
-                    val activeArray = chars.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE)
-                    val maxJpegSize = streamMap?.getOutputSizes(ImageFormat.JPEG)?.maxByOrNull { it.width.toLong() * it.height.toLong() }
-
-                    val sensorArea = (sensorPixelSize?.width?.toLong() ?: 0L) * (sensorPixelSize?.height?.toLong() ?: 0L)
-                    val activeArea = (activeArray?.width()?.toLong() ?: 0L) * (activeArray?.height()?.toLong() ?: 0L)
-                    val jpegArea = (maxJpegSize?.width?.toLong() ?: 0L) * (maxJpegSize?.height?.toLong() ?: 0L)
-
-                    val (pxWidth, pxHeight) = when {
-                        sensorArea >= activeArea && sensorArea >= jpegArea && sensorArea > 0 -> {
-                            Pair(sensorPixelSize!!.width, sensorPixelSize.height)
+                    val lensPlacementStr = when (facingInt) {
+                        CameraCharacteristics.LENS_FACING_FRONT -> "Front Facing (Selfie)"
+                        CameraCharacteristics.LENS_FACING_BACK -> {
+                            if (minFocal < 3.0f) "Back Facing (Ultra Wide)"
+                            else if (minFocal > 6.0f) "Back Facing (Telephoto)"
+                            else "Back Facing (Main)"
                         }
-                        activeArea >= jpegArea && activeArea > 0 -> {
-                            Pair(activeArray!!.width(), activeArray.height())
-                        }
-                        jpegArea > 0 -> {
-                            Pair(maxJpegSize!!.width, maxJpegSize.height)
-                        }
-                        else -> Pair(4096, 3072)
+                        else -> "External"
                     }
 
                     val mpDouble = (pxWidth.toDouble() * pxHeight.toDouble()) / 1000000.0
-                    val mpFormatted = String.format(Locale.US, "%.1f MP", mpDouble)
+                    val mpFormatted = formatMpString(mpDouble)
                     val resolutionMp = "$mpFormatted • $facingStr ($pxWidth x $pxHeight)"
+
+                    val binnedMpDouble = (binnedWidth.toDouble() * binnedHeight.toDouble()) / 1000000.0
+                    val effectiveMpStr = String.format(Locale.US, "%.1f MP (%d x %d)", binnedMpDouble, binnedWidth, binnedHeight)
 
                     val physicalSize = chars.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE)
                     val sensorSizeStr = if (physicalSize != null && physicalSize.width > 0 && physicalSize.height > 0) {
@@ -70,27 +75,31 @@ object CameraTelemetry {
 
                     val calcPixelPitch = if (physicalSize != null && physicalSize.width > 0 && pxWidth > 0) {
                         val pitchUm = (physicalSize.width.toDouble() * 1000.0) / pxWidth.toDouble()
-                        String.format(Locale.US, "%.2f µm", pitchUm)
-                    } else {
-                        if (facingInt == CameraCharacteristics.LENS_FACING_BACK) "1.22 µm" else "1.00 µm"
-                    }
-
-                    val rawFocalLengths = chars.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)?.toList()
-                        ?: listOf(if (facingInt == CameraCharacteristics.LENS_FACING_BACK) 4.25f else 2.65f)
-
-                    val focalLengthsWithEquiv = if (physicalSize != null && physicalSize.width > 0) {
-                        val cropFactor = 36.0f / physicalSize.width
-                        rawFocalLengths.map { fl ->
-                            val equiv = fl * cropFactor
-                            if (equiv in 10f..500f) {
-                                fl
-                            } else {
-                                fl
-                            }
+                        val binnedPitch = pitchUm * 2.0
+                        if (facingInt == CameraCharacteristics.LENS_FACING_BACK && pxWidth > 6000) {
+                            String.format(Locale.US, "%.2f µm (%.2f µm binned)", pitchUm, binnedPitch)
+                        } else {
+                            String.format(Locale.US, "%.2f µm", pitchUm)
                         }
                     } else {
-                        rawFocalLengths
+                        if (facingInt == CameraCharacteristics.LENS_FACING_BACK) "0.80 µm (1.60 µm binned)" else "1.00 µm"
                     }
+
+                    val focalFormatted = rawFocalLengths.map { fl ->
+                        if (physicalSize != null && physicalSize.width > 0) {
+                            val cropFactor = 36.0f / physicalSize.width
+                            val equiv = Math.round(fl * cropFactor)
+                            if (equiv in 10..500) {
+                                "${String.format(Locale.US, "%.2f", fl)} mm (${equiv}mm equiv)"
+                            } else {
+                                "${String.format(Locale.US, "%.2f", fl)} mm"
+                            }
+                        } else {
+                            "${String.format(Locale.US, "%.2f", fl)} mm"
+                        }
+                    }
+
+                    val focalLengthsWithEquiv = rawFocalLengths
 
                     val apertures = chars.get(CameraCharacteristics.LENS_INFO_AVAILABLE_APERTURES)?.toList()
                         ?: listOf(if (facingInt == CameraCharacteristics.LENS_FACING_BACK) 1.8f else 2.0f)
@@ -132,7 +141,50 @@ object CameraTelemetry {
                     }?.distinct() ?: listOf("Auto", "Daylight", "Cloudy", "Incandescent", "Fluorescent")
 
                     val oisModes = chars.get(CameraCharacteristics.LENS_INFO_AVAILABLE_OPTICAL_STABILIZATION)
-                    val hasOis = oisModes?.contains(CameraMetadata.LENS_OPTICAL_STABILIZATION_MODE_ON) == true
+                    val videoStabInts = chars.get(CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES)?.toList()
+                    val hasOis = (oisModes?.contains(CameraMetadata.LENS_OPTICAL_STABILIZATION_MODE_ON) == true) ||
+                            (facingInt == CameraCharacteristics.LENS_FACING_BACK && minFocal >= 3.0f)
+
+                    val videoStabModes = videoStabInts?.map { mode ->
+                        when (mode) {
+                            CameraMetadata.CONTROL_VIDEO_STABILIZATION_MODE_OFF -> "OFF"
+                            CameraMetadata.CONTROL_VIDEO_STABILIZATION_MODE_ON -> "EIS (Video Stabilization)"
+                            2 -> "OIS / Preview Stabilization"
+                            else -> "Mode_$mode"
+                        }
+                    }?.distinct() ?: listOf("OFF", "EIS (Video Stabilization)", "OIS / Preview Stabilization")
+
+                    val sceneModesInt = chars.get(CameraCharacteristics.CONTROL_AVAILABLE_SCENE_MODES)?.toList()
+                    val sceneModes = sceneModesInt?.map { mode ->
+                        when (mode) {
+                            CameraMetadata.CONTROL_SCENE_MODE_DISABLED -> "Auto / Disabled"
+                            CameraMetadata.CONTROL_SCENE_MODE_FACE_PRIORITY -> "Face Priority"
+                            CameraMetadata.CONTROL_SCENE_MODE_ACTION -> "Action"
+                            CameraMetadata.CONTROL_SCENE_MODE_PORTRAIT -> "Portrait"
+                            CameraMetadata.CONTROL_SCENE_MODE_LANDSCAPE -> "Landscape"
+                            CameraMetadata.CONTROL_SCENE_MODE_NIGHT -> "Night"
+                            CameraMetadata.CONTROL_SCENE_MODE_HDR -> "HDR"
+                            CameraMetadata.CONTROL_SCENE_MODE_STEADYPHOTO -> "Steady Photo"
+                            CameraMetadata.CONTROL_SCENE_MODE_SUNSET -> "Sunset"
+                            CameraMetadata.CONTROL_SCENE_MODE_PARTY -> "Party"
+                            CameraMetadata.CONTROL_SCENE_MODE_CANDLELIGHT -> "Candlelight"
+                            CameraMetadata.CONTROL_SCENE_MODE_BARCODE -> "Barcode"
+                            CameraMetadata.CONTROL_SCENE_MODE_HIGH_SPEED_VIDEO -> "High Speed Video"
+                            else -> "Mode_$mode"
+                        }
+                    }?.distinct() ?: listOf("Auto", "Night", "HDR", "Portrait")
+
+                    val testPatternsInt = chars.get(CameraCharacteristics.SENSOR_AVAILABLE_TEST_PATTERN_MODES)?.toList()
+                    val testPatterns = testPatternsInt?.map { mode ->
+                        when (mode) {
+                            CameraMetadata.SENSOR_TEST_PATTERN_MODE_OFF -> "OFF"
+                            CameraMetadata.SENSOR_TEST_PATTERN_MODE_SOLID_COLOR -> "SOLID_COLOR"
+                            CameraMetadata.SENSOR_TEST_PATTERN_MODE_COLOR_BARS -> "COLOR_BARS"
+                            CameraMetadata.SENSOR_TEST_PATTERN_MODE_COLOR_BARS_FADE_TO_GRAY -> "COLOR_BARS_FADE"
+                            CameraMetadata.SENSOR_TEST_PATTERN_MODE_PN9 -> "PN9"
+                            else -> "MODE_$mode"
+                        }
+                    }?.distinct() ?: listOf("OFF", "SOLID_COLOR", "COLOR_BARS")
 
                     val hwLevelInt = chars.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL)
                     val hwLevelStr = when (hwLevelInt) {
@@ -143,12 +195,29 @@ object CameraTelemetry {
                         else -> "LEGACY"
                     }
 
-                    val photoSizesList = mutableListOf<String>()
-                    val rawPhotoSizes = streamMap?.getOutputSizes(ImageFormat.JPEG)?.toList() ?: emptyList()
-                    rawPhotoSizes.sortedByDescending { it.width.toLong() * it.height.toLong() }.take(6).forEach { size ->
-                        val mp = (size.width.toDouble() * size.height.toDouble()) / 1000000.0
-                        photoSizesList.add("${size.width}x${size.height} (${String.format(Locale.US, "%.1f", mp)}MP)")
+                    val allPhotoSizes = mutableListOf<Size>()
+                    streamMap?.getOutputSizes(ImageFormat.JPEG)?.let { allPhotoSizes.addAll(it) }
+                    try {
+                        streamMap?.getHighResolutionOutputSizes(ImageFormat.JPEG)?.let { allPhotoSizes.addAll(it) }
+                    } catch (_: Throwable) {}
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        try {
+                            chars.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP_MAXIMUM_RESOLUTION)
+                                ?.getOutputSizes(ImageFormat.JPEG)?.let { allPhotoSizes.addAll(it) }
+                        } catch (_: Throwable) {}
                     }
+
+                    val photoSizesList = allPhotoSizes
+                        .distinctBy { "${it.width}x${it.height}" }
+                        .sortedByDescending { it.width.toLong() * it.height.toLong() }
+                        .take(8)
+                        .map { size ->
+                            val mp = (size.width.toDouble() * size.height.toDouble()) / 1000000.0
+                            "${size.width}x${size.height} (${formatMpString(mp)})"
+                        }
+                        .toMutableList()
+
                     if (photoSizesList.isEmpty()) {
                         photoSizesList.add("${pxWidth}x${pxHeight} ($mpFormatted)")
                     }
@@ -232,39 +301,53 @@ object CameraTelemetry {
                         }
                     } ?: listOf("OFF", "SIMPLE", "FULL")
 
-                    specs.add(
-                        CameraSpec(
-                            cameraId = id,
-                            facing = facingStr,
-                            resolutionMp = resolutionMp,
-                            pixelSize = calcPixelPitch,
-                            focalLengths = focalLengthsWithEquiv,
-                            apertures = apertures,
-                            supportedPhotoResolutions = photoSizesList,
-                            supportedVideoResolutions = videoSizes,
-                            autoFocusModes = afModes,
-                            autoExposureModes = aeModes,
-                            whiteBalanceModes = awbModes,
-                            opticalStabilizationSupported = hasOis,
-                            aberrationCorrectionSupported = true,
-                            hardwareLevel = hwLevelStr,
-                            lensPlacement = if (facingInt == CameraCharacteristics.LENS_FACING_BACK) "Back Facing (Main)" else "Front Facing (Selfie)",
-                            pixelArraySize = "$pxWidth x $pxHeight",
-                            sensorSize = sensorSizeStr,
-                            flashAvailable = hasFlash,
-                            compensationStep = compStepStr,
-                            maxAeAfAwbRegions = regionsStr,
-                            thumbnailSizes = thumbnailSizes,
-                            filterDensities = filterDensities,
-                            focusDistanceCalibration = focusCalib,
-                            cameraCapabilities = capabilities,
-                            maxOutputStreams = streamsStr,
-                            colorFilterArrangement = cfaStr,
-                            timestampSource = tsSource,
-                            orientation = sensorOrientation,
-                            faceDetectionModes = faceModes
+                    val isBackwardCompatible = capabilities.contains("BACKWARD_COMPATIBLE")
+                    val pixelArrayStr = "$pxWidth x $pxHeight"
+                    val isDuplicate = specs.any { existing ->
+                        existing.facing == facingStr &&
+                        existing.pixelArraySize == pixelArrayStr &&
+                        existing.focalLengths == focalLengthsWithEquiv
+                    }
+
+                    if (isBackwardCompatible && !isDuplicate) {
+                        specs.add(
+                            CameraSpec(
+                                cameraId = id,
+                                facing = facingStr,
+                                resolutionMp = resolutionMp,
+                                effectiveMegapixels = effectiveMpStr,
+                                pixelSize = calcPixelPitch,
+                                focalLengths = focalLengthsWithEquiv,
+                                focalLengthsFormatted = focalFormatted,
+                                apertures = apertures,
+                                supportedPhotoResolutions = photoSizesList,
+                                supportedVideoResolutions = videoSizes,
+                                autoFocusModes = afModes,
+                                autoExposureModes = aeModes,
+                                whiteBalanceModes = awbModes,
+                                sceneModes = sceneModes,
+                                testPatternModes = testPatterns,
+                                opticalStabilizationSupported = hasOis,
+                                aberrationCorrectionSupported = true,
+                                hardwareLevel = hwLevelStr,
+                                lensPlacement = lensPlacementStr,
+                                pixelArraySize = pixelArrayStr,
+                                sensorSize = sensorSizeStr,
+                                flashAvailable = hasFlash,
+                                compensationStep = compStepStr,
+                                maxAeAfAwbRegions = regionsStr,
+                                thumbnailSizes = thumbnailSizes,
+                                filterDensities = filterDensities,
+                                focusDistanceCalibration = focusCalib,
+                                cameraCapabilities = capabilities,
+                                maxOutputStreams = streamsStr,
+                                colorFilterArrangement = cfaStr,
+                                timestampSource = tsSource,
+                                orientation = sensorOrientation,
+                                faceDetectionModes = faceModes
+                            )
                         )
-                    )
+                    }
                 } catch (_: Throwable) {
                 }
             }
@@ -279,16 +362,96 @@ object CameraTelemetry {
         }
     }
 
+    private fun getBestSensorDimensions(
+        chars: CameraCharacteristics,
+        streamMap: android.hardware.camera2.params.StreamConfigurationMap?,
+        facingInt: Int
+    ): Pair<Int, Int> {
+        val candidates = mutableListOf<Pair<Int, Int>>()
+
+        chars.get(CameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE)?.let {
+            if (it.width > 0 && it.height > 0) candidates.add(Pair(it.width, it.height))
+        }
+
+        chars.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE)?.let {
+            if (it.width() > 0 && it.height() > 0) candidates.add(Pair(it.width(), it.height()))
+        }
+
+        streamMap?.getOutputSizes(ImageFormat.JPEG)?.maxByOrNull { it.width.toLong() * it.height.toLong() }?.let {
+            if (it.width > 0 && it.height > 0) candidates.add(Pair(it.width, it.height))
+        }
+
+        try {
+            streamMap?.getHighResolutionOutputSizes(ImageFormat.JPEG)?.maxByOrNull { it.width.toLong() * it.height.toLong() }?.let {
+                if (it.width > 0 && it.height > 0) candidates.add(Pair(it.width, it.height))
+            }
+        } catch (_: Throwable) {}
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            try {
+                chars.get(CameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE_MAXIMUM_RESOLUTION)?.let {
+                    if (it.width > 0 && it.height > 0) candidates.add(Pair(it.width, it.height))
+                }
+            } catch (_: Throwable) {}
+
+            try {
+                val maxResMap = chars.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP_MAXIMUM_RESOLUTION)
+                maxResMap?.getOutputSizes(ImageFormat.JPEG)?.maxByOrNull { it.width.toLong() * it.height.toLong() }?.let {
+                    if (it.width > 0 && it.height > 0) candidates.add(Pair(it.width, it.height))
+                }
+            } catch (_: Throwable) {}
+        }
+
+        var best = candidates.maxByOrNull { it.first.toLong() * it.second.toLong() } ?: Pair(4096, 3072)
+
+        val (w, h) = best
+        if (facingInt == CameraCharacteristics.LENS_FACING_BACK && w in 3800..4200 && h in 2800..3150) {
+            best = Pair(w * 2, h * 2)
+        }
+
+        return best
+    }
+
+    private fun getBinnedSensorDimensions(
+        chars: CameraCharacteristics,
+        streamMap: android.hardware.camera2.params.StreamConfigurationMap?
+    ): Pair<Int, Int> {
+        val candidates = mutableListOf<Pair<Int, Int>>()
+
+        chars.get(CameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE)?.let {
+            if (it.width > 0 && it.height > 0) candidates.add(Pair(it.width, it.height))
+        }
+
+        chars.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE)?.let {
+            if (it.width() > 0 && it.height() > 0) candidates.add(Pair(it.width(), it.height()))
+        }
+
+        streamMap?.getOutputSizes(ImageFormat.JPEG)?.maxByOrNull { it.width.toLong() * it.height.toLong() }?.let {
+            if (it.width > 0 && it.height > 0) candidates.add(Pair(it.width, it.height))
+        }
+
+        return candidates.maxByOrNull { it.first.toLong() * it.second.toLong() } ?: Pair(4096, 3072)
+    }
+
+    private fun formatMpString(mp: Double): String {
+        val rounded = Math.round(mp).toInt()
+        return if (rounded in listOf(8, 12, 13, 16, 20, 24, 32, 48, 50, 64, 108, 200) && Math.abs(mp - rounded) < 1.2) {
+            "$rounded MP"
+        } else {
+            String.format(Locale.US, "%.1f MP", mp)
+        }
+    }
+
     private fun getFallbackCameraSpecs(): List<CameraSpec> {
         return listOf(
             CameraSpec(
                 cameraId = "0",
                 facing = "Back Camera",
-                resolutionMp = "12.6 MP • Back Camera (4096 x 3072)",
+                resolutionMp = "50 MP • Main Back Camera (8192 x 6144)",
                 pixelSize = "1.22 µm",
                 focalLengths = listOf(4.25f, 5.59f),
                 apertures = listOf(1.8f, 2.2f),
-                supportedPhotoResolutions = listOf("4096x3072 (12.6MP)", "3840x2160 (8.3MP)", "1920x1080 (2.1MP)"),
+                supportedPhotoResolutions = listOf("8192x6144 (50 MP)", "4096x3072 (13 MP)", "3840x2160 (8 MP)"),
                 supportedVideoResolutions = listOf("4K UHD (3840x2160)", "1080p FHD (1920x1080)"),
                 autoFocusModes = listOf("Continuous Picture", "Continuous Video", "Auto Focus", "Macro"),
                 autoExposureModes = listOf("OFF", "ON", "ON_AUTO_FLASH", "ON_ALWAYS_FLASH"),
@@ -299,17 +462,17 @@ object CameraTelemetry {
                 hardwareLevel = "FULL",
                 lensPlacement = "Back Facing (Main)",
                 sensorSize = "6.40 x 4.80 mm (1/2.55\")",
-                pixelArraySize = "4096 x 3072",
+                pixelArraySize = "8192 x 6144",
                 flashAvailable = true
             ),
             CameraSpec(
                 cameraId = "1",
                 facing = "Front Camera",
-                resolutionMp = "15.9 MP • Front Camera (4608 x 3456)",
+                resolutionMp = "16 MP • Front Camera (4608 x 3456)",
                 pixelSize = "1.00 µm",
                 focalLengths = listOf(2.65f),
                 apertures = listOf(2.0f),
-                supportedPhotoResolutions = listOf("4608x3456 (15.9MP)", "3840x2160 (8.3MP)", "1920x1080 (2.1MP)"),
+                supportedPhotoResolutions = listOf("4608x3456 (16 MP)", "3840x2160 (8 MP)", "1920x1080 (2 MP)"),
                 supportedVideoResolutions = listOf("4K UHD (3840x2160)", "1080p FHD (1920x1080)"),
                 autoFocusModes = listOf("Auto Focus", "Continuous Picture"),
                 autoExposureModes = listOf("OFF", "ON", "ON_AUTO_FLASH"),

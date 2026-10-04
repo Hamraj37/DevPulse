@@ -257,8 +257,10 @@ data class CameraSpec(
     val cameraId: String,
     val facing: String, // Front / Back / External
     val resolutionMp: String,
+    val effectiveMegapixels: String = "12.6 MP (4096 x 3072)",
     val pixelSize: String = "1.22 µm",
     val focalLengths: List<Float> = listOf(4.25f),
+    val focalLengthsFormatted: List<String> = listOf("4.25 mm (26mm equiv)"),
     val apertures: List<Float> = listOf(1.8f),
     val supportedPhotoResolutions: List<String> = listOf("4096x3072 (13MP)", "3840x2160 (8MP)", "1920x1080 (2MP)"),
     val supportedVideoResolutions: List<String> = listOf("4K UHD (3840x2160 @ 60fps)", "1080p FHD (1920x1080 @ 120fps)"),
