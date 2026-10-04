@@ -236,6 +236,50 @@ fun AppAnalyzerCardItem(
     }
 }
 
+private fun getAndroidVersionNameForApi(apiLevel: Int): Pair<String, String> {
+    return when (apiLevel) {
+        36 -> Pair("Android 16 (API 36)", "Baklava")
+        35 -> Pair("Android 15 (API 35)", "Vanilla Ice Cream")
+        34 -> Pair("Android 14 (API 34)", "Upside Down Cake")
+        33 -> Pair("Android 13 (API 33)", "Tiramisu")
+        32 -> Pair("Android 12L (API 32)", "Snow Cone")
+        31 -> Pair("Android 12 (API 31)", "Snow Cone")
+        30 -> Pair("Android 11 (API 30)", "Red Velvet Cake")
+        29 -> Pair("Android 10 (API 29)", "Quince Tart")
+        28 -> Pair("Android 9 (API 28)", "Pie")
+        27 -> Pair("Android 8.1 (API 27)", "Oreo")
+        26 -> Pair("Android 8.0 (API 26)", "Oreo")
+        25 -> Pair("Android 7.1 (API 25)", "Nougat")
+        24 -> Pair("Android 7.0 (API 24)", "Nougat")
+        23 -> Pair("Android 6.0 (API 23)", "Marshmallow")
+        22 -> Pair("Android 5.1 (API 22)", "Lollipop")
+        21 -> Pair("Android 5.0 (API 21)", "Lollipop")
+        else -> Pair("Android API $apiLevel", "Target SDK $apiLevel")
+    }
+}
+
+private fun getAndroidMinSdkNameForApi(apiLevel: Int): Pair<String, String> {
+    return when (apiLevel) {
+        36 -> Pair("API 36 (Android 16+)", "Baklava")
+        35 -> Pair("API 35 (Android 15+)", "Vanilla Ice Cream")
+        34 -> Pair("API 34 (Android 14+)", "Upside Down Cake")
+        33 -> Pair("API 33 (Android 13+)", "Tiramisu")
+        32 -> Pair("API 32 (Android 12L+)", "Snow Cone")
+        31 -> Pair("API 31 (Android 12+)", "Snow Cone")
+        30 -> Pair("API 30 (Android 11+)", "Red Velvet Cake")
+        29 -> Pair("API 29 (Android 10+)", "Quince Tart")
+        28 -> Pair("API 28 (Android 9+)", "Pie")
+        27 -> Pair("API 27 (Android 8.1+)", "Oreo")
+        26 -> Pair("API 26 (Android 8.0+)", "Oreo")
+        25 -> Pair("API 25 (Android 7.1+)", "Nougat")
+        24 -> Pair("API 24 (Android 7.0+)", "Nougat")
+        23 -> Pair("API 23 (Android 6.0+)", "Marshmallow")
+        22 -> Pair("API 22 (Android 5.1+)", "Lollipop")
+        21 -> Pair("API 21 (Android 5.0+)", "Lollipop")
+        else -> Pair("API $apiLevel", "Min SDK $apiLevel")
+    }
+}
+
 @Composable
 fun AppAnalyzerScreen(
     uiState: MainUiState,
@@ -288,28 +332,28 @@ fun AppAnalyzerScreen(
                     }
                 }
                 "Target SDK" -> {
-                    val t34 = apps.count { it.targetSdk >= 34 }
-                    val t33 = apps.count { it.targetSdk == 33 }
-                    val t31_32 = apps.count { it.targetSdk in 31..32 }
-                    val tLegacy = apps.count { it.targetSdk < 31 }
-
-                    listOf(
-                        AnalyzerItem("Android 14+ (API 34+)", "Target SDK 34 and above", t34, Color(0xFF1976D2)),
-                        AnalyzerItem("Android 13 (API 33)", "Target SDK 33", t33, Color(0xFF7B1FA2)),
-                        AnalyzerItem("Android 12/12L (API 31/32)", "Target SDK 31 - 32", t31_32, Color(0xFF0097A7)),
-                        AnalyzerItem("Legacy (< API 31)", "Older target SDK", tLegacy, Color(0xFFE64A19))
-                    ).filter { it.count > 0 }
+                    val groups = apps.groupBy { it.targetSdk }
+                    groups.entries.sortedByDescending { it.key }.mapIndexed { idx, entry ->
+                        val (title, code) = getAndroidVersionNameForApi(entry.key)
+                        AnalyzerItem(
+                            label = title,
+                            subLabel = "${entry.value.size} Apps • $code",
+                            count = entry.value.size,
+                            color = colors[idx % colors.size]
+                        )
+                    }
                 }
                 "Minimum SDK" -> {
-                    val m26 = apps.count { it.minSdk >= 26 }
-                    val m21 = apps.count { it.minSdk in 21..25 }
-                    val mLegacy = apps.count { it.minSdk < 21 }
-
-                    listOf(
-                        AnalyzerItem("API 26+ (Oreo 8.0+)", "Modern min SDK", m26, Color(0xFF388E3C)),
-                        AnalyzerItem("API 21+ (Lollipop 5.0+)", "Legacy min SDK", m21, Color(0xFFFBC02D)),
-                        AnalyzerItem("Legacy (< API 21)", "Very old min SDK", mLegacy, Color(0xFF5D4037))
-                    ).filter { it.count > 0 }
+                    val groups = apps.groupBy { it.minSdk }
+                    groups.entries.sortedByDescending { it.key }.mapIndexed { idx, entry ->
+                        val (title, code) = getAndroidMinSdkNameForApi(entry.key)
+                        AnalyzerItem(
+                            label = title,
+                            subLabel = "${entry.value.size} Apps • $code",
+                            count = entry.value.size,
+                            color = colors[idx % colors.size]
+                        )
+                    }
                 }
                 else -> {
                     val userApps = apps.count { !it.isSystemApp }
@@ -485,16 +529,23 @@ fun CategoryAppListBottomSheet(
         when (selectedTab) {
             "Categories" -> allApps.filter { it.appCategory == categoryItem.label }
             "Installer" -> allApps.filter { it.installSource.ifBlank { "Side-loaded / Local" } == categoryItem.label }
-            "Target SDK" -> when {
-                categoryItem.label.contains("34") -> allApps.filter { it.targetSdk >= 34 }
-                categoryItem.label.contains("33") -> allApps.filter { it.targetSdk == 33 }
-                categoryItem.label.contains("31") -> allApps.filter { it.targetSdk in 31..32 }
-                else -> allApps.filter { it.targetSdk < 31 }
+            "Target SDK" -> {
+                val api = categoryItem.label.substringAfter("API ").substringBefore(")").toIntOrNull()
+                    ?: categoryItem.subLabel.substringAfter("Target SDK ").substringBefore(" ").toIntOrNull()
+                if (api != null) {
+                    allApps.filter { it.targetSdk == api }
+                } else {
+                    allApps
+                }
             }
-            "Minimum SDK" -> when {
-                categoryItem.label.contains("26") -> allApps.filter { it.minSdk >= 26 }
-                categoryItem.label.contains("21") -> allApps.filter { it.minSdk in 21..25 }
-                else -> allApps.filter { it.minSdk < 21 }
+            "Minimum SDK" -> {
+                val api = categoryItem.label.substringAfter("API ").substringBefore(" ").substringBefore(")").toIntOrNull()
+                    ?: categoryItem.subLabel.substringAfter("Min SDK ").substringBefore(" ").toIntOrNull()
+                if (api != null) {
+                    allApps.filter { it.minSdk == api }
+                } else {
+                    allApps
+                }
             }
             else -> when {
                 categoryItem.label.contains("Pre-Installed", ignoreCase = true) || categoryItem.label.contains("System", ignoreCase = true) ->
