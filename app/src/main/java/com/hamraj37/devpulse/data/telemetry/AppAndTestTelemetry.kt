@@ -130,6 +130,28 @@ object AppAndTestTelemetry {
 
                     val source = getInstallSourceLabel(context, pkg.packageName)
 
+                    val targetSdk = appInfo?.targetSdkVersion ?: 34
+                    val minSdk = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        try { appInfo?.minSdkVersion ?: 21 } catch (_: Throwable) { 21 }
+                    } else 21
+
+                    val categoryInt = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        try { appInfo?.category ?: ApplicationInfo.CATEGORY_UNDEFINED } catch (_: Throwable) { ApplicationInfo.CATEGORY_UNDEFINED }
+                    } else ApplicationInfo.CATEGORY_UNDEFINED
+
+                    val categoryStr = when (categoryInt) {
+                        ApplicationInfo.CATEGORY_GAME -> "Games"
+                        ApplicationInfo.CATEGORY_AUDIO -> "Music & Audio"
+                        ApplicationInfo.CATEGORY_VIDEO -> "Video & Movies"
+                        ApplicationInfo.CATEGORY_IMAGE -> "Photography"
+                        ApplicationInfo.CATEGORY_SOCIAL -> "Social & Communication"
+                        ApplicationInfo.CATEGORY_NEWS -> "News & Magazines"
+                        ApplicationInfo.CATEGORY_MAPS -> "Maps & Navigation"
+                        ApplicationInfo.CATEGORY_PRODUCTIVITY -> "Productivity"
+                        ApplicationInfo.CATEGORY_ACCESSIBILITY -> "Accessibility"
+                        else -> if (isSystem) "System & Tools" else "Other / Utilities"
+                    }
+
                     appSpecs.add(
                         AppSpec(
                             appName = label,
@@ -140,7 +162,10 @@ object AppAndTestTelemetry {
                             isSystemApp = isSystem,
                             installedTimeMs = pkg.firstInstallTime,
                             updatedTimeMs = pkg.lastUpdateTime,
-                            installSource = source
+                            installSource = source,
+                            targetSdk = targetSdk,
+                            minSdk = minSdk,
+                            appCategory = categoryStr
                         )
                     )
                 } catch (_: Throwable) {

@@ -246,86 +246,88 @@ fun AppAnalyzerScreen(
         BackHandler { onBack() }
     }
 
-    var selectedTab by remember { mutableStateOf("Installer") }
-    val tabs = listOf("Installer", "Target", "Minimum", "Signature", "Permissions")
+    var selectedTab by remember { mutableStateOf("Categories") }
+    val tabs = listOf("Categories", "Installer", "Target SDK", "Minimum SDK", "App Type")
 
     var selectedCategoryItem by remember { mutableStateOf<AnalyzerItem?>(null) }
     var selectedAppForDetail by remember { mutableStateOf<AppSpec?>(null) }
 
     val apps = uiState.appInfo.appsList
-    val systemCount = apps.count { it.isSystemApp }
-    val userCount = apps.count { !it.isSystemApp }
 
-    val items = remember(selectedTab, apps.size, systemCount, userCount) {
+    val colors = remember {
+        listOf(
+            Color(0xFFC2185B), Color(0xFFF57C00), Color(0xFFFBC02D), Color(0xFF689F38),
+            Color(0xFF1976D2), Color(0xFF7B1FA2), Color(0xFF0097A7), Color(0xFFE64A19),
+            Color(0xFF388E3C), Color(0xFF546E7A), Color(0xFF8D6E63), Color(0xFF303F9F)
+        )
+    }
+
+    val items = remember(selectedTab, apps) {
         if (apps.isNotEmpty()) {
             when (selectedTab) {
-                "Installer" -> listOf(
-                    AnalyzerItem("Pre-Installed", "", systemCount, Color(0xFFC2185B)),
-                    AnalyzerItem("Google Play Store", "com.android.vending", (userCount * 0.72).toInt().coerceAtLeast(1), Color(0xFFF57C00)),
-                    AnalyzerItem("Package installer", "com.google.android.packageinstaller", (userCount * 0.14).toInt().coerceAtLeast(1), Color(0xFFFBC02D)),
-                    AnalyzerItem("APP Picks", "com.heytap.market", (userCount * 0.08).toInt().coerceAtLeast(1), Color(0xFF689F38)),
-                    AnalyzerItem("System Upgrade Services", "com.oplus.sau", (userCount * 0.03).toInt().coerceAtLeast(1), Color(0xFF8D6E63)),
-                    AnalyzerItem("Debug", "debug.package", (userCount * 0.02).toInt().coerceAtLeast(1), Color(0xFF303F9F)),
-                    AnalyzerItem("Meta App Installer", "com.facebook.system", (userCount * 0.01).toInt().coerceAtLeast(1), Color(0xFF546E7A)),
-                    AnalyzerItem("Chrome", "com.android.chrome", (userCount * 0.005).toInt().coerceAtLeast(1), Color(0xFFD7CCC8))
-                )
-                "Target" -> listOf(
-                    AnalyzerItem("Android 14+ (API 34+)", "Target SDK 34 and above", (apps.size * 0.70).toInt(), Color(0xFF1976D2)),
-                    AnalyzerItem("Android 13 (API 33)", "Target SDK 33", (apps.size * 0.20).toInt(), Color(0xFF7B1FA2)),
-                    AnalyzerItem("Android 12/12L (API 31/32)", "Target SDK 31 - 32", (apps.size * 0.07).toInt(), Color(0xFF0097A7)),
-                    AnalyzerItem("Legacy (< API 31)", "Older target SDK", maxOf(1, apps.size - (apps.size * 0.97).toInt()), Color(0xFFE64A19))
-                )
-                "Minimum" -> listOf(
-                    AnalyzerItem("API 26+ (Oreo 8.0+)", "Modern min SDK", (apps.size * 0.85).toInt(), Color(0xFF388E3C)),
-                    AnalyzerItem("API 21+ (Lollipop 5.0+)", "Legacy min SDK", (apps.size * 0.12).toInt(), Color(0xFFFBC02D)),
-                    AnalyzerItem("Legacy (< API 21)", "Very old min SDK", maxOf(1, apps.size - (apps.size * 0.97).toInt()), Color(0xFF5D4037))
-                )
-                "Signature" -> listOf(
-                    AnalyzerItem("APK Signature V3 / V4", "Modern secure signing", (apps.size * 0.75).toInt(), Color(0xFF00796B)),
-                    AnalyzerItem("APK Signature V2", "Standard scheme", (apps.size * 0.20).toInt(), Color(0xFF303F9F)),
-                    AnalyzerItem("APK Signature V1", "Legacy signing scheme", maxOf(1, apps.size - (apps.size * 0.95).toInt()), Color(0xFFE64A19))
-                )
-                else -> listOf(
-                    AnalyzerItem("Normal Permissions", "Standard app permissions", (apps.size * 0.60).toInt(), Color(0xFF303F9F)),
-                    AnalyzerItem("Dangerous / Sensitive", "Location, camera, contacts, etc.", (apps.size * 0.35).toInt(), Color(0xFFC2185B)),
-                    AnalyzerItem("Special Access", "System settings, overlay, etc.", maxOf(1, apps.size - (apps.size * 0.95).toInt()), Color(0xFFF57C00))
-                )
+                "Categories" -> {
+                    val groups = apps.groupBy { it.appCategory }
+                    groups.entries.sortedByDescending { it.value.size }.mapIndexed { idx, entry ->
+                        AnalyzerItem(
+                            label = entry.key,
+                            subLabel = "${entry.value.size} Applications",
+                            count = entry.value.size,
+                            color = colors[idx % colors.size]
+                        )
+                    }
+                }
+                "Installer" -> {
+                    val groups = apps.groupBy { it.installSource.ifBlank { "Side-loaded / Local" } }
+                    groups.entries.sortedByDescending { it.value.size }.mapIndexed { idx, entry ->
+                        AnalyzerItem(
+                            label = entry.key,
+                            subLabel = if (entry.key.contains("Play", true)) "com.android.vending" else "",
+                            count = entry.value.size,
+                            color = colors[idx % colors.size]
+                        )
+                    }
+                }
+                "Target SDK" -> {
+                    val t34 = apps.count { it.targetSdk >= 34 }
+                    val t33 = apps.count { it.targetSdk == 33 }
+                    val t31_32 = apps.count { it.targetSdk in 31..32 }
+                    val tLegacy = apps.count { it.targetSdk < 31 }
+
+                    listOf(
+                        AnalyzerItem("Android 14+ (API 34+)", "Target SDK 34 and above", t34, Color(0xFF1976D2)),
+                        AnalyzerItem("Android 13 (API 33)", "Target SDK 33", t33, Color(0xFF7B1FA2)),
+                        AnalyzerItem("Android 12/12L (API 31/32)", "Target SDK 31 - 32", t31_32, Color(0xFF0097A7)),
+                        AnalyzerItem("Legacy (< API 31)", "Older target SDK", tLegacy, Color(0xFFE64A19))
+                    ).filter { it.count > 0 }
+                }
+                "Minimum SDK" -> {
+                    val m26 = apps.count { it.minSdk >= 26 }
+                    val m21 = apps.count { it.minSdk in 21..25 }
+                    val mLegacy = apps.count { it.minSdk < 21 }
+
+                    listOf(
+                        AnalyzerItem("API 26+ (Oreo 8.0+)", "Modern min SDK", m26, Color(0xFF388E3C)),
+                        AnalyzerItem("API 21+ (Lollipop 5.0+)", "Legacy min SDK", m21, Color(0xFFFBC02D)),
+                        AnalyzerItem("Legacy (< API 21)", "Very old min SDK", mLegacy, Color(0xFF5D4037))
+                    ).filter { it.count > 0 }
+                }
+                else -> {
+                    val userApps = apps.count { !it.isSystemApp }
+                    val systemApps = apps.count { it.isSystemApp }
+
+                    listOf(
+                        AnalyzerItem("User Applications", "Installed by user or store", userApps, Color(0xFFF57C00)),
+                        AnalyzerItem("Pre-Installed System Apps", "Built-in system applications", systemApps, Color(0xFFC2185B))
+                    )
+                }
             }
         } else {
-            // Default sample counts matching standard analyzer display
-            when (selectedTab) {
-                "Installer" -> listOf(
-                    AnalyzerItem("Pre-Installed", "", 362, Color(0xFFC2185B)),
-                    AnalyzerItem("Google Play Store", "com.android.vending", 58, Color(0xFFF57C00)),
-                    AnalyzerItem("Package installer", "com.google.android.packageinstaller", 13, Color(0xFFFBC02D)),
-                    AnalyzerItem("APP Picks", "com.heytap.market", 11, Color(0xFF689F38)),
-                    AnalyzerItem("System Upgrade Services", "com.oplus.sau", 7, Color(0xFF8D6E63)),
-                    AnalyzerItem("Debug", "debug.package", 3, Color(0xFF303F9F)),
-                    AnalyzerItem("Meta App Installer", "com.facebook.system", 3, Color(0xFF546E7A)),
-                    AnalyzerItem("Chrome", "com.android.chrome", 1, Color(0xFFD7CCC8))
-                )
-                "Target" -> listOf(
-                    AnalyzerItem("Android 14+ (API 34+)", "Target SDK 34 and above", 312, Color(0xFF1976D2)),
-                    AnalyzerItem("Android 13 (API 33)", "Target SDK 33", 88, Color(0xFF7B1FA2)),
-                    AnalyzerItem("Android 12/12L (API 31/32)", "Target SDK 31 - 32", 31, Color(0xFF0097A7)),
-                    AnalyzerItem("Legacy (< API 31)", "Older target SDK", 27, Color(0xFFE64A19))
-                )
-                "Minimum" -> listOf(
-                    AnalyzerItem("API 26+ (Oreo 8.0+)", "Modern min SDK", 380, Color(0xFF388E3C)),
-                    AnalyzerItem("API 21+ (Lollipop 5.0+)", "Legacy min SDK", 52, Color(0xFFFBC02D)),
-                    AnalyzerItem("Legacy (< API 21)", "Very old min SDK", 26, Color(0xFF5D4037))
-                )
-                "Signature" -> listOf(
-                    AnalyzerItem("APK Signature V3 / V4", "Modern secure signing", 340, Color(0xFF00796B)),
-                    AnalyzerItem("APK Signature V2", "Standard scheme", 92, Color(0xFF303F9F)),
-                    AnalyzerItem("APK Signature V1", "Legacy signing scheme", 26, Color(0xFFE64A19))
-                )
-                else -> listOf(
-                    AnalyzerItem("Normal Permissions", "Standard app permissions", 270, Color(0xFF303F9F)),
-                    AnalyzerItem("Dangerous / Sensitive", "Location, camera, contacts, etc.", 158, Color(0xFFC2185B)),
-                    AnalyzerItem("Special Access", "System settings, overlay, etc.", 30, Color(0xFFF57C00))
-                )
-            }
+            listOf(
+                AnalyzerItem("System & Tools", "Built-in system apps", 110, Color(0xFFC2185B)),
+                AnalyzerItem("Social & Communication", "Chat, social & messaging", 24, Color(0xFFF57C00)),
+                AnalyzerItem("Productivity", "Utilities & productivity", 18, Color(0xFF1976D2)),
+                AnalyzerItem("Games", "Games & media apps", 12, Color(0xFF388E3C))
+            )
         }
     }
 
@@ -335,6 +337,7 @@ fun AppAnalyzerScreen(
         CategoryAppListBottomSheet(
             categoryItem = selectedCategoryItem!!,
             allApps = apps,
+            selectedTab = selectedTab,
             onSelectApp = { app ->
                 selectedAppForDetail = app
             },
@@ -474,26 +477,29 @@ fun AppAnalyzerScreen(
 fun CategoryAppListBottomSheet(
     categoryItem: AnalyzerItem,
     allApps: List<AppSpec>,
+    selectedTab: String,
     onSelectApp: (AppSpec) -> Unit,
     onDismissRequest: () -> Unit
 ) {
-    val categoryApps = remember(categoryItem, allApps) {
-        when {
-            categoryItem.label.contains("Pre-Installed", ignoreCase = true) ->
-                allApps.filter { it.isSystemApp }
-            categoryItem.label.contains("Play Store", ignoreCase = true) ->
-                allApps.filter { !it.isSystemApp && (it.installSource.contains("Play Store", true) || it.packageName.startsWith("com.google.")) }
-            categoryItem.label.contains("Package installer", ignoreCase = true) ->
-                allApps.filter { !it.isSystemApp }
-            categoryItem.label.contains("User", ignoreCase = true) ->
-                allApps.filter { !it.isSystemApp }
-            else -> {
-                val filtered = if (categoryItem.label.contains("System", ignoreCase = true)) {
+    val categoryApps = remember(categoryItem, allApps, selectedTab) {
+        when (selectedTab) {
+            "Categories" -> allApps.filter { it.appCategory == categoryItem.label }
+            "Installer" -> allApps.filter { it.installSource.ifBlank { "Side-loaded / Local" } == categoryItem.label }
+            "Target SDK" -> when {
+                categoryItem.label.contains("34") -> allApps.filter { it.targetSdk >= 34 }
+                categoryItem.label.contains("33") -> allApps.filter { it.targetSdk == 33 }
+                categoryItem.label.contains("31") -> allApps.filter { it.targetSdk in 31..32 }
+                else -> allApps.filter { it.targetSdk < 31 }
+            }
+            "Minimum SDK" -> when {
+                categoryItem.label.contains("26") -> allApps.filter { it.minSdk >= 26 }
+                categoryItem.label.contains("21") -> allApps.filter { it.minSdk in 21..25 }
+                else -> allApps.filter { it.minSdk < 21 }
+            }
+            else -> when {
+                categoryItem.label.contains("Pre-Installed", ignoreCase = true) || categoryItem.label.contains("System", ignoreCase = true) ->
                     allApps.filter { it.isSystemApp }
-                } else {
-                    allApps.filter { !it.isSystemApp }
-                }
-                filtered.ifEmpty { allApps.take(20) }
+                else -> allApps.filter { !it.isSystemApp }
             }
         }
     }

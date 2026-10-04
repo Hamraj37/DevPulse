@@ -347,7 +347,10 @@ data class AppSpec(
     val isSystemApp: Boolean,
     val installedTimeMs: Long,
     val updatedTimeMs: Long,
-    val installSource: String = ""
+    val installSource: String = "",
+    val targetSdk: Int = 34,
+    val minSdk: Int = 26,
+    val appCategory: String = "System & Tools"
 )
 
 // 14. Tests Info
