@@ -51,6 +51,8 @@ data class DeviceInfo(
 
 // 3. System Info
 data class SystemInfo(
+    val osName: String = "Android",
+    val osVersion: String = "16.0",
     val androidVersion: String = "16.0",
     val codeName: String = "Baklava",
     val versionLetter: String = "W",

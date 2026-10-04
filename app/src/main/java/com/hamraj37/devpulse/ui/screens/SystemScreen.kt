@@ -136,6 +136,9 @@ fun SystemScreen(
                 HorizontalDivider(color = dividerColor)
 
                 val systemSpecs = listOf(
+                    "OS Name" to systemInfo.osName,
+                    "OS Version" to systemInfo.osVersion,
+                    "Android Version" to systemInfo.androidVersion,
                     "Code Name" to systemInfo.codeName,
                     "API Level" to systemInfo.apiLevel.toString(),
                     "Security Patch Level" to systemInfo.securityPatch,

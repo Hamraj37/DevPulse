@@ -125,6 +125,8 @@ object DeviceAndSystemTelemetry {
             val uptime = formatUptime(SystemClock.elapsedRealtime())
 
             SystemInfo(
+                osName = getCustomOsName(),
+                osVersion = getCustomOsVersion(releaseStr),
                 androidVersion = releaseStr,
                 codeName = codeName,
                 versionLetter = getVersionLetter(sdkInt),
@@ -166,6 +168,22 @@ object DeviceAndSystemTelemetry {
     }
 
     private fun getBootloaderVersion(): String {
+        val lockState = getSystemProperty("ro.boot.flash.locked")
+        if (lockState == "1") return "Locked"
+        if (lockState == "0") return "Unlocked"
+
+        val vbmetaState = getSystemProperty("ro.boot.vbmeta.device_state")
+        if (vbmetaState != null && vbmetaState.isNotBlank()) {
+            return vbmetaState.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+        }
+
+        val verifiedBootState = getSystemProperty("ro.boot.verifiedbootstate")
+        if (verifiedBootState == "orange") return "Unlocked"
+        if (verifiedBootState == "green") return "Locked"
+        
+        val oemUnlock = getSystemProperty("ro.oem_unlock_supported")
+        if (oemUnlock == "1") return "Unlock Supported"
+
         val b1 = Build.BOOTLOADER
         if (b1.isNotEmpty() && !b1.equals("unknown", ignoreCase = true)) {
             return b1
@@ -182,11 +200,7 @@ object DeviceAndSystemTelemetry {
         if (!b4.isNullOrBlank()) {
             return b4
         }
-        return if (Build.BOARD.isNotEmpty() && !Build.BOARD.equals("unknown", ignoreCase = true)) {
-            "Stock Bootloader (${Build.BOARD})"
-        } else {
-            "Stock Bootloader"
-        }
+        return "Unknown"
     }
 
     private fun getCodeName(sdkInt: Int): String {
@@ -417,5 +431,91 @@ object DeviceAndSystemTelemetry {
         }
 
         return Pair(op1, op2)
+    }
+
+    private fun getCustomOsName(): String {
+        val manufacturer = Build.MANUFACTURER.lowercase(Locale.ROOT)
+        val brand = Build.BRAND.lowercase(Locale.ROOT)
+        val model = Build.MODEL.lowercase(Locale.ROOT)
+        val fingerprint = Build.FINGERPRINT.lowercase(Locale.ROOT)
+        
+        val isOnePlus = manufacturer.contains("oneplus") || brand.contains("oneplus") || fingerprint.contains("oneplus")
+        val isRealme = manufacturer.contains("realme") || brand.contains("realme") || fingerprint.contains("realme")
+        val isOppo = manufacturer.contains("oppo") || brand.contains("oppo") || manufacturer.contains("oplus") || brand.contains("oplus")
+
+        val hyperOsVersion = getSystemProperty("ro.mi.os.version.name")
+        if (!hyperOsVersion.isNullOrBlank()) return "HyperOS"
+        
+        val miuiVersion = getSystemProperty("ro.miui.ui.version.name")
+        if (!miuiVersion.isNullOrBlank()) return "MIUI"
+
+        val oxygenVersion = getSystemProperty("ro.oxygen.version")
+        val buildOxygenVersion = getSystemProperty("ro.build.version.oxygen")
+        if (!oxygenVersion.isNullOrBlank() || !buildOxygenVersion.isNullOrBlank()) return "OxygenOS"
+
+        val oplusVersion = getSystemProperty("ro.build.version.oplusrom")
+        val oplusRom = getSystemProperty("ro.oplus.rom.version")
+        if (!oplusVersion.isNullOrBlank() || !oplusRom.isNullOrBlank()) {
+            if (isOnePlus) return "OxygenOS"
+            if (isRealme) return "Realme UI"
+            return "ColorOS"
+        }
+
+        val emuiVersion = getSystemProperty("ro.build.version.emui")
+        if (!emuiVersion.isNullOrBlank()) return "EMUI"
+
+        val vivoOs = getSystemProperty("ro.vivo.os.name")
+        if (!vivoOs.isNullOrBlank()) return vivoOs
+
+        // Fallback checks using display ID or standard OS names
+        val displayId = Build.DISPLAY.lowercase(Locale.ROOT)
+        if (displayId.contains("oxygen")) return "OxygenOS"
+        if (displayId.contains("coloros")) return "ColorOS"
+        if (displayId.contains("realme")) return "Realme UI"
+        if (displayId.contains("miui")) return "MIUI"
+        if (displayId.contains("hyperos")) return "HyperOS"
+        if (displayId.contains("emui")) return "EMUI"
+        if (displayId.contains("funtouch")) return "Funtouch OS"
+
+        return when {
+            manufacturer.contains("samsung") || brand.contains("samsung") -> "One UI"
+            isOnePlus -> "OxygenOS"
+            manufacturer.contains("xiaomi") || brand.contains("xiaomi") || manufacturer.contains("poco") || manufacturer.contains("redmi") -> "HyperOS / MIUI"
+            isRealme -> "Realme UI"
+            isOppo -> "ColorOS"
+            manufacturer.contains("vivo") || brand.contains("vivo") || manufacturer.contains("iqoo") -> "Funtouch OS"
+            manufacturer.contains("motorola") || brand.contains("motorola") -> "My UX / Hello UI"
+            manufacturer.contains("google") || brand.contains("google") -> "Pixel UI"
+            manufacturer.contains("nothing") || brand.contains("nothing") -> "Nothing OS"
+            manufacturer.contains("asus") || brand.contains("asus") -> "ZenUI / ROG UI"
+            else -> "Android"
+        }
+    }
+
+    private fun getCustomOsVersion(defaultVersion: String): String {
+        val hyperOsVersion = getSystemProperty("ro.mi.os.version.name")
+        if (!hyperOsVersion.isNullOrBlank()) return hyperOsVersion
+
+        val miuiVersion = getSystemProperty("ro.miui.ui.version.name")
+        if (!miuiVersion.isNullOrBlank()) return miuiVersion
+
+        val oplusDisplayVersion = getSystemProperty("ro.build.version.oplusrom.display")
+        if (!oplusDisplayVersion.isNullOrBlank()) return oplusDisplayVersion
+
+        val oplusVersion = getSystemProperty("ro.build.version.oplusrom")
+        if (!oplusVersion.isNullOrBlank()) return oplusVersion
+
+        val oxygenVersion = getSystemProperty("ro.oxygen.version")
+        val buildOxygenVersion = getSystemProperty("ro.build.version.oxygen")
+        if (!oxygenVersion.isNullOrBlank()) return oxygenVersion
+        if (!buildOxygenVersion.isNullOrBlank()) return buildOxygenVersion
+
+        val emuiVersion = getSystemProperty("ro.build.version.emui")
+        if (!emuiVersion.isNullOrBlank()) return emuiVersion
+
+        val vivoOs = getSystemProperty("ro.vivo.os.version")
+        if (!vivoOs.isNullOrBlank()) return vivoOs
+        
+        return defaultVersion
     }
 }
