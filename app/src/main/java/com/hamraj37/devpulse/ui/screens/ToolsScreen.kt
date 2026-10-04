@@ -20,19 +20,19 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.rounded.AdminPanelSettings
 import androidx.compose.material.icons.rounded.BarChart
 import androidx.compose.material.icons.rounded.Explore
 import androidx.compose.material.icons.rounded.GridView
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.PictureAsPdf
 import androidx.compose.material.icons.rounded.Router
-import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.Smartphone
 import androidx.compose.material.icons.rounded.SsidChart
 import androidx.compose.material.icons.rounded.SwapHoriz
+import androidx.compose.material.icons.rounded.VerifiedUser
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.data.model.AppTab
 import com.hamraj37.devpulse.ui.MainUiState
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
+import com.hamraj37.devpulse.util.tr
 
 enum class ToolType {
     FLOATING_MONITORS,
@@ -71,6 +72,8 @@ enum class ToolType {
     COMPASS,
     EXPORT,
     APP_ANALYZER,
+    PLAY_INTEGRITY,
+    ROOT_CHECKER,
     SETTINGS,
     ABOUT
 }
@@ -147,6 +150,18 @@ fun ToolsScreen(
                 icon = Icons.Rounded.BarChart
             ),
             ToolItemData(
+                type = ToolType.PLAY_INTEGRITY,
+                title = "Play Integrity",
+                description = "Check Play Integrity API verdicts & device attestation",
+                icon = Icons.Rounded.VerifiedUser
+            ),
+            ToolItemData(
+                type = ToolType.ROOT_CHECKER,
+                title = "Root Checker",
+                description = "Scan su binaries, Magisk, KernelSU & root access",
+                icon = Icons.Rounded.AdminPanelSettings
+            ),
+            ToolItemData(
                 type = ToolType.COMPASS,
                 title = "Compass",
                 description = "Find your directions with compass",
@@ -209,6 +224,14 @@ fun ToolsScreen(
                     uiState = uiState,
                     onBack = handleToolBack
                 )
+                ToolType.PLAY_INTEGRITY -> PlayIntegrityScreen(
+                    uiState = uiState,
+                    onBack = handleToolBack
+                )
+                ToolType.ROOT_CHECKER -> RootCheckerScreen(
+                    uiState = uiState,
+                    onBack = handleToolBack
+                )
                 ToolType.COMPASS -> CompassScreen(
                     context = context,
                     onBack = handleToolBack
@@ -257,14 +280,14 @@ fun ToolsScreen(
                             onDismissRequest = { showMenu = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("Refresh Tools") },
+                                text = { Text("Refresh Tools".tr(context)) },
                                 onClick = {
                                     showMenu = false
                                     Toast.makeText(context, "Tools refreshed", Toast.LENGTH_SHORT).show()
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Export Full System Report") },
+                                text = { Text("Export Full System Report".tr(context)) },
                                 onClick = {
                                     showMenu = false
                                     selectedTool = ToolType.EXPORT
@@ -300,6 +323,7 @@ fun ToolCardItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -318,7 +342,7 @@ fun ToolCardItem(
         ) {
             Icon(
                 imageVector = tool.icon,
-                contentDescription = tool.title,
+                contentDescription = tool.title.tr(context),
                 tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(28.dp)
             )
@@ -330,7 +354,7 @@ fun ToolCardItem(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = tool.title,
+                    text = tool.title.tr(context),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 17.sp
@@ -342,7 +366,7 @@ fun ToolCardItem(
                 Spacer(modifier = Modifier.height(2.dp))
 
                 Text(
-                    text = tool.description,
+                    text = tool.description.tr(context),
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontSize = 13.5.sp
                     ),

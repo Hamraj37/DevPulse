@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AdminPanelSettings
 import androidx.compose.material.icons.rounded.BarChart
 import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.GridView
@@ -36,6 +37,7 @@ import androidx.compose.material.icons.rounded.Router
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.SwapHoriz
+import androidx.compose.material.icons.rounded.VerifiedUser
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.material.icons.rounded.SystemUpdate
@@ -98,6 +100,7 @@ import com.hamraj37.devpulse.ui.screens.SystemScreen
 import com.hamraj37.devpulse.ui.screens.TestsScreen
 import com.hamraj37.devpulse.ui.screens.ThermalScreen
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
+import com.hamraj37.devpulse.util.tr
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.Job
@@ -553,7 +556,7 @@ fun MainScreen(
                                     )
 
                                     DropdownMenuItem(
-                                        text = { Text("Permissions") },
+                                        text = { Text("Permissions".tr(context)) },
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Rounded.Shield,
@@ -564,6 +567,36 @@ fun MainScreen(
                                         onClick = {
                                             showTopMenu = false
                                             viewModel.openTool(ToolType.PERMISSIONS)
+                                        }
+                                    )
+
+                                    DropdownMenuItem(
+                                        text = { Text("Play Integrity".tr(context)) },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = Icons.Rounded.VerifiedUser,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        },
+                                        onClick = {
+                                            showTopMenu = false
+                                            viewModel.openTool(ToolType.PLAY_INTEGRITY)
+                                        }
+                                    )
+
+                                    DropdownMenuItem(
+                                        text = { Text("Root Checker".tr(context)) },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = Icons.Rounded.AdminPanelSettings,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        },
+                                        onClick = {
+                                            showTopMenu = false
+                                            viewModel.openTool(ToolType.ROOT_CHECKER)
                                         }
                                     )
 
