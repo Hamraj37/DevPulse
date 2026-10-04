@@ -173,28 +173,103 @@ object CpuTelemetry {
         }
     }
 
-    private fun getProcessorName(hardware: String): String {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            try {
-                val socModel = Build.SOC_MODEL
-                if (socModel.isNotBlank() && !socModel.equals("unknown", ignoreCase = true)) {
-                    return socModel
-                }
-            } catch (_: Throwable) {}
+    private fun getSystemProperty(key: String): String? {
+        return try {
+            val clazz = Class.forName("android.os.SystemProperties")
+            val getMethod = clazz.getMethod("get", String::class.java)
+            val value = getMethod.invoke(null, key) as? String
+            if (value.isNullOrBlank() || value.equals("unknown", ignoreCase = true)) null else value
+        } catch (_: Throwable) {
+            null
         }
-        val procFromCpuInfo = readCpuModelFromProc()
-        if (!procFromCpuInfo.isNullOrBlank()) {
-            return procFromCpuInfo
-        }
-        val hw = hardware.ifEmpty { Build.HARDWARE ?: "" }
+    }
+
+    private fun formatSocMarketingName(rawModel: String, hardware: String): String {
+        val model = rawModel.trim()
+        val hw = hardware.trim()
+        val combined = "$model $hw".lowercase()
+
         return when {
-            hw.contains("qcom", ignoreCase = true) || hw.contains("snapdragon", ignoreCase = true) -> "Qualcomm Snapdragon ($hw)"
-            hw.contains("exynos", ignoreCase = true) || hw.contains("samsung", ignoreCase = true) -> "Samsung Exynos ($hw)"
-            hw.contains("mt", ignoreCase = true) || hw.contains("mediatek", ignoreCase = true) || hw.contains("dimensity", ignoreCase = true) -> "MediaTek Dimensity ($hw)"
-            hw.contains("tensor", ignoreCase = true) || hw.contains("gs", ignoreCase = true) || hw.contains("zuma", ignoreCase = true) -> "Google Tensor ($hw)"
-            hw.contains("kirin", ignoreCase = true) -> "HiSilicon Kirin ($hw)"
-            else -> "ARM ${System.getProperty("os.arch") ?: "v8a"} ($hw)"
+            // Snapdragon 7 Series
+            combined.contains("sm7675") || combined.contains("7+ gen 3") || combined.contains("7plusgen3") -> "Snapdragon 7 Plus Gen3 (SM7675)"
+            combined.contains("sm7550") || combined.contains("7 gen 3") -> "Snapdragon 7 Gen 3 (SM7550)"
+            combined.contains("sm7475") || combined.contains("7+ gen 2") -> "Snapdragon 7 Plus Gen2 (SM7475)"
+            combined.contains("sm7450") || combined.contains("7 gen 1") -> "Snapdragon 7 Gen 1 (SM7450)"
+            combined.contains("sm7325") || combined.contains("778g") -> "Snapdragon 778G (SM7325)"
+            combined.contains("sm7250") || combined.contains("765g") -> "Snapdragon 765G (SM7250)"
+
+            // Snapdragon 8 Series
+            combined.contains("sm8650") || combined.contains("8 gen 3") -> "Snapdragon 8 Gen 3 (SM8650)"
+            combined.contains("sm8550") || combined.contains("8 gen 2") -> "Snapdragon 8 Gen 2 (SM8550)"
+            combined.contains("sm8475") || combined.contains("8+ gen 1") -> "Snapdragon 8 Plus Gen1 (SM8475)"
+            combined.contains("sm8450") || combined.contains("8 gen 1") -> "Snapdragon 8 Gen 1 (SM8450)"
+            combined.contains("sm8350") || combined.contains("888") -> "Snapdragon 888 (SM8350)"
+            combined.contains("sm8250") || combined.contains("865") -> "Snapdragon 865 (SM8250)"
+            combined.contains("sm8150") || combined.contains("855") -> "Snapdragon 855 (SM8150)"
+
+            // Snapdragon 6 & 4 Series
+            combined.contains("sm6450") || combined.contains("6 gen 1") -> "Snapdragon 6 Gen 1 (SM6450)"
+            combined.contains("sm6375") || combined.contains("695") -> "Snapdragon 695 (SM6375)"
+            combined.contains("sm6225") || combined.contains("680") -> "Snapdragon 680 (SM6225)"
+            combined.contains("sm4450") || combined.contains("4 gen 2") -> "Snapdragon 4 Gen 2 (SM4450)"
+            combined.contains("sm4375") || combined.contains("4 gen 1") -> "Snapdragon 4 Gen 1 (SM4375)"
+
+            // Dimensity Series
+            combined.contains("mt6989") || combined.contains("dimensity 9300") -> "MediaTek Dimensity 9300 (MT6989)"
+            combined.contains("mt6985") || combined.contains("dimensity 9200") -> "MediaTek Dimensity 9200 (MT6985)"
+            combined.contains("mt6983") || combined.contains("dimensity 9000") -> "MediaTek Dimensity 9000 (MT6983)"
+            combined.contains("mt6895") || combined.contains("dimensity 8100") -> "MediaTek Dimensity 8100 (MT6895)"
+            combined.contains("mt6893") || combined.contains("dimensity 1200") -> "MediaTek Dimensity 1200 (MT6893)"
+            combined.contains("mt6877") || combined.contains("dimensity 900") -> "MediaTek Dimensity 900 (MT6877)"
+            combined.contains("mt6833") || combined.contains("dimensity 700") -> "MediaTek Dimensity 700 (MT6833)"
+
+            // Tensor Series
+            combined.contains("zuma") || combined.contains("tensor g3") -> "Google Tensor G3 (Zuma)"
+            combined.contains("cloudripper") || combined.contains("tensor g2") -> "Google Tensor G2"
+            combined.contains("whitechapel") || combined.contains("tensor g1") || combined.contains("gs101") -> "Google Tensor G1"
+
+            // Exynos Series
+            combined.contains("exynos 2400") || combined.contains("s5e9945") -> "Samsung Exynos 2400 (S5E9945)"
+            combined.contains("exynos 2200") || combined.contains("s5e9925") -> "Samsung Exynos 2200 (S5E9925)"
+            combined.contains("exynos 2100") || combined.contains("s5e9840") -> "Samsung Exynos 2100 (S5E9840)"
+            combined.contains("exynos 1380") || combined.contains("s5e8835") -> "Samsung Exynos 1380 (S5E8835)"
+            combined.contains("exynos 1280") || combined.contains("s5e8825") -> "Samsung Exynos 1280 (S5E8825)"
+
+            // Fallback / If model code is available
+            model.isNotBlank() && !model.equals("unknown", ignoreCase = true) -> {
+                if (!model.contains("Qualcomm", true) && !model.contains("Snapdragon", true) && (hw.contains("qcom", true) || hw.contains("sm", true))) {
+                    "Snapdragon $model ($hw)"
+                } else if (!model.contains("(") && hw.isNotBlank() && !hw.equals("unknown", ignoreCase = true)) {
+                    "$model ($hw)"
+                } else {
+                    model
+                }
+            }
+            else -> {
+                when {
+                    hw.contains("qcom", true) || hw.contains("sm", true) -> "Qualcomm Snapdragon ($hw)"
+                    hw.contains("exynos", true) || hw.contains("samsung", true) -> "Samsung Exynos ($hw)"
+                    hw.contains("mt", true) || hw.contains("mediatek", true) -> "MediaTek Dimensity ($hw)"
+                    hw.contains("tensor", true) || hw.contains("zuma", true) -> "Google Tensor ($hw)"
+                    else -> "ARM Processor ($hw)"
+                }
+            }
         }
+    }
+
+    private fun getProcessorName(hardware: String): String {
+        val rawModel = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            try { Build.SOC_MODEL } catch (_: Throwable) { "" }
+        } else ""
+
+        val propModel = getSystemProperty("ro.soc.model")
+            ?: getSystemProperty("ro.chipname")
+            ?: getSystemProperty("ro.board.platform")
+            ?: readCpuModelFromProc()
+            ?: ""
+
+        val candidate = rawModel.ifEmpty { propModel }
+        return formatSocMarketingName(candidate, hardware)
     }
 
     private fun getGpuInfo(): Triple<String, String, String> {
