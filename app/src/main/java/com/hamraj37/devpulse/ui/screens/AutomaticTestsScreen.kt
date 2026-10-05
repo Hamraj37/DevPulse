@@ -324,7 +324,7 @@ fun AutomaticTestsScreen(
                                         Spacer(modifier = Modifier.height(10.dp))
                                         Surface(
                                             shape = RoundedCornerShape(12.dp),
-                                            color = Color(0xFF455345),
+                                            color = MaterialTheme.colorScheme.primaryContainer,
                                             modifier = Modifier.clickable {
                                                 try {
                                                     context.startActivity(item.actionIntent)
@@ -338,7 +338,7 @@ fun AutomaticTestsScreen(
                                                     fontWeight = FontWeight.Bold,
                                                     fontSize = 14.sp
                                                 ),
-                                                color = Color.White
+                                                color = MaterialTheme.colorScheme.onPrimaryContainer
                                             )
                                         }
                                     }
@@ -350,7 +350,7 @@ fun AutomaticTestsScreen(
                             Icon(
                                 imageVector = if (item.isPassed) Icons.Rounded.CheckCircle else Icons.Rounded.Cancel,
                                 contentDescription = if (item.isPassed) "Passed" else "Suggestion",
-                                tint = if (item.isPassed) Color(0xFF4CAF50) else Color(0xFFEF5350),
+                                tint = if (item.isPassed) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
                                 modifier = Modifier.size(28.dp)
                             )
                         }

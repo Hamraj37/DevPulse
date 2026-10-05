@@ -80,6 +80,9 @@ fun ChargingTestGraphic(context: Context) {
         }
     }
 
+    val activeColor = if (isCharging) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+    val boltColor = MaterialTheme.colorScheme.tertiary
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -89,14 +92,14 @@ fun ChargingTestGraphic(context: Context) {
             val h = size.height
 
             drawRoundRect(
-                color = if (isCharging) Color(0xFF66BB6A) else Color(0xFFFF7043),
+                color = activeColor,
                 topLeft = Offset(w / 2f - 16.dp.toPx(), 0f),
                 size = Size(32.dp.toPx(), 10.dp.toPx()),
                 cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx())
             )
 
             drawRoundRect(
-                color = if (isCharging) Color(0xFF66BB6A) else Color(0xFFFF7043),
+                color = activeColor,
                 topLeft = Offset(0f, 10.dp.toPx()),
                 size = Size(w, h - 10.dp.toPx()),
                 cornerRadius = CornerRadius(18.dp.toPx(), 18.dp.toPx())
@@ -112,14 +115,14 @@ fun ChargingTestGraphic(context: Context) {
                     lineTo(w * 0.48f, h * 0.48f)
                     close()
                 }
-                drawPath(path = boltPath, color = Color(0xFFFFD54F))
+                drawPath(path = boltPath, color = boltColor)
             }
         }
 
         Text(
             text = if (isCharging) "Charging".tr(LocalContext.current) + " (Power Connected)" else "Connect your charger".tr(LocalContext.current),
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-            color = if (isCharging) Color(0xFF2E7D32) else Color(0xFFD32F2F)
+            color = activeColor
         )
 
         Column(

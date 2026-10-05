@@ -6,6 +6,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
@@ -41,6 +42,10 @@ fun FlashlightTestGraphic(context: Context) {
         }
     }
 
+    val primary = MaterialTheme.colorScheme.primary
+    val primaryContainer = MaterialTheme.colorScheme.primaryContainer
+    val tertiary = MaterialTheme.colorScheme.tertiary
+
     Box(
         modifier = Modifier.size(240.dp),
         contentAlignment = Alignment.Center
@@ -60,16 +65,16 @@ fun FlashlightTestGraphic(context: Context) {
                         lineTo(cx - 60.dp.toPx(), cy - 100.dp.toPx())
                         close()
                     },
-                    color = Color(0xFF81D4FA)
+                    color = primaryContainer
                 )
                 drawRoundRect(
-                    color = Color(0xFF0288D1),
+                    color = primary,
                     topLeft = Offset(cx - 30.dp.toPx(), cy - 40.dp.toPx()),
                     size = Size(60.dp.toPx(), 140.dp.toPx()),
                     cornerRadius = CornerRadius(16.dp.toPx(), 16.dp.toPx())
                 )
                 drawRoundRect(
-                    color = Color(0xFFFFD54F),
+                    color = tertiary,
                     topLeft = Offset(cx - 8.dp.toPx(), cy + 10.dp.toPx()),
                     size = Size(16.dp.toPx(), 32.dp.toPx()),
                     cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx())

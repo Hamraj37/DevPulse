@@ -42,6 +42,11 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun DisplayTestGraphic() {
+    val primary = MaterialTheme.colorScheme.primary
+    val secondary = MaterialTheme.colorScheme.secondary
+    val tertiary = MaterialTheme.colorScheme.tertiary
+    val primaryContainer = MaterialTheme.colorScheme.primaryContainer
+
     Canvas(modifier = Modifier.size(160.dp, 280.dp)) {
         val w = size.width
         val h = size.height
@@ -55,14 +60,10 @@ fun DisplayTestGraphic() {
                 )
             )
         }
+
         clipPath(path) {
             val bandHeight = h / 4f
-            val colors = listOf(
-                Color(0xFF29B6F6),
-                Color(0xFF03A9F4),
-                Color(0xFF0288D1),
-                Color(0xFF01579B)
-            )
+            val colors = listOf(primary, secondary, tertiary, primaryContainer)
             colors.forEachIndexed { i, color ->
                 drawRect(
                     color = color,
@@ -71,7 +72,7 @@ fun DisplayTestGraphic() {
                 )
             }
             drawRoundRect(
-                color = Color(0xFF01579B),
+                color = primary,
                 topLeft = Offset(w / 2f - 24.dp.toPx(), 12.dp.toPx()),
                 size = Size(48.dp.toPx(), 10.dp.toPx()),
                 cornerRadius = CornerRadius(5.dp.toPx(), 5.dp.toPx())
@@ -108,7 +109,9 @@ fun DisplayTestFullscreen(
             Surface(
                 shape = RoundedCornerShape(20.dp),
                 color = Color.Black.copy(alpha = 0.8f),
-                modifier = Modifier.padding(bottom = 56.dp)
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .padding(bottom = 56.dp)
             ) {
                 Text(
                     text = "Tap screen to cycle colors".tr(LocalContext.current) + ": " + colorNames[colorIndex].tr(LocalContext.current) + " (${colorIndex + 1}/${colors.size})",

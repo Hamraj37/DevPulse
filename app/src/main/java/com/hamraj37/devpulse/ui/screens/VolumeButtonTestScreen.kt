@@ -69,6 +69,9 @@ fun VolumeButtonTestGraphic() {
             },
         contentAlignment = Alignment.Center
     ) {
+        val primary = MaterialTheme.colorScheme.primary
+        val secondary = MaterialTheme.colorScheme.secondary
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -89,12 +92,12 @@ fun VolumeButtonTestGraphic() {
                         lineTo(cx - 36.dp.toPx(), cy + 18.dp.toPx())
                         close()
                     },
-                    color = Color(0xFF78909C)
+                    color = primary
                 )
 
                 val rUp = 55.dp.toPx()
                 drawArc(
-                    color = if (volUpPressed) Color(0xFF0288D1) else Color(0xFF0288D1).copy(alpha = 0.3f),
+                    color = if (volUpPressed) primary else primary.copy(alpha = 0.3f),
                     startAngle = -45f,
                     sweepAngle = 90f,
                     useCenter = false,
@@ -105,7 +108,7 @@ fun VolumeButtonTestGraphic() {
 
                 val rDown = 28.dp.toPx()
                 drawArc(
-                    color = if (volDownPressed) Color(0xFF29B6F6) else Color(0xFF29B6F6).copy(alpha = 0.3f),
+                    color = if (volDownPressed) secondary else secondary.copy(alpha = 0.3f),
                     startAngle = -45f,
                     sweepAngle = 90f,
                     useCenter = false,
@@ -125,27 +128,27 @@ fun VolumeButtonTestGraphic() {
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Surface(
                     shape = RoundedCornerShape(10.dp),
-                    color = if (volUpPressed) Color(0xFF2E7D32) else MaterialTheme.colorScheme.surfaceContainerHigh,
+                    color = if (volUpPressed) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
                     modifier = Modifier.clickable { volUpPressed = true }
                 ) {
                     Text(
                         text = "Simulate Vol Up".tr(LocalContext.current),
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                         style = MaterialTheme.typography.labelMedium,
-                        color = if (volUpPressed) Color.White else MaterialTheme.colorScheme.onSurface
+                        color = if (volUpPressed) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
                     )
                 }
 
                 Surface(
                     shape = RoundedCornerShape(10.dp),
-                    color = if (volDownPressed) Color(0xFF2E7D32) else MaterialTheme.colorScheme.surfaceContainerHigh,
+                    color = if (volDownPressed) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
                     modifier = Modifier.clickable { volDownPressed = true }
                 ) {
                     Text(
                         text = "Simulate Vol Down".tr(LocalContext.current),
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                         style = MaterialTheme.typography.labelMedium,
-                        color = if (volDownPressed) Color.White else MaterialTheme.colorScheme.onSurface
+                        color = if (volDownPressed) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
                     )
                 }
             }

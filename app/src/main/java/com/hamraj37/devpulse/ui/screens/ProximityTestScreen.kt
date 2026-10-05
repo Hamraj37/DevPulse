@@ -82,9 +82,14 @@ fun EarProximityTestGraphic(context: Context) {
         }
     }
 
+    val primary = MaterialTheme.colorScheme.primary
+    val primaryContainer = MaterialTheme.colorScheme.primaryContainer
+    val onPrimaryContainer = MaterialTheme.colorScheme.onPrimaryContainer
+    val onPrimary = MaterialTheme.colorScheme.onPrimary
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
         modifier = Modifier.clickable {
             isNear = !isNear
             rawDistance = if (isNear) 0.0f else 5.0f
@@ -94,9 +99,9 @@ fun EarProximityTestGraphic(context: Context) {
             val cx = size.width / 2f
             val cy = size.height / 2f
 
-            val pulseColor1 = if (isNear) Color(0xFF00E676) else Color(0xFFB2EBF2)
-            val pulseColor2 = if (isNear) Color(0xFF00C853) else Color(0xFF4DD0E1)
-            val centerColor = if (isNear) Color(0xFF2E7D32) else Color(0xFF00ACC1)
+            val pulseColor1 = if (isNear) primary.copy(alpha = 0.2f) else primaryContainer.copy(alpha = 0.3f)
+            val pulseColor2 = if (isNear) primary.copy(alpha = 0.5f) else primaryContainer.copy(alpha = 0.6f)
+            val centerColor = if (isNear) primary else primaryContainer
 
             drawCircle(
                 color = pulseColor1,
@@ -123,20 +128,20 @@ fun EarProximityTestGraphic(context: Context) {
                     lineTo(cx, cy + 40.dp.toPx())
                     lineTo(cx + 40.dp.toPx(), cy - 10.dp.toPx())
                 },
-                color = Color.White,
+                color = if (isNear) onPrimary else onPrimaryContainer,
                 style = Stroke(width = 8.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round)
             )
         }
 
         Surface(
             shape = RoundedCornerShape(14.dp),
-            color = if (isNear) Color(0xFF2E7D32) else MaterialTheme.colorScheme.primaryContainer
+            color = if (isNear) primary else primaryContainer
         ) {
             Text(
                 text = if (isNear) "NEAR".tr(LocalContext.current) + " (Sensor Covered ✅)" else "FAR".tr(LocalContext.current) + " (Sensor Uncovered)",
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                color = if (isNear) Color.White else MaterialTheme.colorScheme.onPrimaryContainer
+                color = if (isNear) onPrimary else onPrimaryContainer
             )
         }
 

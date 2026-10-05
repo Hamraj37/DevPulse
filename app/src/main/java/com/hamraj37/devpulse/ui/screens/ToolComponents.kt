@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -43,6 +44,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -60,17 +62,20 @@ fun DevPulseTopAppBar(
     title: String,
     onBack: (() -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
+    containerColor: Color = Color.Transparent,
+    titleContentColor: Color = MaterialTheme.colorScheme.onSurface,
+    navigationIconContentColor: Color = MaterialTheme.colorScheme.onSurface,
+    actionIconContentColor: Color = MaterialTheme.colorScheme.onSurface,
     modifier: Modifier = Modifier
 ) {
-    CenterAlignedTopAppBar(
+    TopAppBar(
         title = {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
-                ),
-                color = MaterialTheme.colorScheme.onSurface
+                )
             )
         },
         navigationIcon = {
@@ -78,15 +83,17 @@ fun DevPulseTopAppBar(
                 IconButton(onClick = onBack) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                        contentDescription = "Back",
-                        tint = MaterialTheme.colorScheme.onSurface
+                        contentDescription = "Back"
                     )
                 }
             }
         },
         actions = actions,
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = containerColor,
+            titleContentColor = titleContentColor,
+            navigationIconContentColor = navigationIconContentColor,
+            actionIconContentColor = actionIconContentColor
         ),
         modifier = modifier
     )
@@ -127,6 +134,9 @@ fun StandardTestScreen(
     val context = LocalContext.current
     BackHandler { onBack() }
 
+    val appBarBg = if (isDarkBackground) Color.Black else Color.Transparent
+    val appBarFg = if (isDarkBackground) Color.White else MaterialTheme.colorScheme.onSurface
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -134,12 +144,17 @@ fun StandardTestScreen(
     ) {
         DevPulseTopAppBar(
             title = title.tr(context),
-            onBack = onBack
+            onBack = onBack,
+            containerColor = appBarBg,
+            titleContentColor = appBarFg,
+            navigationIconContentColor = appBarFg,
+            actionIconContentColor = appBarFg
         )
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .navigationBarsPadding()
                 .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
@@ -175,9 +190,14 @@ fun StandardTestScreen(
                         .padding(horizontal = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
+                    val failBgColor = MaterialTheme.colorScheme.errorContainer
+                    val failFgColor = MaterialTheme.colorScheme.onErrorContainer
+                    val passBgColor = MaterialTheme.colorScheme.primaryContainer
+                    val passFgColor = MaterialTheme.colorScheme.onPrimaryContainer
+
                     Surface(
                         shape = RoundedCornerShape(50.dp),
-                        color = Color(0xFF455345),
+                        color = failBgColor,
                         modifier = Modifier
                             .weight(1f)
                             .clickable { onFail() }
@@ -190,14 +210,14 @@ fun StandardTestScreen(
                             Surface(
                                 shape = CircleShape,
                                 color = Color.Transparent,
-                                border = BorderStroke(1.5.dp, Color.White),
+                                border = BorderStroke(1.5.dp, failFgColor),
                                 modifier = Modifier.size(20.dp)
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
                                     Icon(
                                         imageVector = Icons.Rounded.Close,
                                         contentDescription = "No",
-                                        tint = Color.White,
+                                        tint = failFgColor,
                                         modifier = Modifier.size(12.dp)
                                     )
                                 }
@@ -209,14 +229,14 @@ fun StandardTestScreen(
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 16.sp
                                 ),
-                                color = Color.White
+                                color = failFgColor
                             )
                         }
                     }
 
                     Surface(
                         shape = RoundedCornerShape(50.dp),
-                        color = Color(0xFF455345),
+                        color = passBgColor,
                         modifier = Modifier
                             .weight(1f)
                             .clickable { onPass() }
@@ -229,14 +249,14 @@ fun StandardTestScreen(
                             Surface(
                                 shape = CircleShape,
                                 color = Color.Transparent,
-                                border = BorderStroke(1.5.dp, Color.White),
+                                border = BorderStroke(1.5.dp, passFgColor),
                                 modifier = Modifier.size(20.dp)
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
                                     Icon(
                                         imageVector = Icons.Rounded.Check,
                                         contentDescription = "Yes",
-                                        tint = Color.White,
+                                        tint = passFgColor,
                                         modifier = Modifier.size(12.dp)
                                     )
                                 }
@@ -248,7 +268,7 @@ fun StandardTestScreen(
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 16.sp
                                 ),
-                                color = Color.White
+                                color = passFgColor
                             )
                         }
                     }

@@ -47,14 +47,14 @@ fun BluetoothTestGraphic(context: Context) {
     ) {
         Surface(
             shape = RoundedCornerShape(100.dp),
-            color = if (hasHardware && isEnabled) Color(0xFF1565C0) else Color.Gray,
+            color = if (hasHardware && isEnabled) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
             modifier = Modifier.size(140.dp, 200.dp)
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
                     imageVector = Icons.Rounded.Bluetooth,
                     contentDescription = null,
-                    tint = Color.White,
+                    tint = if (hasHardware && isEnabled) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(80.dp)
                 )
             }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,6 +40,9 @@ fun MicTestGraphic() {
         }
     }
 
+    val primary = MaterialTheme.colorScheme.primary
+    val secondary = MaterialTheme.colorScheme.secondary
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(24.dp)
@@ -48,16 +52,15 @@ fun MicTestGraphic() {
             val cy = size.height * 0.4f
 
             drawRoundRect(
-                color = Color(0xFF78909C),
+                color = primary,
                 topLeft = Offset(cx - 30.dp.toPx(), cy - 50.dp.toPx()),
                 size = Size(60.dp.toPx(), 100.dp.toPx()),
                 cornerRadius = CornerRadius(30.dp.toPx(), 30.dp.toPx())
             )
 
-            val ribColor = Color(0xFF546E7A)
             listOf(-20.dp.toPx(), 0f, 20.dp.toPx()).forEach { yOffset ->
                 drawLine(
-                    color = ribColor,
+                    color = secondary,
                     start = Offset(cx - 26.dp.toPx(), cy + yOffset),
                     end = Offset(cx + 26.dp.toPx(), cy + yOffset),
                     strokeWidth = 4.dp.toPx()
@@ -65,7 +68,7 @@ fun MicTestGraphic() {
             }
 
             drawArc(
-                color = Color(0xFF78909C),
+                color = primary,
                 startAngle = 0f,
                 sweepAngle = 180f,
                 useCenter = false,
@@ -75,14 +78,14 @@ fun MicTestGraphic() {
             )
 
             drawLine(
-                color = Color(0xFF78909C),
+                color = primary,
                 start = Offset(cx, cy + 70.dp.toPx()),
                 end = Offset(cx, cy + 100.dp.toPx()),
                 strokeWidth = 10.dp.toPx()
             )
 
             drawLine(
-                color = Color(0xFF78909C),
+                color = primary,
                 start = Offset(cx - 35.dp.toPx(), cy + 100.dp.toPx()),
                 end = Offset(cx + 35.dp.toPx(), cy + 100.dp.toPx()),
                 strokeWidth = 10.dp.toPx(),
@@ -96,8 +99,8 @@ fun MicTestGraphic() {
                 .width(240.dp)
                 .height(6.dp)
                 .clip(RoundedCornerShape(3.dp)),
-            color = Color(0xFF424242),
-            trackColor = Color(0xFFE0E0E0)
+            color = MaterialTheme.colorScheme.primary,
+            trackColor = MaterialTheme.colorScheme.surfaceContainerHighest
         )
     }
 }

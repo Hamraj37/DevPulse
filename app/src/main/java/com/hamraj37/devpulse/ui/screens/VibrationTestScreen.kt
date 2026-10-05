@@ -9,6 +9,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -37,6 +38,8 @@ fun VibrationTestGraphic(context: Context) {
         } catch (_: Throwable) {}
     }
 
+    val waveColor = MaterialTheme.colorScheme.secondary
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -45,7 +48,7 @@ fun VibrationTestGraphic(context: Context) {
             val h = size.height
             listOf(20.dp.toPx(), 35.dp.toPx()).forEach { xOff ->
                 drawLine(
-                    color = Color(0xFFAB47BC),
+                    color = waveColor,
                     start = Offset(xOff, h * 0.2f),
                     end = Offset(xOff, h * 0.8f),
                     strokeWidth = 8.dp.toPx(),
@@ -60,7 +63,7 @@ fun VibrationTestGraphic(context: Context) {
             val h = size.height
             listOf(5.dp.toPx(), 20.dp.toPx()).forEach { xOff ->
                 drawLine(
-                    color = Color(0xFFAB47BC),
+                    color = waveColor,
                     start = Offset(xOff, h * 0.2f),
                     end = Offset(xOff, h * 0.8f),
                     strokeWidth = 8.dp.toPx(),

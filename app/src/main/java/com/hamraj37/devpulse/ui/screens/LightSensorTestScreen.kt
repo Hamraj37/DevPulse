@@ -85,11 +85,17 @@ fun LightSensorTestGraphic(context: Context) {
         else -> "Bright Direct Light"
     }
 
+    val primary = MaterialTheme.colorScheme.primary
+    val secondary = MaterialTheme.colorScheme.secondary
+    val tertiary = MaterialTheme.colorScheme.tertiary
+    val outline = MaterialTheme.colorScheme.outline
+    val surfaceContainer = MaterialTheme.colorScheme.surfaceContainerHighest
+
     val sunGlowColor = when {
-        lux < 10f -> Color(0xFF37474F)
-        lux < 100f -> Color(0xFFFFB300)
-        lux < 500f -> Color(0xFFFF8F00)
-        else -> Color(0xFFFF6D00)
+        lux < 10f -> outline
+        lux < 100f -> secondary
+        lux < 500f -> primary
+        else -> tertiary
     }
 
     Column(
@@ -116,7 +122,7 @@ fun LightSensorTestGraphic(context: Context) {
             )
 
             drawRoundRect(
-                color = Color(0xFFECEFF1),
+                color = surfaceContainer,
                 topLeft = Offset(16.dp.toPx(), 16.dp.toPx()),
                 size = Size(w - 32.dp.toPx(), h - 32.dp.toPx()),
                 cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx())

@@ -77,6 +77,11 @@ fun LoudspeakerTestGraphic(context: Context) {
         }
     }
 
+    val primary = MaterialTheme.colorScheme.primary
+    val secondary = MaterialTheme.colorScheme.secondary
+    val surfaceContainer = MaterialTheme.colorScheme.surfaceContainerHighest
+    val onSurface = MaterialTheme.colorScheme.onSurface
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -87,7 +92,7 @@ fun LoudspeakerTestGraphic(context: Context) {
             val corner = 20.dp.toPx()
 
             drawRoundRect(
-                color = Color(0xFF0288D1),
+                color = primary,
                 topLeft = Offset(0f, 0f),
                 size = Size(w, h),
                 cornerRadius = CornerRadius(corner, corner)
@@ -101,18 +106,18 @@ fun LoudspeakerTestGraphic(context: Context) {
                 Offset(margin, h - margin),
                 Offset(w - margin, h - margin)
             ).forEach {
-                drawCircle(color = Color(0xFF01579B), radius = screwRadius, center = it)
+                drawCircle(color = secondary, radius = screwRadius, center = it)
             }
 
             val topCenter = Offset(w / 2f, h * 0.3f)
-            drawCircle(color = Color(0xFF37474F), radius = 28.dp.toPx(), center = topCenter)
-            drawCircle(color = Color(0xFFECEFF1), radius = 18.dp.toPx(), center = topCenter)
-            drawCircle(color = Color(0xFF212121), radius = 8.dp.toPx(), center = topCenter)
+            drawCircle(color = secondary, radius = 28.dp.toPx(), center = topCenter)
+            drawCircle(color = surfaceContainer, radius = 18.dp.toPx(), center = topCenter)
+            drawCircle(color = onSurface, radius = 8.dp.toPx(), center = topCenter)
 
             val bottomCenter = Offset(w / 2f, h * 0.7f)
-            drawCircle(color = Color(0xFF37474F), radius = 48.dp.toPx(), center = bottomCenter)
-            drawCircle(color = Color(0xFFECEFF1), radius = 32.dp.toPx(), center = bottomCenter)
-            drawCircle(color = Color(0xFF212121), radius = 14.dp.toPx(), center = bottomCenter)
+            drawCircle(color = secondary, radius = 48.dp.toPx(), center = bottomCenter)
+            drawCircle(color = surfaceContainer, radius = 32.dp.toPx(), center = bottomCenter)
+            drawCircle(color = onSurface, radius = 14.dp.toPx(), center = bottomCenter)
         }
 
         Surface(

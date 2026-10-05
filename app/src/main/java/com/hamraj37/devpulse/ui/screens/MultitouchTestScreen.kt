@@ -21,6 +21,14 @@ import com.hamraj37.devpulse.util.tr
 fun MultitouchTestContent() {
     val pointers = remember { mutableStateMapOf<Int, Offset>() }
 
+    val c1 = MaterialTheme.colorScheme.primary
+    val c2 = MaterialTheme.colorScheme.secondary
+    val c3 = MaterialTheme.colorScheme.tertiary
+    val c4 = MaterialTheme.colorScheme.primaryContainer
+    val c5 = MaterialTheme.colorScheme.secondaryContainer
+    val c6 = MaterialTheme.colorScheme.tertiaryContainer
+    val colors = listOf(c1, c2, c3, c4, c5, c6)
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -43,10 +51,6 @@ fun MultitouchTestContent() {
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             pointers.values.forEachIndexed { i, pos ->
-                val colors = listOf(
-                    Color(0xFF2196F3), Color(0xFFE91E63), Color(0xFF4CAF50),
-                    Color(0xFFFF9800), Color(0xFF9C27B0), Color(0xFF00BCD4)
-                )
                 val color = colors[i % colors.size]
                 drawCircle(color = color.copy(alpha = 0.3f), radius = 100f, center = pos)
                 drawCircle(color = color, radius = 50f, center = pos)

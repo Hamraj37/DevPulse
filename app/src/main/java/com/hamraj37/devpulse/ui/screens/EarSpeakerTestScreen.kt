@@ -63,6 +63,10 @@ fun EarSpeakerTestGraphic(context: Context) {
         }
     }
 
+    val primary = MaterialTheme.colorScheme.primary
+    val secondary = MaterialTheme.colorScheme.secondary
+    val tertiary = MaterialTheme.colorScheme.tertiary
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -72,9 +76,9 @@ fun EarSpeakerTestGraphic(context: Context) {
             val cy = size.height
 
             val arcs = listOf(
-                100.dp.toPx() to Color(0xFF8E24AA),
-                75.dp.toPx() to Color(0xFFAB47BC),
-                50.dp.toPx() to Color(0xFFCE93D8)
+                100.dp.toPx() to primary,
+                75.dp.toPx() to secondary,
+                50.dp.toPx() to tertiary
             )
 
             arcs.forEach { (radius, color) ->

@@ -110,22 +110,26 @@ fun AccelerometerTestGraphic(context: Context) {
             } catch (_: Throwable) {}
         }
     ) {
+        val primaryColor = MaterialTheme.colorScheme.primary
+        val secondaryColor = MaterialTheme.colorScheme.secondary
+        val tertiaryColor = MaterialTheme.colorScheme.tertiary
+
         Canvas(modifier = Modifier.size(200.dp)) {
             val cx = size.width / 2f
             val cy = size.height / 2f
             val outerRadius = size.width / 2f - 10f
 
             drawCircle(
-                color = Color(0xFF29B6F6).copy(alpha = 0.2f),
+                color = primaryColor.copy(alpha = 0.2f),
                 radius = outerRadius
             )
             drawCircle(
-                color = Color(0xFF0288D1),
+                color = primaryColor,
                 radius = outerRadius,
                 style = Stroke(width = 4.dp.toPx())
             )
             drawCircle(
-                color = Color(0xFF0288D1).copy(alpha = 0.3f),
+                color = secondaryColor.copy(alpha = 0.3f),
                 radius = outerRadius / 2f,
                 style = Stroke(width = 2.dp.toPx())
             )
@@ -134,7 +138,7 @@ fun AccelerometerTestGraphic(context: Context) {
             val ballY = (cy + (accelY * 12f)).coerceIn(24.dp.toPx(), size.height - 24.dp.toPx())
 
             drawCircle(
-                color = if (motionDetected) Color(0xFF00E676) else Color(0xFFFFCA28),
+                color = if (motionDetected) primaryColor else tertiaryColor,
                 radius = 20.dp.toPx(),
                 center = Offset(ballX, ballY)
             )
@@ -142,13 +146,13 @@ fun AccelerometerTestGraphic(context: Context) {
 
         Surface(
             shape = RoundedCornerShape(12.dp),
-            color = if (motionDetected) Color(0xFF2E7D32) else MaterialTheme.colorScheme.surfaceContainerHigh
+            color = if (motionDetected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh
         ) {
             Text(
                 text = if (motionDetected) "Motion / Shake Detected! ✅" else "Shake or tilt your device",
                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
                 style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                color = if (motionDetected) Color.White else MaterialTheme.colorScheme.onSurface
+                color = if (motionDetected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
             )
         }
 
