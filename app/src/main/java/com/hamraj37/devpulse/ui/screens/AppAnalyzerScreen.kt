@@ -564,6 +564,7 @@ fun CategoryAppListBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = rememberModalBottomSheetState()
     ) {
+        val context = LocalContext.current
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -596,11 +597,11 @@ fun CategoryAppListBottomSheet(
 
                     Column {
                         Text(
-                            text = categoryItem.label,
+                            text = categoryItem.label.tr(context),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                         )
                         Text(
-                            text = "${categoryApps.size} Applications",
+                            text = "${categoryApps.size} " + "Applications".tr(context),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.net.wifi.ScanResult
 import android.net.wifi.WifiManager
 import android.os.Build
+import com.hamraj37.devpulse.util.tr
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -273,11 +274,11 @@ fun WifiAnalyzerScreen(
                     )
                     Column {
                         Text(
-                            text = "Wi-Fi Analyzer",
+                            text = "Wi-Fi Analyzer".tr(context),
                             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                         )
                         Text(
-                            text = "Nearby networks & signal strength",
+                            text = "Nearby networks & signal strength".tr(context),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -296,7 +297,7 @@ fun WifiAnalyzerScreen(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Search Wi-Fi networks...") },
+                placeholder = { Text("Search Wi-Fi networks...".tr(context)) },
                 leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
                 trailingIcon = if (searchQuery.isNotEmpty()) {
                     {
@@ -464,6 +465,7 @@ fun WifiDetailBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = rememberModalBottomSheetState()
     ) {
+        val context = LocalContext.current
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -541,7 +543,7 @@ fun WifiDetailBottomSheet(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(14.dp)
             ) {
-                Text("Close")
+                Text("Close".tr(context))
             }
         }
     }

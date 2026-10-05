@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Process
+import com.hamraj37.devpulse.util.tr
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -408,11 +409,11 @@ fun ScreenTimeScreen(
             )
             Column {
                 Text(
-                    text = "Screen Time",
+                    text = "Screen Time & App Usage".tr(context),
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
-                    text = "Daily display uptime & usage statistics",
+                    text = "Daily device screen time and application usage".tr(context),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -423,7 +424,7 @@ fun ScreenTimeScreen(
             value = searchQuery,
             onValueChange = { searchQuery = it },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Search screen time usage...") },
+            placeholder = { Text("Search screen time usage...".tr(context)) },
             leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
             trailingIcon = if (searchQuery.isNotEmpty()) {
                 {
@@ -663,7 +664,7 @@ fun ScreenTimeScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(14.dp)
             ) {
-                Text("Open System Usage Access Settings")
+                Text("Open System Usage Access Settings".tr(context))
             }
         }
 

@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
+import com.hamraj37.devpulse.util.tr
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -232,11 +233,11 @@ fun PermissionsScreen(
             )
             Column {
                 Text(
-                    text = "Permissions Manager",
+                    text = "Permissions Manager".tr(context),
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
-                    text = "App permission usage across installed apps",
+                    text = "App permission usage across installed apps".tr(context),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -247,7 +248,7 @@ fun PermissionsScreen(
             value = searchQuery,
             onValueChange = { searchQuery = it },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Search permissions...") },
+            placeholder = { Text("Search permissions...".tr(context)) },
             leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
             trailingIcon = if (searchQuery.isNotEmpty()) {
                 {
@@ -361,7 +362,7 @@ fun PermissionsScreen(
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
-                                    text = if (item.totalCount > 0) "${item.allowedCount} allowed of ${item.totalCount}" else "Not requested by installed apps",
+                                    text = if (item.totalCount > 0) "${item.allowedCount} " + "allowed of".tr(context) + " ${item.totalCount}" else "Not requested by installed apps".tr(context),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
                                 )

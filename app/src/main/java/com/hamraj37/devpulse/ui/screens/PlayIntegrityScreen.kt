@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.widget.Toast
+import com.hamraj37.devpulse.util.tr
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -190,7 +191,7 @@ fun PlayIntegrityScreen(
 
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Play Integrity Status",
+                                text = "Play Integrity Status".tr(context),
                                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                                 color = MaterialTheme.colorScheme.onSurface
                             )
@@ -228,7 +229,7 @@ fun PlayIntegrityScreen(
                                 contentDescription = "Run Check",
                                 modifier = Modifier.size(18.dp)
                             )
-                            Text(text = if (isChecking) "Attesting Device..." else "Run Integrity Check")
+                            Text(text = if (isChecking) "Attesting Device...".tr(context) else "Run Integrity Check".tr(context))
                         }
                     }
                 }

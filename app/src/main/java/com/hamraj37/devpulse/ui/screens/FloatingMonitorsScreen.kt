@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
+import com.hamraj37.devpulse.util.tr
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -136,11 +137,11 @@ fun FloatingMonitorsScreen(
             )
             Column {
                 Text(
-                    text = "Floating Monitors",
+                    text = "Floating Monitors".tr(context),
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
-                    text = "Display live system performance overlays",
+                    text = "Display live system performance overlays".tr(context),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -160,12 +161,12 @@ fun FloatingMonitorsScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Display Over Apps Permission Required",
+                        text = "Display Over Apps Permission Required".tr(context),
                         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onErrorContainer
                     )
                     Text(
-                        text = "To render floating performance indicators on top of other applications, please grant overlay permission.",
+                        text = "To render floating performance indicators on top of other applications, please grant overlay permission.".tr(context),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onErrorContainer
                     )
@@ -189,7 +190,7 @@ fun FloatingMonitorsScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
                         shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text("Grant Permission")
+                        Text("Grant Permission".tr(context))
                     }
                 }
             }
@@ -273,7 +274,7 @@ fun FloatingMonitorsScreen(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Live Monitor Preview",
+                        text = "Live Monitor Preview".tr(context),
                         style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -291,7 +292,7 @@ fun FloatingMonitorsScreen(
                     color = MaterialTheme.colorScheme.primary
                 ) {
                     Text(
-                        text = "LIVE",
+                        text = "LIVE".tr(context),
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onPrimary,

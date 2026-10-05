@@ -186,7 +186,7 @@ fun RootCheckerScreen(
 
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Root Status Verdict",
+                                text = "Root Status Verdict".tr(context),
                                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                                 color = MaterialTheme.colorScheme.onSurface
                             )
@@ -223,7 +223,7 @@ fun RootCheckerScreen(
                                 contentDescription = "Verify Root",
                                 modifier = Modifier.size(18.dp)
                             )
-                            Text(text = if (isScanning) "Scanning Root Access..." else "Verify Root Status")
+                            Text(text = if (isScanning) "Scanning Root Access...".tr(context) else "Verify Root Status".tr(context))
                         }
                     }
                 }

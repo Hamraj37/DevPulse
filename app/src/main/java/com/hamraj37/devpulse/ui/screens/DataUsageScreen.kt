@@ -12,6 +12,7 @@ import android.net.ConnectivityManager
 import android.net.TrafficStats
 import android.os.Build
 import android.os.Process
+import com.hamraj37.devpulse.util.tr
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -385,11 +386,11 @@ fun DataUsageScreen(
             )
             Column {
                 Text(
-                    text = "Data Usage",
+                    text = "Network Data Usage".tr(context),
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
-                    text = "Mobile and Wi-Fi network traffic stats",
+                    text = "Mobile & Wi-Fi data traffic per application".tr(context),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -400,7 +401,7 @@ fun DataUsageScreen(
             value = searchQuery,
             onValueChange = { searchQuery = it },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Search app usage...") },
+            placeholder = { Text("Search app usage...".tr(context)) },
             leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
             trailingIcon = if (searchQuery.isNotEmpty()) {
                 {
@@ -649,7 +650,7 @@ fun DataUsageScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(14.dp)
             ) {
-                Text("Open System Usage Access Settings")
+                Text("Open System Usage Access Settings".tr(context))
             }
         }
 
