@@ -18,6 +18,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.ui.platform.LocalContext
+import com.hamraj37.devpulse.util.tr
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -109,7 +111,7 @@ fun DisplayTestFullscreen(
                 modifier = Modifier.padding(bottom = 56.dp)
             ) {
                 Text(
-                    text = "Tap to cycle color: ${colorNames[colorIndex]} (${colorIndex + 1}/${colors.size})",
+                    text = "Tap screen to cycle colors".tr(LocalContext.current) + ": " + colorNames[colorIndex].tr(LocalContext.current) + " (${colorIndex + 1}/${colors.size})",
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
                     color = Color.White,
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)

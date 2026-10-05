@@ -14,6 +14,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.ui.platform.LocalContext
+import com.hamraj37.devpulse.util.tr
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -114,7 +116,7 @@ fun VolumeButtonTestGraphic() {
             }
 
             Text(
-                text = "Volume Up: ${if (volUpPressed) "Pressed ✅" else "Press Vol Up Key"} | Volume Down: ${if (volDownPressed) "Pressed ✅" else "Press Vol Down Key"}",
+                text = "Volume Up Key".tr(LocalContext.current) + ": " + (if (volUpPressed) "Pressed".tr(LocalContext.current) else "Not Pressed".tr(LocalContext.current)) + " | " + "Volume Down Key".tr(LocalContext.current) + ": " + (if (volDownPressed) "Pressed".tr(LocalContext.current) else "Not Pressed".tr(LocalContext.current)),
                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -127,7 +129,7 @@ fun VolumeButtonTestGraphic() {
                     modifier = Modifier.clickable { volUpPressed = true }
                 ) {
                     Text(
-                        text = "Simulate Vol Up",
+                        text = "Simulate Vol Up".tr(LocalContext.current),
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                         style = MaterialTheme.typography.labelMedium,
                         color = if (volUpPressed) Color.White else MaterialTheme.colorScheme.onSurface
@@ -140,7 +142,7 @@ fun VolumeButtonTestGraphic() {
                     modifier = Modifier.clickable { volDownPressed = true }
                 ) {
                     Text(
-                        text = "Simulate Vol Down",
+                        text = "Simulate Vol Down".tr(LocalContext.current),
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                         style = MaterialTheme.typography.labelMedium,
                         color = if (volDownPressed) Color.White else MaterialTheme.colorScheme.onSurface

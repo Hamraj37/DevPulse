@@ -15,6 +15,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.ui.platform.LocalContext
+import com.hamraj37.devpulse.util.tr
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -131,7 +133,7 @@ fun EarProximityTestGraphic(context: Context) {
             color = if (isNear) Color(0xFF2E7D32) else MaterialTheme.colorScheme.primaryContainer
         ) {
             Text(
-                text = if (isNear) "NEAR (Sensor Covered ✅)" else "FAR (Sensor Uncovered)",
+                text = if (isNear) "NEAR".tr(LocalContext.current) + " (Sensor Covered ✅)" else "FAR".tr(LocalContext.current) + " (Sensor Uncovered)",
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 color = if (isNear) Color.White else MaterialTheme.colorScheme.onPrimaryContainer

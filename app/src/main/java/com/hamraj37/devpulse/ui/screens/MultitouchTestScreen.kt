@@ -13,7 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import com.hamraj37.devpulse.util.tr
 
 @Composable
 fun MultitouchTestContent() {
@@ -52,7 +54,7 @@ fun MultitouchTestContent() {
         }
         if (pointers.isEmpty()) {
             Text(
-                text = "Touch screen with multiple fingers",
+                text = "Touch screen with multiple fingers".tr(LocalContext.current),
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium),
                 color = Color.White.copy(alpha = 0.6f)
             )

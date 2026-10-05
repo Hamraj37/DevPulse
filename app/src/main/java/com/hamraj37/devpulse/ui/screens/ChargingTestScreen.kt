@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.ui.platform.LocalContext
+import com.hamraj37.devpulse.util.tr
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -115,7 +117,7 @@ fun ChargingTestGraphic(context: Context) {
         }
 
         Text(
-            text = if (isCharging) "Charging (Power Connected)" else "Connect your charger",
+            text = if (isCharging) "Charging".tr(LocalContext.current) + " (Power Connected)" else "Connect your charger".tr(LocalContext.current),
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = if (isCharging) Color(0xFF2E7D32) else Color(0xFFD32F2F)
         )
@@ -125,15 +127,15 @@ fun ChargingTestGraphic(context: Context) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                Text("Level", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("Level".tr(LocalContext.current), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text("$batteryLevel%", fontWeight = FontWeight.Bold)
             }
             Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                Text("Temperature", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("Temperature".tr(LocalContext.current), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text("${String.format(Locale.US, "%.1f", tempC)} °C", fontWeight = FontWeight.Bold)
             }
             Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                Text("Voltage", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("Voltage".tr(LocalContext.current), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text("$voltageMv mV", fontWeight = FontWeight.Bold)
             }
         }

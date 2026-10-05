@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import com.hamraj37.devpulse.util.tr
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -123,6 +124,7 @@ fun StandardTestScreen(
     isDarkBackground: Boolean = false,
     content: @Composable () -> Unit
 ) {
+    val context = LocalContext.current
     BackHandler { onBack() }
 
     Column(
@@ -131,7 +133,7 @@ fun StandardTestScreen(
             .background(if (isDarkBackground) Color.Black else MaterialTheme.colorScheme.background)
     ) {
         DevPulseTopAppBar(
-            title = title,
+            title = title.tr(context),
             onBack = onBack
         )
 
@@ -157,7 +159,7 @@ fun StandardTestScreen(
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 Text(
-                    text = getQuestionForTest(testId),
+                    text = getQuestionForTest(testId).tr(context),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Medium
@@ -202,7 +204,7 @@ fun StandardTestScreen(
                             }
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(
-                                text = "No",
+                                text = "No".tr(context),
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 16.sp
@@ -241,7 +243,7 @@ fun StandardTestScreen(
                             }
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(
-                                text = "Yes",
+                                text = "Yes".tr(context),
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 16.sp

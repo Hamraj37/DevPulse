@@ -6,6 +6,7 @@ import android.content.Intent
 import android.nfc.NfcManager
 import android.os.SystemClock
 import android.provider.Settings
+import com.hamraj37.devpulse.util.tr
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -252,7 +253,7 @@ fun AutomaticTestsScreen(
                 SadFaceIcon(isSad = hasSuggestions)
 
                 Text(
-                    text = if (hasSuggestions) "Suggestions are available" else "All automatic tests passed",
+                    text = if (hasSuggestions) "Suggestions are available".tr(context) else "All automatic tests passed".tr(context),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
@@ -303,7 +304,7 @@ fun AutomaticTestsScreen(
 
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = item.title,
+                                        text = item.title.tr(context),
                                         style = MaterialTheme.typography.titleMedium.copy(
                                             fontWeight = FontWeight.Bold,
                                             fontSize = 16.sp
@@ -312,7 +313,7 @@ fun AutomaticTestsScreen(
                                     )
                                     Spacer(modifier = Modifier.height(2.dp))
                                     Text(
-                                        text = item.subtitle,
+                                        text = item.subtitle.tr(context),
                                         style = MaterialTheme.typography.bodyMedium.copy(
                                             fontSize = 13.5.sp
                                         ),
@@ -331,7 +332,7 @@ fun AutomaticTestsScreen(
                                             }
                                         ) {
                                             Text(
-                                                text = "Check",
+                                                text = "Check".tr(context),
                                                 modifier = Modifier.padding(horizontal = 18.dp, vertical = 8.dp),
                                                 style = MaterialTheme.typography.labelMedium.copy(
                                                     fontWeight = FontWeight.Bold,
