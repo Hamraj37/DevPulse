@@ -22,7 +22,7 @@ def hiKeys = []
 def langMaps = [:]
 def hiLines = []
 
-def langs = ["hi", "es", "fr", "de", "pt", "ru", "ar", "ja", "zh"]
+def langs = ["hi", "es", "fr", "de", "pt", "ru", "ar", "ja", "zh", "bn"]
 langs.each { langMaps[it] = [:] }
 
 while (langMatcher.find()) {
