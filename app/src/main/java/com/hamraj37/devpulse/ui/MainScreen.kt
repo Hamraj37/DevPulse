@@ -511,7 +511,7 @@ fun MainScreen(
                                     onDismissRequest = { showTopMenu = false }
                                 ) {
                                     DropdownMenuItem(
-                                        text = { Text("Refresh Telemetry") },
+                                        text = { Text("Refresh Telemetry".tr(context)) },
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Rounded.Refresh,
@@ -528,7 +528,7 @@ fun MainScreen(
                                     HorizontalDivider()
 
                                     DropdownMenuItem(
-                                        text = { Text("App Analyzer") },
+                                        text = { Text("App Analyzer".tr(context)) },
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Rounded.BarChart,
@@ -543,7 +543,7 @@ fun MainScreen(
                                     )
 
                                     DropdownMenuItem(
-                                        text = { Text("Wi-Fi Analyzer") },
+                                        text = { Text("Wi-Fi Analyzer".tr(context)) },
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Rounded.Router,
@@ -603,7 +603,7 @@ fun MainScreen(
                                     )
 
                                     DropdownMenuItem(
-                                        text = { Text("Data Usage") },
+                                        text = { Text("Data Usage".tr(context)) },
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Rounded.SwapHoriz,
@@ -618,7 +618,7 @@ fun MainScreen(
                                     )
 
                                     DropdownMenuItem(
-                                        text = { Text("Widgets") },
+                                        text = { Text("Widgets".tr(context)) },
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Rounded.GridView,
@@ -633,7 +633,7 @@ fun MainScreen(
                                     )
 
                                     DropdownMenuItem(
-                                        text = { Text("Export System Report") },
+                                        text = { Text("Export System Report".tr(context)) },
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Rounded.PictureAsPdf,
@@ -650,7 +650,7 @@ fun MainScreen(
                                     HorizontalDivider()
 
                                     DropdownMenuItem(
-                                        text = { Text("Settings") },
+                                        text = { Text("Settings".tr(context)) },
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Rounded.Settings,
@@ -665,7 +665,7 @@ fun MainScreen(
                                     )
 
                                     DropdownMenuItem(
-                                        text = { Text("About DevPulse") },
+                                        text = { Text("About DevPulse".tr(context)) },
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Rounded.Info,
