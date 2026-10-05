@@ -50,7 +50,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Switch
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -448,11 +448,11 @@ fun MainScreen(
                 Column(
                     modifier = Modifier.background(MaterialTheme.colorScheme.surface)
                 ) {
-                    CenterAlignedTopAppBar(
+                    TopAppBar(
                         title = {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center
+                                horizontalArrangement = Arrangement.Start
                             ) {
                                 Image(
                                     painter = painterResource(id = R.drawable.ic_launcher_foreground),
@@ -681,7 +681,7 @@ fun MainScreen(
                                 }
                             }
                         },
-                        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = MaterialTheme.colorScheme.surface
                         )
                     )

@@ -16,3 +16,8 @@ local.properties
 *.jks
 *.keystore
 /.kotlin/errors/errors-1790660382458.log
+/camera_dumpsys.txt
+/es_debug.txt
+/newBlock.txt
+/props.txt
+/update_log.txt
