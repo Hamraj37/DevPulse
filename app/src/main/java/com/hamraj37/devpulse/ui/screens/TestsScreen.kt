@@ -102,7 +102,7 @@ fun TestsScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Hardware Diagnostic Tests",
+                    text = "Hardware Diagnostic Tests".tr(context),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 22.sp
@@ -110,7 +110,7 @@ fun TestsScreen(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "Complete interactive tests to check hardware",
+                    text = "Complete interactive tests to check hardware".tr(context),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -121,7 +121,7 @@ fun TestsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "$completedCount of $totalCount Completed",
+                        text = "$completedCount " + "of".tr(context) + " $totalCount " + "Completed".tr(context),
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -147,7 +147,7 @@ fun TestsScreen(
         // Automatic Tests Section
         if (automaticTests.isNotEmpty()) {
             Text(
-                text = "Automatic Diagnostics (${automaticTests.size})",
+                text = "Automatic Diagnostics".tr(context) + " (${automaticTests.size})",
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(start = 4.dp, top = 4.dp)
@@ -172,7 +172,7 @@ fun TestsScreen(
 
         // Interactive Tests Section
         Text(
-            text = "Interactive Hardware Tests (${interactiveTests.size})",
+            text = "Interactive Hardware Tests".tr(context) + " (${interactiveTests.size})",
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(start = 4.dp, top = 8.dp)

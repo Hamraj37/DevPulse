@@ -333,17 +333,17 @@ fun AppDetailBottomSheet(
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    AppDetailRow("Version", "${app.versionName} (${app.versionCode})")
-                    AppDetailRow("APK Size", formatApkSize(app.appSizeBytes))
-                    AppDetailRow("App Type", if (app.isSystemApp) "System Application" else "User Installed Application")
-                    AppDetailRow("Install Source", installSource)
-                    AppDetailRow("First Installed", formatTime(app.installedTimeMs))
-                    AppDetailRow("Last Updated", formatTime(app.updatedTimeMs))
+                    AppDetailRow("Version".tr(context), "${app.versionName} (${app.versionCode})")
+                    AppDetailRow("APK Size".tr(context), formatApkSize(app.appSizeBytes))
+                    AppDetailRow("App Type".tr(context), if (app.isSystemApp) "System Application".tr(context) else "User Installed Application".tr(context))
+                    AppDetailRow("Install Source".tr(context), installSource)
+                    AppDetailRow("First Installed".tr(context), formatTime(app.installedTimeMs))
+                    AppDetailRow("Last Updated".tr(context), formatTime(app.updatedTimeMs))
                 }
             }
 
             Text(
-                text = "Quick Actions",
+                text = "Quick Actions".tr(context),
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.primary
             )
@@ -387,7 +387,7 @@ fun AppDetailBottomSheet(
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
-                                text = "Launch App",
+                                text = "Launch App".tr(context),
                                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
                             )
                         }
@@ -417,7 +417,7 @@ fun AppDetailBottomSheet(
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
-                                text = "Extract APK",
+                                text = "Extract APK".tr(context),
                                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
                             )
                         }
@@ -461,7 +461,7 @@ fun AppDetailBottomSheet(
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
-                                text = "Google Play",
+                                text = "Google Play".tr(context),
                                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
                             )
                         }
@@ -493,7 +493,7 @@ fun AppDetailBottomSheet(
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
-                                text = "App Settings",
+                                text = "App Settings".tr(context),
                                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
                             )
                         }

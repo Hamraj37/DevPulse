@@ -294,7 +294,7 @@ fun SettingsScreen(
         val themeOptions = listOf("System default", "Light", "Dark")
         AlertDialog(
             onDismissRequest = { showThemeDialog = false },
-            title = { Text(text = "Choose Theme", fontWeight = FontWeight.Bold) },
+            title = { Text(text = "Choose Theme".tr(context), fontWeight = FontWeight.Bold) },
             text = {
                 Column {
                     themeOptions.forEach { option ->
@@ -316,14 +316,14 @@ fun SettingsScreen(
                                 }
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(text = option)
+                            Text(text = option.tr(context))
                         }
                     }
                 }
             },
             confirmButton = {
                 TextButton(onClick = { showThemeDialog = false }) {
-                    Text("Cancel")
+                    Text("Cancel".tr(context))
                 }
             }
         )
@@ -413,9 +413,9 @@ fun SettingsScreen(
     if (showClearDataDialog) {
         AlertDialog(
             onDismissRequest = { showClearDataDialog = false },
-            title = { Text(text = "Clear Data", fontWeight = FontWeight.Bold) },
+            title = { Text(text = "Clear Data".tr(context), fontWeight = FontWeight.Bold) },
             text = {
-                Text("Are you sure you want to clear app cache and reset preferences?")
+                Text("Are you sure you want to clear app cache and reset preferences?".tr(context))
             },
             confirmButton = {
                 TextButton(
@@ -426,12 +426,12 @@ fun SettingsScreen(
                         Toast.makeText(context, "App data & preferences cleared", Toast.LENGTH_SHORT).show()
                     }
                 ) {
-                    Text("Clear")
+                    Text("Clear".tr(context))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showClearDataDialog = false }) {
-                    Text("Cancel")
+                    Text("Cancel".tr(context))
                 }
             }
         )
@@ -444,13 +444,13 @@ fun SettingsScreen(
     if (showPrivacyDialog) {
         AlertDialog(
             onDismissRequest = { showPrivacyDialog = false },
-            title = { Text(text = "Privacy Policy", fontWeight = FontWeight.Bold) },
+            title = { Text(text = "Privacy Policy".tr(context), fontWeight = FontWeight.Bold) },
             text = {
-                Text("DevPulse does not collect or transmit any personal user data. All hardware telemetry, app analysis, and system diagnostics are processed locally on your device.")
+                Text("DevPulse does not collect or transmit any personal user data. All hardware telemetry, app analytics, and diagnostic logs are processed locally on your device.".tr(context))
             },
             confirmButton = {
                 TextButton(onClick = { showPrivacyDialog = false }) {
-                    Text("Close")
+                    Text("Close".tr(context))
                 }
             }
         )

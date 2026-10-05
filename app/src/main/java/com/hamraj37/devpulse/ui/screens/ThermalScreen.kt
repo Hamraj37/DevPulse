@@ -100,7 +100,7 @@ fun ThermalScreen(
                                 maxLines = 1
                             )
                             Text(
-                                text = "Status:".tr(context) + " ${thermalInfo.overallStatus}",
+                                text = "Status:".tr(context) + " " + thermalInfo.overallStatus.tr(context),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = OliveActiveBadge,
                                 maxLines = 1

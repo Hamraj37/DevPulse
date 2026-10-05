@@ -321,7 +321,7 @@ fun SensorCardItem(
 
                     if (isLocationOrientationSensor && !isLocationEnabled) {
                         Text(
-                            text = "Location service is disabled. GPS/Location is required for true declination & orientation calibration.",
+                            text = "Location service is disabled. GPS/Location is required for true declination & orientation calibration.".tr(context),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.error,
                             modifier = Modifier.padding(bottom = 6.dp)
@@ -329,7 +329,7 @@ fun SensorCardItem(
                     }
 
                     Text(
-                        text = "LIVE SENSOR STREAM DATA",
+                        text = "LIVE SENSOR STREAM DATA".tr(context),
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -340,7 +340,7 @@ fun SensorCardItem(
                     if (vals != null && vals.isNotEmpty()) {
                         when (vals.size) {
                             1 -> {
-                                LiveReadingRow(label = "Value", value = String.format(Locale.US, "%.3f", vals[0]))
+                                LiveReadingRow(label = "Value".tr(context), value = String.format(Locale.US, "%.3f", vals[0]))
                             }
                             2 -> {
                                 LiveReadingRow(label = "X", value = String.format(Locale.US, "%+.3f", vals[0]))
