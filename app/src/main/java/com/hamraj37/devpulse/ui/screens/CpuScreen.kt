@@ -31,9 +31,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
 import com.hamraj37.devpulse.data.model.CpuCoreSpeed
 import com.hamraj37.devpulse.data.model.CpuInfo
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
+import com.hamraj37.devpulse.util.tr
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -42,6 +44,7 @@ fun CpuScreen(
     modifier: Modifier = Modifier
 ) {
     val dividerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
+    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -77,7 +80,7 @@ fun CpuScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Core Frequencies",
+                            text = "Core Frequencies".tr(context),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             maxLines = 1
                         )
@@ -174,7 +177,7 @@ fun CpuScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Processor & Graphics Architecture",
+                        text = "Processor & Graphics Architecture".tr(context),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -212,13 +215,14 @@ fun CpuItemRow(
     label: String,
     value: String
 ) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
         Text(
-            text = label,
+            text = label.tr(context),
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)

@@ -53,6 +53,7 @@ import com.hamraj37.devpulse.data.model.NetworkInfo
 import com.hamraj37.devpulse.ui.components.LiveSparklineChart
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
+import com.hamraj37.devpulse.util.tr
 
 @Composable
 fun NetworkScreen(
@@ -217,7 +218,7 @@ fun NetworkScreen(
 
                             Column {
                                 Text(
-                                    text = "DOWNLOAD",
+                                    text = "DOWNLOAD".tr(context),
                                     style = MaterialTheme.typography.labelSmall.copy(
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 10.sp
@@ -263,7 +264,7 @@ fun NetworkScreen(
 
                             Column {
                                 Text(
-                                    text = "UPLOAD",
+                                    text = "UPLOAD".tr(context),
                                     style = MaterialTheme.typography.labelSmall.copy(
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 10.sp
@@ -293,12 +294,12 @@ fun NetworkScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Live Network Traffic",
+                                text = "Live Network Traffic".tr(context),
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
-                                text = "Real-time",
+                                text = "Real-time".tr(context),
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                                 color = MaterialTheme.colorScheme.primary
                             )
@@ -336,7 +337,7 @@ fun NetworkScreen(
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(text = "Usage", fontWeight = FontWeight.SemiBold, maxLines = 1, softWrap = false)
+                        Text(text = "Usage".tr(context), fontWeight = FontWeight.SemiBold, maxLines = 1, softWrap = false)
                     }
 
                     OutlinedButton(
@@ -353,7 +354,7 @@ fun NetworkScreen(
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(text = "Public IP", fontWeight = FontWeight.SemiBold, maxLines = 1, softWrap = false)
+                        Text(text = "Public IP".tr(context), fontWeight = FontWeight.SemiBold, maxLines = 1, softWrap = false)
                     }
                 }
             }
@@ -415,9 +416,9 @@ fun NetworkScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = when {
-                            isCellular -> "Detailed Mobile Data & Network Specs"
-                            isDisconnected -> "Network Connection Status"
-                            else -> "Detailed Wi-Fi & Network Specs"
+                            isCellular -> "Detailed Mobile Data & Network Specs".tr(context)
+                            isDisconnected -> "Network Connection Status".tr(context)
+                            else -> "Detailed Wi-Fi & Network Specs".tr(context)
                         },
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface
@@ -559,13 +560,14 @@ fun NetworkItemRow(
     label: String,
     value: String
 ) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
         Text(
-            text = label,
+            text = label.tr(context),
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)

@@ -66,6 +66,8 @@ data class MainUiState(
     val themeMode: String = "System default", // "System default", "Light", "Dark"
     val useSystemColors: Boolean = true,
     val themeColor: String = "Blue", // "Blue", "Purple", "Green", "Orange", "Teal"
+    val appLanguageCode: String = "", // "" = System default
+    val appLanguageName: String = "System default",
     val updateInfo: GithubReleaseInfo? = null,
     val showUpdateDialog: Boolean = false
 )
@@ -82,11 +84,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         val savedTheme = prefs.getString("theme_mode", "System default") ?: "System default"
         val savedSystemColors = prefs.getBoolean("use_system_colors", true)
         val savedThemeColor = prefs.getString("theme_color", "Blue") ?: "Blue"
+        val savedLangCode = prefs.getString("app_language_code", "") ?: ""
+        val savedLangName = prefs.getString("app_language_name", "System default") ?: "System default"
         _uiState.update {
             it.copy(
                 themeMode = savedTheme,
                 useSystemColors = savedSystemColors,
-                themeColor = savedThemeColor
+                themeColor = savedThemeColor,
+                appLanguageCode = savedLangCode,
+                appLanguageName = savedLangName
             )
         }
         loadStaticTelemetry()
@@ -107,6 +113,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun setThemeColor(color: String) {
         prefs.edit().putString("theme_color", color).apply()
         _uiState.update { it.copy(themeColor = color) }
+    }
+
+    fun onAppLanguageChange(code: String, name: String) {
+        prefs.edit()
+            .putString("app_language_code", code)
+            .putString("app_language_name", name)
+            .apply()
+        _uiState.update {
+            it.copy(
+                appLanguageCode = code,
+                appLanguageName = name
+            )
+        }
     }
 
     fun dismissUpdateDialog() {

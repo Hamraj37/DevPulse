@@ -76,6 +76,7 @@ import com.hamraj37.devpulse.data.model.AppInfo
 import com.hamraj37.devpulse.data.model.AppSpec
 import com.hamraj37.devpulse.data.telemetry.AppCategoryFilter
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
+import com.hamraj37.devpulse.util.tr
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -138,7 +139,7 @@ fun AppsScreen(
                     color = MaterialTheme.colorScheme.primary
                 ) {
                     Text(
-                        text = "${appInfo.totalApps} Apps",
+                        text = "${appInfo.totalApps} " + "Apps".tr(context),
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onPrimary,
@@ -163,7 +164,7 @@ fun AppsScreen(
                             )
                     ) {
                         Text(
-                            text = category,
+                            text = category.tr(context),
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
@@ -204,7 +205,7 @@ fun AppsScreen(
                 value = searchQuery,
                 onValueChange = onSearchQueryChange,
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Filter apps by name or package...") },
+                placeholder = { Text("Filter apps by name or package...".tr(context)) },
                 singleLine = true,
                 leadingIcon = {
                     Icon(

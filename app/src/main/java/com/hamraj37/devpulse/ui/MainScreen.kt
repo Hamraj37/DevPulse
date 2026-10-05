@@ -418,31 +418,33 @@ fun MainScreen(
         }
     }
 
-    if (uiState.isToolsPageOpen) {
-        Surface(
-            modifier = modifier
-                .fillMaxSize()
-                .statusBarsPadding(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            ToolsScreen(
-                uiState = uiState,
-                initialTool = uiState.initialTool,
-                onThemeModeChange = { viewModel.setThemeMode(it) },
-                onUseSystemColorsChange = { viewModel.setUseSystemColors(it) },
-                onThemeColorChange = { viewModel.setThemeColor(it) },
-                onBack = { viewModel.setToolsPageOpen(false) },
-                onNavigateToTab = { tab ->
-                    viewModel.selectTab(tab)
-                    viewModel.setToolsPageOpen(false)
-                },
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp)
-            )
-        }
-    } else {
-        Scaffold(
-            modifier = modifier.fillMaxSize(),
-            topBar = {
+    key(uiState.appLanguageCode) {
+        if (uiState.isToolsPageOpen) {
+            Surface(
+                modifier = modifier
+                    .fillMaxSize()
+                    .statusBarsPadding(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                ToolsScreen(
+                    uiState = uiState,
+                    initialTool = uiState.initialTool,
+                    onThemeModeChange = { viewModel.setThemeMode(it) },
+                    onUseSystemColorsChange = { viewModel.setUseSystemColors(it) },
+                    onThemeColorChange = { viewModel.setThemeColor(it) },
+                    onAppLanguageChange = { code, name -> viewModel.onAppLanguageChange(code, name) },
+                    onBack = { viewModel.setToolsPageOpen(false) },
+                    onNavigateToTab = { tab ->
+                        viewModel.selectTab(tab)
+                        viewModel.setToolsPageOpen(false)
+                    },
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp)
+                )
+            }
+        } else {
+            Scaffold(
+                modifier = modifier.fillMaxSize(),
+                topBar = {
                 Column(
                     modifier = Modifier.background(MaterialTheme.colorScheme.surface)
                 ) {
@@ -731,6 +733,7 @@ fun MainScreen(
             }
         }
     }
+}
 }
 
 @Composable

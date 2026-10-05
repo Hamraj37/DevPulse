@@ -49,6 +49,7 @@ import com.hamraj37.devpulse.data.model.TestItem
 import com.hamraj37.devpulse.data.model.TestStatus
 import com.hamraj37.devpulse.ui.TestActivity
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
+import com.hamraj37.devpulse.util.tr
 
 @Composable
 fun TestsScreen(
@@ -200,6 +201,7 @@ fun TestCardItem(
     test: TestItem,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -251,7 +253,7 @@ fun TestCardItem(
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = test.title,
+                        text = test.title.tr(context),
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 15.5.sp
@@ -260,7 +262,7 @@ fun TestCardItem(
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = test.description,
+                        text = test.description.tr(context),
                         style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -279,9 +281,9 @@ fun TestCardItem(
             ) {
                 Text(
                     text = when (test.status) {
-                        TestStatus.PASSED -> "Passed"
-                        TestStatus.FAILED -> "Failed"
-                        else -> "Test"
+                        TestStatus.PASSED -> "Passed".tr(context)
+                        TestStatus.FAILED -> "Failed".tr(context)
+                        else -> "Test".tr(context)
                     },
                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp),
                     style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),

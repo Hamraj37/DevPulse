@@ -56,8 +56,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import com.hamraj37.devpulse.util.tr
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.data.model.AppSpec
@@ -290,8 +292,11 @@ fun AppAnalyzerScreen(
         BackHandler { onBack() }
     }
 
+    val context = LocalContext.current
     var selectedTab by remember { mutableStateOf("Categories") }
-    val tabs = listOf("Categories", "Installer", "Target SDK", "Minimum SDK", "App Type")
+    val tabs = remember(context) {
+        listOf("Categories".tr(context), "Installer".tr(context), "Target SDK".tr(context), "Minimum SDK".tr(context), "App Type".tr(context))
+    }
 
     var selectedCategoryItem by remember { mutableStateOf<AnalyzerItem?>(null) }
     var selectedAppForDetail by remember { mutableStateOf<AppSpec?>(null) }

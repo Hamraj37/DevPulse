@@ -33,9 +33,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import com.hamraj37.devpulse.data.model.DisplayInfo
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
+import com.hamraj37.devpulse.util.tr
 
 @Composable
 fun DisplayScreen(
@@ -43,6 +45,7 @@ fun DisplayScreen(
     modifier: Modifier = Modifier
 ) {
     val dividerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
+    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -147,7 +150,7 @@ fun DisplayScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Display Hardware & System Details",
+                        text = "Display Hardware & System Details".tr(context),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -171,7 +174,7 @@ fun DisplayScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Refresh Rate",
+                        text = "Refresh Rate".tr(context),
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.weight(1f)
@@ -215,7 +218,7 @@ fun DisplayScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "Brightness Level",
+                            text = "Brightness Level".tr(context),
                             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -254,9 +257,10 @@ fun DisplayMetricPill(
     label: String,
     value: String
 ) {
+    val context = LocalContext.current
     Column {
         Text(
-            text = label,
+            text = label.tr(context),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -273,13 +277,14 @@ fun DisplayItemRow(
     label: String,
     value: String
 ) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
         Text(
-            text = label,
+            text = label.tr(context),
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)

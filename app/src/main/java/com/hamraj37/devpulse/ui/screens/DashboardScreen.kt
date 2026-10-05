@@ -52,13 +52,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.data.model.DashboardInfo
 import com.hamraj37.devpulse.data.model.TestItem
 import com.hamraj37.devpulse.data.model.TestStatus
 import com.hamraj37.devpulse.ui.components.CircularRamGauge
 import com.hamraj37.devpulse.ui.components.LiveSparklineChart
+import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
+import com.hamraj37.devpulse.util.tr
 import androidx.compose.foundation.clickable
 import androidx.compose.runtime.remember
 import java.io.File
@@ -124,7 +125,7 @@ fun DashboardScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "RAM - $ramTotalMb MB Total",
+                        text = "RAM".tr(context) + " - $ramTotalMb MB " + "Total".tr(context),
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold
                         ),
@@ -132,7 +133,7 @@ fun DashboardScreen(
                     )
 
                     Text(
-                        text = "$ramUsedMb MB Used",
+                        text = "$ramUsedMb MB " + "Used".tr(context),
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold
                         ),
@@ -166,7 +167,7 @@ fun DashboardScreen(
                         )
 
                         Text(
-                            text = "$ramFreeMb MB Free",
+                            text = "$ramFreeMb MB " + "Free".tr(context),
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.Bold
                             ),
@@ -206,7 +207,7 @@ fun DashboardScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "CPU Core Status",
+                            text = "CPU Core Status".tr(context),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             maxLines = 1
                         )
@@ -219,7 +220,7 @@ fun DashboardScreen(
                         color = MaterialTheme.colorScheme.primaryContainer
                     ) {
                         Text(
-                            text = "${dashboardInfo.cpuCoreFrequencies.size} Cores",
+                            text = "${dashboardInfo.cpuCoreFrequencies.size} " + "Cores".tr(context),
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -252,7 +253,7 @@ fun DashboardScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = "Core $index",
+                                    text = "Core".tr(context) + " $index",
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -321,12 +322,12 @@ fun DashboardScreen(
                         }
                         Column {
                             Text(
-                                text = "Hardware Tests Report",
+                                text = "Hardware Tests Report".tr(context),
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "$completedTests of $totalTests Tests Completed",
+                                text = "$completedTests " + "of".tr(context) + " $totalTests " + "Tests Completed".tr(context),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -369,7 +370,7 @@ fun DashboardScreen(
                                 .background(Color(0xFF2E7D32))
                         )
                         Text(
-                            text = "Passed: $passedCount",
+                            text = "Passed".tr(context) + ": $passedCount",
                             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -383,7 +384,7 @@ fun DashboardScreen(
                                 .background(MaterialTheme.colorScheme.error)
                         )
                         Text(
-                            text = "Failed: $failedCount",
+                            text = "Failed".tr(context) + ": $failedCount",
                             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -397,7 +398,7 @@ fun DashboardScreen(
                                 .background(MaterialTheme.colorScheme.outline)
                         )
                         Text(
-                            text = "Pending: $pendingCount",
+                            text = "Pending".tr(context) + ": $pendingCount",
                             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -434,7 +435,7 @@ fun DashboardScreen(
                     )
                     Column {
                         Text(
-                            text = "Display Spec",
+                            text = "Display Spec".tr(context),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -491,7 +492,7 @@ fun DashboardScreen(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "Tools",
+                            text = "Tools".tr(context),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = FontWeight.Bold,
@@ -522,7 +523,7 @@ fun DashboardScreen(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "Analyze",
+                            text = "Analyze".tr(context),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = FontWeight.Bold,
@@ -553,7 +554,7 @@ fun DashboardScreen(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "Export",
+                            text = "Export".tr(context),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = FontWeight.Bold,
@@ -594,7 +595,7 @@ fun DashboardScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Internal Storage",
+                            text = "Internal Storage".tr(context),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             maxLines = 1
                         )
@@ -633,12 +634,12 @@ fun DashboardScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Free: ${String.format("%.1f", storageFreeGb)} GB",
+                        text = "Free".tr(context) + ": ${String.format("%.1f", storageFreeGb)} GB",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "Total: ${String.format("%.1f", storageTotalGb)} GB",
+                        text = "Total".tr(context) + ": ${String.format("%.1f", storageTotalGb)} GB",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -673,7 +674,7 @@ fun DashboardScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Battery State",
+                            text = "Battery State".tr(context),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                         )
                     }
@@ -745,12 +746,12 @@ fun DashboardScreen(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            text = "Sensors",
+                            text = "Sensors".tr(context),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = "${dashboardInfo.sensorCount} Active",
+                            text = "${dashboardInfo.sensorCount} " + "Active".tr(context),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -778,12 +779,12 @@ fun DashboardScreen(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            text = "All Apps",
+                            text = "All Apps".tr(context),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = "${dashboardInfo.appCount} Installed",
+                            text = "${dashboardInfo.appCount} " + "Installed".tr(context),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface
                         )

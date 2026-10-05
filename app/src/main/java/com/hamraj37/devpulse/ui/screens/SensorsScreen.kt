@@ -62,6 +62,7 @@ import com.hamraj37.devpulse.data.model.SensorInfo
 import com.hamraj37.devpulse.data.model.SensorSpec
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
+import com.hamraj37.devpulse.util.tr
 import java.util.Locale
 
 @Composable
@@ -113,13 +114,13 @@ fun SensorsScreen(
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "${sensorInfo.sensorCount} Sensors are available on your device",
+                        text = "${sensorInfo.sensorCount} " + "Sensors are available on your device".tr(context),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Real-time stream & live event listener",
+                        text = "Real-time stream & live event listener".tr(context),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -251,7 +252,7 @@ fun SensorCardItem(
                     Spacer(modifier = Modifier.height(2.dp))
 
                     Text(
-                        text = "Vendor: ${sensorSpec.vendor} | Type: ${sensorSpec.typeName}",
+                        text = "Vendor:".tr(context) + " ${sensorSpec.vendor} | " + "Type:".tr(context) + " ${sensorSpec.typeName}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1
@@ -265,7 +266,7 @@ fun SensorCardItem(
                     color = if (sensorSpec.isWakeUpSensor) OliveActiveBadge.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceContainerHighest
                 ) {
                     Text(
-                        text = if (sensorSpec.isWakeUpSensor) "Wakeup" else "Non-wakeup",
+                        text = if (sensorSpec.isWakeUpSensor) "Wakeup".tr(context) else "Non-wakeup".tr(context),
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
                         style = MaterialTheme.typography.labelSmall.copy(
                             fontWeight = FontWeight.Bold,

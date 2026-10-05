@@ -28,12 +28,15 @@ import androidx.compose.material.icons.rounded.DeleteOutline
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.NightsStay
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.PrivacyTip
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.Thermostat
+import com.hamraj37.devpulse.util.AppLanguageManager
+import com.hamraj37.devpulse.util.tr
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -66,6 +69,7 @@ fun SettingsScreen(
     onThemeModeChange: (String) -> Unit = {},
     onUseSystemColorsChange: (Boolean) -> Unit = {},
     onThemeColorChange: (String) -> Unit = {},
+    onAppLanguageChange: (String, String) -> Unit = { _, _ -> },
     onBack: (() -> Unit)? = null,
     onNavigateToExport: (() -> Unit)? = null,
     onNavigateToAbout: (() -> Unit)? = null,
@@ -79,6 +83,7 @@ fun SettingsScreen(
 
     var showThemeDialog by remember { mutableStateOf(false) }
     var showColorDialog by remember { mutableStateOf(false) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
     var showClearDataDialog by remember { mutableStateOf(false) }
     var showDonateDialog by remember { mutableStateOf(false) }
     var showPrivacyDialog by remember { mutableStateOf(false) }
@@ -189,16 +194,23 @@ fun SettingsScreen(
         // Section 2: General
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
-                text = "General",
+                text = "General".tr(context),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                 modifier = Modifier.padding(start = 56.dp, bottom = 4.dp)
             )
 
             SettingsItemRow(
+                icon = Icons.Rounded.Language,
+                title = "App Language".tr(context),
+                subtitle = uiState.appLanguageName.ifBlank { "System default".tr(context) },
+                onClick = { showLanguageDialog = true }
+            )
+
+            SettingsItemRow(
                 icon = Icons.Rounded.Download,
-                title = "Export Data",
-                subtitle = "Save your device information to a text file",
+                title = "Export Data".tr(context),
+                subtitle = "Save your device information to a text file".tr(context),
                 onClick = {
                     if (onNavigateToExport != null) {
                         onNavigateToExport()
@@ -321,7 +333,7 @@ fun SettingsScreen(
         val colorOptions = listOf("Blue", "Purple", "Green", "Orange", "Teal")
         AlertDialog(
             onDismissRequest = { showColorDialog = false },
-            title = { Text(text = "Choose Theme Color", fontWeight = FontWeight.Bold) },
+            title = { Text(text = "Choose Theme Color".tr(context), fontWeight = FontWeight.Bold) },
             text = {
                 Column {
                     colorOptions.forEach { option ->
@@ -350,7 +362,49 @@ fun SettingsScreen(
             },
             confirmButton = {
                 TextButton(onClick = { showColorDialog = false }) {
-                    Text("Cancel")
+                    Text("Cancel".tr(context))
+                }
+            }
+        )
+    }
+
+    if (showLanguageDialog) {
+        AlertDialog(
+            onDismissRequest = { showLanguageDialog = false },
+            title = { Text(text = "Choose App Language".tr(context), fontWeight = FontWeight.Bold) },
+            text = {
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState())
+                ) {
+                    AppLanguageManager.supportedLanguages.forEach { lang ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    onAppLanguageChange(lang.code, if (lang.code.isEmpty()) "System default" else lang.nativeName)
+                                    showLanguageDialog = false
+                                }
+                                .padding(vertical = 8.dp)
+                        ) {
+                            RadioButton(
+                                selected = (uiState.appLanguageCode == lang.code),
+                                onClick = {
+                                    onAppLanguageChange(lang.code, if (lang.code.isEmpty()) "System default" else lang.nativeName)
+                                    showLanguageDialog = false
+                                }
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = if (lang.code.isEmpty()) "System default".tr(context) else "${lang.displayName} (${lang.nativeName})"
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showLanguageDialog = false }) {
+                    Text("Cancel".tr(context))
                 }
             }
         )

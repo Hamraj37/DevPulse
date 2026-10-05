@@ -33,14 +33,17 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import com.hamraj37.devpulse.data.model.MemoryInfo
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
+import com.hamraj37.devpulse.util.tr
 
 @Composable
 fun MemoryScreen(
     memoryInfo: MemoryInfo,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val ramTotalGb = memoryInfo.ramTotalBytes / (1024 * 1024 * 1024f)
     val ramUsedGb = memoryInfo.ramUsedBytes / (1024 * 1024 * 1024f)
     val ramFreeGb = memoryInfo.ramAvailableBytes / (1024 * 1024 * 1024f)
@@ -111,6 +114,7 @@ fun MemoryStorageProgressCard(
     totalGb: Float,
     pct: Int
 ) {
+    val context = LocalContext.current
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
@@ -131,20 +135,20 @@ fun MemoryStorageProgressCard(
                 ) {
                     Icon(
                         imageVector = icon,
-                        contentDescription = title,
+                        contentDescription = title.tr(context),
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            text = title,
+                            text = title.tr(context),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface,
                             maxLines = 1
                         )
                         Text(
-                            text = path,
+                            text = path.tr(context),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1
@@ -184,13 +188,15 @@ fun MemoryStorageProgressCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                val usedText = "${String.format("%.2f", usedGb)} GB of ${String.format("%.2f", totalGb)} GB Used"
+                val freeText = "${String.format("%.2f", freeGb)} GB Free"
                 Text(
-                    text = "${String.format("%.2f", usedGb)} GB of ${String.format("%.2f", totalGb)} GB Used",
+                    text = usedText,
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "${String.format("%.2f", freeGb)} GB Free",
+                    text = freeText,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -203,6 +209,7 @@ fun MemoryStorageProgressCard(
 fun ZramProgressCard(
     memoryInfo: MemoryInfo
 ) {
+    val context = LocalContext.current
     val zramTotalGb = memoryInfo.zramTotalBytes / (1024 * 1024 * 1024f)
     val zramOrigGb = memoryInfo.zramOrigBytes / (1024 * 1024 * 1024f)
     val zramComprGb = memoryInfo.zramComprBytes / (1024 * 1024 * 1024f)
@@ -240,7 +247,7 @@ fun ZramProgressCard(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            text = "zRAM (RAM Swap)",
+                            text = "zRAM (RAM Swap)".tr(context),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface,
                             maxLines = 1

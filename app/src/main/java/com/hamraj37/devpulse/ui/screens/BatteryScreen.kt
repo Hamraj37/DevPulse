@@ -32,10 +32,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
 import com.hamraj37.devpulse.data.model.BatteryInfo
 import com.hamraj37.devpulse.ui.components.LiveSparklineChart
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
+import com.hamraj37.devpulse.util.tr
 import java.util.Locale
 
 @Composable
@@ -44,6 +46,7 @@ fun BatteryScreen(
     modifier: Modifier = Modifier
 ) {
     val dividerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
+    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -92,7 +95,7 @@ fun BatteryScreen(
 
                         Column {
                             Text(
-                                text = "Battery Power State",
+                                text = "Battery Power State".tr(context),
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 maxLines = 1
@@ -138,7 +141,7 @@ fun BatteryScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "Live Power Draw Stream",
+                    text = "Live Power Draw Stream".tr(context),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -176,7 +179,7 @@ fun BatteryScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Battery Health & Hardware Specs",
+                        text = "Battery Health & Hardware Specs".tr(context),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -217,9 +220,10 @@ fun BatteryMetricChip(
     label: String,
     value: String
 ) {
+    val context = LocalContext.current
     Column {
         Text(
-            text = label,
+            text = label.tr(context),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -236,13 +240,14 @@ fun BatteryItemRow(
     label: String,
     value: String
 ) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
         Text(
-            text = label,
+            text = label.tr(context),
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)

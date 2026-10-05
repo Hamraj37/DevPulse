@@ -39,8 +39,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
 import com.hamraj37.devpulse.data.model.AppTab
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
+import com.hamraj37.devpulse.util.tr
 import kotlinx.coroutines.launch
 
 @Composable
@@ -132,15 +134,16 @@ fun DevPulseTabRow(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
+                        val context = LocalContext.current
                         Icon(
                             imageVector = tab.icon,
-                            contentDescription = tab.title,
+                            contentDescription = tab.title.tr(context),
                             tint = contentColor,
                             modifier = Modifier.size(18.dp)
                         )
 
                         Text(
-                            text = tab.title,
+                            text = tab.title.tr(context),
                             color = contentColor,
                             style = MaterialTheme.typography.labelLarge.copy(
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,

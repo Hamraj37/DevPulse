@@ -33,10 +33,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
 import com.hamraj37.devpulse.data.model.ThermalInfo
 import com.hamraj37.devpulse.data.model.ThermalZone
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
+import com.hamraj37.devpulse.util.tr
 import java.util.Locale
 
 @Composable
@@ -44,6 +46,7 @@ fun ThermalScreen(
     thermalInfo: ThermalInfo,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -91,13 +94,13 @@ fun ThermalScreen(
 
                         Column {
                             Text(
-                                text = "Thermal Zone Monitors",
+                                text = "Thermal Zone Monitors".tr(context),
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 maxLines = 1
                             )
                             Text(
-                                text = "Status: ${thermalInfo.overallStatus}",
+                                text = "Status:".tr(context) + " ${thermalInfo.overallStatus}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = OliveActiveBadge,
                                 maxLines = 1
@@ -112,7 +115,7 @@ fun ThermalScreen(
                         color = MaterialTheme.colorScheme.primaryContainer
                     ) {
                         Text(
-                            text = "${thermalInfo.thermalZones.size} Zones",
+                            text = "${thermalInfo.thermalZones.size} " + "Zones".tr(context),
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -125,7 +128,7 @@ fun ThermalScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Thermal Headroom Capacity",
+                    text = "Thermal Headroom Capacity".tr(context),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -180,6 +183,7 @@ fun ThermalScreen(
 fun ThermalCardItem(
     zone: ThermalZone
 ) {
+    val context = LocalContext.current
     val temp = zone.tempCelsius
     val (tempColor, tempLabel) = when {
         temp >= 48f -> Color(0xFFE53935) to "HIGH"
@@ -222,7 +226,7 @@ fun ThermalCardItem(
                     color = tempColor.copy(alpha = 0.2f)
                 ) {
                     Text(
-                        text = tempLabel,
+                        text = tempLabel.tr(context),
                         modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontSize = 10.sp),
                         color = tempColor

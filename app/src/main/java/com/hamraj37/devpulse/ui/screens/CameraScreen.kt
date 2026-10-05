@@ -40,9 +40,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
 import com.hamraj37.devpulse.data.model.CameraInfo
 import com.hamraj37.devpulse.data.model.CameraSpec
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
+import com.hamraj37.devpulse.util.tr
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -53,6 +55,7 @@ fun CameraScreen(
     modifier: Modifier = Modifier
 ) {
     val dividerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
+    val context = LocalContext.current
 
     val cameras = cameraInfo.cameras.ifEmpty {
         listOf(
@@ -158,13 +161,13 @@ fun CameraScreen(
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        text = "Please Read This",
+                        text = "Please Read This".tr(context),
                         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onTertiaryContainer
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "If the MegaPixel count shown is wrong, this is because some manufacturers cap maximum camera resolution to 12MP or 8MP for 3rd party apps.",
+                        text = "If the MegaPixel count shown is wrong, this is because some manufacturers cap maximum camera resolution to 12MP or 8MP for 3rd party apps.".tr(context),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.9f),
                         fontSize = 13.sp,
@@ -191,7 +194,7 @@ fun CameraScreen(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "${activeSpec.facing} Specifications",
+                            text = "${activeSpec.facing} " + "Specifications".tr(context),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -301,7 +304,7 @@ fun CameraScreen(
 
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
-                        text = "Camera Capabilities",
+                        text = "Camera Capabilities".tr(context),
                         style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -327,7 +330,7 @@ fun CameraScreen(
 
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
-                        text = "Supported Photo & Video Resolutions",
+                        text = "Supported Photo & Video Resolutions".tr(context),
                         style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -357,6 +360,7 @@ fun CameraScreen(
 
 @Composable
 fun CameraSpecSectionHeader(title: String) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -371,7 +375,7 @@ fun CameraSpecSectionHeader(title: String) {
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = title,
+            text = title.tr(context),
             style = MaterialTheme.typography.labelLarge.copy(
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.5.sp
@@ -386,13 +390,14 @@ fun CameraSpecRow(
     label: String,
     value: String
 ) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
         Text(
-            text = label,
+            text = label.tr(context),
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)

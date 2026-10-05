@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import com.hamraj37.devpulse.data.model.ConnectivityInfo
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
+import com.hamraj37.devpulse.util.tr
 
 @Composable
 fun ConnectivityScreen(
@@ -110,13 +111,13 @@ fun ConnectivityScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Bluetooth is Disabled",
+                                text = "Bluetooth is Disabled".tr(context),
                                 style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                                 color = MaterialTheme.colorScheme.onErrorContainer
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "Please enable Bluetooth to view full hardware radio capabilities.",
+                                text = "Please enable Bluetooth to view full hardware radio capabilities.".tr(context),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.85f)
                             )
@@ -133,7 +134,7 @@ fun ConnectivityScreen(
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                         ) {
-                            Text("Enable", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold))
+                            Text("Enable".tr(context), style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold))
                         }
                     }
                 }
@@ -209,6 +210,7 @@ fun ConnectivitySectionCard(
     dividerColor: androidx.compose.ui.graphics.Color,
     content: @Composable () -> Unit
 ) {
+    val context = LocalContext.current
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
@@ -229,7 +231,7 @@ fun ConnectivitySectionCard(
                 ) {
                     Icon(
                         imageVector = icon,
-                        contentDescription = title,
+                        contentDescription = title.tr(context),
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(6.dp)
                     )
@@ -238,7 +240,7 @@ fun ConnectivitySectionCard(
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Text(
-                    text = title,
+                    text = title.tr(context),
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -257,13 +259,14 @@ fun ConnectivityFeatureRow(
     isSupported: Boolean,
     statusText: String? = null
 ) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = label,
+            text = label.tr(context),
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)
@@ -313,13 +316,14 @@ fun ConnectivityItemRow(
     label: String,
     value: String
 ) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
         Text(
-            text = label,
+            text = label.tr(context),
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)

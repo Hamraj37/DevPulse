@@ -32,8 +32,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import com.hamraj37.devpulse.data.model.SystemInfo
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
+import com.hamraj37.devpulse.util.tr
 
 @Composable
 fun SystemScreen(
@@ -41,6 +43,7 @@ fun SystemScreen(
     modifier: Modifier = Modifier
 ) {
     val dividerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
+    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -127,7 +130,7 @@ fun SystemScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "System Architecture & Runtime",
+                        text = "System Architecture & Runtime".tr(context),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -190,7 +193,7 @@ fun SystemScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "DRM Specifications",
+                        text = "DRM Specifications".tr(context),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -224,13 +227,14 @@ fun SystemItemRow(
     label: String,
     value: String
 ) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
         Text(
-            text = label,
+            text = label.tr(context),
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)
