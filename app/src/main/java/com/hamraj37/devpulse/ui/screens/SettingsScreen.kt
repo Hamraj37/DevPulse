@@ -87,20 +87,15 @@ fun SettingsScreen(
     var showDonateDialog by remember { mutableStateOf(false) }
     var showPrivacyDialog by remember { mutableStateOf(false) }
 
-    val supportedLanguages = remember {
+    val systemDefaultLabel = stringResource(R.string.lbl_system_default)
+    val supportedLanguages = remember(systemDefaultLabel) {
         listOf(
-            "system" to "System default",
+            "system" to systemDefaultLabel,
             "en" to "English",
             "ru" to "Русский",
             "hi" to "हिन्दी",
-            "es" to "Español",
-            "fr" to "Français",
-            "de" to "Deutsch",
-            "pt" to "Português",
-            "ar" to "العربية",
-            "ja" to "日本語",
-            "zh" to "中文",
-            "bn" to "বাংলা"
+            "bn" to "বাংলা",
+            "zh" to "中文 (简体)"
         )
     }
 
@@ -110,7 +105,9 @@ fun SettingsScreen(
     } else {
         currentLocales.get(0)?.language ?: "system"
     }
-    val currentLanguageDisplayName = supportedLanguages.find { it.first == currentLangCode }?.second ?: "System default"
+    val currentLanguageDisplayName = supportedLanguages.find {
+        it.first == currentLangCode || (it.first != "system" && currentLangCode.startsWith(it.first))
+    }?.second ?: systemDefaultLabel
 
     val appVersionText = remember {
         try {
@@ -299,6 +296,7 @@ fun SettingsScreen(
                     modifier = Modifier.verticalScroll(rememberScrollState())
                 ) {
                     supportedLanguages.forEach { (code, name) ->
+                        val isSelected = currentLangCode == code || (code != "system" && currentLangCode.startsWith(code))
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
@@ -316,7 +314,7 @@ fun SettingsScreen(
                                 .padding(vertical = 8.dp)
                         ) {
                             RadioButton(
-                                selected = currentLangCode == code,
+                                selected = isSelected,
                                 onClick = {
                                     showLanguageDialog = false
                                     val localeList = if (code == "system") {
