@@ -1,0 +1,5 @@
+- Initial public open-source release of DevPulse v1.0.5.
+- Real-Time Hardware Dashboard: RAM telemetry, per-core CPU frequency streams, and live system state gauges.
+- Hardware Diagnostic Suite: Interactive tests for display, touch canvas, flashlight, stereo audio, microphone dB meter, sensors, vibration, and USB charging.
+- Deep System Telemetry: System specs, Widevine DRM level, detailed CPU topology, battery health & charge rates, zRAM swap analytics, dual-SIM details, and thermal zones.
+- 100% Free & Open Source without tracking, ads, or proprietary SDKs.
