@@ -362,7 +362,7 @@ fun DataUsageScreen(
     ) {
         if (onBack != null) {
             DevPulseTopAppBar(
-                title = "Data Usage",
+                title = stringResource(R.string.data_usage_title),
                 onBack = onBack
             )
         }
@@ -407,7 +407,7 @@ fun DataUsageScreen(
             trailingIcon = if (searchQuery.isNotEmpty()) {
                 {
                     IconButton(onClick = { searchQuery = "" }) {
-                        Icon(Icons.Rounded.Close, contentDescription = "Clear")
+                        Icon(Icons.Rounded.Close, contentDescription = null)
                     }
                 }
             } else null,
@@ -428,7 +428,11 @@ fun DataUsageScreen(
                 .padding(4.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            val filters = listOf("Today", "Last 7 Days", "Last 30 Days")
+            val filters = listOf(
+                stringResource(R.string.data_usage_today),
+                stringResource(R.string.data_usage_last_7_days),
+                stringResource(R.string.data_usage_last_30_days)
+            )
             filters.forEachIndexed { index, filterTitle ->
                 val isSelected = selectedTimeFilter == index
                 Box(
@@ -475,7 +479,7 @@ fun DataUsageScreen(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "Total data usage",
+                    text = stringResource(R.string.data_usage_total_data_usage),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -497,7 +501,7 @@ fun DataUsageScreen(
                             modifier = Modifier.size(16.dp)
                         )
                         Text(
-                            text = "Wi-Fi - ${formatDataSize(totalWifiBytes)}",
+                            text = "${stringResource(R.string.data_usage_wifi_label)} - ${formatDataSize(totalWifiBytes)}",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -513,7 +517,7 @@ fun DataUsageScreen(
                             modifier = Modifier.size(16.dp)
                         )
                         Text(
-                            text = "Mobile - ${formatDataSize(totalMobileBytes)}",
+                            text = "${stringResource(R.string.data_usage_mobile_label)} - ${formatDataSize(totalMobileBytes)}",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -525,12 +529,12 @@ fun DataUsageScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "⬇ Download - ${formatDataSize(totalRxBytes)}",
+                        text = "⬇ ${stringResource(R.string.data_usage_download_label)} - ${formatDataSize(totalRxBytes)}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "⬆ Upload - ${formatDataSize(totalTxBytes)}",
+                        text = "⬆ ${stringResource(R.string.data_usage_upload_label)} - ${formatDataSize(totalTxBytes)}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -540,7 +544,7 @@ fun DataUsageScreen(
 
         // App usage Header
         Text(
-            text = "App usage",
+            text = stringResource(R.string.data_usage_app_usage_hdr),
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onSurface
         )
@@ -558,7 +562,7 @@ fun DataUsageScreen(
                 }
             } else if (filteredApps.isEmpty()) {
                 Text(
-                    text = "No app usage data found",
+                    text = stringResource(R.string.data_usage_none_found),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(16.dp)
@@ -585,7 +589,7 @@ fun DataUsageScreen(
                                 if (item.iconDrawable != null) {
                                     Image(
                                         painter = rememberAsyncImagePainter(item.iconDrawable),
-                                        contentDescription = item.appName,
+                                        contentDescription = null,
                                         modifier = Modifier
                                             .size(32.dp)
                                             .clip(RoundedCornerShape(8.dp))
@@ -593,7 +597,7 @@ fun DataUsageScreen(
                                 } else {
                                     Icon(
                                         imageVector = Icons.Rounded.Android,
-                                        contentDescription = item.appName,
+                                        contentDescription = null,
                                         tint = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier.size(24.dp)
                                     )
@@ -615,7 +619,7 @@ fun DataUsageScreen(
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "Wi-Fi ${formatDataSize(item.wifiBytes)} · Mobile ${formatDataSize(item.mobileBytes)}",
+                                text = "${stringResource(R.string.data_usage_wifi_label)} ${formatDataSize(item.wifiBytes)} · ${stringResource(R.string.data_usage_mobile_label)} ${formatDataSize(item.mobileBytes)}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 maxLines = 1,

@@ -385,7 +385,7 @@ fun ScreenTimeScreen(
     ) {
         if (onBack != null) {
             DevPulseTopAppBar(
-                title = "Screen Time",
+                title = stringResource(R.string.screen_time_title),
                 onBack = onBack
             )
         }
@@ -430,7 +430,7 @@ fun ScreenTimeScreen(
             trailingIcon = if (searchQuery.isNotEmpty()) {
                 {
                     IconButton(onClick = { searchQuery = "" }) {
-                        Icon(Icons.Rounded.Close, contentDescription = "Clear")
+                        Icon(Icons.Rounded.Close, contentDescription = null)
                     }
                 }
             } else null,
@@ -451,7 +451,11 @@ fun ScreenTimeScreen(
                 .padding(4.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            val filters = listOf("Today", "Last 7 Days", "Last 30 Days")
+            val filters = listOf(
+                stringResource(R.string.data_usage_today),
+                stringResource(R.string.data_usage_last_7_days),
+                stringResource(R.string.data_usage_last_30_days)
+            )
             filters.forEachIndexed { index, filterTitle ->
                 val isSelected = selectedTimeFilter == index
                 Box(
@@ -498,7 +502,7 @@ fun ScreenTimeScreen(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "Total screen time",
+                    text = stringResource(R.string.screen_time_total_time),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -510,12 +514,12 @@ fun ScreenTimeScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Unlocks - $unlocksCount",
+                        text = "${stringResource(R.string.screen_time_unlocks)} - $unlocksCount",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "Opens - $totalOpens",
+                        text = "${stringResource(R.string.screen_time_opens)} - $totalOpens",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -526,12 +530,12 @@ fun ScreenTimeScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Apps used - $totalAppsUsed",
+                        text = "${stringResource(R.string.screen_time_apps_used)} - $totalAppsUsed",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "Daily average - ${formatDuration(dailyAverageMs)}",
+                        text = "${stringResource(R.string.screen_time_daily_avg)} - ${formatDuration(dailyAverageMs)}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -541,7 +545,7 @@ fun ScreenTimeScreen(
 
         // Section Header
         Text(
-            text = "Screen Time",
+            text = stringResource(R.string.screen_time_title),
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onSurface
         )
@@ -559,7 +563,7 @@ fun ScreenTimeScreen(
                 }
             } else if (filteredList.isEmpty()) {
                 Text(
-                    text = "No screen time usage found",
+                    text = stringResource(R.string.screen_time_none_found),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(16.dp)
@@ -587,7 +591,7 @@ fun ScreenTimeScreen(
                                     if (item.iconDrawable != null) {
                                         Image(
                                             painter = rememberAsyncImagePainter(item.iconDrawable),
-                                            contentDescription = item.appName,
+                                            contentDescription = null,
                                             modifier = Modifier
                                                 .size(32.dp)
                                                 .clip(RoundedCornerShape(8.dp))
@@ -595,7 +599,7 @@ fun ScreenTimeScreen(
                                     } else {
                                         Icon(
                                             imageVector = Icons.Rounded.Android,
-                                            contentDescription = item.appName,
+                                            contentDescription = null,
                                             tint = MaterialTheme.colorScheme.primary,
                                             modifier = Modifier.size(24.dp)
                                         )
@@ -621,7 +625,7 @@ fun ScreenTimeScreen(
                                 } catch (_: Throwable) { "12:14 am" }
 
                                 Text(
-                                    text = "Opens ${item.launchCount} · Last used $timeStr",
+                                    text = "${stringResource(R.string.screen_time_opens)} ${item.launchCount} · ${stringResource(R.string.screen_time_last_used)} $timeStr",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     maxLines = 1,

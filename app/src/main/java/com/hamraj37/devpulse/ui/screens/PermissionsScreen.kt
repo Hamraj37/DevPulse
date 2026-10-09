@@ -208,7 +208,7 @@ fun PermissionsScreen(
     ) {
         if (onBack != null) {
             DevPulseTopAppBar(
-                title = "Permissions",
+                title = stringResource(R.string.permissions_title),
                 onBack = onBack
             )
         }
@@ -253,7 +253,7 @@ fun PermissionsScreen(
             trailingIcon = if (searchQuery.isNotEmpty()) {
                 {
                     IconButton(onClick = { searchQuery = "" }) {
-                        Icon(Icons.Rounded.Close, contentDescription = "Clear")
+                        Icon(Icons.Rounded.Close, contentDescription = null)
                     }
                 }
             } else null,
@@ -274,7 +274,10 @@ fun PermissionsScreen(
                 .padding(4.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            val tabs = listOf("Runtime", "Signature")
+            val tabs = listOf(
+                stringResource(R.string.permissions_tab_runtime),
+                stringResource(R.string.permissions_tab_signature)
+            )
             tabs.forEachIndexed { index, tabTitle ->
                 val isSelected = selectedTab == index
                 Box(
@@ -311,7 +314,7 @@ fun PermissionsScreen(
                 }
             } else if (filteredPermissions.isEmpty()) {
                 Text(
-                    text = "No matching permissions found",
+                    text = stringResource(R.string.permissions_none_found),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(16.dp)
@@ -337,7 +340,7 @@ fun PermissionsScreen(
                                 Box(contentAlignment = Alignment.Center) {
                                     Icon(
                                         imageVector = item.icon,
-                                        contentDescription = item.name,
+                                        contentDescription = null,
                                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.size(22.dp)
                                     )
@@ -362,7 +365,7 @@ fun PermissionsScreen(
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
-                                    text = if (item.totalCount > 0) "${item.allowedCount} allowed of ${item.totalCount}" else "Not requested by installed apps",
+                                    text = if (item.totalCount > 0) "${item.allowedCount} ${stringResource(R.string.permissions_allowed_of)} ${item.totalCount}" else stringResource(R.string.permissions_not_requested),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
                                 )

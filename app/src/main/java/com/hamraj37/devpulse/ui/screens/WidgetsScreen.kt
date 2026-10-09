@@ -111,7 +111,7 @@ fun WidgetsScreen(
     ) {
         if (onBack != null) {
             DevPulseTopAppBar(
-                title = "Home Screen Widgets",
+                title = stringResource(R.string.widgets_title),
                 onBack = onBack
             )
         }
@@ -124,10 +124,8 @@ fun WidgetsScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-
-
         Text(
-            text = "Preview of all the widgets available for you. Use your launcher to add widgets",
+            text = stringResource(R.string.widgets_instructions),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,

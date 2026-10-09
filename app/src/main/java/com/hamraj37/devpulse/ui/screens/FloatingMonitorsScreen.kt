@@ -113,7 +113,7 @@ fun FloatingMonitorsScreen(
     ) {
         if (onBack != null) {
             DevPulseTopAppBar(
-                title = "Floating Monitors",
+                title = stringResource(R.string.floating_monitors_title),
                 onBack = onBack
             )
         }
@@ -204,8 +204,8 @@ fun FloatingMonitorsScreen(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 ToggleRow(
-                    title = "FPS Frame Rate Counter",
-                    subtitle = "Shows real-time display frame rate (FPS)",
+                    title = stringResource(R.string.floating_fps_title),
+                    subtitle = stringResource(R.string.floating_fps_desc),
                     checked = fpsOverlay,
                     onCheckedChange = {
                         if (!hasOverlayPermission) {
@@ -218,8 +218,8 @@ fun FloatingMonitorsScreen(
                 )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                 ToggleRow(
-                    title = "Floating CPU Monitor",
-                    subtitle = "Shows live CPU load & core frequency",
+                    title = stringResource(R.string.floating_cpu_title),
+                    subtitle = stringResource(R.string.floating_cpu_desc),
                     checked = cpuOverlay,
                     onCheckedChange = {
                         if (!hasOverlayPermission) {
@@ -232,8 +232,8 @@ fun FloatingMonitorsScreen(
                 )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                 ToggleRow(
-                    title = "Floating RAM Gauge",
-                    subtitle = "Shows real-time memory usage",
+                    title = stringResource(R.string.floating_ram_title),
+                    subtitle = stringResource(R.string.floating_ram_desc),
                     checked = ramOverlay,
                     onCheckedChange = {
                         if (!hasOverlayPermission) {
@@ -246,8 +246,8 @@ fun FloatingMonitorsScreen(
                 )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                 ToggleRow(
-                    title = "Battery Temperature Badge",
-                    subtitle = "Shows live battery temp & voltage",
+                    title = stringResource(R.string.floating_battery_title),
+                    subtitle = stringResource(R.string.floating_battery_desc),
                     checked = batteryOverlay,
                     onCheckedChange = {
                         if (!hasOverlayPermission) {

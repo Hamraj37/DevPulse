@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Build
+import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.model.AppInfo
 import com.hamraj37.devpulse.data.model.AppSpec
 import com.hamraj37.devpulse.data.model.TestItem
@@ -140,16 +141,16 @@ object AppAndTestTelemetry {
                     } else ApplicationInfo.CATEGORY_UNDEFINED
 
                     val categoryStr = when (categoryInt) {
-                        ApplicationInfo.CATEGORY_GAME -> "Games"
-                        ApplicationInfo.CATEGORY_AUDIO -> "Music & Audio"
-                        ApplicationInfo.CATEGORY_VIDEO -> "Video & Movies"
-                        ApplicationInfo.CATEGORY_IMAGE -> "Photography"
-                        ApplicationInfo.CATEGORY_SOCIAL -> "Social & Communication"
-                        ApplicationInfo.CATEGORY_NEWS -> "News & Magazines"
-                        ApplicationInfo.CATEGORY_MAPS -> "Maps & Navigation"
-                        ApplicationInfo.CATEGORY_PRODUCTIVITY -> "Productivity"
-                        ApplicationInfo.CATEGORY_ACCESSIBILITY -> "Accessibility"
-                        else -> if (isSystem) "System & Tools" else "Other / Utilities"
+                        ApplicationInfo.CATEGORY_GAME -> context.getString(R.string.app_category_games)
+                        ApplicationInfo.CATEGORY_AUDIO -> context.getString(R.string.app_category_audio)
+                        ApplicationInfo.CATEGORY_VIDEO -> context.getString(R.string.app_category_video)
+                        ApplicationInfo.CATEGORY_IMAGE -> context.getString(R.string.app_category_photography)
+                        ApplicationInfo.CATEGORY_SOCIAL -> context.getString(R.string.app_category_social)
+                        ApplicationInfo.CATEGORY_NEWS -> context.getString(R.string.app_category_news)
+                        ApplicationInfo.CATEGORY_MAPS -> context.getString(R.string.app_category_maps)
+                        ApplicationInfo.CATEGORY_PRODUCTIVITY -> context.getString(R.string.app_category_productivity)
+                        ApplicationInfo.CATEGORY_ACCESSIBILITY -> context.getString(R.string.app_category_accessibility)
+                        else -> if (isSystem) context.getString(R.string.app_category_system_tools) else context.getString(R.string.app_category_other)
                     }
 
                     appSpecs.add(

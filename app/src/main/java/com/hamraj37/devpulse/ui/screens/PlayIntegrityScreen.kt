@@ -2,7 +2,6 @@ package com.hamraj37.devpulse.ui.screens
 
 import com.hamraj37.devpulse.R
 import androidx.compose.ui.res.stringResource
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.widget.Toast
@@ -78,14 +77,15 @@ fun PlayIntegrityScreen(
 
     val context = LocalContext.current
     var isChecking by remember { mutableStateOf(false) }
-    var lastCheckTime by remember { mutableStateOf("Just now") }
+    val justNowText = stringResource(R.string.play_integrity_just_now)
+    var lastCheckTime by remember(justNowText) { mutableStateOf(justNowText) }
 
     val playServicesInfo = remember(context) {
         try {
             val pInfo = context.packageManager.getPackageInfo("com.google.android.gms", 0)
-            Pair(true, "Google Play Services v${pInfo.versionName}")
+            Pair(true, context.getString(R.string.play_integrity_google_play_services_version, pInfo.versionName))
         } catch (_: Exception) {
-            Pair(false, "Play Services Not Available")
+            Pair(false, context.getString(R.string.play_integrity_play_services_not_available))
         }
     }
 
@@ -145,7 +145,7 @@ fun PlayIntegrityScreen(
     ) {
         if (onBack != null) {
             DevPulseTopAppBar(
-                title = "Play Integrity",
+                title = stringResource(R.string.play_integrity_title),
                 onBack = onBack
             )
         }
@@ -182,7 +182,7 @@ fun PlayIntegrityScreen(
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     imageVector = Icons.Rounded.VerifiedUser,
-                                    contentDescription = "Play Integrity",
+                                    contentDescription = stringResource(R.string.play_integrity_title),
                                     tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(32.dp)
                                 )
@@ -196,7 +196,7 @@ fun PlayIntegrityScreen(
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = if (playServicesInfo.first) "Device Meets Device Integrity" else "Play Services Check Required",
+                                text = if (playServicesInfo.first) stringResource(R.string.play_integrity_device_meets_integrity) else stringResource(R.string.play_integrity_play_services_check_required),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = if (playServicesInfo.first) OliveActiveBadge else MaterialTheme.colorScheme.error,
                                 fontWeight = FontWeight.SemiBold
@@ -226,7 +226,7 @@ fun PlayIntegrityScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Refresh,
-                                contentDescription = "Run Check",
+                                contentDescription = stringResource(R.string.play_integrity_run_check),
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(text = if (isChecking) stringResource(R.string.play_integrity_attesting) else stringResource(R.string.play_integrity_run_check))
@@ -251,12 +251,12 @@ fun PlayIntegrityScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Shield,
-                            contentDescription = "Verdicts",
+                            contentDescription = stringResource(R.string.play_integrity_verdicts_title),
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(22.dp)
                         )
                         Text(
-                            text = "Play Integrity Verdicts",
+                            text = stringResource(R.string.play_integrity_verdicts_title),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -265,34 +265,34 @@ fun PlayIntegrityScreen(
                     HorizontalDivider(color = dividerColor)
 
                     IntegrityVerdictRow(
-                        title = "MEETS_BASIC_INTEGRITY",
-                        description = "Device passes basic integrity checks. System binaries & boot intact.",
+                        title = stringResource(R.string.play_integrity_verdict_basic_title),
+                        description = stringResource(R.string.play_integrity_verdict_basic_desc),
                         isPassed = true
                     )
 
                     HorizontalDivider(color = dividerColor)
 
                     IntegrityVerdictRow(
-                        title = "MEETS_DEVICE_INTEGRITY",
-                        description = "Device is a genuine Android device powered by Google Play Services.",
+                        title = stringResource(R.string.play_integrity_verdict_device_title),
+                        description = stringResource(R.string.play_integrity_verdict_device_desc),
                         isPassed = playServicesInfo.first
                     )
 
                     HorizontalDivider(color = dividerColor)
 
                     IntegrityVerdictRow(
-                        title = "MEETS_STRONG_INTEGRITY",
-                        description = "Hardware-backed key attestation in TEE / StrongBox Keymaster.",
+                        title = stringResource(R.string.play_integrity_verdict_strong_title),
+                        description = stringResource(R.string.play_integrity_verdict_strong_desc),
                         isPassed = true
                     )
 
                     HorizontalDivider(color = dividerColor)
 
                     IntegrityVerdictRow(
-                        title = "MEETS_VIRTUAL_INTEGRITY",
-                        description = "Device is running in an emulator or virtualized container.",
+                        title = stringResource(R.string.play_integrity_verdict_virtual_title),
+                        description = stringResource(R.string.play_integrity_verdict_virtual_desc),
                         isPassed = false,
-                        badgeText = "Physical Device"
+                        badgeText = stringResource(R.string.play_integrity_badge_physical_device)
                     )
                 }
             }
@@ -313,12 +313,12 @@ fun PlayIntegrityScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Security,
-                            contentDescription = "App Licensing",
+                            contentDescription = stringResource(R.string.play_integrity_app_licensing_title),
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(22.dp)
                         )
                         Text(
-                            text = "App Recognition & Licensing",
+                            text = stringResource(R.string.play_integrity_app_licensing_title),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -326,11 +326,20 @@ fun PlayIntegrityScreen(
 
                     HorizontalDivider(color = dividerColor)
 
-                    IntegrityDetailRow("App Licensing Verdict", "LICENSED (Recognized Package)")
+                    IntegrityDetailRow(
+                        stringResource(R.string.play_integrity_licensing_verdict_label),
+                        stringResource(R.string.play_integrity_licensing_verdict_value)
+                    )
                     HorizontalDivider(color = dividerColor)
-                    IntegrityDetailRow("Package Name", context.packageName)
+                    IntegrityDetailRow(
+                        stringResource(R.string.play_integrity_package_name_label),
+                        context.packageName
+                    )
                     HorizontalDivider(color = dividerColor)
-                    IntegrityDetailRow("Signing Certificate Hash", certFingerprint)
+                    IntegrityDetailRow(
+                        stringResource(R.string.play_integrity_signing_cert_hash_label),
+                        certFingerprint
+                    )
                 }
             }
 
@@ -350,12 +359,12 @@ fun PlayIntegrityScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Lock,
-                            contentDescription = "Hardware Environment",
+                            contentDescription = stringResource(R.string.play_integrity_hardware_env_title),
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(22.dp)
                         )
                         Text(
-                            text = "Hardware & Environment Attestation",
+                            text = stringResource(R.string.play_integrity_hardware_env_title),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -363,17 +372,35 @@ fun PlayIntegrityScreen(
 
                     HorizontalDivider(color = dividerColor)
 
-                    IntegrityDetailRow("Google Play Services", playServicesInfo.second)
+                    IntegrityDetailRow(
+                        stringResource(R.string.play_integrity_google_play_services_label),
+                        playServicesInfo.second
+                    )
                     HorizontalDivider(color = dividerColor)
-                    IntegrityDetailRow("Bootloader State", "LOCKED (Verified Boot Enforced)")
+                    IntegrityDetailRow(
+                        stringResource(R.string.play_integrity_bootloader_state_label),
+                        stringResource(R.string.play_integrity_bootloader_state_value)
+                    )
                     HorizontalDivider(color = dividerColor)
-                    IntegrityDetailRow("Hardware Keymaster / TEE", "Supported (TEE Keymaster 4.1)")
+                    IntegrityDetailRow(
+                        stringResource(R.string.play_integrity_hardware_keymaster_label),
+                        stringResource(R.string.play_integrity_hardware_keymaster_value)
+                    )
                     HorizontalDivider(color = dividerColor)
-                    IntegrityDetailRow("StrongBox Keymaster", if (isStrongBoxSupported) "Supported (Hardware StrongBox)" else "Standard TEE")
+                    IntegrityDetailRow(
+                        stringResource(R.string.play_integrity_strongbox_label),
+                        if (isStrongBoxSupported) stringResource(R.string.play_integrity_strongbox_supported) else stringResource(R.string.play_integrity_strongbox_standard_tee)
+                    )
                     HorizontalDivider(color = dividerColor)
-                    IntegrityDetailRow("Root & Tamper Check", "Passed (No Binary Tampering Detected)")
+                    IntegrityDetailRow(
+                        stringResource(R.string.play_integrity_root_tamper_check_label),
+                        stringResource(R.string.play_integrity_root_tamper_check_value)
+                    )
                     HorizontalDivider(color = dividerColor)
-                    IntegrityDetailRow("SELinux Status", "Enforcing")
+                    IntegrityDetailRow(
+                        stringResource(R.string.play_integrity_selinux_status_label),
+                        stringResource(R.string.play_integrity_selinux_status_value)
+                    )
                 }
             }
 
@@ -428,7 +455,7 @@ fun IntegrityVerdictRow(
                     )
                 }
                 Text(
-                    text = badgeText ?: (if (isPassed) "MEETS" else "FAILED"),
+                    text = badgeText ?: (if (isPassed) stringResource(R.string.play_integrity_badge_meets) else stringResource(R.string.play_integrity_badge_failed)),
                     style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                     color = if (badgeText != null) MaterialTheme.colorScheme.onSurface else Color.White
                 )

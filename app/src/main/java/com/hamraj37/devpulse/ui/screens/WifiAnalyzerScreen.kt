@@ -330,7 +330,7 @@ fun WifiAnalyzerScreen(
     ) {
         if (onBack != null) {
             DevPulseTopAppBar(
-                title = "Wi-Fi Signal Analyzer",
+                title = stringResource(R.string.wifi_analyzer_title),
                 onBack = onBack
             )
         }
@@ -373,7 +373,7 @@ fun WifiAnalyzerScreen(
                 IconButton(onClick = { refreshScan() }) {
                     Icon(
                         imageVector = Icons.Rounded.Refresh,
-                        contentDescription = "Refresh Scan",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -388,7 +388,7 @@ fun WifiAnalyzerScreen(
                 trailingIcon = if (searchQuery.isNotEmpty()) {
                     {
                         IconButton(onClick = { searchQuery = "" }) {
-                            Icon(Icons.Rounded.Close, contentDescription = "Clear")
+                            Icon(Icons.Rounded.Close, contentDescription = null)
                         }
                     }
                 } else null,
@@ -410,13 +410,13 @@ fun WifiAnalyzerScreen(
 
                 val emptyTitle = when {
                     !isWifiOn -> stringResource(R.string.wifi_analyzer_turned_off)
-                    !hasLocationPerm -> "Location Permission Required for Wi-Fi Scan"
+                    !hasLocationPerm -> stringResource(R.string.wifi_location_perm_hdr)
                     else -> stringResource(R.string.wifi_analyzer_no_networks)
                 }
 
                 val emptyDesc = when {
                     !isWifiOn -> stringResource(R.string.wifi_analyzer_turned_off_desc)
-                    !hasLocationPerm -> "Android requires Location permission (GPS) to scan nearby Wi-Fi access points."
+                    !hasLocationPerm -> stringResource(R.string.wifi_location_perm_msg)
                     else -> stringResource(R.string.wifi_analyzer_no_networks_desc)
                 }
 
@@ -648,14 +648,14 @@ fun WifiDetailBottomSheet(
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    WifiDetailRow("SSID (Network Name)", item.ssid)
-                    WifiDetailRow("BSSID (MAC Address)", item.bssid)
-                    WifiDetailRow("Signal Strength", "${item.rssiDbm} dBm (${item.signalQuality})")
-                    WifiDetailRow("Wi-Fi Standard", item.wifiStandardText)
-                    WifiDetailRow("Frequency Band", "${item.bandText} (${item.frequencyMhz} MHz)")
-                    WifiDetailRow("Channel", "Channel ${item.channelNumber} (${item.channelWidthMhz} MHz Width)")
-                    WifiDetailRow("Security & Capabilities", item.capabilities)
-                    WifiDetailRow("Est. Distance", "~${String.format(Locale.US, "%.1f", item.distanceMeters)} meters")
+                    WifiDetailRow(stringResource(R.string.wifi_detail_ssid), item.ssid)
+                    WifiDetailRow(stringResource(R.string.wifi_detail_bssid), item.bssid)
+                    WifiDetailRow(stringResource(R.string.wifi_detail_signal_strength), "${item.rssiDbm} dBm (${item.signalQuality})")
+                    WifiDetailRow(stringResource(R.string.wifi_detail_standard), item.wifiStandardText)
+                    WifiDetailRow(stringResource(R.string.wifi_detail_frequency_band), "${item.bandText} (${item.frequencyMhz} MHz)")
+                    WifiDetailRow(stringResource(R.string.wifi_detail_channel), "Channel ${item.channelNumber} (${item.channelWidthMhz} MHz Width)")
+                    WifiDetailRow(stringResource(R.string.wifi_detail_security_capabilities), item.capabilities)
+                    WifiDetailRow(stringResource(R.string.wifi_detail_est_distance), "~${String.format(Locale.US, "%.1f", item.distanceMeters)} meters")
                 }
             }
 

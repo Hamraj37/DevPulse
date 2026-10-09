@@ -47,7 +47,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -56,7 +55,7 @@ import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
 import kotlinx.coroutines.delay
 import java.io.File
 
-fun checkSuBinaries(): Pair<Boolean, String> {
+fun checkSuBinaries(context: Context): Pair<Boolean, String> {
     val paths = arrayOf(
         "/system/app/Superuser.apk", "/sbin/su", "/system/bin/su", "/system/xbin/su",
         "/data/local/xbin/su", "/data/local/bin/su", "/system/sd/xbin/su",
@@ -64,10 +63,10 @@ fun checkSuBinaries(): Pair<Boolean, String> {
     )
     for (path in paths) {
         if (File(path).exists()) {
-            return Pair(true, "Found at $path")
+            return Pair(true, context.getString(R.string.root_checker_su_found_at, path))
         }
     }
-    return Pair(false, "No su binary detected in system paths")
+    return Pair(false, context.getString(R.string.root_checker_no_su_detected))
 }
 
 fun checkRootApps(context: Context): Pair<Boolean, String> {
@@ -83,18 +82,18 @@ fun checkRootApps(context: Context): Pair<Boolean, String> {
     for ((pkg, name) in rootPkgs) {
         try {
             context.packageManager.getPackageInfo(pkg, 0)
-            return Pair(true, "$name Installed ($pkg)")
+            return Pair(true, context.getString(R.string.root_checker_app_installed, name, pkg))
         } catch (_: Exception) {}
     }
-    return Pair(false, "No root management app detected")
+    return Pair(false, context.getString(R.string.root_checker_no_root_app_detected))
 }
 
-fun checkBusyBox(): Pair<Boolean, String> {
+fun checkBusyBox(context: Context): Pair<Boolean, String> {
     val paths = arrayOf("/system/xbin/busybox", "/system/bin/busybox", "/sbin/busybox")
     for (path in paths) {
-        if (File(path).exists()) return Pair(true, "Detected at $path")
+        if (File(path).exists()) return Pair(true, context.getString(R.string.root_checker_busybox_detected_at, path))
     }
-    return Pair(false, "Not Installed")
+    return Pair(false, context.getString(R.string.root_checker_not_installed))
 }
 
 @Composable
@@ -110,9 +109,9 @@ fun RootCheckerScreen(
     val context = LocalContext.current
     var isScanning by remember { mutableStateOf(false) }
 
-    val suCheck = remember(isScanning) { checkSuBinaries() }
+    val suCheck = remember(isScanning) { checkSuBinaries(context) }
     val rootAppCheck = remember(isScanning) { checkRootApps(context) }
-    val busyBoxCheck = remember(isScanning) { checkBusyBox() }
+    val busyBoxCheck = remember(isScanning) { checkBusyBox(context) }
 
     val isTestKeys = remember { Build.TAGS != null && Build.TAGS.contains("test-keys") }
     val isRooted = suCheck.first || rootAppCheck.first || isTestKeys
@@ -139,7 +138,7 @@ fun RootCheckerScreen(
     ) {
         if (onBack != null) {
             DevPulseTopAppBar(
-                title = "Root Checker",
+                title = stringResource(R.string.root_checker_title),
                 onBack = onBack
             )
         }
@@ -179,7 +178,7 @@ fun RootCheckerScreen(
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     imageVector = Icons.Rounded.AdminPanelSettings,
-                                    contentDescription = "Root Checker",
+                                    contentDescription = stringResource(R.string.root_checker_title),
                                     tint = if (isRooted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(32.dp)
                                 )
@@ -193,7 +192,7 @@ fun RootCheckerScreen(
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = if (isRooted) "ROOTED / Superuser Detected" else "NOT ROOTED (Standard System)",
+                                text = if (isRooted) stringResource(R.string.root_checker_status_rooted) else stringResource(R.string.root_checker_status_not_rooted),
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                                 color = if (isRooted) MaterialTheme.colorScheme.error else OliveActiveBadge
                             )
@@ -222,7 +221,7 @@ fun RootCheckerScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Refresh,
-                                contentDescription = "Verify Root",
+                                contentDescription = stringResource(R.string.root_checker_verify_status),
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(text = if (isScanning) stringResource(R.string.root_checker_scanning) else stringResource(R.string.root_checker_verify_status))
@@ -247,12 +246,12 @@ fun RootCheckerScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Shield,
-                            contentDescription = "Root Inspection",
+                            contentDescription = stringResource(R.string.root_checker_binaries_title),
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(22.dp)
                         )
                         Text(
-                            text = "Root Binaries & Superuser Inspection",
+                            text = stringResource(R.string.root_checker_binaries_title),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -261,8 +260,8 @@ fun RootCheckerScreen(
                     HorizontalDivider(color = dividerColor)
 
                     RootCheckItemRow(
-                        label = "su Binary Executable",
-                        statusText = if (suCheck.first) "Detected" else "Not Found",
+                        label = stringResource(R.string.root_checker_su_binary_label),
+                        statusText = if (suCheck.first) stringResource(R.string.root_checker_status_detected) else stringResource(R.string.root_checker_status_not_found),
                         isPassed = !suCheck.first,
                         detailText = suCheck.second
                     )
@@ -270,8 +269,8 @@ fun RootCheckerScreen(
                     HorizontalDivider(color = dividerColor)
 
                     RootCheckItemRow(
-                        label = "Superuser / Magisk Apps",
-                        statusText = if (rootAppCheck.first) "Detected" else "Not Installed",
+                        label = stringResource(R.string.root_checker_superuser_apps_label),
+                        statusText = if (rootAppCheck.first) stringResource(R.string.root_checker_status_detected) else stringResource(R.string.root_checker_not_installed),
                         isPassed = !rootAppCheck.first,
                         detailText = rootAppCheck.second
                     )
@@ -279,8 +278,8 @@ fun RootCheckerScreen(
                     HorizontalDivider(color = dividerColor)
 
                     RootCheckItemRow(
-                        label = "BusyBox Binary",
-                        statusText = if (busyBoxCheck.first) "Detected" else "Not Installed",
+                        label = stringResource(R.string.root_checker_busybox_label),
+                        statusText = if (busyBoxCheck.first) stringResource(R.string.root_checker_status_detected) else stringResource(R.string.root_checker_not_installed),
                         isPassed = !busyBoxCheck.first,
                         detailText = busyBoxCheck.second
                     )
@@ -303,12 +302,12 @@ fun RootCheckerScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Security,
-                            contentDescription = "Build Integrity",
+                            contentDescription = stringResource(R.string.root_checker_firmware_title),
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(22.dp)
                         )
                         Text(
-                            text = "Firmware & System Security State",
+                            text = stringResource(R.string.root_checker_firmware_title),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -317,28 +316,28 @@ fun RootCheckerScreen(
                     HorizontalDivider(color = dividerColor)
 
                     RootCheckItemRow(
-                        label = "OS Build Keys",
-                        statusText = if (isTestKeys) "Test-Keys (Custom ROM)" else "Release-Keys (Official)",
+                        label = stringResource(R.string.root_checker_os_build_keys_label),
+                        statusText = if (isTestKeys) stringResource(R.string.root_checker_test_keys_status) else stringResource(R.string.root_checker_release_keys_status),
                         isPassed = !isTestKeys,
-                        detailText = "Build Tags: ${Build.TAGS ?: "release-keys"}"
+                        detailText = stringResource(R.string.root_checker_build_tags_detail, Build.TAGS ?: "release-keys")
                     )
 
                     HorizontalDivider(color = dividerColor)
 
                     RootCheckItemRow(
-                        label = "SELinux Enforcing State",
+                        label = stringResource(R.string.root_checker_selinux_label),
                         statusText = uiState.systemInfo.seLinux,
                         isPassed = uiState.systemInfo.seLinux.contains("Enforcing", ignoreCase = true),
-                        detailText = "System Security Policy Mode"
+                        detailText = stringResource(R.string.root_checker_selinux_detail)
                     )
 
                     HorizontalDivider(color = dividerColor)
 
                     RootCheckItemRow(
-                        label = "System Directory Read-Only",
-                        statusText = "Protected",
+                        label = stringResource(R.string.root_checker_system_dir_label),
+                        statusText = stringResource(R.string.root_checker_protected_status),
                         isPassed = true,
-                        detailText = "/system partition write protection"
+                        detailText = stringResource(R.string.root_checker_system_dir_detail)
                     )
                 }
             }
@@ -355,7 +354,6 @@ fun RootCheckItemRow(
     isPassed: Boolean,
     detailText: String
 ) {
-    val context = LocalContext.current
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,

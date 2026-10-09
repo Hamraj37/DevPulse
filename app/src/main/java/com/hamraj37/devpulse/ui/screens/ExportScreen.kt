@@ -29,7 +29,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material3.Button
@@ -81,7 +80,7 @@ fun generatePdfReportFile(context: Context, reportContent: String): Uri? {
             textSize = 11f
         }
 
-        canvas.drawText("DevPulse System Telemetry Report", 40f, 50f, titlePaint)
+        canvas.drawText(context.getString(R.string.export_pdf_title), 40f, 50f, titlePaint)
 
         var y = 85f
         val lines = reportContent.split("\n")
@@ -139,23 +138,30 @@ fun ExportScreen(
 
     var reportType by remember { mutableStateOf("Text") } // "Text" or "PDF"
 
-    val allCategories = remember {
-        listOf(
-            "Device", "System", "CPU", "Battery",
-            "Network", "Connectivity", "Display", "Memory",
-            "Camera", "Thermal", "Sensors", "Apps"
-        )
-    }
+    val allCategories = listOf(
+        Pair("Device", stringResource(R.string.export_cat_device)),
+        Pair("System", stringResource(R.string.export_cat_system)),
+        Pair("CPU", stringResource(R.string.export_cat_cpu)),
+        Pair("Battery", stringResource(R.string.export_cat_battery)),
+        Pair("Network", stringResource(R.string.export_cat_network)),
+        Pair("Connectivity", stringResource(R.string.export_cat_connectivity)),
+        Pair("Display", stringResource(R.string.export_cat_display)),
+        Pair("Memory", stringResource(R.string.export_cat_memory)),
+        Pair("Camera", stringResource(R.string.export_cat_camera)),
+        Pair("Thermal", stringResource(R.string.export_cat_thermal)),
+        Pair("Sensors", stringResource(R.string.export_cat_sensors)),
+        Pair("Apps", stringResource(R.string.export_cat_apps))
+    )
 
     val selectedCategories = remember {
-        mutableStateListOf<String>().apply { addAll(allCategories) }
+        mutableStateListOf<String>().apply { addAll(allCategories.map { it.first }) }
     }
 
     fun buildCustomReport(): String {
         return buildString {
-            appendLine("=== DevPulse System Telemetry Report ===")
+            appendLine(context.getString(R.string.export_report_header))
             val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.US)
-            appendLine("Generated: ${sdf.format(Date())}")
+            appendLine(context.getString(R.string.export_report_generated, sdf.format(Date())))
             appendLine()
 
             if (selectedCategories.contains("Device")) {
@@ -265,7 +271,7 @@ fun ExportScreen(
     ) {
         if (onBack != null) {
             DevPulseTopAppBar(
-                title = "Export Report",
+                title = stringResource(R.string.export_title),
                 onBack = onBack
             )
         }
@@ -322,7 +328,7 @@ fun ExportScreen(
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 Text(
-                    text = "Report Type",
+                    text = stringResource(R.string.export_report_type_title),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
@@ -330,7 +336,7 @@ fun ExportScreen(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "Select the type of the report you want to export",
+                    text = stringResource(R.string.export_report_type_desc),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
@@ -340,14 +346,17 @@ fun ExportScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val types = listOf("Text", "PDF")
-                    types.forEach { typeName ->
-                        val isSelected = reportType == typeName
+                    val types = listOf(
+                        "Text" to stringResource(R.string.export_type_text),
+                        "PDF" to stringResource(R.string.export_type_pdf)
+                    )
+                    types.forEach { (typeKey, typeName) ->
+                        val isSelected = reportType == typeKey
                         Surface(
                             shape = CircleShape,
                             color = if (isSelected) MaterialTheme.colorScheme.surfaceContainerHigh else Color.Transparent,
                             border = if (isSelected) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                            modifier = Modifier.clickable { reportType = typeName }
+                            modifier = Modifier.clickable { reportType = typeKey }
                         ) {
                             Row(
                                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
@@ -398,7 +407,7 @@ fun ExportScreen(
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 Text(
-                    text = "Categories",
+                    text = stringResource(R.string.export_categories_title),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
@@ -406,7 +415,7 @@ fun ExportScreen(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "Select the categories of data you want to export",
+                    text = stringResource(R.string.export_categories_desc),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
@@ -417,8 +426,8 @@ fun ExportScreen(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    allCategories.forEach { categoryName ->
-                        val isSelected = selectedCategories.contains(categoryName)
+                    allCategories.forEach { category ->
+                        val isSelected = selectedCategories.contains(category.first)
                         Surface(
                             shape = CircleShape,
                             color = if (isSelected) MaterialTheme.colorScheme.surfaceContainerHigh else Color.Transparent,
@@ -426,10 +435,10 @@ fun ExportScreen(
                             modifier = Modifier.clickable {
                                 if (isSelected) {
                                     if (selectedCategories.size > 1) {
-                                        selectedCategories.remove(categoryName)
+                                        selectedCategories.remove(category.first)
                                     }
                                 } else {
-                                    selectedCategories.add(categoryName)
+                                    selectedCategories.add(category.first)
                                 }
                             }
                         ) {
@@ -455,7 +464,7 @@ fun ExportScreen(
                                     }
                                 }
                                 Text(
-                                    text = categoryName,
+                                    text = category.second,
                                     style = MaterialTheme.typography.labelLarge.copy(
                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
                                     ),
@@ -504,12 +513,12 @@ fun ExportScreen(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Download,
-                    contentDescription = "Export",
+                    contentDescription = stringResource(R.string.btn_export),
                     tint = Color.White,
                     modifier = Modifier.size(20.dp)
                 )
                 Text(
-                    text = "Export",
+                    text = stringResource(R.string.btn_export),
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = Color.White
                 )

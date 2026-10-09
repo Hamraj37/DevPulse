@@ -294,15 +294,40 @@ fun AppAnalyzerScreen(
     }
 
     val context = LocalContext.current
-    var selectedTab by remember { mutableStateOf("Categories") }
-    val tabs = remember {
-        listOf("Categories", "Installer", "Target SDK", "Minimum SDK", "App Type")
+
+    val tabCategories = stringResource(R.string.app_analyzer_tab_categories)
+    val tabInstaller = stringResource(R.string.app_analyzer_tab_installer)
+    val tabTargetSdk = stringResource(R.string.app_analyzer_tab_target_sdk)
+    val tabMinSdk = stringResource(R.string.app_analyzer_tab_min_sdk)
+    val tabAppType = stringResource(R.string.app_analyzer_tab_app_type)
+
+    val tabs = remember(tabCategories, tabInstaller, tabTargetSdk, tabMinSdk, tabAppType) {
+        listOf(tabCategories, tabInstaller, tabTargetSdk, tabMinSdk, tabAppType)
     }
+
+    var selectedTab by remember(tabCategories) { mutableStateOf(tabCategories) }
 
     var selectedCategoryItem by remember { mutableStateOf<AnalyzerItem?>(null) }
     var selectedAppForDetail by remember { mutableStateOf<AppSpec?>(null) }
 
     val apps = uiState.appInfo.appsList
+
+    val userAppsTitle = stringResource(R.string.app_analyzer_user_apps)
+    val userAppsDesc = stringResource(R.string.app_analyzer_user_apps_desc)
+    val systemAppsTitle = stringResource(R.string.app_analyzer_system_apps)
+    val systemAppsDesc = stringResource(R.string.app_analyzer_system_apps_desc)
+    val sideloadedLocalText = stringResource(R.string.app_analyzer_sideloaded_local)
+    val applicationsLabel = stringResource(R.string.lbl_applications)
+    val appsLabel = stringResource(R.string.tab_apps)
+
+    val systemToolsTitle = stringResource(R.string.app_category_system_tools)
+    val systemToolsDesc = stringResource(R.string.app_category_system_tools_desc)
+    val socialTitle = stringResource(R.string.app_category_social)
+    val socialDesc = stringResource(R.string.app_category_social_desc)
+    val productivityTitle = stringResource(R.string.app_category_productivity)
+    val productivityDesc = stringResource(R.string.app_category_productivity_desc)
+    val gamesTitle = stringResource(R.string.app_category_games)
+    val gamesDesc = stringResource(R.string.app_category_games_desc)
 
     val primaryColor = MaterialTheme.colorScheme.primary
     val secondaryColor = MaterialTheme.colorScheme.secondary
@@ -316,22 +341,22 @@ fun AppAnalyzerScreen(
         )
     }
 
-    val items = remember(selectedTab, apps, colors) {
+    val items = remember(selectedTab, apps, colors, tabCategories, tabInstaller, tabTargetSdk, tabMinSdk) {
         if (apps.isNotEmpty()) {
             when (selectedTab) {
-                "Categories" -> {
+                tabCategories -> {
                     val groups = apps.groupBy { it.appCategory }
                     groups.entries.sortedByDescending { it.value.size }.mapIndexed { idx, entry ->
                         AnalyzerItem(
                             label = entry.key,
-                            subLabel = "${entry.value.size} Applications",
+                            subLabel = "${entry.value.size} $applicationsLabel",
                             count = entry.value.size,
                             color = colors[idx % colors.size]
                         )
                     }
                 }
-                "Installer" -> {
-                    val groups = apps.groupBy { it.installSource.ifBlank { "Side-loaded / Local" } }
+                tabInstaller -> {
+                    val groups = apps.groupBy { it.installSource.ifBlank { sideloadedLocalText } }
                     groups.entries.sortedByDescending { it.value.size }.mapIndexed { idx, entry ->
                         AnalyzerItem(
                             label = entry.key,
@@ -341,25 +366,25 @@ fun AppAnalyzerScreen(
                         )
                     }
                 }
-                "Target SDK" -> {
+                tabTargetSdk -> {
                     val groups = apps.groupBy { it.targetSdk }
                     groups.entries.sortedByDescending { it.key }.mapIndexed { idx, entry ->
                         val (title, code) = getAndroidVersionNameForApi(entry.key)
                         AnalyzerItem(
                             label = title,
-                            subLabel = "${entry.value.size} Apps • $code",
+                            subLabel = "${entry.value.size} $appsLabel • $code",
                             count = entry.value.size,
                             color = colors[idx % colors.size]
                         )
                     }
                 }
-                "Minimum SDK" -> {
+                tabMinSdk -> {
                     val groups = apps.groupBy { it.minSdk }
                     groups.entries.sortedByDescending { it.key }.mapIndexed { idx, entry ->
                         val (title, code) = getAndroidMinSdkNameForApi(entry.key)
                         AnalyzerItem(
                             label = title,
-                            subLabel = "${entry.value.size} Apps • $code",
+                            subLabel = "${entry.value.size} $appsLabel • $code",
                             count = entry.value.size,
                             color = colors[idx % colors.size]
                         )
@@ -370,17 +395,17 @@ fun AppAnalyzerScreen(
                     val systemApps = apps.count { it.isSystemApp }
 
                     listOf(
-                        AnalyzerItem("User Applications", "Installed by user or store", userApps, primaryColor),
-                        AnalyzerItem("Pre-Installed System Apps", "Built-in system applications", systemApps, secondaryColor)
+                        AnalyzerItem(userAppsTitle, userAppsDesc, userApps, primaryColor),
+                        AnalyzerItem(systemAppsTitle, systemAppsDesc, systemApps, secondaryColor)
                     )
                 }
             }
         } else {
             listOf(
-                AnalyzerItem("System & Tools", "Built-in system apps", 110, primaryColor),
-                AnalyzerItem("Social & Communication", "Chat, social & messaging", 24, secondaryColor),
-                AnalyzerItem("Productivity", "Utilities & productivity", 18, tertiaryColor),
-                AnalyzerItem("Games", "Games & media apps", 12, primaryColor)
+                AnalyzerItem(systemToolsTitle, systemToolsDesc, 110, primaryColor),
+                AnalyzerItem(socialTitle, socialDesc, 24, secondaryColor),
+                AnalyzerItem(productivityTitle, productivityDesc, 18, tertiaryColor),
+                AnalyzerItem(gamesTitle, gamesDesc, 12, primaryColor)
             )
         }
     }
@@ -413,7 +438,7 @@ fun AppAnalyzerScreen(
     ) {
         if (onBack != null) {
             DevPulseTopAppBar(
-                title = "App Analyzer",
+                title = stringResource(R.string.app_analyzer_title),
                 onBack = onBack
             )
         }
@@ -535,11 +560,17 @@ fun CategoryAppListBottomSheet(
     onSelectApp: (AppSpec) -> Unit,
     onDismissRequest: () -> Unit
 ) {
-    val categoryApps = remember(categoryItem, allApps, selectedTab) {
+    val tabCategories = stringResource(R.string.app_analyzer_tab_categories)
+    val tabInstaller = stringResource(R.string.app_analyzer_tab_installer)
+    val tabTargetSdk = stringResource(R.string.app_analyzer_tab_target_sdk)
+    val tabMinSdk = stringResource(R.string.app_analyzer_tab_min_sdk)
+    val sideloadedLocalText = stringResource(R.string.app_analyzer_sideloaded_local)
+
+    val categoryApps = remember(categoryItem, allApps, selectedTab, tabCategories, tabInstaller, tabTargetSdk, tabMinSdk, sideloadedLocalText) {
         when (selectedTab) {
-            "Categories" -> allApps.filter { it.appCategory == categoryItem.label }
-            "Installer" -> allApps.filter { it.installSource.ifBlank { "Side-loaded / Local" } == categoryItem.label }
-            "Target SDK" -> {
+            tabCategories -> allApps.filter { it.appCategory == categoryItem.label }
+            tabInstaller -> allApps.filter { it.installSource.ifBlank { sideloadedLocalText } == categoryItem.label }
+            tabTargetSdk -> {
                 val api = categoryItem.label.substringAfter("API ").substringBefore(")").toIntOrNull()
                     ?: categoryItem.subLabel.substringAfter("Target SDK ").substringBefore(" ").toIntOrNull()
                 if (api != null) {
@@ -548,7 +579,7 @@ fun CategoryAppListBottomSheet(
                     allApps
                 }
             }
-            "Minimum SDK" -> {
+            tabMinSdk -> {
                 val api = categoryItem.label.substringAfter("API ").substringBefore(" ").substringBefore(")").toIntOrNull()
                     ?: categoryItem.subLabel.substringAfter("Min SDK ").substringBefore(" ").toIntOrNull()
                 if (api != null) {
@@ -676,7 +707,7 @@ fun CategoryAppListBottomSheet(
                     }
                 } else {
                     Text(
-                        text = "No apps found in this category.",
+                        text = stringResource(R.string.app_analyzer_no_apps_category),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(vertical = 24.dp)
