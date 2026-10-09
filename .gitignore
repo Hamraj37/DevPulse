@@ -23,6 +23,7 @@ local.properties
 
 # Android Studio & IntelliJ IDEA
 .idea/
+.agent/
 *.iml
 .kotlin/
 .externalNativeBuild/
