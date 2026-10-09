@@ -2,10 +2,15 @@ package com.hamraj37.devpulse.ui
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.hamraj37.devpulse.ui.screens.AccelerometerTestScreen
 import com.hamraj37.devpulse.ui.screens.AutomaticTestsScreen
 import com.hamraj37.devpulse.ui.screens.BiometricTestScreen
@@ -22,13 +27,14 @@ import com.hamraj37.devpulse.ui.screens.ProximityTestScreen
 import com.hamraj37.devpulse.ui.screens.SpeakerTestScreen
 import com.hamraj37.devpulse.ui.screens.VibrationTestScreen
 import com.hamraj37.devpulse.ui.screens.VolumeButtonTestScreen
-import androidx.appcompat.app.AppCompatActivity
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 
 class TestActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        hideSystemBars()
 
         val testId = intent.getStringExtra(EXTRA_TEST_ID) ?: ""
 
@@ -120,6 +126,22 @@ class TestActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            hideSystemBars()
+        }
+    }
+
+    private fun hideSystemBars() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        controller.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        controller.show(WindowInsetsCompat.Type.statusBars())
+        controller.hide(WindowInsetsCompat.Type.navigationBars())
     }
 
     companion object {
