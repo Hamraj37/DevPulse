@@ -214,116 +214,116 @@ object AppAndTestTelemetry {
             // Automatic Section
             TestItem(
                 id = "test_automatic",
-                title = getString(com.hamraj37.devpulse.R.string.test_item_auto_title, "Automatic Tests"),
+                title = getString(R.string.test_item_auto_title, "Automatic Tests"),
                 category = "Automatic",
-                description = getString(com.hamraj37.devpulse.R.string.test_item_auto_desc, "Runs automated background diagnostic checks on radio, battery, and system modules."),
+                description = getString(R.string.test_item_auto_desc, "Runs automated background diagnostic checks on radio, battery, and system modules."),
                 status = TestStatus.NOT_TESTED
             ),
 
             // Interactive Section (14 Tests)
             TestItem(
                 id = "test_display",
-                title = getString(com.hamraj37.devpulse.R.string.test_item_display_title, "Display Test"),
+                title = getString(R.string.test_item_display_title, "Display Test"),
                 category = "Interactive",
-                description = getString(com.hamraj37.devpulse.R.string.test_item_display_desc, "Color screens fill for dead pixel check (Red, Green, Blue, White, Black)."),
+                description = getString(R.string.test_item_display_desc, "Color screens fill for dead pixel check (Red, Green, Blue, White, Black)."),
                 status = TestStatus.NOT_TESTED
             ),
             TestItem(
                 id = "test_touch",
-                title = getString(com.hamraj37.devpulse.R.string.test_item_touch_title, "Multitouch Test"),
+                title = getString(R.string.test_item_touch_title, "Multitouch Test"),
                 category = "Interactive",
-                description = getString(com.hamraj37.devpulse.R.string.test_item_touch_desc, "Touch points visualization canvas with multi-finger input tracking."),
+                description = getString(R.string.test_item_touch_desc, "Touch points visualization canvas with multi-finger input tracking."),
                 status = TestStatus.NOT_TESTED
             ),
             TestItem(
                 id = "test_flashlight",
-                title = getString(com.hamraj37.devpulse.R.string.test_item_flashlight_title, "Flashlight Test"),
+                title = getString(R.string.test_item_flashlight_title, "Flashlight Test"),
                 category = "Interactive",
-                description = getString(com.hamraj37.devpulse.R.string.test_item_flashlight_desc, "Toggle camera flashlight LED torch light."),
+                description = getString(R.string.test_item_flashlight_desc, "Toggle camera flashlight LED torch light."),
                 status = TestStatus.NOT_TESTED
             ),
             TestItem(
                 id = "test_speaker",
-                title = getString(com.hamraj37.devpulse.R.string.test_item_speaker_title, "Loudspeaker Test"),
+                title = getString(R.string.test_item_speaker_title, "Loudspeaker Test"),
                 category = "Interactive",
-                description = getString(com.hamraj37.devpulse.R.string.test_item_speaker_desc, "Stereo audio tone playback check."),
+                description = getString(R.string.test_item_speaker_desc, "Stereo audio tone playback check."),
                 status = TestStatus.NOT_TESTED
             ),
             TestItem(
                 id = "test_earspeaker",
-                title = getString(com.hamraj37.devpulse.R.string.test_item_earspeaker_title, "Ear Speaker Test"),
+                title = getString(R.string.test_item_earspeaker_title, "Ear Speaker Test"),
                 category = "Interactive",
-                description = getString(com.hamraj37.devpulse.R.string.test_item_earspeaker_desc, "Earpiece call speaker audio playback check."),
+                description = getString(R.string.test_item_earspeaker_desc, "Earpiece call speaker audio playback check."),
                 status = TestStatus.NOT_TESTED
             ),
             TestItem(
                 id = "test_mic",
-                title = getString(com.hamraj37.devpulse.R.string.test_item_mic_title, "Microphone Test"),
+                title = getString(R.string.test_item_mic_title, "Microphone Test"),
                 category = "Interactive",
-                description = getString(com.hamraj37.devpulse.R.string.test_item_mic_desc, "Mic level recorder check with live audio spectrum meter."),
+                description = getString(R.string.test_item_mic_desc, "Mic level recorder check with live audio spectrum meter."),
                 status = TestStatus.NOT_TESTED
             ),
             TestItem(
                 id = "test_proximity",
-                title = getString(com.hamraj37.devpulse.R.string.test_item_proximity_title, "Ear Proximity Test"),
+                title = getString(R.string.test_item_proximity_title, "Ear Proximity Test"),
                 category = "Interactive",
-                description = getString(com.hamraj37.devpulse.R.string.test_item_proximity_desc, "Proximity sensor distance reading check."),
+                description = getString(R.string.test_item_proximity_desc, "Proximity sensor distance reading check."),
                 status = TestStatus.NOT_TESTED
             ),
             TestItem(
                 id = "test_light",
-                title = getString(com.hamraj37.devpulse.R.string.test_item_light_title, "Light Sensor Test"),
+                title = getString(R.string.test_item_light_title, "Light Sensor Test"),
                 category = "Interactive",
-                description = getString(com.hamraj37.devpulse.R.string.test_item_light_desc, "Ambient light lux level sensor change check."),
+                description = getString(R.string.test_item_light_desc, "Ambient light lux level sensor change check."),
                 status = TestStatus.NOT_TESTED
             ),
             TestItem(
                 id = "test_accel",
-                title = getString(com.hamraj37.devpulse.R.string.test_item_accel_title, "Accelerometer Test"),
+                title = getString(R.string.test_item_accel_title, "Accelerometer Test"),
                 category = "Interactive",
-                description = getString(com.hamraj37.devpulse.R.string.test_item_accel_desc, "Tilt sphere/box physics animation canvas."),
+                description = getString(R.string.test_item_accel_desc, "Tilt sphere/box physics animation canvas."),
                 status = TestStatus.NOT_TESTED
             ),
             TestItem(
                 id = "test_charging",
-                title = getString(com.hamraj37.devpulse.R.string.test_item_charging_title, "Charging Test"),
+                title = getString(R.string.test_item_charging_title, "Charging Test"),
                 category = "Interactive",
-                description = getString(com.hamraj37.devpulse.R.string.test_item_charging_desc, "USB & AC charger plug detection check."),
+                description = getString(R.string.test_item_charging_desc, "USB & AC charger plug detection check."),
                 status = TestStatus.NOT_TESTED
             ),
             TestItem(
                 id = "test_vibration",
-                title = getString(com.hamraj37.devpulse.R.string.test_item_vibration_title, "Vibration Test"),
+                title = getString(R.string.test_item_vibration_title, "Vibration Test"),
                 category = "Interactive",
-                description = getString(com.hamraj37.devpulse.R.string.test_item_vibration_desc, "Haptic feedback vibration motor pattern trigger."),
+                description = getString(R.string.test_item_vibration_desc, "Haptic feedback vibration motor pattern trigger."),
                 status = TestStatus.NOT_TESTED
             ),
             TestItem(
                 id = "test_bluetooth",
-                title = getString(com.hamraj37.devpulse.R.string.test_item_bluetooth_title, "Bluetooth Test"),
+                title = getString(R.string.test_item_bluetooth_title, "Bluetooth Test"),
                 category = "Interactive",
-                description = getString(com.hamraj37.devpulse.R.string.test_item_bluetooth_desc, "Bluetooth radio scan state check."),
+                description = getString(R.string.test_item_bluetooth_desc, "Bluetooth radio scan state check."),
                 status = TestStatus.NOT_TESTED
             ),
             TestItem(
                 id = "test_fingerprint",
-                title = getString(com.hamraj37.devpulse.R.string.test_item_fingerprint_title, "Fingerprint Test"),
+                title = getString(R.string.test_item_fingerprint_title, "Fingerprint Test"),
                 category = "Interactive",
-                description = getString(com.hamraj37.devpulse.R.string.test_item_fingerprint_desc, "Biometric prompt and hardware sensor check."),
+                description = getString(R.string.test_item_fingerprint_desc, "Biometric prompt and hardware sensor check."),
                 status = TestStatus.NOT_TESTED
             ),
             TestItem(
                 id = "test_gps",
-                title = getString(com.hamraj37.devpulse.R.string.test_item_gps_title, "GPS / Location Test"),
+                title = getString(R.string.test_item_gps_title, "GPS / Location Test"),
                 category = "Interactive",
-                description = getString(com.hamraj37.devpulse.R.string.test_item_gps_desc, "GPS satellite & network location provider diagnostic check."),
+                description = getString(R.string.test_item_gps_desc, "GPS satellite & network location provider diagnostic check."),
                 status = TestStatus.NOT_TESTED
             ),
             TestItem(
                 id = "test_volume",
-                title = getString(com.hamraj37.devpulse.R.string.test_item_volume_title, "Volume Up / Down Button Test"),
+                title = getString(R.string.test_item_volume_title, "Volume Up / Down Button Test"),
                 category = "Interactive",
-                description = getString(com.hamraj37.devpulse.R.string.test_item_volume_desc, "Key event listener test for hardware volume controls."),
+                description = getString(R.string.test_item_volume_desc, "Key event listener test for hardware volume controls."),
                 status = TestStatus.NOT_TESTED
             )
         )
