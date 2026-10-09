@@ -1,0 +1,1 @@
+Real-time system telemetry, hardware diagnostics, and monitoring utility.

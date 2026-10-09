@@ -1,0 +1,9 @@
+DevPulse is a modern, native Android system telemetry, hardware diagnostic suite, and real-time performance monitoring application built with Jetpack Compose and Material 3.
+
+Designed for developers, power users, and privacy-conscious users, DevPulse offers real-time hardware telemetry streams, live per-core CPU monitoring, zRAM swap analytics, dual-SIM network inspection, and a comprehensive hardware diagnostic test suite with persistent test reports.
+
+Features:
+- Real-Time Dashboard: RAM telemetry, per-core CPU frequency streams, and live system state gauges.
+- Hardware Diagnostic Suite: Interactive tests for display pixels, multi-touch, flashlight, loudspeakers, microphones (dB meter), sensors, vibration, and charging.
+- Deep System Telemetry: System specs, Widevine DRM level, bootloader status, detailed CPU core topology, battery health/charging rates, zRAM compression ratios, Wi-Fi 6E/Cellular details, display parameters, and thermal zone throttling.
+- 100% Free & Open Source: No tracking, no analytics, no ads, and no proprietary SDKs.
