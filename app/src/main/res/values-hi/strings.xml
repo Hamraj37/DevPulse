@@ -702,7 +702,6 @@
     <string name="widget_title_devpulse_status">DevPulse स्थिति</string>
     <string name="widget_lbl_storage_used">प्रयुक्त स्टोरेज</string>
     <string name="widget_lbl_ram_used">प्रयुक्त RAM</string>
-    <string name="manifest_fgs_special_use_subtype">रीयल-टाइम टेलीमेट्री प्रदर्शन के लिए ओवरले मॉनिटर</string>
 
     <!-- Additional About & Component Strings -->
     <string name="about_title">DevPulse के बारे में</string>

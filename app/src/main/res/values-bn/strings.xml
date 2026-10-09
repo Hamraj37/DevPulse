@@ -701,7 +701,6 @@
     <string name="widget_title_devpulse_status">DevPulse স্ট্যাটাস</string>
     <string name="widget_lbl_storage_used">ব্যবহৃত স্টোরেজ</string>
     <string name="widget_lbl_ram_used">ব্যবহৃত র্যাম</string>
-    <string name="manifest_fgs_special_use_subtype">রিয়েল-টাইম টেলিমেট্রি ফ্লোটিং ওভারলে</string>
 
     <!-- Additional About & Component Strings -->
     <string name="about_title">DevPulse সম্পর্কে</string>

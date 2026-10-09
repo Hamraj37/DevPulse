@@ -701,7 +701,6 @@
     <string name="widget_title_devpulse_status">DevPulse 状态</string>
     <string name="widget_lbl_storage_used">存储已用</string>
     <string name="widget_lbl_ram_used">内存已用</string>
-    <string name="manifest_fgs_special_use_subtype">用于实时遥测显示的悬浮监视器</string>
 
     <!-- Additional About & Component Strings -->
     <string name="about_title">关于 DevPulse</string>

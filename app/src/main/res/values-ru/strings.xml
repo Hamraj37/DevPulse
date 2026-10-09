@@ -701,7 +701,6 @@
     <string name="widget_title_devpulse_status">Статус DevPulse</string>
     <string name="widget_lbl_storage_used">Память занята</string>
     <string name="widget_lbl_ram_used">ОЗУ занято</string>
-    <string name="manifest_fgs_special_use_subtype">Монитор-оверлей для отображения телеметрии в реальном времени</string>
 
     <!-- Additional About & Component Strings -->
     <string name="about_title">О приложении DevPulse</string>
