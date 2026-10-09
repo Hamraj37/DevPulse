@@ -6,3 +6,4 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.plugin.serialization) apply false
 }
 
+
