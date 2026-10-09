@@ -198,11 +198,61 @@ fun TestsScreen(
     }
 }
 
+fun getTestTitleRes(testId: String): Int {
+    return when (testId) {
+        "test_automatic" -> R.string.test_item_auto_title
+        "test_display" -> R.string.test_item_display_title
+        "test_touch" -> R.string.test_item_touch_title
+        "test_flashlight" -> R.string.test_item_flashlight_title
+        "test_speaker" -> R.string.test_item_speaker_title
+        "test_earspeaker" -> R.string.test_item_earspeaker_title
+        "test_mic" -> R.string.test_item_mic_title
+        "test_proximity" -> R.string.test_item_proximity_title
+        "test_light" -> R.string.test_item_light_title
+        "test_accel" -> R.string.test_item_accel_title
+        "test_charging" -> R.string.test_item_charging_title
+        "test_vibration" -> R.string.test_item_vibration_title
+        "test_bluetooth" -> R.string.test_item_bluetooth_title
+        "test_fingerprint" -> R.string.test_item_fingerprint_title
+        "test_gps" -> R.string.test_item_gps_title
+        "test_volume" -> R.string.test_item_volume_title
+        else -> 0
+    }
+}
+
+fun getTestDescRes(testId: String): Int {
+    return when (testId) {
+        "test_automatic" -> R.string.test_item_auto_desc
+        "test_display" -> R.string.test_item_display_desc
+        "test_touch" -> R.string.test_item_touch_desc
+        "test_flashlight" -> R.string.test_item_flashlight_desc
+        "test_speaker" -> R.string.test_item_speaker_desc
+        "test_earspeaker" -> R.string.test_item_earspeaker_desc
+        "test_mic" -> R.string.test_item_mic_desc
+        "test_proximity" -> R.string.test_item_proximity_desc
+        "test_light" -> R.string.test_item_light_desc
+        "test_accel" -> R.string.test_item_accel_desc
+        "test_charging" -> R.string.test_item_charging_desc
+        "test_vibration" -> R.string.test_item_vibration_desc
+        "test_bluetooth" -> R.string.test_item_bluetooth_desc
+        "test_fingerprint" -> R.string.test_item_fingerprint_desc
+        "test_gps" -> R.string.test_item_gps_desc
+        "test_volume" -> R.string.test_item_volume_desc
+        else -> 0
+    }
+}
+
 @Composable
 fun TestCardItem(
     test: TestItem,
     onClick: () -> Unit
 ) {
+    val titleRes = getTestTitleRes(test.id)
+    val descRes = getTestDescRes(test.id)
+
+    val itemTitle = if (titleRes != 0) stringResource(titleRes) else test.title
+    val itemDesc = if (descRes != 0) stringResource(descRes) else test.description
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -254,7 +304,7 @@ fun TestCardItem(
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = test.title,
+                        text = itemTitle,
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 15.5.sp
@@ -263,7 +313,7 @@ fun TestCardItem(
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = test.description,
+                        text = itemDesc,
                         style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

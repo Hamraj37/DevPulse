@@ -55,6 +55,22 @@ class TelemetryRepository(private val context: Context) {
         }
     }
 
+    fun refreshTestsList() {
+        val latestItems = AppAndTestTelemetry.getInitialTestItems(context)
+        _testsState.update { currentList ->
+            latestItems.map { newItem ->
+                val existingItem = currentList.find { it.id == newItem.id }
+                val savedName = prefs.getString("test_status_${newItem.id}", null)
+                val status = try {
+                    if (savedName != null) TestStatus.valueOf(savedName) else existingItem?.status ?: newItem.status
+                } catch (_: Throwable) {
+                    existingItem?.status ?: newItem.status
+                }
+                newItem.copy(status = status)
+            }
+        }
+    }
+
     // 1. Dashboard Flow (updates every 1000ms)
     fun getDashboardFlow(): Flow<DashboardInfo> = flow {
         while (true) {

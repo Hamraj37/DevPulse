@@ -153,6 +153,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun loadStaticTelemetry() {
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.update { it.copy(isLoading = true) }
+            repository.refreshTestsList()
             val device = repository.getDeviceInfo()
             val system = repository.getSystemInfo()
             val network = repository.getNetworkInfo()
