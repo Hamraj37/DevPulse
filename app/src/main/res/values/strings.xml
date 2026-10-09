@@ -281,6 +281,11 @@
     <string name="network_frequency">Frequency</string>
     <string name="network_wifi_standard">WiFi Standard</string>
     <string name="network_security_type">Security Type</string>
+    <string name="wifi_analyzer_turned_off">Wi-Fi is Turned Off</string>
+    <string name="wifi_analyzer_turned_off_desc">Turn on Wi-Fi in Settings to scan nearby wireless access points.</string>
+    <string name="wifi_analyzer_no_networks">No Wi-Fi Networks Scanned</string>
+    <string name="wifi_analyzer_no_networks_desc">Ensure Wi-Fi and Location services are enabled, then tap Refresh.</string>
+    <string name="btn_turn_on_wifi">Turn On Wi-Fi</string>
     <string name="network_data_usage_summary">Data Usage Summary</string>
     <string name="network_mobile_rx">Mobile Received: %s</string>
     <string name="network_mobile_tx">Mobile Sent: %s</string>
@@ -572,6 +577,9 @@
     <string name="desc_options">Options</string>
     <string name="desc_export">Export</string>
     <string name="compass">Compass</string>
+    <string name="compass_title">Compass</string>
+    <string name="compass_subtitle">Digital Compass &amp; Orientation</string>
+    <string name="compass_desc">Real-time magnetic heading and cardinal direction</string>
 
     <!-- Toast, Intent & Clipboard Strings -->
     <string name="toast_unable_to_open_link">Unable to open link</string>

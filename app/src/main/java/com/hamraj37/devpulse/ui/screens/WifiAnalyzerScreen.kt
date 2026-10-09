@@ -3,12 +3,20 @@ package com.hamraj37.devpulse.ui.screens
 import com.hamraj37.devpulse.R
 import androidx.compose.ui.res.stringResource
 import android.Manifest
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.wifi.ScanResult
 import android.net.wifi.WifiManager
 import android.os.Build
+import android.provider.Settings
 import androidx.activity.compose.BackHandler
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.material.icons.rounded.WifiOff
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -172,6 +180,56 @@ fun parseScanResult(result: ScanResult): WifiScanItem {
     )
 }
 
+@Suppress("MissingPermission")
+fun getConnectedWifiScanItem(context: Context, wifiManager: WifiManager?): WifiScanItem? {
+    if (wifiManager == null || !wifiManager.isWifiEnabled) return null
+    val connInfo = try { wifiManager.connectionInfo } catch (_: Throwable) { null } ?: return null
+    val ssid = connInfo.ssid?.replace("\"", "") ?: ""
+    if (ssid.isEmpty() || ssid == "<unknown ssid>") return null
+
+    val bssid = connInfo.bssid ?: "00:00:00:00:00:00"
+    val rssi = connInfo.rssi
+    val freq = if (Build.VERSION.SDK_INT >= 21) connInfo.frequency else 2412
+
+    val band = when {
+        freq in 2400..2500 -> "2.4GHz"
+        freq in 4900..5900 -> "5GHz"
+        freq in 5925..7125 -> "6GHz"
+        else -> "2.4GHz"
+    }
+
+    val channel = when {
+        freq in 2412..2484 -> (freq - 2407) / 5
+        freq in 5170..5825 -> (freq - 5000) / 5
+        freq in 5925..7115 -> (freq - 5950) / 5
+        else -> 6
+    }
+
+    val exp = (27.55 - (20 * log10(freq.toDouble())) + abs(rssi)) / 20.0
+    val distance = Math.pow(10.0, exp)
+
+    val quality = when {
+        rssi >= -55 -> "Best"
+        rssi >= -75 -> "Fair"
+        else -> "Weak"
+    }
+
+    return WifiScanItem(
+        ssid = ssid,
+        bssid = bssid,
+        rssiDbm = rssi,
+        frequencyMhz = freq,
+        channelWidthMhz = 20,
+        capabilities = "[Connected]",
+        wifiStandardText = if (freq > 4900) "Wi-Fi 802.11ac (Wi-Fi 5)" else "Wi-Fi 802.11n (Wi-Fi 4)",
+        wifiGenNumber = if (freq > 4900) 5 else 4,
+        channelNumber = channel,
+        bandText = band,
+        distanceMeters = distance,
+        signalQuality = quality
+    )
+}
+
 @Composable
 fun WifiAnalyzerScreen(
     uiState: MainUiState,
@@ -190,10 +248,12 @@ fun WifiAnalyzerScreen(
 
     fun refreshScan() {
         val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as? WifiManager
-        try {
-            @Suppress("DEPRECATION")
-            wifiManager?.startScan()
-        } catch (_: Throwable) {}
+        val isWifiOn = wifiManager?.isWifiEnabled == true
+
+        if (!isWifiOn) {
+            scanResults = emptyList()
+            return
+        }
 
         val hasLocationPerm = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
@@ -209,20 +269,44 @@ fun WifiAnalyzerScreen(
             null
         }
 
+        val parsedList = mutableListOf<WifiScanItem>()
         if (!rawResults.isNullOrEmpty()) {
-            scanResults = rawResults.map { parseScanResult(it) }.sortedByDescending { it.rssiDbm }
-        } else {
-            scanResults = listOf(
-                WifiScanItem("DIRECT-sYWIN-ERAK4RP2GIPA0tF", "90:de:80:d8:12:37", -34, 2437, 20, "[WPS WPA2]", "Wi-Fi 802.11n (Wi-Fi 4)", 4, 6, "2.4GHz", 0.5, "Best"),
-                WifiScanItem("PAPPU GUEST", "1c:a6:f7:d8:9d:20", -73, 2437, 40, "[WPA2]", "Wi-Fi 802.11n (Wi-Fi 4)", 4, 6, "2.4GHz", 43.7, "Fair"),
-                WifiScanItem("Pappu", "18:a6:f7:d8:9d:20", -73, 2437, 40, "[WPS WPA2]", "Wi-Fi 802.11n (Wi-Fi 4)", 4, 6, "2.4GHz", 43.7, "Fair"),
-                WifiScanItem("TASLIM 5G+", "7c:1e:4a:15:5d:30", -86, 2437, 40, "[WPS WPA2]", "Wi-Fi 802.11ax (Wi-Fi 6)", 6, 6, "2.4GHz", 195.3, "Weak")
-            )
+            parsedList.addAll(rawResults.map { parseScanResult(it) })
         }
+
+        val connectedItem = getConnectedWifiScanItem(context, wifiManager)
+        if (connectedItem != null && parsedList.none { it.bssid.equals(connectedItem.bssid, ignoreCase = true) }) {
+            parsedList.add(0, connectedItem)
+        }
+
+        scanResults = parsedList.distinctBy { it.bssid }.sortedByDescending { it.rssiDbm }
+
+        try {
+            @Suppress("DEPRECATION")
+            wifiManager?.startScan()
+        } catch (_: Throwable) {}
     }
 
-    LaunchedEffect(Unit) {
+    DisposableEffect(context) {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(c: Context?, intent: Intent?) {
+                refreshScan()
+            }
+        }
+        val intentFilter = IntentFilter().apply {
+            addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
+            addAction(WifiManager.WIFI_STATE_CHANGED_ACTION)
+            @Suppress("DEPRECATION")
+            addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION)
+        }
+        context.registerReceiver(receiver, intentFilter)
         refreshScan()
+
+        onDispose {
+            try {
+                context.unregisterReceiver(receiver)
+            } catch (_: Throwable) {}
+        }
     }
 
     val filteredResults = remember(searchQuery, scanResults) {
@@ -318,128 +402,163 @@ fun WifiAnalyzerScreen(
 
             HorizontalDivider()
 
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                filteredResults.forEach { item ->
-                    val badgeColor = when (item.signalQuality) {
-                        "Best" -> OliveActiveBadge
-                        "Fair" -> MaterialTheme.colorScheme.tertiary
-                        else -> MaterialTheme.colorScheme.error
-                    }
+            if (filteredResults.isEmpty()) {
+                val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as? WifiManager
+                val isWifiOn = wifiManager?.isWifiEnabled == true
+                val hasLocationPerm = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                        ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
-                    Surface(
-                        shape = RoundedCornerShape(18.dp),
-                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                val emptyTitle = when {
+                    !isWifiOn -> stringResource(R.string.wifi_analyzer_turned_off)
+                    !hasLocationPerm -> "Location Permission Required for Wi-Fi Scan"
+                    else -> stringResource(R.string.wifi_analyzer_no_networks)
+                }
+
+                val emptyDesc = when {
+                    !isWifiOn -> stringResource(R.string.wifi_analyzer_turned_off_desc)
+                    !hasLocationPerm -> "Android requires Location permission (GPS) to scan nearby Wi-Fi access points."
+                    else -> stringResource(R.string.wifi_analyzer_no_networks_desc)
+                }
+
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+                    shape = RoundedCornerShape(18.dp)
+                ) {
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { selectedWifiItem = item }
+                            .padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Row(
+                        Icon(
+                            imageVector = Icons.Rounded.WifiOff,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Text(
+                            text = emptyTitle,
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            text = emptyDesc,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
+                        )
+                        Button(
+                            onClick = {
+                                if (!isWifiOn) {
+                                    try {
+                                        context.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
+                                    } catch (_: Throwable) {}
+                                } else {
+                                    refreshScan()
+                                }
+                            },
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text(if (!isWifiOn) stringResource(R.string.btn_turn_on_wifi) else stringResource(R.string.desc_refresh))
+                        }
+                    }
+                }
+            } else {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    filteredResults.forEach { item ->
+                        val badgeColor = when (item.signalQuality) {
+                            "Best" -> OliveActiveBadge
+                            "Fair" -> MaterialTheme.colorScheme.tertiary
+                            else -> MaterialTheme.colorScheme.error
+                        }
+
+                        Surface(
+                            shape = RoundedCornerShape(18.dp),
+                            color = MaterialTheme.colorScheme.surfaceContainerLow,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(16.dp),
-                            verticalAlignment = Alignment.Top,
-                            horizontalArrangement = Arrangement.SpaceBetween
+                                .clickable { selectedWifiItem = item }
                         ) {
                             Row(
-                                modifier = Modifier.weight(1f),
-                                horizontalArrangement = Arrangement.spacedBy(14.dp)
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                verticalAlignment = Alignment.Top,
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Wifi,
-                                    contentDescription = null,
-                                    tint = badgeColor,
-                                    modifier = Modifier
-                                        .size(36.dp)
-                                        .padding(top = 4.dp)
-                                )
-
-                                Column {
-                                    Text(
-                                        text = item.ssid,
-                                        style = MaterialTheme.typography.titleMedium.copy(
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 16.sp
-                                        ),
-                                        maxLines = 2
-                                    )
-                                    Spacer(modifier = Modifier.height(2.dp))
-                                    Text(
-                                        text = item.bssid,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                    Text(
-                                        text = item.wifiStandardText,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                    Text(
-                                        text = "CH ${item.channelNumber} | ${item.bandText} (${item.channelWidthMhz} MHz)",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                    Text(
-                                        text = item.capabilities,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-                            }
-
-                            Spacer(modifier = Modifier.width(8.dp))
-
-                            Column(
-                                horizontalAlignment = Alignment.End,
-                                verticalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                Surface(
-                                    shape = RoundedCornerShape(8.dp),
-                                    color = badgeColor
+                                Row(
+                                    modifier = Modifier.weight(1f),
+                                    horizontalArrangement = Arrangement.spacedBy(14.dp)
                                 ) {
-                                    Text(
-                                        text = "${item.rssiDbm} dBm",
-                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
-                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                        color = Color.White
-                                    )
-                                }
-
-                                Text(
-                                    text = item.signalQuality,
-                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                                    color = badgeColor
-                                )
-
-                                Box(contentAlignment = Alignment.Center) {
                                     Icon(
                                         imageVector = Icons.Rounded.Wifi,
                                         contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.size(26.dp)
+                                        tint = badgeColor,
+                                        modifier = Modifier
+                                            .size(36.dp)
+                                            .padding(top = 4.dp)
                                     )
-                                    Surface(
-                                        shape = CircleShape,
-                                        color = MaterialTheme.colorScheme.surfaceContainerLowest,
-                                        modifier = Modifier.size(14.dp)
-                                    ) {
-                                        Box(contentAlignment = Alignment.Center) {
-                                            Text(
-                                                text = "${item.wifiGenNumber}",
-                                                style = MaterialTheme.typography.labelSmall.copy(
-                                                    fontSize = 9.sp,
-                                                    fontWeight = FontWeight.Bold
-                                                ),
-                                                color = MaterialTheme.colorScheme.onSurface
-                                            )
-                                        }
+
+                                    Column {
+                                        Text(
+                                            text = item.ssid,
+                                            style = MaterialTheme.typography.titleMedium.copy(
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 16.sp
+                                            ),
+                                            maxLines = 2
+                                        )
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        Text(
+                                            text = item.bssid,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                        Text(
+                                            text = item.wifiStandardText,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                        Text(
+                                            text = "CH ${item.channelNumber} | ${item.bandText} (${item.channelWidthMhz} MHz)",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                        Text(
+                                            text = item.capabilities,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
                                     }
                                 }
 
-                                Text(
-                                    text = "~${String.format(Locale.US, "%.1f", item.distanceMeters)}m",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                Column(
+                                    horizontalAlignment = Alignment.End,
+                                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    Surface(
+                                        shape = RoundedCornerShape(8.dp),
+                                        color = badgeColor
+                                    ) {
+                                        Text(
+                                            text = "${item.rssiDbm} dBm",
+                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                            color = Color.White
+                                        )
+                                    }
+
+                                    Text(
+                                        text = item.signalQuality,
+                                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                                        color = badgeColor
+                                    )
+                                }
                             }
                         }
                     }

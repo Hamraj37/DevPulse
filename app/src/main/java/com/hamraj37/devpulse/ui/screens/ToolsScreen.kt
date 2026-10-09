@@ -144,6 +144,12 @@ fun ToolsScreen(
                 icon = Icons.Rounded.GridView
             ),
             ToolItemData(
+                type = ToolType.COMPASS,
+                titleRes = R.string.compass_title,
+                descriptionRes = R.string.compass_desc,
+                icon = Icons.Rounded.Explore
+            ),
+            ToolItemData(
                 type = ToolType.APP_ANALYZER,
                 titleRes = R.string.app_analyzer_title,
                 descriptionRes = R.string.app_analyzer_desc,
