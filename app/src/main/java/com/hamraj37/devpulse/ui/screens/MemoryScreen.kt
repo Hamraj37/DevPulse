@@ -68,7 +68,7 @@ fun MemoryScreen(
         // 1. RAM Card
         MemoryStorageProgressCard(
             title = stringResource(R.string.tab_memory),
-            path = "RAM (Volatile)",
+            path = stringResource(R.string.memory_ram_volatile),
             icon = Icons.Rounded.Memory,
             usedGb = ramUsedGb,
             freeGb = ramFreeGb,
@@ -81,7 +81,7 @@ fun MemoryScreen(
 
         // 3. System Storage Card
         MemoryStorageProgressCard(
-            title = "System Storage",
+            title = stringResource(R.string.memory_system_storage),
             path = "/system",
             icon = Icons.Rounded.Folder,
             usedGb = sysUsedGb,
@@ -133,7 +133,7 @@ fun MemoryStorageProgressCard(
                 ) {
                     Icon(
                         imageVector = icon,
-                        contentDescription = title,
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(24.dp)
                     )
@@ -186,8 +186,8 @@ fun MemoryStorageProgressCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                val usedText = "${String.format(Locale.US, "%.2f", usedGb)} GB of ${String.format(Locale.US, "%.2f", totalGb)} GB Used"
-                val freeText = "${String.format(Locale.US, "%.2f", freeGb)} GB Free"
+                val usedText = "${String.format(Locale.US, "%.2f", usedGb)} ${stringResource(R.string.memory_gb_of)} ${String.format(Locale.US, "%.2f", totalGb)} ${stringResource(R.string.memory_gb_used)}"
+                val freeText = "${String.format(Locale.US, "%.2f", freeGb)} ${stringResource(R.string.memory_gb_free)}"
                 Text(
                     text = usedText,
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
@@ -237,7 +237,7 @@ fun ZramProgressCard(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Memory,
-                        contentDescription = "zRAM",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(24.dp)
                     )
@@ -250,7 +250,7 @@ fun ZramProgressCard(
                             maxLines = 1
                         )
                         Text(
-                            text = String.format(Locale.US, "%.1fx Compression Saved", compressionRatio),
+                            text = stringResource(R.string.memory_compression_saved, String.format(Locale.US, "%.1f", compressionRatio)),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.primary,
                             maxLines = 1
@@ -291,12 +291,12 @@ fun ZramProgressCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "${String.format(Locale.US, "%.2f", zramOrigGb)} GB Uncompressed",
+                    text = stringResource(R.string.memory_gb_uncompressed, String.format(Locale.US, "%.2f", zramOrigGb)),
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "${String.format(Locale.US, "%.2f", zramComprGb)} GB in RAM",
+                    text = stringResource(R.string.memory_gb_in_ram, String.format(Locale.US, "%.2f", zramComprGb)),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

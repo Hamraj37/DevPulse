@@ -116,6 +116,11 @@
     <string name="lbl_installer">Installer</string>
     <string name="lbl_target_sdk">Target SDK</string>
     <string name="lbl_min_sdk">Minimum SDK</string>
+    <string name="apps_storage_analysis">App Storage Analysis</string>
+    <string name="apps_showing_count">Showing %d Applications</string>
+    <string name="apps_user_installed_count">User Installed Apps (%d)</string>
+    <string name="apps_system_os_count">System OS Apps (%d)</string>
+    <string name="apps_top_storage_occupying">Top Storage Occupying Apps</string>
 
     <!-- Dialogs & Prompts -->
     <string name="dialog_update_available_title">Update Available (%1$s)</string>
@@ -220,6 +225,13 @@
     <string name="memory_zram_swap">zRAM (RAM Swap)</string>
     <string name="memory_ram_volatile">RAM (Volatile)</string>
     <string name="memory_ram_memory">RAM Memory</string>
+    <string name="memory_system_storage">System Storage</string>
+    <string name="memory_gb_of">GB of</string>
+    <string name="memory_gb_used">GB Used</string>
+    <string name="memory_gb_free">GB Free</string>
+    <string name="memory_compression_saved">%sx Compression Saved</string>
+    <string name="memory_gb_uncompressed">%s GB Uncompressed</string>
+    <string name="memory_gb_in_ram">%s GB in RAM</string>
 
     <!-- Network & Connectivity Specs Screens -->
     <string name="network_download">DOWNLOAD</string>
@@ -228,6 +240,56 @@
     <string name="network_realtime">Real-time</string>
     <string name="network_usage">Usage</string>
     <string name="network_public_ip">Public IP</string>
+    <string name="network_no_active_network">No Active Network</string>
+    <string name="network_offline">Offline</string>
+    <string name="network_connect_prompt">Please connect to Wi-Fi or Mobile Data</string>
+    <string name="network_location_service_disabled">Location Service Disabled</string>
+    <string name="network_location_permission_required">Location Permission Required</string>
+    <string name="network_location_disclaimer">Android 8.1+ requires Location services (GPS) and permissions to access Wi-Fi SSID and BSSID details.</string>
+    <string name="network_connection_type">Connection Type</string>
+    <string name="network_download_speed">Real-time Download</string>
+    <string name="network_upload_speed">Real-time Upload</string>
+    <string name="network_operator">Network Operator</string>
+    <string name="network_type">Network Type</string>
+    <string name="network_cellular_ipv4">Cellular IPv4</string>
+    <string name="network_cellular_ipv6">Cellular IPv6</string>
+    <string name="network_data_state">Data State</string>
+    <string name="network_interface">Interface</string>
+    <string name="network_roaming">Roaming</string>
+    <string name="network_country_mcc">Country / MCC</string>
+    <string name="network_mcc_mnc">MCC / MNC</string>
+    <string name="network_mobile_signal">Mobile Signal</string>
+    <string name="network_public_ip_location">Public IP Location</string>
+    <string name="network_disconnected">Disconnected</string>
+    <string name="network_active_conn">Active Connection</string>
+    <string name="network_none">None</string>
+    <string name="network_wifi">Wi-Fi</string>
+    <string name="network_not_connected">Not Connected</string>
+    <string name="network_mobile_data">Mobile Data</string>
+    <string name="network_recommendation">Recommendation</string>
+    <string name="network_enable_settings_rec">Enable Wi-Fi or Mobile Data in Settings</string>
+    <string name="network_ssid">SSID / Network</string>
+    <string name="network_bssid">BSSID</string>
+    <string name="network_ip_address">IP Address</string>
+    <string name="network_ipv6_address">IPv6 Address</string>
+    <string name="network_gateway">Gateway</string>
+    <string name="network_subnet_mask">Subnet Mask</string>
+    <string name="network_dns1">DNS 1</string>
+    <string name="network_lease_duration">Lease Duration</string>
+    <string name="network_link_speed">Link Speed</string>
+    <string name="network_channel">Channel</string>
+    <string name="network_frequency">Frequency</string>
+    <string name="network_wifi_standard">WiFi Standard</string>
+    <string name="network_security_type">Security Type</string>
+    <string name="network_data_usage_summary">Data Usage Summary</string>
+    <string name="network_mobile_rx">Mobile Received: %s</string>
+    <string name="network_mobile_tx">Mobile Sent: %s</string>
+    <string name="network_wifi_rx">Wi-Fi Received: %s</string>
+    <string name="network_wifi_tx">Wi-Fi Sent: %s</string>
+    <string name="network_public_ip_title">Public IP Address</string>
+    <string name="network_detected_public_ip">Detected Public IP: %s</string>
+    <string name="network_isp_carrier">ISP / Carrier: %s</string>
+    <string name="network_location_label">Location: %s</string>
     <string name="conn_bluetooth_disabled_msg">Please enable Bluetooth to view full hardware radio capabilities.</string>
     <string name="conn_bluetooth_disabled_hdr">Bluetooth is Disabled</string>
     <string name="conn_wifi_capabilities">Wi-Fi Capabilities</string>
@@ -235,21 +297,58 @@
     <string name="conn_nfc_capabilities">NFC Capabilities</string>
     <string name="conn_uwb_capabilities">Ultra Wide Band (UWB)</string>
     <string name="conn_usb_capabilities">USB Capabilities</string>
+    <string name="conn_wifi_standard">WiFi Standard</string>
+    <string name="conn_wifi_direct">WiFi Direct</string>
+    <string name="conn_5ghz_band">5GHz Band</string>
+    <string name="conn_6ghz_band">6GHz Band (Wi-Fi 6E)</string>
+    <string name="conn_disabled">Disabled</string>
+    <string name="conn_bt_radio">Bluetooth Radio</string>
+    <string name="conn_bt_multiple_adv">Multiple Advertisements</string>
+    <string name="conn_bt_offloaded_filtering">Offloaded Filtering</string>
+    <string name="conn_bt_offloaded_batching">Offloaded Scan Batching</string>
+    <string name="conn_bt_le">Bluetooth LE</string>
+    <string name="conn_bt_le_2m_phy">LE 2M PHY</string>
+    <string name="conn_bt_le_coded_phy">LE Coded PHY</string>
+    <string name="conn_bt_le_ext_adv">LE Extended Advertising</string>
+    <string name="conn_bt_le_periodic_adv">LE Periodic Advertising</string>
+    <string name="conn_bt_le_audio">LE Audio</string>
+    <string name="conn_nfc">NFC</string>
+    <string name="conn_secure_nfc">Secure NFC</string>
+    <string name="conn_uwb_hardware">UWB Hardware</string>
+    <string name="conn_usb_host">USB Host</string>
+    <string name="conn_usb_accessory">USB Accessory</string>
+    <string name="conn_usb_debugging">USB Debugging</string>
 
     <!-- Display Specs Screen -->
     <string name="display_hardware_details">Display Hardware &amp; System Details</string>
     <string name="display_refresh_rate">Refresh Rate</string>
     <string name="display_brightness_level">Brightness Level</string>
+    <string name="display_physical_size_refresh">Physical Size &amp; Refresh</string>
+    <string name="display_resolution">Resolution</string>
+    <string name="display_density">Density</string>
+    <string name="display_font_scale">Font Scale</string>
+    <string name="display_physical_size">Physical Size</string>
+    <string name="display_hdr">HDR</string>
+    <string name="display_hdr_capabilities">HDR Capabilities</string>
+    <string name="display_wide_color_gamut">Wide Color Gamut</string>
+    <string name="display_brightness_mode">Brightness Mode</string>
+    <string name="display_screen_timeout">Screen Timeout</string>
+    <string name="display_orientation">Orientation</string>
 
     <!-- Thermal & Sensor Specs Screens -->
     <string name="thermal_zone_monitors">Thermal Zone Monitors</string>
     <string name="thermal_headroom_capacity">Thermal Headroom Capacity</string>
+    <string name="thermal_zones_label">Zones</string>
+    <string name="thermal_label_high">HIGH</string>
+    <string name="thermal_label_warm">WARM</string>
+    <string name="thermal_label_normal">NORMAL</string>
     <string name="sensors_available_hdr">Sensors are available on your device</string>
     <string name="sensors_realtime_stream">Real-time stream &amp; live event listener</string>
     <string name="sensors_live_stream_hdr">LIVE SENSOR STREAM DATA</string>
     <string name="sensors_gps_disabled_warning">Location service is disabled. GPS/Location is required for true declination &amp; orientation calibration.</string>
     <string name="sensors_wakeup">Wakeup</string>
     <string name="sensors_non_wakeup">Non-wakeup</string>
+    <string name="sensors_awaiting_updates">Awaiting sensor updates&#8230;</string>
 
     <!-- Camera Specs Screen -->
     <string name="camera_please_read_hdr">Please Read This</string>
@@ -257,6 +356,42 @@
     <string name="camera_capabilities">Camera Capabilities</string>
     <string name="camera_resolutions">Supported Photo &amp; Video Resolutions</string>
     <string name="camera_specifications">Specifications</string>
+    <string name="camera_sec_lens_optics">Lens &amp; Optical System</string>
+    <string name="camera_sec_sensor_specs">Sensor Specs &amp; Architecture</string>
+    <string name="camera_sec_exposure_color">Exposure &amp; Color Processing</string>
+    <string name="camera_sec_video_flash">Video, Flash &amp; Features</string>
+    <string name="camera_sec_capabilities_resolutions">Capabilities, Resolutions &amp; Streams</string>
+    <string name="camera_lens_placement">Lens Placement</string>
+    <string name="camera_focal_lengths">Focal Lengths</string>
+    <string name="camera_apertures">Apertures</string>
+    <string name="camera_ois">Optical Stabilization (OIS)</string>
+    <string name="camera_focus_distance_calibration">Focus Distance Calibration</string>
+    <string name="camera_filter_densities">Filter Densities</string>
+    <string name="camera_sensor_size">Sensor Size</string>
+    <string name="camera_sensor_resolution">Sensor Resolution</string>
+    <string name="camera_effective_megapixels">Effective Megapixels</string>
+    <string name="camera_pixel_array_size">Pixel Array Size</string>
+    <string name="camera_color_filter">Color Filter Arrangement</string>
+    <string name="camera_orientation">Orientation</string>
+    <string name="camera_timestamp_source">Timestamp Source</string>
+    <string name="camera_hot_pixel_modes">Hot Pixel Modes</string>
+    <string name="camera_ae_modes">Auto Exposure (AE) Modes</string>
+    <string name="camera_compensation_step">Compensation Step</string>
+    <string name="camera_af_modes">AutoFocus (AF) Modes</string>
+    <string name="camera_awb_modes">Auto White Balance (AWB)</string>
+    <string name="camera_ae_af_awb_regions">Max AE / AF / AWB Regions</string>
+    <string name="camera_aberration_modes">Aberration Modes</string>
+    <string name="camera_antibanding_modes">Antibanding Modes</string>
+    <string name="camera_edge_modes">Edge Modes</string>
+    <string name="camera_flash_available">Flash Available</string>
+    <string name="camera_video_stabilization">Video Stabilization Modes</string>
+    <string name="camera_face_detection">Face Detection Modes</string>
+    <string name="camera_scene_modes">Scene Modes</string>
+    <string name="camera_effects_available">Effects Available</string>
+    <string name="camera_test_pattern_modes">Test Pattern Modes</string>
+    <string name="camera_dynamic_range_profiles">Dynamic Range Profiles</string>
+    <string name="camera_max_output_streams">Max Output Streams</string>
+    <string name="camera_thumbnail_sizes">Thumbnail Sizes</string>
 
     <!-- Apps Screen -->
     <string name="apps_filter_placeholder">Filter apps by name or package&#8230;</string>
@@ -309,10 +444,12 @@
     <string name="wifi_analyzer_search_placeholder">Search Wi-Fi networks...</string>
 
     <!-- Settings & About Screens -->
+    <string name="settings_title">Settings</string>
     <string name="settings_preferences_customization">App preferences &amp; customization</string>
     <string name="settings_use_system_colors">Use system colors</string>
     <string name="settings_match_wallpaper_colors">Match the colors from your wallpaper</string>
     <string name="settings_theme_color">Theme color</string>
+    <string name="settings_dynamic_material_you">Dynamic Material You</string>
     <string name="settings_clear_data_confirm_msg">Are you sure you want to clear app cache and reset preferences?</string>
     <string name="settings_donate_msg">You can show your appreciation for my work by making a small donation</string>
     <string name="settings_privacy_policy_desc">DevPulse does not collect or transmit any personal user data. All hardware telemetry, app analytics, and diagnostic logs are processed locally on your device.</string>
@@ -320,6 +457,10 @@
     <string name="settings_choose_theme">Choose Theme</string>
     <string name="settings_choose_theme_color">Choose Theme Color</string>
     <string name="about_devpulse_desc">DevPulse is an all-in-one Android system intelligence tool providing real-time telemetry, hardware diagnostic tests, and system inspection.</string>
+    <string name="about_email">Email</string>
+    <string name="about_community_title">Suggestions, Questions, Issues</string>
+    <string name="about_community_desc">If you have suggestions, questions, or issues with DevPulse, you can join our Telegram Group</string>
+    <string name="about_telegram">Telegram</string>
 
     <!-- Tests & Hardware Diagnostics Prompts -->
     <string name="tests_hdr">Hardware Diagnostic Tests</string>
@@ -328,6 +469,24 @@
     <string name="tests_interactive_tests">Interactive Hardware Tests</string>
     <string name="tests_suggestions_available">Suggestions are available</string>
     <string name="tests_all_passed">All automatic tests passed</string>
+    <string name="auto_check_last_restart_title">Last Restart</string>
+    <string name="auto_check_last_restart_ok">Your device was restarted recently</string>
+    <string name="auto_check_last_restart_uptime">Device uptime: %d days</string>
+    <string name="auto_check_usb_debugging_title">USB Debugging</string>
+    <string name="auto_check_usb_debugging_warn">USB Debugging is enabled. It is recommended to disable USB Debugging</string>
+    <string name="auto_check_usb_debugging_ok">USB Debugging is disabled</string>
+    <string name="auto_check_brightness_title">Screen Brightness</string>
+    <string name="auto_check_brightness_warn">Reduce your screen brightness to save battery</string>
+    <string name="auto_check_brightness_ok">Screen brightness is optimized</string>
+    <string name="auto_check_timeout_title">Screen Timeout</string>
+    <string name="auto_check_timeout_ok">Screen timeout is on its best</string>
+    <string name="auto_check_timeout_sec">Screen timeout is set to %ds</string>
+    <string name="auto_check_lock_title">Screen Lock</string>
+    <string name="auto_check_lock_ok">Screen lock is configured successfully</string>
+    <string name="auto_check_lock_warn">Screen lock is not configured</string>
+    <string name="auto_check_nfc_title">NFC</string>
+    <string name="auto_check_nfc_on">NFC is turned on</string>
+    <string name="auto_check_nfc_off">NFC is turned off</string>
     <string name="test_display_cycle_colors">Tap screen to cycle colors</string>
     <string name="test_multitouch_prompt">Touch screen with multiple fingers</string>
     <string name="test_multitouch_question">Does the screen detects multiple fingers?</string>
@@ -337,6 +496,40 @@
     <string name="test_mic_question">Speak to the microphone. Is the progress changing?</string>
     <string name="test_ear_speaker_question">Cover the area above the display or place your palm on the display. do you get any feedback?</string>
     <string name="test_proximity_question">Cover the area above the display. Is the value changing?</string>
+
+    <!-- Test Items Titles & Descriptions -->
+    <string name="test_item_auto_title">Automatic Tests</string>
+    <string name="test_item_auto_desc">Runs automated background diagnostic checks on radio, battery, and system modules.</string>
+    <string name="test_item_display_title">Display Test</string>
+    <string name="test_item_display_desc">Color screens fill for dead pixel check (Red, Green, Blue, White, Black).</string>
+    <string name="test_item_touch_title">Multitouch Test</string>
+    <string name="test_item_touch_desc">Touch points visualization canvas with multi-finger input tracking.</string>
+    <string name="test_item_flashlight_title">Flashlight Test</string>
+    <string name="test_item_flashlight_desc">Toggle camera flashlight LED torch light.</string>
+    <string name="test_item_speaker_title">Loudspeaker Test</string>
+    <string name="test_item_speaker_desc">Stereo audio tone playback check.</string>
+    <string name="test_item_earspeaker_title">Ear Speaker Test</string>
+    <string name="test_item_earspeaker_desc">Earpiece call speaker audio playback check.</string>
+    <string name="test_item_mic_title">Microphone Test</string>
+    <string name="test_item_mic_desc">Mic level recorder check with live audio spectrum meter.</string>
+    <string name="test_item_proximity_title">Ear Proximity Test</string>
+    <string name="test_item_proximity_desc">Proximity sensor distance reading check.</string>
+    <string name="test_item_light_title">Light Sensor Test</string>
+    <string name="test_item_light_desc">Ambient light lux level sensor change check.</string>
+    <string name="test_item_accel_title">Accelerometer Test</string>
+    <string name="test_item_accel_desc">Tilt sphere/box physics animation canvas.</string>
+    <string name="test_item_charging_title">Charging Test</string>
+    <string name="test_item_charging_desc">USB &amp; AC charger plug detection check.</string>
+    <string name="test_item_vibration_title">Vibration Test</string>
+    <string name="test_item_vibration_desc">Haptic feedback vibration motor pattern trigger.</string>
+    <string name="test_item_bluetooth_title">Bluetooth Test</string>
+    <string name="test_item_bluetooth_desc">Bluetooth radio scan state check.</string>
+    <string name="test_item_fingerprint_title">Fingerprint Test</string>
+    <string name="test_item_fingerprint_desc">Biometric prompt and hardware sensor check.</string>
+    <string name="test_item_gps_title">GPS / Location Test</string>
+    <string name="test_item_gps_desc">GPS satellite &amp; network location provider diagnostic check.</string>
+    <string name="test_item_volume_title">Volume Up / Down Button Test</string>
+    <string name="test_item_volume_desc">Key event listener test for hardware volume controls.</string>
     <string name="test_vibration_question">Shake your device. Did you feel the vibration?</string>
     <string name="test_charging_question">Is it charging?</string>
     <string name="test_vibration_feel_question">Can you feel the phone vibrating?</string>

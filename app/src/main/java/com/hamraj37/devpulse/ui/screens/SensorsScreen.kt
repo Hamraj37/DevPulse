@@ -57,6 +57,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -104,7 +105,7 @@ fun SensorsScreen(
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
                             imageVector = Icons.Rounded.Sensors,
-                            contentDescription = "Sensors",
+                            contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(30.dp)
                         )
@@ -234,7 +235,7 @@ fun SensorCardItem(
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
                             imageVector = sensorIcon,
-                            contentDescription = sensorSpec.name,
+                            contentDescription = null,
                             tint = if (isStreaming) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(24.dp)
                         )
@@ -247,36 +248,38 @@ fun SensorCardItem(
                     Text(
                         text = sensorSpec.name,
                         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
 
                     Spacer(modifier = Modifier.height(2.dp))
 
                     Text(
-                        text = "Vendor: ${sensorSpec.vendor} | Type: ${sensorSpec.typeName}",
+                        text = "${stringResource(R.string.lbl_vendor)} ${sensorSpec.vendor} | ${stringResource(R.string.lbl_type)} ${sensorSpec.typeName}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = if (sensorSpec.isWakeUpSensor) OliveActiveBadge.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceContainerHighest
-                ) {
-                    Text(
-                        text = if (sensorSpec.isWakeUpSensor) "Wakeup" else "Non-wakeup",
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 11.sp
-                        ),
-                        color = if (sensorSpec.isWakeUpSensor) OliveActiveBadge else MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
-                        softWrap = false
+                        overflow = TextOverflow.Ellipsis
                     )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = if (sensorSpec.isWakeUpSensor) OliveActiveBadge.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceContainerHighest
+                    ) {
+                        Text(
+                            text = if (sensorSpec.isWakeUpSensor) stringResource(R.string.sensors_wakeup) else stringResource(R.string.sensors_non_wakeup),
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 11.sp
+                            ),
+                            color = if (sensorSpec.isWakeUpSensor) OliveActiveBadge else MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -287,7 +290,7 @@ fun SensorCardItem(
                 ) {
                     Icon(
                         imageVector = if (isStreaming) Icons.Rounded.PauseCircle else Icons.Rounded.PlayCircle,
-                        contentDescription = if (isStreaming) "Stop Streaming" else "Start Live Streaming",
+                        contentDescription = null,
                         tint = if (isStreaming) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(30.dp)
                     )
@@ -322,7 +325,7 @@ fun SensorCardItem(
 
                     if (isLocationOrientationSensor && !isLocationEnabled) {
                         Text(
-                            text = "Location service is disabled. GPS/Location is required for true declination & orientation calibration.",
+                            text = stringResource(R.string.sensors_gps_disabled_warning),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.error,
                             modifier = Modifier.padding(bottom = 6.dp)
@@ -330,7 +333,7 @@ fun SensorCardItem(
                     }
 
                     Text(
-                        text = "LIVE SENSOR STREAM DATA",
+                        text = stringResource(R.string.sensors_live_stream_hdr),
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -341,7 +344,7 @@ fun SensorCardItem(
                     if (vals != null && vals.isNotEmpty()) {
                         when (vals.size) {
                             1 -> {
-                                LiveReadingRow(label = "Value", value = String.format(Locale.US, "%.3f", vals[0]))
+                                LiveReadingRow(label = stringResource(R.string.lbl_value), value = String.format(Locale.US, "%.3f", vals[0]))
                             }
                             2 -> {
                                 LiveReadingRow(label = "X", value = String.format(Locale.US, "%+.3f", vals[0]))
@@ -360,7 +363,7 @@ fun SensorCardItem(
                         }
                     } else {
                         Text(
-                            text = "Awaiting sensor updates...",
+                            text = stringResource(R.string.sensors_awaiting_updates),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

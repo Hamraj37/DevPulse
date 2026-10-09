@@ -34,7 +34,7 @@ class TelemetryRepository(private val context: Context) {
     private val prefs = context.getSharedPreferences("devpulse_test_prefs", Context.MODE_PRIVATE)
 
     private val _testsState = MutableStateFlow<List<TestItem>>(
-        AppAndTestTelemetry.getInitialTestItems().map { item ->
+        AppAndTestTelemetry.getInitialTestItems(context).map { item ->
             val savedName = prefs.getString("test_status_${item.id}", null)
             val savedStatus = try {
                 if (savedName != null) TestStatus.valueOf(savedName) else item.status

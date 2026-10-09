@@ -76,22 +76,22 @@ fun ConnectivityScreen(
     ) {
         // 1. Wi-Fi Capabilities Section
         ConnectivitySectionCard(
-            title = "Wi-Fi Capabilities",
+            title = stringResource(R.string.conn_wifi_capabilities),
             icon = Icons.Rounded.Wifi,
             dividerColor = dividerColor
         ) {
-            ConnectivityItemRow("WiFi Standard", connectivityInfo.wifiStandard)
+            ConnectivityItemRow(stringResource(R.string.conn_wifi_standard), connectivityInfo.wifiStandard)
             HorizontalDivider(color = dividerColor)
-            ConnectivityFeatureRow("WiFi Direct", connectivityInfo.wifiDirectSupported)
+            ConnectivityFeatureRow(stringResource(R.string.conn_wifi_direct), connectivityInfo.wifiDirectSupported)
             HorizontalDivider(color = dividerColor)
-            ConnectivityFeatureRow("5GHz Band", connectivityInfo.wifi5GhzSupported)
+            ConnectivityFeatureRow(stringResource(R.string.conn_5ghz_band), connectivityInfo.wifi5GhzSupported)
             HorizontalDivider(color = dividerColor)
-            ConnectivityFeatureRow("6GHz Band (Wi-Fi 6E)", connectivityInfo.wifi6GhzSupported)
+            ConnectivityFeatureRow(stringResource(R.string.conn_6ghz_band), connectivityInfo.wifi6GhzSupported)
         }
 
         // 2. Bluetooth Capabilities Section
         ConnectivitySectionCard(
-            title = "Bluetooth Capabilities",
+            title = stringResource(R.string.conn_bluetooth_capabilities),
             icon = Icons.Rounded.Bluetooth,
             dividerColor = dividerColor
         ) {
@@ -143,63 +143,63 @@ fun ConnectivityScreen(
             }
 
             ConnectivityFeatureRow(
-                label = "Bluetooth Radio",
+                label = stringResource(R.string.conn_bt_radio),
                 isSupported = connectivityInfo.bluetoothSupported,
-                statusText = if (isBluetoothEnabled) connectivityInfo.bluetoothVersion else "Disabled"
+                statusText = if (isBluetoothEnabled) connectivityInfo.bluetoothVersion else stringResource(R.string.conn_disabled)
             )
             HorizontalDivider(color = dividerColor)
-            ConnectivityFeatureRow("Multiple Advertisements", connectivityInfo.multipleAdvertisementsSupported)
+            ConnectivityFeatureRow(stringResource(R.string.conn_bt_multiple_adv), connectivityInfo.multipleAdvertisementsSupported)
             HorizontalDivider(color = dividerColor)
-            ConnectivityFeatureRow("Offloaded Filtering", connectivityInfo.offloadedFilteringSupported)
+            ConnectivityFeatureRow(stringResource(R.string.conn_bt_offloaded_filtering), connectivityInfo.offloadedFilteringSupported)
             HorizontalDivider(color = dividerColor)
-            ConnectivityFeatureRow("Offloaded Scan Batching", connectivityInfo.offloadedScanBatchingSupported)
+            ConnectivityFeatureRow(stringResource(R.string.conn_bt_offloaded_batching), connectivityInfo.offloadedScanBatchingSupported)
             HorizontalDivider(color = dividerColor)
-            ConnectivityFeatureRow("Bluetooth LE", connectivityInfo.bluetoothLeSupported)
+            ConnectivityFeatureRow(stringResource(R.string.conn_bt_le), connectivityInfo.bluetoothLeSupported)
             HorizontalDivider(color = dividerColor)
-            ConnectivityFeatureRow("LE 2M PHY", connectivityInfo.le2mPhySupported)
+            ConnectivityFeatureRow(stringResource(R.string.conn_bt_le_2m_phy), connectivityInfo.le2mPhySupported)
             HorizontalDivider(color = dividerColor)
-            ConnectivityFeatureRow("LE Coded PHY", connectivityInfo.leCodedPhySupported)
+            ConnectivityFeatureRow(stringResource(R.string.conn_bt_le_coded_phy), connectivityInfo.leCodedPhySupported)
             HorizontalDivider(color = dividerColor)
-            ConnectivityFeatureRow("LE Extended Advertising", connectivityInfo.leExtendedAdvertisingSupported)
+            ConnectivityFeatureRow(stringResource(R.string.conn_bt_le_ext_adv), connectivityInfo.leExtendedAdvertisingSupported)
             HorizontalDivider(color = dividerColor)
-            ConnectivityFeatureRow("LE Periodic Advertising", connectivityInfo.lePeriodicAdvertisingSupported)
+            ConnectivityFeatureRow(stringResource(R.string.conn_bt_le_periodic_adv), connectivityInfo.lePeriodicAdvertisingSupported)
             HorizontalDivider(color = dividerColor)
-            ConnectivityFeatureRow("LE Audio", connectivityInfo.leAudioSupported)
+            ConnectivityFeatureRow(stringResource(R.string.conn_bt_le_audio), connectivityInfo.leAudioSupported)
         }
 
         // 3. NFC Capabilities Section
         ConnectivitySectionCard(
-            title = "NFC Capabilities",
+            title = stringResource(R.string.conn_nfc_capabilities),
             icon = Icons.Rounded.Nfc,
             dividerColor = dividerColor
         ) {
-            ConnectivityFeatureRow("NFC", connectivityInfo.nfcSupported)
+            ConnectivityFeatureRow(stringResource(R.string.conn_nfc), connectivityInfo.nfcSupported)
             HorizontalDivider(color = dividerColor)
-            ConnectivityItemRow("Status", connectivityInfo.nfcStatus)
+            ConnectivityItemRow(stringResource(R.string.lbl_status), connectivityInfo.nfcStatus)
             HorizontalDivider(color = dividerColor)
-            ConnectivityFeatureRow("Secure NFC", connectivityInfo.secureNfcSupported)
+            ConnectivityFeatureRow(stringResource(R.string.conn_secure_nfc), connectivityInfo.secureNfcSupported)
         }
 
         // 4. Ultra Wide Band (UWB) Section
         ConnectivitySectionCard(
-            title = "Ultra Wide Band (UWB)",
+            title = stringResource(R.string.conn_uwb_capabilities),
             icon = Icons.Rounded.Radar,
             dividerColor = dividerColor
         ) {
-            ConnectivityFeatureRow("UWB Hardware", connectivityInfo.uwbSupported, statusText = connectivityInfo.uwbStatus)
+            ConnectivityFeatureRow(stringResource(R.string.conn_uwb_hardware), connectivityInfo.uwbSupported, statusText = connectivityInfo.uwbStatus)
         }
 
         // 5. USB Capabilities Section
         ConnectivitySectionCard(
-            title = "USB Capabilities",
+            title = stringResource(R.string.conn_usb_capabilities),
             icon = Icons.Rounded.Usb,
             dividerColor = dividerColor
         ) {
-            ConnectivityFeatureRow("USB Host", connectivityInfo.usbHostSupported)
+            ConnectivityFeatureRow(stringResource(R.string.conn_usb_host), connectivityInfo.usbHostSupported)
             HorizontalDivider(color = dividerColor)
-            ConnectivityFeatureRow("USB Accessory", connectivityInfo.usbAccessorySupported)
+            ConnectivityFeatureRow(stringResource(R.string.conn_usb_accessory), connectivityInfo.usbAccessorySupported)
             HorizontalDivider(color = dividerColor)
-            ConnectivityFeatureRow("USB Debugging", connectivityInfo.usbDebuggingEnabled, statusText = connectivityInfo.usbStatus)
+            ConnectivityFeatureRow(stringResource(R.string.conn_usb_debugging), connectivityInfo.usbDebuggingEnabled, statusText = connectivityInfo.usbStatus)
         }
     }
 }
@@ -232,7 +232,7 @@ fun ConnectivitySectionCard(
                 ) {
                     Icon(
                         imageVector = icon,
-                        contentDescription = title,
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(6.dp)
                     )
@@ -293,12 +293,12 @@ fun ConnectivityFeatureRow(
             } else {
                 Icon(
                     imageVector = if (isSupported) Icons.Rounded.CheckCircle else Icons.Rounded.Cancel,
-                    contentDescription = if (isSupported) "Supported" else "Not Supported",
+                    contentDescription = null,
                     tint = if (isSupported) OliveActiveBadge else MaterialTheme.colorScheme.error,
                     modifier = Modifier.size(20.dp)
                 )
                 Text(
-                    text = if (isSupported) "Supported" else "Not Supported",
+                    text = if (isSupported) stringResource(R.string.lbl_supported) else stringResource(R.string.lbl_not_supported),
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontWeight = FontWeight.Bold,
                         color = if (isSupported) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.error

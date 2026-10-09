@@ -84,7 +84,7 @@ fun DevPulseTopAppBar(
                 IconButton(onClick = onBack) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                        contentDescription = "Back"
+                        contentDescription = stringResource(R.string.desc_back)
                     )
                 }
             }
@@ -217,7 +217,7 @@ fun StandardTestScreen(
                                 Box(contentAlignment = Alignment.Center) {
                                     Icon(
                                         imageVector = Icons.Rounded.Close,
-                                        contentDescription = "No",
+                                        contentDescription = null,
                                         tint = failFgColor,
                                         modifier = Modifier.size(12.dp)
                                     )
@@ -256,7 +256,7 @@ fun StandardTestScreen(
                                 Box(contentAlignment = Alignment.Center) {
                                     Icon(
                                         imageVector = Icons.Rounded.Check,
-                                        contentDescription = "Yes",
+                                        contentDescription = null,
                                         tint = passFgColor,
                                         modifier = Modifier.size(12.dp)
                                     )
@@ -353,7 +353,7 @@ fun DonateDialog(
         icon = {
             Icon(
                 imageVector = Icons.Rounded.Favorite,
-                contentDescription = "Donate",
+                contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )
         },
@@ -444,7 +444,7 @@ fun DonateDialog(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Payment,
-                            contentDescription = "Pay via UPI",
+                            contentDescription = null,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))

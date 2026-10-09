@@ -79,7 +79,7 @@ fun DisplayScreen(
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.Rounded.Smartphone,
-                                contentDescription = "Display Specs",
+                                contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(30.dp)
                             )
@@ -124,8 +124,8 @@ fun DisplayScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    DisplayMetricPill("Physical Size & Refresh", "${displayInfo.physicalSize} | ${displayInfo.refreshRate}")
-                    DisplayMetricPill("Orientation", displayInfo.orientation)
+                    DisplayMetricPill(stringResource(R.string.display_physical_size_refresh), "${displayInfo.physicalSize} | ${displayInfo.refreshRate}")
+                    DisplayMetricPill(stringResource(R.string.display_orientation), displayInfo.orientation)
                 }
             }
         }
@@ -146,7 +146,7 @@ fun DisplayScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.DisplaySettings,
-                        contentDescription = "Display Parameters",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -159,13 +159,13 @@ fun DisplayScreen(
 
                 HorizontalDivider(color = dividerColor)
 
-                DisplayItemRow("Resolution", displayInfo.resolution)
+                DisplayItemRow(stringResource(R.string.display_resolution), displayInfo.resolution)
                 HorizontalDivider(color = dividerColor)
-                DisplayItemRow("Density", displayInfo.density)
+                DisplayItemRow(stringResource(R.string.display_density), displayInfo.density)
                 HorizontalDivider(color = dividerColor)
-                DisplayItemRow("Font Scale", displayInfo.fontScale)
+                DisplayItemRow(stringResource(R.string.display_font_scale), displayInfo.fontScale)
                 HorizontalDivider(color = dividerColor)
-                DisplayItemRow("Physical Size", displayInfo.physicalSize)
+                DisplayItemRow(stringResource(R.string.display_physical_size), displayInfo.physicalSize)
                 HorizontalDivider(color = dividerColor)
 
                 // Refresh Rate Options with bullet chips
@@ -205,11 +205,11 @@ fun DisplayScreen(
                 }
                 HorizontalDivider(color = dividerColor)
 
-                DisplayItemRow("HDR", displayInfo.hdrSupported)
+                DisplayItemRow(stringResource(R.string.display_hdr), displayInfo.hdrSupported)
                 HorizontalDivider(color = dividerColor)
-                DisplayItemRow("HDR Capabilities", displayInfo.hdrCapabilities)
+                DisplayItemRow(stringResource(R.string.display_hdr_capabilities), displayInfo.hdrCapabilities)
                 HorizontalDivider(color = dividerColor)
-                DisplayItemRow("Wide Color Gamut", displayInfo.wideColorGamut)
+                DisplayItemRow(stringResource(R.string.display_wide_color_gamut), displayInfo.wideColorGamut)
                 HorizontalDivider(color = dividerColor)
 
                 // Brightness Progress Bar
@@ -243,11 +243,11 @@ fun DisplayScreen(
                 }
                 HorizontalDivider(color = dividerColor)
 
-                DisplayItemRow("Brightness Mode", displayInfo.brightnessMode)
+                DisplayItemRow(stringResource(R.string.display_brightness_mode), displayInfo.brightnessMode)
                 HorizontalDivider(color = dividerColor)
-                DisplayItemRow("Screen Timeout", displayInfo.screenTimeout)
+                DisplayItemRow(stringResource(R.string.display_screen_timeout), displayInfo.screenTimeout)
                 HorizontalDivider(color = dividerColor)
-                DisplayItemRow("Orientation", displayInfo.orientation)
+                DisplayItemRow(stringResource(R.string.display_orientation), displayInfo.orientation)
             }
         }
     }

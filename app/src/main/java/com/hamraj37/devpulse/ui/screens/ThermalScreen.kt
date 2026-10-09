@@ -35,7 +35,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.platform.LocalContext
 import com.hamraj37.devpulse.data.model.ThermalInfo
 import com.hamraj37.devpulse.data.model.ThermalZone
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
@@ -47,7 +46,6 @@ fun ThermalScreen(
     thermalInfo: ThermalInfo,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -84,7 +82,7 @@ fun ThermalScreen(
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     imageVector = Icons.Rounded.Thermostat,
-                                    contentDescription = "Thermal Sensors",
+                                    contentDescription = null,
                                     tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(28.dp)
                                 )
@@ -116,7 +114,7 @@ fun ThermalScreen(
                         color = MaterialTheme.colorScheme.primaryContainer
                     ) {
                         Text(
-                            text = "${thermalInfo.thermalZones.size} Zones",
+                            text = "${thermalInfo.thermalZones.size} ${stringResource(R.string.thermal_zones_label)}",
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -184,12 +182,15 @@ fun ThermalScreen(
 fun ThermalCardItem(
     zone: ThermalZone
 ) {
-    val context = LocalContext.current
     val temp = zone.tempCelsius
+    val highLabel = stringResource(R.string.thermal_label_high)
+    val warmLabel = stringResource(R.string.thermal_label_warm)
+    val normalLabel = stringResource(R.string.thermal_label_normal)
+
     val (tempColor, tempLabel) = when {
-        temp >= 48f -> Color(0xFFE53935) to "HIGH"
-        temp >= 40f -> Color(0xFFFB8C00) to "WARM"
-        else -> OliveActiveBadge to "NORMAL"
+        temp >= 48f -> Color(0xFFE53935) to highLabel
+        temp >= 40f -> Color(0xFFFB8C00) to warmLabel
+        else -> OliveActiveBadge to normalLabel
     }
 
     Card(
@@ -215,7 +216,7 @@ fun ThermalCardItem(
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
                             imageVector = Icons.Rounded.Thermostat,
-                            contentDescription = zone.name,
+                            contentDescription = null,
                             tint = tempColor,
                             modifier = Modifier.size(20.dp)
                         )

@@ -280,7 +280,7 @@ fun AboutScreen(
                                 .crossfade(true)
                                 .build()
                         ),
-                        contentDescription = "Developer Profile Photo",
+                        contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxSize()
@@ -315,11 +315,11 @@ fun AboutScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Email,
-                            contentDescription = "Email",
+                            contentDescription = null,
                             modifier = Modifier.size(18.dp)
                         )
                         Text(
-                            text = "Email",
+                            text = stringResource(R.string.about_email),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                         )
                     }
@@ -341,13 +341,13 @@ fun AboutScreen(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Text(
-                    text = "Suggestions, Questions, Issues",
+                    text = stringResource(R.string.about_community_title),
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Text(
-                    text = "If you have suggestions, questions, or issues with DevPulse, you can join our Telegram Group",
+                    text = stringResource(R.string.about_community_desc),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -368,11 +368,11 @@ fun AboutScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Rounded.Send,
-                            contentDescription = "Telegram",
+                            contentDescription = null,
                             modifier = Modifier.size(18.dp)
                         )
                         Text(
-                            text = "Telegram",
+                            text = stringResource(R.string.about_telegram),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                         )
                     }

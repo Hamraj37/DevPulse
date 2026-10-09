@@ -192,7 +192,7 @@ fun AppsScreen(
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = Icons.Rounded.Search,
-                        contentDescription = "Search Apps",
+                        contentDescription = null,
                         tint = if (isSearchExpanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(20.dp)
                     )
@@ -220,7 +220,7 @@ fun AppsScreen(
                         IconButton(onClick = { onSearchQueryChange("") }) {
                             Icon(
                                 imageVector = Icons.Rounded.Clear,
-                                contentDescription = "Clear search"
+                                contentDescription = null
                             )
                         }
                     }
@@ -244,7 +244,7 @@ fun AppsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Showing ${filteredApps.size} Applications",
+                    text = stringResource(R.string.apps_showing_count, filteredApps.size),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -384,7 +384,7 @@ fun AppDetailBottomSheet(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.PlayArrow,
-                                contentDescription = "Launch App",
+                                contentDescription = null,
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
@@ -414,7 +414,7 @@ fun AppDetailBottomSheet(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Download,
-                                contentDescription = "Extract App",
+                                contentDescription = null,
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
@@ -458,7 +458,7 @@ fun AppDetailBottomSheet(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Storefront,
-                                contentDescription = "Google Play",
+                                contentDescription = null,
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
@@ -490,7 +490,7 @@ fun AppDetailBottomSheet(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.OpenInNew,
-                                contentDescription = "App Settings",
+                                contentDescription = null,
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
@@ -714,13 +714,13 @@ fun AppStorageAnalysisCard(appInfo: AppInfo) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Rounded.Analytics,
-                        contentDescription = "App Storage Analysis",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(22.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "App Storage Analysis",
+                        text = stringResource(R.string.apps_storage_analysis),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 }
@@ -732,7 +732,7 @@ fun AppStorageAnalysisCard(appInfo: AppInfo) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "User Installed Apps (${userApps.size})",
+                        text = stringResource(R.string.apps_user_installed_count, userApps.size),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -764,7 +764,7 @@ fun AppStorageAnalysisCard(appInfo: AppInfo) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "System OS Apps (${systemApps.size})",
+                        text = stringResource(R.string.apps_system_os_count, systemApps.size),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.secondary
                     )
@@ -777,7 +777,7 @@ fun AppStorageAnalysisCard(appInfo: AppInfo) {
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    text = "Top Storage Occupying Apps",
+                    text = stringResource(R.string.apps_top_storage_occupying),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -855,7 +855,7 @@ fun AppIconImage(
     if (bitmap != null) {
         Image(
             bitmap = bitmap,
-            contentDescription = packageName,
+            contentDescription = null,
             modifier = modifier
         )
     } else {

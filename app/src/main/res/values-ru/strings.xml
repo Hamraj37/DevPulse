@@ -116,6 +116,11 @@
     <string name="lbl_installer">Установщик</string>
     <string name="lbl_target_sdk">Целевой SDK</string>
     <string name="lbl_min_sdk">Минимальный SDK</string>
+    <string name="apps_storage_analysis">Анализ памяти приложений</string>
+    <string name="apps_showing_count">Показано приложений: %d</string>
+    <string name="apps_user_installed_count">Установленные пользователем (%d)</string>
+    <string name="apps_system_os_count">Системные приложения (%d)</string>
+    <string name="apps_top_storage_occupying">Приложения, занимающие больше всего памяти</string>
 
     <!-- Dialogs & Prompts -->
     <string name="dialog_update_available_title">Доступно обновление (%1$s)</string>
@@ -220,6 +225,13 @@
     <string name="memory_zram_swap">zRAM (Файл подкачки)</string>
     <string name="memory_ram_volatile">ОЗУ (Оперативная память)</string>
     <string name="memory_ram_memory">Память ОЗУ</string>
+    <string name="memory_system_storage">Системная память</string>
+    <string name="memory_gb_of">ГБ из</string>
+    <string name="memory_gb_used">ГБ использовано</string>
+    <string name="memory_gb_free">ГБ свободно</string>
+    <string name="memory_compression_saved">Сжатие сэкономило %sx</string>
+    <string name="memory_gb_uncompressed">%s ГБ без сжатия</string>
+    <string name="memory_gb_in_ram">%s ГБ в ОЗУ</string>
 
     <!-- Network & Connectivity Specs Screens -->
     <string name="network_download">СКАЧИВАНИЕ</string>
@@ -228,6 +240,56 @@
     <string name="network_realtime">В реальном времени</string>
     <string name="network_usage">Трафик</string>
     <string name="network_public_ip">Публичный IP</string>
+    <string name="network_no_active_network">Нет активной сети</string>
+    <string name="network_offline">Офлайн</string>
+    <string name="network_connect_prompt">Пожалуйста, подключитесь к Wi-Fi или мобильным данным</string>
+    <string name="network_location_service_disabled">Служба геолокации отключена</string>
+    <string name="network_location_permission_required">Требуется разрешение на геолокацию</string>
+    <string name="network_location_disclaimer">Для получения сведений об SSID и BSSID Wi-Fi в Android 8.1+ требуются службы геолокации (GPS) и соответствующие разрешения.</string>
+    <string name="network_connection_type">Тип подключения</string>
+    <string name="network_download_speed">Загрузка в реальном времени</string>
+    <string name="network_upload_speed">Отдача в реальном времени</string>
+    <string name="network_operator">Оператор сети</string>
+    <string name="network_type">Тип сети</string>
+    <string name="network_cellular_ipv4">Мобильный IPv4</string>
+    <string name="network_cellular_ipv6">Мобильный IPv6</string>
+    <string name="network_data_state">Состояние передачи данных</string>
+    <string name="network_interface">Сетевой интерфейс</string>
+    <string name="network_roaming">Роуминг</string>
+    <string name="network_country_mcc">Страна / MCC</string>
+    <string name="network_mcc_mnc">MCC / MNC</string>
+    <string name="network_mobile_signal">Сигнал сотовой сети</string>
+    <string name="network_public_ip_location">Местоположение публичного IP</string>
+    <string name="network_disconnected">Отключено</string>
+    <string name="network_active_conn">Активное подключение</string>
+    <string name="network_none">Отсутствует</string>
+    <string name="network_wifi">Wi-Fi</string>
+    <string name="network_not_connected">Не подключено</string>
+    <string name="network_mobile_data">Мобильные данные</string>
+    <string name="network_recommendation">Рекомендация</string>
+    <string name="network_enable_settings_rec">Включите Wi-Fi или Мобильные данные в Настройках</string>
+    <string name="network_ssid">SSID / Сеть</string>
+    <string name="network_bssid">BSSID</string>
+    <string name="network_ip_address">IP-адрес</string>
+    <string name="network_ipv6_address">IPv6-адрес</string>
+    <string name="network_gateway">Шлюз</string>
+    <string name="network_subnet_mask">Маска подсети</string>
+    <string name="network_dns1">DNS 1</string>
+    <string name="network_lease_duration">Срок аренды IP</string>
+    <string name="network_link_speed">Скорость соединения</string>
+    <string name="network_channel">Канал</string>
+    <string name="network_frequency">Частота</string>
+    <string name="network_wifi_standard">Стандарт Wi-Fi</string>
+    <string name="network_security_type">Тип защиты</string>
+    <string name="network_data_usage_summary">Сводка использования данных</string>
+    <string name="network_mobile_rx">Мобильные получено: %s</string>
+    <string name="network_mobile_tx">Мобильные отправлено: %s</string>
+    <string name="network_wifi_rx">Wi-Fi получено: %s</string>
+    <string name="network_wifi_tx">Wi-Fi отправлено: %s</string>
+    <string name="network_public_ip_title">Публичный IP-адрес</string>
+    <string name="network_detected_public_ip">Обнаружен публичный IP: %s</string>
+    <string name="network_isp_carrier">Провайдер / Оператор: %s</string>
+    <string name="network_location_label">Местоположение: %s</string>
     <string name="conn_bluetooth_disabled_msg">Пожалуйста, включите Bluetooth для просмотра полных аппаратных параметров.</string>
     <string name="conn_bluetooth_disabled_hdr">Bluetooth выключен</string>
     <string name="conn_wifi_capabilities">Возможности Wi-Fi</string>
@@ -235,21 +297,58 @@
     <string name="conn_nfc_capabilities">Возможности NFC</string>
     <string name="conn_uwb_capabilities">Сверхширокополосная связь (UWB)</string>
     <string name="conn_usb_capabilities">Возможности USB</string>
+    <string name="conn_wifi_standard">Стандарт Wi-Fi</string>
+    <string name="conn_wifi_direct">Wi-Fi Direct</string>
+    <string name="conn_5ghz_band">Диапазон 5 ГГц</string>
+    <string name="conn_6ghz_band">Диапазон 6 ГГц (Wi-Fi 6E)</string>
+    <string name="conn_disabled">Отключено</string>
+    <string name="conn_bt_radio">Модуль Bluetooth</string>
+    <string name="conn_bt_multiple_adv">Множественные объявления (Advertisements)</string>
+    <string name="conn_bt_offloaded_filtering">Аппаратная фильтрация</string>
+    <string name="conn_bt_offloaded_batching">Аппаратная пакетизация сканирования</string>
+    <string name="conn_bt_le">Bluetooth LE</string>
+    <string name="conn_bt_le_2m_phy">LE 2M PHY</string>
+    <string name="conn_bt_le_coded_phy">LE Coded PHY</string>
+    <string name="conn_bt_le_ext_adv">Расширенное вещание LE</string>
+    <string name="conn_bt_le_periodic_adv">Периодическое вещание LE</string>
+    <string name="conn_bt_le_audio">LE Audio</string>
+    <string name="conn_nfc">NFC</string>
+    <string name="conn_secure_nfc">Безопасный NFC (Secure NFC)</string>
+    <string name="conn_uwb_hardware">Оборудование UWB</string>
+    <string name="conn_usb_host">USB Host</string>
+    <string name="conn_usb_accessory">USB Accessory</string>
+    <string name="conn_usb_debugging">Отладка по USB</string>
 
     <!-- Display Specs Screen -->
     <string name="display_hardware_details">Параметры экрана и дисплея</string>
     <string name="display_refresh_rate">Частота обновления</string>
     <string name="display_brightness_level">Уровень яркости</string>
+    <string name="display_physical_size_refresh">Физический размер и частота</string>
+    <string name="display_resolution">Разрешение</string>
+    <string name="display_density">Плотность пикселей (DPI)</string>
+    <string name="display_font_scale">Масштаб шрифта</string>
+    <string name="display_physical_size">Физический размер</string>
+    <string name="display_hdr">HDR</string>
+    <string name="display_hdr_capabilities">Возможности HDR</string>
+    <string name="display_wide_color_gamut">Широкий цветовой охват</string>
+    <string name="display_brightness_mode">Режим яркости</string>
+    <string name="display_screen_timeout">Тайм-аут экрана</string>
+    <string name="display_orientation">Ориентация</string>
 
     <!-- Thermal & Sensor Specs Screens -->
     <string name="thermal_zone_monitors">Мониторинг тепловых зон</string>
     <string name="thermal_headroom_capacity">Запас по температуре (Thermal Headroom)</string>
-    <string name="sensors_available_hdr">Датчики, доступные на вашем устройстве</string>
+    <string name="thermal_zones_label">Зоны</string>
+    <string name="thermal_label_high">ВЫСОКАЯ</string>
+    <string name="thermal_label_warm">ТЕПЛАЯ</string>
+    <string name="thermal_label_normal">НОРМА</string>
+    <string name="sensors_available_hdr">датчиков на устройстве</string>
     <string name="sensors_realtime_stream">Поток данных и событий в реальном времени</string>
     <string name="sensors_live_stream_hdr">ПОТОК ДАННЫХ С ДАТЧИКОВ LIVE</string>
     <string name="sensors_gps_disabled_warning">Служба геолокации отключена. GPS/Геолокация необходимы для расчета магнитного склонения и калибровки ориентации.</string>
-    <string name="sensors_wakeup">С пробуждением (Wakeup)</string>
-    <string name="sensors_non_wakeup">Без пробуждения (Non-wakeup)</string>
+    <string name="sensors_wakeup">С пробуждением</string>
+    <string name="sensors_non_wakeup">Без пробуждения</string>
+    <string name="sensors_awaiting_updates">Ожидание данных с датчика&#8230;</string>
 
     <!-- Camera Specs Screen -->
     <string name="camera_please_read_hdr">Обратите внимание</string>
@@ -257,6 +356,42 @@
     <string name="camera_capabilities">Возможности камеры</string>
     <string name="camera_resolutions">Поддерживаемые разрешения фото и видео</string>
     <string name="camera_specifications">Спецификации</string>
+    <string name="camera_sec_lens_optics">Объектив и оптика</string>
+    <string name="camera_sec_sensor_specs">Характеристики и архитектура сенсора</string>
+    <string name="camera_sec_exposure_color">Экспозиция и обработка цвета</string>
+    <string name="camera_sec_video_flash">Видео, вспышка и функции</string>
+    <string name="camera_sec_capabilities_resolutions">Возможности, разрешения и потоки</string>
+    <string name="camera_lens_placement">Расположение объектива</string>
+    <string name="camera_focal_lengths">Фокусные расстояния</string>
+    <string name="camera_apertures">Диафрагма (Apertures)</string>
+    <string name="camera_ois">Оптическая стабилизация (OIS)</string>
+    <string name="camera_focus_distance_calibration">Калибровка фокусного расстояния</string>
+    <string name="camera_filter_densities">Плотность фильтров</string>
+    <string name="camera_sensor_size">Размер сенсора</string>
+    <string name="camera_sensor_resolution">Разрешение сенсора</string>
+    <string name="camera_effective_megapixels">Эффективные мегапиксели</string>
+    <string name="camera_pixel_array_size">Размер матрицы пикселей</string>
+    <string name="camera_color_filter">Цветовой фильтр (Bayer/RGB)</string>
+    <string name="camera_orientation">Ориентация</string>
+    <string name="camera_timestamp_source">Источник временных меток</string>
+    <string name="camera_hot_pixel_modes">Режимы горячих пикселей</string>
+    <string name="camera_ae_modes">Режимы автоэкспозиции (AE)</string>
+    <string name="camera_compensation_step">Шаг компенсации экспозиции</string>
+    <string name="camera_af_modes">Режимы автофокуса (AF)</string>
+    <string name="camera_awb_modes">Автобаланс белого (AWB)</string>
+    <string name="camera_ae_af_awb_regions">Макс. зоны AE / AF / AWB</string>
+    <string name="camera_aberration_modes">Режимы аберрации</string>
+    <string name="camera_antibanding_modes">Режимы подавления мерцания</string>
+    <string name="camera_edge_modes">Режимы резкости (Edge)</string>
+    <string name="camera_flash_available">Наличие вспышки</string>
+    <string name="camera_video_stabilization">Режимы стабилизации видео</string>
+    <string name="camera_face_detection">Режимы распознавания лиц</string>
+    <string name="camera_scene_modes">Сюжетные режимы</string>
+    <string name="camera_effects_available">Доступные эффекты</string>
+    <string name="camera_test_pattern_modes">Режимы тестовой таблицы</string>
+    <string name="camera_dynamic_range_profiles">Профили динамического диапазона</string>
+    <string name="camera_max_output_streams">Макс. выходные потоки</string>
+    <string name="camera_thumbnail_sizes">Размеры миниатюр</string>
 
     <!-- Apps Screen -->
     <string name="apps_filter_placeholder">Поиск по названию или пакету&#8230;</string>
@@ -309,10 +444,12 @@
     <string name="wifi_analyzer_search_placeholder">Поиск сетей Wi-Fi...</string>
 
     <!-- Settings & About Screens -->
+    <string name="settings_title">Настройки</string>
     <string name="settings_preferences_customization">Настройки приложения и персонализация</string>
     <string name="settings_use_system_colors">Использовать системные цвета</string>
     <string name="settings_match_wallpaper_colors">Цвета на основе обоев</string>
     <string name="settings_theme_color">Цвет темы</string>
+    <string name="settings_dynamic_material_you">Динамический Material You</string>
     <string name="settings_clear_data_confirm_msg">Вы уверены, что хотите очистить кэш приложения и сбросить настройки?</string>
     <string name="settings_donate_msg">Вы можете поддержать мою работу и выразить благодарность небольшим пожертвованием</string>
     <string name="settings_privacy_policy_desc">DevPulse не собирает и не передает персональные данные пользователей. Вся телеметрия, аналитика и логи обрабатываются локально на вашем устройстве.</string>
@@ -320,6 +457,10 @@
     <string name="settings_choose_theme">Выберите тему</string>
     <string name="settings_choose_theme_color">Выберите цвет темы</string>
     <string name="about_devpulse_desc">DevPulse — это комплексный инструмент системной аналитики Android, обеспечивающий телеметрию в реальном времени, диагностику оборудования и аудит системы.</string>
+    <string name="about_email">Эл. почта</string>
+    <string name="about_community_title">Предложения, вопросы, ошибки</string>
+    <string name="about_community_desc">Если у вас есть предложения, вопросы или проблемы с DevPulse, присоединяйтесь к нашей группе в Telegram</string>
+    <string name="about_telegram">Telegram</string>
 
     <!-- Tests & Hardware Diagnostics Prompts -->
     <string name="tests_hdr">Диагностические тесты оборудования</string>
@@ -328,6 +469,24 @@
     <string name="tests_interactive_tests">Интерактивные тесты оборудования</string>
     <string name="tests_suggestions_available">Доступны рекомендации</string>
     <string name="tests_all_passed">Все автоматические тесты пройдены</string>
+    <string name="auto_check_last_restart_title">Последняя перезагрузка</string>
+    <string name="auto_check_last_restart_ok">Устройство недавно перезапускалось</string>
+    <string name="auto_check_last_restart_uptime">Время работы без перезагрузки: %d дн.</string>
+    <string name="auto_check_usb_debugging_title">Отладка по USB</string>
+    <string name="auto_check_usb_debugging_warn">Отладка по USB включена. Рекомендуется отключить отладку по USB</string>
+    <string name="auto_check_usb_debugging_ok">Отладка по USB отключена</string>
+    <string name="auto_check_brightness_title">Яркость экрана</string>
+    <string name="auto_check_brightness_warn">Уменьшите яркость экрана для экономии заряда батареи</string>
+    <string name="auto_check_brightness_ok">Яркость экрана оптимизирована</string>
+    <string name="auto_check_timeout_title">Тайм-аут экрана</string>
+    <string name="auto_check_timeout_ok">Тайм-аут экрана настроен оптимально</string>
+    <string name="auto_check_timeout_sec">Тайм-аут экрана установлен на %d сек.</string>
+    <string name="auto_check_lock_title">Блокировка экрана</string>
+    <string name="auto_check_lock_ok">Блокировка экрана успешно настроена</string>
+    <string name="auto_check_lock_warn">Блокировка экрана не настроена</string>
+    <string name="auto_check_nfc_title">NFC</string>
+    <string name="auto_check_nfc_on">NFC включен</string>
+    <string name="auto_check_nfc_off">NFC выключен</string>
     <string name="test_display_cycle_colors">Нажимайте на экран для смены цветов</string>
     <string name="test_multitouch_prompt">Коснитесь экрана несколькими пальцами</string>
     <string name="test_multitouch_question">Экран распознает одновременные касания?</string>
@@ -345,6 +504,40 @@
     <string name="test_gps_question">Определено ли местоположение / сигнал GPS?</string>
     <string name="test_volume_question">Нажмите клавишу громкости вверх или вниз. Есть ли отклик?</string>
     <string name="test_generic_question">Тест работает корректно?</string>
+
+    <!-- Test Items Titles & Descriptions -->
+    <string name="test_item_auto_title">Автоматические тесты</string>
+    <string name="test_item_auto_desc">Фоновая автоматическая проверка беспроводных модулей, батареи и системы.</string>
+    <string name="test_item_display_title">Тест дисплея</string>
+    <string name="test_item_display_desc">Заливка цветами (красный, зеленый, синий, белый, черный) для проверки битых пикселей.</string>
+    <string name="test_item_touch_title">Тест мультитач</string>
+    <string name="test_item_touch_desc">Визуализация касаний с отслеживанием нескольких пальцев на экране.</string>
+    <string name="test_item_flashlight_title">Тест фонарика</string>
+    <string name="test_item_flashlight_desc">Переключение светодиодной вспышки камеры.</string>
+    <string name="test_item_speaker_title">Тест громкоговорителя</string>
+    <string name="test_item_speaker_desc">Проверка воспроизведения стереозвука и тональности.</string>
+    <string name="test_item_earspeaker_title">Тест разговорного динамика</string>
+    <string name="test_item_earspeaker_desc">Проверка воспроизведения звука через разговорный динамик.</string>
+    <string name="test_item_mic_title">Тест микрофона</string>
+    <string name="test_item_mic_desc">Проверка записи уровня звука с индикатором спектра в реальном времени.</string>
+    <string name="test_item_proximity_title">Тест датчика приближения</string>
+    <string name="test_item_proximity_desc">Проверка считывания расстояния датчиком приближения.</string>
+    <string name="test_item_light_title">Тест датчика освещенности</string>
+    <string name="test_item_light_desc">Проверка изменения освещенности в люксах (Lux).</string>
+    <string name="test_item_accel_title">Тест акселерометра</string>
+    <string name="test_item_accel_desc">Интерактивная гироскопическая гиро-анимация с наклоном.</string>
+    <string name="test_item_charging_title">Тест зарядки</string>
+    <string name="test_item_charging_desc">Проверка подключения USB и сетевого зарядного устройства.</string>
+    <string name="test_item_vibration_title">Тест вибрации</string>
+    <string name="test_item_vibration_desc">Запуск мотора вибрации и тактильной отдачи.</string>
+    <string name="test_item_bluetooth_title">Тест Bluetooth</string>
+    <string name="test_item_bluetooth_desc">Проверка состояния радиомодуля Bluetooth.</string>
+    <string name="test_item_fingerprint_title">Тест сканера отпечатков</string>
+    <string name="test_item_fingerprint_desc">Проверка биометрического сканера и сенсора отпечатков пальцев.</string>
+    <string name="test_item_gps_title">Тест GPS / Геолокации</string>
+    <string name="test_item_gps_desc">Проверка спутников GPS и провайдера сетевой геолокации.</string>
+    <string name="test_item_volume_title">Тест клавиш громкости</string>
+    <string name="test_item_volume_desc">Проверка перехвата событий нажатий физических клавиш громкости.</string>
 
     <!-- Services, Widgets & Manifest Properties -->
     <string name="notification_channel_floating_monitor">Плавающий индикатор монитора</string>

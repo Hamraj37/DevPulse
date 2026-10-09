@@ -81,7 +81,7 @@ fun NetworkScreen(
             val op = networkInfo.networkOperatorName
             if (op.contains("Mobile Data")) op else "$op - Mobile Data"
         }
-        isDisconnected -> "No Active Network"
+        isDisconnected -> stringResource(R.string.network_no_active_network)
         else -> networkInfo.ssid
     }
 
@@ -89,7 +89,7 @@ fun NetworkScreen(
         isCellular -> {
             if (networkInfo.networkType.contains("5G") || networkInfo.wifiBadge == "5G") "5G" else "4G LTE"
         }
-        isDisconnected -> "Offline"
+        isDisconnected -> stringResource(R.string.network_offline)
         else -> networkInfo.wifiBadge
     }
 
@@ -99,7 +99,7 @@ fun NetworkScreen(
     }
 
     val bannerSubtitle = when {
-        isDisconnected -> "Please connect to Wi-Fi or Mobile Data"
+        isDisconnected -> stringResource(R.string.network_connect_prompt)
         else -> networkInfo.ipAddress
     }
 
@@ -134,7 +134,7 @@ fun NetworkScreen(
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = bannerIcon,
-                                contentDescription = "Active Network",
+                                contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(30.dp)
                             )
@@ -373,20 +373,20 @@ fun NetworkScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.WifiOff,
-                        contentDescription = "Location Warning",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier.size(28.dp)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = if (networkInfo.ssid.contains("Disabled")) "Location Service Disabled" else "Location Permission Required",
+                            text = if (networkInfo.ssid.contains("Disabled")) stringResource(R.string.network_location_service_disabled) else stringResource(R.string.network_location_permission_required),
                             style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onErrorContainer
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Android 8.1+ requires Location services (GPS) and permissions to access Wi-Fi SSID and BSSID details.",
+                            text = stringResource(R.string.network_location_disclaimer),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f)
                         )
@@ -411,15 +411,15 @@ fun NetworkScreen(
                 ) {
                     Icon(
                         imageVector = bannerIcon,
-                        contentDescription = "Network Details",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = when {
-                            isCellular -> "Detailed Mobile Data & Network Specs"
-                            isDisconnected -> "Network Connection Status"
-                            else -> "Detailed Wi-Fi & Network Specs"
+                            isCellular -> stringResource(R.string.network_mobile_specs)
+                            isDisconnected -> stringResource(R.string.network_conn_status)
+                            else -> stringResource(R.string.network_wifi_specs)
                         },
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface
@@ -430,47 +430,47 @@ fun NetworkScreen(
 
                 val networkSpecs = when {
                     isCellular -> listOf(
-                        "Connection Type" to "Mobile Data",
-                        "Real-time Download" to networkInfo.downloadSpeed,
-                        "Real-time Upload" to networkInfo.uploadSpeed,
-                        "Network Operator" to networkInfo.networkOperatorName,
-                        "Network Type" to networkInfo.networkType,
-                        "Cellular IPv4" to networkInfo.ipAddress,
-                        "Cellular IPv6" to networkInfo.ipv6Address,
-                        "Data State" to networkInfo.dataState,
-                        "Interface" to networkInfo.interfaceName,
-                        "Roaming" to networkInfo.roamingState,
-                        "Country / MCC" to networkInfo.countryMcc,
-                        "MCC / MNC" to networkInfo.mccMnc,
-                        "Mobile Signal" to networkInfo.mobileSignal,
-                        "Public IP Location" to networkInfo.location
+                        stringResource(R.string.network_connection_type) to stringResource(R.string.network_mobile_data),
+                        stringResource(R.string.network_download_speed) to networkInfo.downloadSpeed,
+                        stringResource(R.string.network_upload_speed) to networkInfo.uploadSpeed,
+                        stringResource(R.string.network_operator) to networkInfo.networkOperatorName,
+                        stringResource(R.string.network_type) to networkInfo.networkType,
+                        stringResource(R.string.network_cellular_ipv4) to networkInfo.ipAddress,
+                        stringResource(R.string.network_cellular_ipv6) to networkInfo.ipv6Address,
+                        stringResource(R.string.network_data_state) to networkInfo.dataState,
+                        stringResource(R.string.network_interface) to networkInfo.interfaceName,
+                        stringResource(R.string.network_roaming) to networkInfo.roamingState,
+                        stringResource(R.string.network_country_mcc) to networkInfo.countryMcc,
+                        stringResource(R.string.network_mcc_mnc) to networkInfo.mccMnc,
+                        stringResource(R.string.network_mobile_signal) to networkInfo.mobileSignal,
+                        stringResource(R.string.network_public_ip_location) to networkInfo.location
                     )
                     isDisconnected -> listOf(
-                        "Status" to "Disconnected",
-                        "Active Connection" to "None",
-                        "Wi-Fi" to "Not Connected",
-                        "Mobile Data" to "Not Connected",
-                        "Interface" to "None",
-                        "Recommendation" to "Enable Wi-Fi or Mobile Data in Settings"
+                        stringResource(R.string.lbl_status) to stringResource(R.string.network_disconnected),
+                        stringResource(R.string.network_active_conn) to stringResource(R.string.network_none),
+                        stringResource(R.string.network_wifi) to stringResource(R.string.network_not_connected),
+                        stringResource(R.string.network_mobile_data) to stringResource(R.string.network_not_connected),
+                        stringResource(R.string.network_interface) to stringResource(R.string.network_none),
+                        stringResource(R.string.network_recommendation) to stringResource(R.string.network_enable_settings_rec)
                     )
                     else -> listOf(
-                        "SSID / Network" to networkInfo.ssid,
-                        "Real-time Download" to networkInfo.downloadSpeed,
-                        "Real-time Upload" to networkInfo.uploadSpeed,
-                        "BSSID" to networkInfo.bssid,
-                        "IP Address" to networkInfo.ipAddress,
-                        "IPv6 Address" to networkInfo.ipv6Address,
-                        "Gateway" to networkInfo.gateway,
-                        "Subnet Mask" to networkInfo.subnetMask,
-                        "DNS 1" to networkInfo.dns1,
-                        "Lease Duration" to networkInfo.leaseDuration,
-                        "Interface" to networkInfo.interfaceName,
-                        "Link Speed" to networkInfo.linkSpeed,
-                        "Channel" to networkInfo.channel,
-                        "Frequency" to networkInfo.frequency,
-                        "WiFi Standard" to networkInfo.wifiStandard,
-                        "Security Type" to networkInfo.securityType,
-                        "Public IP Location" to networkInfo.location
+                        stringResource(R.string.network_ssid) to networkInfo.ssid,
+                        stringResource(R.string.network_download_speed) to networkInfo.downloadSpeed,
+                        stringResource(R.string.network_upload_speed) to networkInfo.uploadSpeed,
+                        stringResource(R.string.network_bssid) to networkInfo.bssid,
+                        stringResource(R.string.network_ip_address) to networkInfo.ipAddress,
+                        stringResource(R.string.network_ipv6_address) to networkInfo.ipv6Address,
+                        stringResource(R.string.network_gateway) to networkInfo.gateway,
+                        stringResource(R.string.network_subnet_mask) to networkInfo.subnetMask,
+                        stringResource(R.string.network_dns1) to networkInfo.dns1,
+                        stringResource(R.string.network_lease_duration) to networkInfo.leaseDuration,
+                        stringResource(R.string.network_interface) to networkInfo.interfaceName,
+                        stringResource(R.string.network_link_speed) to networkInfo.linkSpeed,
+                        stringResource(R.string.network_channel) to networkInfo.channel,
+                        stringResource(R.string.network_frequency) to networkInfo.frequency,
+                        stringResource(R.string.network_wifi_standard) to networkInfo.wifiStandard,
+                        stringResource(R.string.network_security_type) to networkInfo.securityType,
+                        stringResource(R.string.network_public_ip_location) to networkInfo.location
                     )
                 }
 
@@ -500,27 +500,27 @@ fun NetworkScreen(
 
         AlertDialog(
             onDismissRequest = { showUsageDialog = false },
-            title = { Text(text = "Data Usage Summary", fontWeight = FontWeight.Bold) },
+            title = { Text(text = stringResource(R.string.network_data_usage_summary), fontWeight = FontWeight.Bold) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        text = "Mobile Received: $formattedMobileRx",
+                        text = stringResource(R.string.network_mobile_rx, formattedMobileRx),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = if (isCellular) FontWeight.Bold else FontWeight.Normal
                     )
                     Text(
-                        text = "Mobile Sent: $formattedMobileTx",
+                        text = stringResource(R.string.network_mobile_tx, formattedMobileTx),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = if (isCellular) FontWeight.Bold else FontWeight.Normal
                     )
                     HorizontalDivider(color = dividerColor)
                     Text(
-                        text = "Wi-Fi Received: $formattedWifiRx",
+                        text = stringResource(R.string.network_wifi_rx, formattedWifiRx),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = if (!isCellular && !isDisconnected) FontWeight.Bold else FontWeight.Normal
                     )
                     Text(
-                        text = "Wi-Fi Sent: $formattedWifiTx",
+                        text = stringResource(R.string.network_wifi_tx, formattedWifiTx),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = if (!isCellular && !isDisconnected) FontWeight.Bold else FontWeight.Normal
                     )
@@ -528,7 +528,7 @@ fun NetworkScreen(
             },
             confirmButton = {
                 TextButton(onClick = { showUsageDialog = false }) {
-                    Text("OK")
+                    Text(stringResource(R.string.btn_ok))
                 }
             }
         )
@@ -538,18 +538,18 @@ fun NetworkScreen(
         val carrierOrIsp = if (isCellular) networkInfo.networkOperatorName else "Reliance Jio Infocomm Ltd"
         AlertDialog(
             onDismissRequest = { showPublicIpDialog = false },
-            title = { Text(text = "Public IP Address", fontWeight = FontWeight.Bold) },
+            title = { Text(text = stringResource(R.string.network_public_ip_title), fontWeight = FontWeight.Bold) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(text = "Detected Public IP: ${networkInfo.publicIp}", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+                    Text(text = stringResource(R.string.network_detected_public_ip, networkInfo.publicIp), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = "ISP / Carrier: $carrierOrIsp", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text(text = "Location: ${networkInfo.location}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(text = stringResource(R.string.network_isp_carrier, carrierOrIsp), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(text = stringResource(R.string.network_location_label, networkInfo.location), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             },
             confirmButton = {
                 TextButton(onClick = { showPublicIpDialog = false }) {
-                    Text("OK")
+                    Text(stringResource(R.string.btn_ok))
                 }
             }
         )

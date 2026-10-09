@@ -227,8 +227,8 @@ fun WidgetsScreen(
                         }
 
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("Temp: ${batteryTemp} ℃", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurface)
-                            Text("Battery: $batteryLevel%", style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.primary)
+                            Text("${stringResource(R.string.battery_temp_chip)}: ${batteryTemp} ℃", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurface)
+                            Text("${stringResource(R.string.tab_battery)}: $batteryLevel%", style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.primary)
                         }
                     }
                 }

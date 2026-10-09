@@ -110,7 +110,7 @@ fun CameraScreen(
                         if (isSelected) {
                             Icon(
                                 imageVector = Icons.Rounded.Check,
-                                contentDescription = "Selected",
+                                contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(18.dp)
                             )
@@ -118,7 +118,7 @@ fun CameraScreen(
                         } else {
                             Icon(
                                 imageVector = Icons.Rounded.PhotoCamera,
-                                contentDescription = "Camera",
+                                contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(18.dp)
                             )
@@ -153,7 +153,7 @@ fun CameraScreen(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Info,
-                    contentDescription = "Disclaimer",
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.tertiary,
                     modifier = Modifier
                         .size(22.dp)
@@ -227,80 +227,80 @@ fun CameraScreen(
                 HorizontalDivider(color = dividerColor)
 
                 // Section 1: Lens & Optics
-                CameraSpecSectionHeader("Lens & Optical System")
-                CameraSpecRow("Lens Placement", activeSpec.lensPlacement)
+                CameraSpecSectionHeader(stringResource(R.string.camera_sec_lens_optics))
+                CameraSpecRow(stringResource(R.string.camera_lens_placement), activeSpec.lensPlacement)
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Focal Lengths", activeSpec.focalLengthsFormatted.ifEmpty { activeSpec.focalLengths.map { "${it} mm" } }.joinToString(", "))
+                CameraSpecRow(stringResource(R.string.camera_focal_lengths), activeSpec.focalLengthsFormatted.ifEmpty { activeSpec.focalLengths.map { "${it} mm" } }.joinToString(", "))
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Apertures", activeSpec.apertures.joinToString(", ") { "f/$it" })
+                CameraSpecRow(stringResource(R.string.camera_apertures), activeSpec.apertures.joinToString(", ") { "f/$it" })
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Optical Stabilization (OIS)", if (activeSpec.opticalStabilizationSupported) "Supported (Hardware OIS)" else "Not Supported")
+                CameraSpecRow(stringResource(R.string.camera_ois), if (activeSpec.opticalStabilizationSupported) "Supported (Hardware OIS)" else stringResource(R.string.lbl_not_supported))
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Focus Distance Calibration", activeSpec.focusDistanceCalibration)
+                CameraSpecRow(stringResource(R.string.camera_focus_distance_calibration), activeSpec.focusDistanceCalibration)
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Filter Densities", activeSpec.filterDensities.joinToString(", "))
+                CameraSpecRow(stringResource(R.string.camera_filter_densities), activeSpec.filterDensities.joinToString(", "))
                 HorizontalDivider(color = dividerColor)
 
                 // Section 2: Sensor & Pixel Structure
-                CameraSpecSectionHeader("Sensor Specs & Architecture")
-                CameraSpecRow("Sensor Size", activeSpec.sensorSize)
+                CameraSpecSectionHeader(stringResource(R.string.camera_sec_sensor_specs))
+                CameraSpecRow(stringResource(R.string.camera_sensor_size), activeSpec.sensorSize)
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Sensor Resolution", activeSpec.resolutionMp.substringBefore(" •"))
+                CameraSpecRow(stringResource(R.string.camera_sensor_resolution), activeSpec.resolutionMp.substringBefore(" •"))
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Effective Megapixels", activeSpec.effectiveMegapixels)
+                CameraSpecRow(stringResource(R.string.camera_effective_megapixels), activeSpec.effectiveMegapixels)
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Pixel Array Size", activeSpec.pixelArraySize)
+                CameraSpecRow(stringResource(R.string.camera_pixel_array_size), activeSpec.pixelArraySize)
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Color Filter Arrangement", activeSpec.colorFilterArrangement)
+                CameraSpecRow(stringResource(R.string.camera_color_filter), activeSpec.colorFilterArrangement)
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Orientation", activeSpec.orientation)
+                CameraSpecRow(stringResource(R.string.camera_orientation), activeSpec.orientation)
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Timestamp Source", activeSpec.timestampSource)
+                CameraSpecRow(stringResource(R.string.camera_timestamp_source), activeSpec.timestampSource)
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Hot Pixel Modes", activeSpec.hotPixelModes.joinToString(", "))
+                CameraSpecRow(stringResource(R.string.camera_hot_pixel_modes), activeSpec.hotPixelModes.joinToString(", "))
                 HorizontalDivider(color = dividerColor)
 
                 // Section 3: Exposure, Focus & White Balance
-                CameraSpecSectionHeader("Exposure & Color Processing")
-                CameraSpecRow("Auto Exposure (AE) Modes", activeSpec.autoExposureModes.joinToString(", "))
+                CameraSpecSectionHeader(stringResource(R.string.camera_sec_exposure_color))
+                CameraSpecRow(stringResource(R.string.camera_ae_modes), activeSpec.autoExposureModes.joinToString(", "))
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Compensation Step", activeSpec.compensationStep)
+                CameraSpecRow(stringResource(R.string.camera_compensation_step), activeSpec.compensationStep)
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("AutoFocus (AF) Modes", activeSpec.autoFocusModes.joinToString(", "))
+                CameraSpecRow(stringResource(R.string.camera_af_modes), activeSpec.autoFocusModes.joinToString(", "))
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Auto White Balance (AWB)", activeSpec.whiteBalanceModes.joinToString(", "))
+                CameraSpecRow(stringResource(R.string.camera_awb_modes), activeSpec.whiteBalanceModes.joinToString(", "))
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Max AE / AF / AWB Regions", activeSpec.maxAeAfAwbRegions)
+                CameraSpecRow(stringResource(R.string.camera_ae_af_awb_regions), activeSpec.maxAeAfAwbRegions)
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Aberration Modes", activeSpec.aberrationModes.joinToString(", "))
+                CameraSpecRow(stringResource(R.string.camera_aberration_modes), activeSpec.aberrationModes.joinToString(", "))
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Antibanding Modes", activeSpec.antibandingModes.joinToString(", "))
+                CameraSpecRow(stringResource(R.string.camera_antibanding_modes), activeSpec.antibandingModes.joinToString(", "))
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Edge Modes", activeSpec.edgeModes.joinToString(", "))
+                CameraSpecRow(stringResource(R.string.camera_edge_modes), activeSpec.edgeModes.joinToString(", "))
                 HorizontalDivider(color = dividerColor)
 
                 // Section 4: Video, Flash & Features
-                CameraSpecSectionHeader("Video, Flash & Features")
-                CameraSpecRow("Flash Available", if (activeSpec.flashAvailable) "Yes (Hardware Torch/Flash)" else "No Flash")
+                CameraSpecSectionHeader(stringResource(R.string.camera_sec_video_flash))
+                CameraSpecRow(stringResource(R.string.camera_flash_available), if (activeSpec.flashAvailable) "Yes (Hardware Torch/Flash)" else "No Flash")
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Video Stabilization Modes", activeSpec.videoStabilizationModes.joinToString(", "))
+                CameraSpecRow(stringResource(R.string.camera_video_stabilization), activeSpec.videoStabilizationModes.joinToString(", "))
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Face Detection Modes", activeSpec.faceDetectionModes.joinToString(", "))
+                CameraSpecRow(stringResource(R.string.camera_face_detection), activeSpec.faceDetectionModes.joinToString(", "))
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Scene Modes", activeSpec.sceneModes.joinToString(", "))
+                CameraSpecRow(stringResource(R.string.camera_scene_modes), activeSpec.sceneModes.joinToString(", "))
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Effects Available", activeSpec.effects.joinToString(", "))
+                CameraSpecRow(stringResource(R.string.camera_effects_available), activeSpec.effects.joinToString(", "))
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Test Pattern Modes", activeSpec.testPatternModes.joinToString(", "))
+                CameraSpecRow(stringResource(R.string.camera_test_pattern_modes), activeSpec.testPatternModes.joinToString(", "))
                 HorizontalDivider(color = dividerColor)
 
                 // Section 5: Capabilities & Resolutions
-                CameraSpecSectionHeader("Capabilities, Resolutions & Streams")
-                CameraSpecRow("Dynamic Range Profiles", activeSpec.dynamicRangeProfiles.joinToString(", "))
+                CameraSpecSectionHeader(stringResource(R.string.camera_sec_capabilities_resolutions))
+                CameraSpecRow(stringResource(R.string.camera_dynamic_range_profiles), activeSpec.dynamicRangeProfiles.joinToString(", "))
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Max Output Streams", activeSpec.maxOutputStreams)
+                CameraSpecRow(stringResource(R.string.camera_max_output_streams), activeSpec.maxOutputStreams)
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow("Thumbnail Sizes", activeSpec.thumbnailSizes.joinToString(", "))
+                CameraSpecRow(stringResource(R.string.camera_thumbnail_sizes), activeSpec.thumbnailSizes.joinToString(", "))
                 HorizontalDivider(color = dividerColor)
 
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -361,7 +361,6 @@ fun CameraScreen(
 
 @Composable
 fun CameraSpecSectionHeader(title: String) {
-    val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()

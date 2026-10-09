@@ -202,7 +202,6 @@ fun TestCardItem(
     test: TestItem,
     onClick: () -> Unit
 ) {
-    val context = LocalContext.current
     Card(
         modifier = Modifier
             .fillMaxWidth()

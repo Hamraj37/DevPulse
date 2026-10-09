@@ -137,7 +137,7 @@ fun SettingsScreen(
     ) {
         if (onBack != null) {
             DevPulseTopAppBar(
-                title = "App Settings",
+                title = stringResource(R.string.settings_title),
                 onBack = onBack
             )
         }
@@ -162,11 +162,11 @@ fun SettingsScreen(
             )
             Column {
                 Text(
-                    text = "Settings",
+                    text = stringResource(R.string.settings_title),
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
-                    text = "App preferences & customization",
+                    text = stringResource(R.string.settings_preferences_customization),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -178,7 +178,7 @@ fun SettingsScreen(
         // Section 1: Theme
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
-                text = "Theme",
+                text = stringResource(R.string.lbl_theme),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                 modifier = Modifier.padding(start = 56.dp, bottom = 4.dp)
@@ -186,15 +186,15 @@ fun SettingsScreen(
 
             SettingsItemRow(
                 icon = Icons.Rounded.NightsStay,
-                title = "Theme",
+                title = stringResource(R.string.lbl_theme),
                 subtitle = uiState.themeMode,
                 onClick = { showThemeDialog = true }
             )
 
             SettingsItemRow(
                 icon = Icons.Rounded.Palette,
-                title = "Use system colors",
-                subtitle = "Match the colors from your wallpaper",
+                title = stringResource(R.string.settings_use_system_colors),
+                subtitle = stringResource(R.string.settings_match_wallpaper_colors),
                 trailing = {
                     Switch(
                         checked = uiState.useSystemColors,
@@ -205,8 +205,8 @@ fun SettingsScreen(
 
             SettingsItemRow(
                 icon = Icons.Rounded.ColorLens,
-                title = "Theme color",
-                subtitle = if (uiState.useSystemColors) "Dynamic Material You" else uiState.themeColor,
+                title = stringResource(R.string.settings_theme_color),
+                subtitle = if (uiState.useSystemColors) stringResource(R.string.settings_dynamic_material_you) else uiState.themeColor,
                 enabled = !uiState.useSystemColors,
                 onClick = {
                     if (!uiState.useSystemColors) {
