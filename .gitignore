@@ -1,23 +1,42 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# Built application files
+*.apk
+*.aar
+*.ap_
+*.aab
+*.dex
+*.class
+
+# Gradle & Build files
+.gradle/
+/build/
+**/build/
+/bin/
+/gen/
+/out/
+
+# Local configuration files
 local.properties
+
+# Keystore files
 *.jks
 *.keystore
-/.kotlin/errors/errors-1790660382458.log
+
+# Android Studio & IntelliJ IDEA
+.idea/
+*.iml
+.kotlin/
+.externalNativeBuild/
+.cxx/
+/captures/
+
+# Debug dumps and log files
+*.log
 /camera_dumpsys.txt
 /es_debug.txt
 /newBlock.txt
 /props.txt
 /update_log.txt
+
+# OS generated files
+.DS_Store
+Thumbs.db
