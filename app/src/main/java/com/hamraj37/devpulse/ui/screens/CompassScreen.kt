@@ -71,6 +71,12 @@ fun CompassDialView(
         label = "azimuthRotation"
     )
 
+    val ringColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+    val textLabelColor = MaterialTheme.colorScheme.onSurface
+    val primaryNeedleColor = MaterialTheme.colorScheme.primary
+    val errorNeedleColor = MaterialTheme.colorScheme.error
+    val pivotColor = MaterialTheme.colorScheme.onSurfaceVariant
+
     Box(
         modifier = modifier.size(310.dp),
         contentAlignment = Alignment.Center
@@ -88,7 +94,7 @@ fun CompassDialView(
 
             // Outer Circle Ring
             drawCircle(
-                color = Color(0xFF6B6E5F),
+                color = ringColor,
                 radius = radius,
                 center = center,
                 style = Stroke(width = 2.dp.toPx())
@@ -96,7 +102,7 @@ fun CompassDialView(
 
             // Inner Concentric Ring 1
             drawCircle(
-                color = Color(0xFF6B6E5F),
+                color = ringColor,
                 radius = radius * 0.75f,
                 center = center,
                 style = Stroke(width = 1.5.dp.toPx())
@@ -104,7 +110,7 @@ fun CompassDialView(
 
             // Inner Dashed Ring 2
             drawCircle(
-                color = Color(0xFF6B6E5F),
+                color = ringColor,
                 radius = radius * 0.55f,
                 center = center,
                 style = Stroke(
@@ -115,7 +121,7 @@ fun CompassDialView(
 
             // Inner Solid Ring 3
             drawCircle(
-                color = Color(0xFF6B6E5F),
+                color = ringColor,
                 radius = radius * 0.32f,
                 center = center,
                 style = Stroke(width = 2.dp.toPx())
@@ -145,7 +151,7 @@ fun CompassDialView(
                 val endY = center.y + radius * Math.sin(angleRad).toFloat()
 
                 drawLine(
-                    color = Color(0xFF6B6E5F),
+                    color = ringColor,
                     start = Offset(startX, startY),
                     end = Offset(endX, endY),
                     strokeWidth = strokeWidth
@@ -181,7 +187,7 @@ fun CompassDialView(
                         style = TextStyle(
                             fontSize = if (label.length == 1) 16.sp else 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF53564A)
+                            color = textLabelColor
                         )
                     )
                 }
@@ -205,7 +211,7 @@ fun CompassDialView(
             }
             drawPath(
                 path = northPath,
-                color = Color(0xFF0288D1)
+                color = primaryNeedleColor
             )
 
             // Red Pointer
@@ -217,22 +223,22 @@ fun CompassDialView(
             }
             drawPath(
                 path = southPath,
-                color = Color(0xFFD32F2F)
+                color = errorNeedleColor
             )
 
             // Center Pivot Ring
             drawCircle(
-                color = Color(0xFF53564A),
+                color = pivotColor,
                 radius = 16f,
                 center = c
             )
             drawCircle(
-                color = Color(0xFFE0E0E0),
+                color = ringColor,
                 radius = 10f,
                 center = c
             )
             drawCircle(
-                color = Color(0xFF424242),
+                color = textLabelColor,
                 radius = 5f,
                 center = c
             )
@@ -332,7 +338,7 @@ fun CompassScreen(
         Text(
             text = "${azimuthDegree.roundToInt()}° $cardinalDirection",
             style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-            color = Color(0xFF53564A)
+            color = MaterialTheme.colorScheme.onSurface
         )
 
         Spacer(modifier = Modifier.height(8.dp))

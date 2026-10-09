@@ -52,6 +52,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hamraj37.devpulse.ui.MainUiState
+import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
 import kotlinx.coroutines.delay
 import java.io.File
 
@@ -194,7 +195,7 @@ fun RootCheckerScreen(
                             Text(
                                 text = if (isRooted) "ROOTED / Superuser Detected" else "NOT ROOTED (Standard System)",
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                                color = if (isRooted) MaterialTheme.colorScheme.error else Color(0xFF2E7D32)
+                                color = if (isRooted) MaterialTheme.colorScheme.error else OliveActiveBadge
                             )
                         }
                     }

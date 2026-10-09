@@ -429,14 +429,12 @@ fun MainScreen(
                     uiState = uiState,
                     initialTool = uiState.initialTool,
                     onThemeModeChange = { viewModel.setThemeMode(it) },
-                    onUseSystemColorsChange = { viewModel.setUseSystemColors(it) },
-                    onThemeColorChange = { viewModel.setThemeColor(it) },
                     onBack = { viewModel.setToolsPageOpen(false) },
                     onNavigateToTab = { tab ->
                         viewModel.selectTab(tab)
                         viewModel.setToolsPageOpen(false)
                     },
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp)
+                    modifier = Modifier.fillMaxSize()
                 )
             }
         } else {

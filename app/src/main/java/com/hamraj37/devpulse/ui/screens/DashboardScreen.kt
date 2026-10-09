@@ -369,7 +369,7 @@ fun DashboardScreen(
                             modifier = Modifier
                                 .size(8.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFF2E7D32))
+                                .background(OliveActiveBadge)
                         )
                         Text(
                             text = stringResource(R.string.lbl_passed) + ": $passedCount",

@@ -74,8 +74,8 @@ fun getAutoCheckItems(context: Context): List<AutoCheckItem> {
     items.add(
         AutoCheckItem(
             id = "last_restart",
-            title = "Last Restart",
-            subtitle = if (days < 7) "Your device was restarted recently" else "Device uptime: $days days",
+            title = context.getString(R.string.auto_check_last_restart_title),
+            subtitle = if (days < 7) context.getString(R.string.auto_check_last_restart_ok) else context.getString(R.string.auto_check_last_restart_uptime, days),
             isPassed = true,
             icon = Icons.Rounded.Refresh
         )
@@ -89,11 +89,11 @@ fun getAutoCheckItems(context: Context): List<AutoCheckItem> {
     items.add(
         AutoCheckItem(
             id = "usb_debugging",
-            title = "USB Debugging",
+            title = context.getString(R.string.auto_check_usb_debugging_title),
             subtitle = if (isUsbDebugging)
-                "USB Debugging is enabled. It is recommended to disable USB Debugging"
+                context.getString(R.string.auto_check_usb_debugging_warn)
             else
-                "USB Debugging is disabled",
+                context.getString(R.string.auto_check_usb_debugging_ok),
             isPassed = !isUsbDebugging,
             icon = Icons.Rounded.Usb,
             actionIntent = Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS)
@@ -109,11 +109,11 @@ fun getAutoCheckItems(context: Context): List<AutoCheckItem> {
     items.add(
         AutoCheckItem(
             id = "screen_brightness",
-            title = "Screen Brightness",
+            title = context.getString(R.string.auto_check_brightness_title),
             subtitle = if (isHighBrightness)
-                "Reduce your screen brightness to save battery"
+                context.getString(R.string.auto_check_brightness_warn)
             else
-                "Screen brightness is optimized",
+                context.getString(R.string.auto_check_brightness_ok),
             isPassed = !isHighBrightness,
             icon = Icons.Rounded.BrightnessHigh,
             actionIntent = Intent(Settings.ACTION_DISPLAY_SETTINGS)
@@ -128,8 +128,8 @@ fun getAutoCheckItems(context: Context): List<AutoCheckItem> {
     items.add(
         AutoCheckItem(
             id = "screen_timeout",
-            title = "Screen Timeout",
-            subtitle = if (timeoutMs <= 60000) "Screen timeout is on its best" else "Screen timeout is set to ${timeoutMs / 1000}s",
+            title = context.getString(R.string.auto_check_timeout_title),
+            subtitle = if (timeoutMs <= 60000) context.getString(R.string.auto_check_timeout_ok) else context.getString(R.string.auto_check_timeout_sec, timeoutMs / 1000),
             isPassed = true,
             icon = Icons.Rounded.Smartphone
         )
@@ -141,8 +141,8 @@ fun getAutoCheckItems(context: Context): List<AutoCheckItem> {
     items.add(
         AutoCheckItem(
             id = "screen_lock",
-            title = "Screen Lock",
-            subtitle = if (isSecure) "Screen lock is configured successfully" else "Screen lock is not configured",
+            title = context.getString(R.string.auto_check_lock_title),
+            subtitle = if (isSecure) context.getString(R.string.auto_check_lock_ok) else context.getString(R.string.auto_check_lock_warn),
             isPassed = isSecure,
             icon = Icons.Rounded.Lock,
             actionIntent = if (!isSecure) Intent(Settings.ACTION_SECURITY_SETTINGS) else null
@@ -156,8 +156,8 @@ fun getAutoCheckItems(context: Context): List<AutoCheckItem> {
     items.add(
         AutoCheckItem(
             id = "nfc",
-            title = "NFC",
-            subtitle = if (isNfcEnabled) "NFC is turned on" else "NFC is turned off",
+            title = context.getString(R.string.auto_check_nfc_title),
+            subtitle = if (isNfcEnabled) context.getString(R.string.auto_check_nfc_on) else context.getString(R.string.auto_check_nfc_off),
             isPassed = true,
             icon = Icons.Rounded.Nfc
         )
@@ -171,7 +171,7 @@ fun SadFaceIcon(
     isSad: Boolean,
     modifier: Modifier = Modifier.size(80.dp)
 ) {
-    val color = if (isSad) Color(0xFFFFA000) else Color(0xFF4CAF50)
+    val color = if (isSad) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary
     Canvas(modifier = modifier) {
         val w = size.width
         val h = size.height
@@ -231,7 +231,7 @@ fun AutomaticTestsScreen(
     ) {
         if (onBack != null) {
             DevPulseTopAppBar(
-                title = "Automatic Diagnostics",
+                title = stringResource(R.string.tests_auto_diagnostics),
                 onBack = onBack
             )
         }
@@ -241,120 +241,123 @@ fun AutomaticTestsScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Status Mascot / Banner
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+            // Top Status Mascot Banner Card (matches DashboardScreen)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
+                shape = RoundedCornerShape(20.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
-                SadFaceIcon(isSad = hasSuggestions)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    SadFaceIcon(isSad = hasSuggestions)
 
-                Text(
-                    text = if (hasSuggestions) stringResource(R.string.tests_suggestions_available) else stringResource(R.string.tests_all_passed),
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                    Text(
+                        text = if (hasSuggestions) stringResource(R.string.tests_suggestions_available) else stringResource(R.string.tests_all_passed),
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
             }
 
             // Auto Check Item Cards List
-            Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                checkItems.forEach { item ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surface
-                        ),
-                        shape = RoundedCornerShape(20.dp),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 0.5.dp)
+            checkItems.forEach { item ->
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                    ),
+                    shape = RoundedCornerShape(20.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            modifier = Modifier.weight(1f),
+                            verticalAlignment = Alignment.Top,
+                            horizontalArrangement = Arrangement.spacedBy(14.dp)
                         ) {
-                            Row(
-                                modifier = Modifier.weight(1f),
-                                verticalAlignment = Alignment.Top,
-                                horizontalArrangement = Arrangement.spacedBy(14.dp)
+                            Surface(
+                                shape = RoundedCornerShape(12.dp),
+                                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                modifier = Modifier.size(44.dp)
                             ) {
-                                Surface(
-                                    shape = RoundedCornerShape(12.dp),
-                                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                    modifier = Modifier.size(44.dp)
-                                ) {
-                                    Box(contentAlignment = Alignment.Center) {
-                                        Icon(
-                                            imageVector = item.icon,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.onSurface,
-                                            modifier = Modifier.size(24.dp)
-                                        )
-                                    }
-                                }
-
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = item.title,
-                                        style = MaterialTheme.typography.titleMedium.copy(
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 16.sp
-                                        ),
-                                        color = MaterialTheme.colorScheme.onSurface
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = item.icon,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.size(24.dp)
                                     )
-                                    Spacer(modifier = Modifier.height(2.dp))
-                                    Text(
-                                        text = item.subtitle,
-                                        style = MaterialTheme.typography.bodyMedium.copy(
-                                            fontSize = 13.5.sp
-                                        ),
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-
-                                    if (!item.isPassed && item.actionIntent != null) {
-                                        Spacer(modifier = Modifier.height(10.dp))
-                                        Surface(
-                                            shape = RoundedCornerShape(12.dp),
-                                            color = MaterialTheme.colorScheme.primaryContainer,
-                                            modifier = Modifier.clickable {
-                                                try {
-                                                    context.startActivity(item.actionIntent)
-                                                } catch (_: Throwable) {}
-                                            }
-                                        ) {
-                                            Text(
-                                                text = stringResource(R.string.btn_check),
-                                                modifier = Modifier.padding(horizontal = 18.dp, vertical = 8.dp),
-                                                style = MaterialTheme.typography.labelMedium.copy(
-                                                    fontWeight = FontWeight.Bold,
-                                                    fontSize = 14.sp
-                                                ),
-                                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                                            )
-                                        }
-                                    }
                                 }
                             }
 
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = item.title,
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 16.sp
+                                    ),
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = item.subtitle,
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        fontSize = 13.5.sp
+                                    ),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
 
-                            Icon(
-                                imageVector = if (item.isPassed) Icons.Rounded.CheckCircle else Icons.Rounded.Cancel,
-                                contentDescription = if (item.isPassed) "Passed" else "Suggestion",
-                                tint = if (item.isPassed) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
-                                modifier = Modifier.size(28.dp)
-                            )
+                                if (!item.isPassed && item.actionIntent != null) {
+                                    Spacer(modifier = Modifier.height(10.dp))
+                                    Surface(
+                                        shape = RoundedCornerShape(12.dp),
+                                        color = MaterialTheme.colorScheme.primaryContainer,
+                                        modifier = Modifier.clickable {
+                                            try {
+                                                context.startActivity(item.actionIntent)
+                                            } catch (_: Throwable) {}
+                                        }
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.btn_check),
+                                            modifier = Modifier.padding(horizontal = 18.dp, vertical = 8.dp),
+                                            style = MaterialTheme.typography.labelMedium.copy(
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 14.sp
+                                            ),
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                                        )
+                                    }
+                                }
+                            }
                         }
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Icon(
+                            imageVector = if (item.isPassed) Icons.Rounded.CheckCircle else Icons.Rounded.Cancel,
+                            contentDescription = null,
+                            tint = if (item.isPassed) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(28.dp)
+                        )
                     }
                 }
             }

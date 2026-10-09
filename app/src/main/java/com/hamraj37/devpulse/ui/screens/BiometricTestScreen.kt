@@ -1,5 +1,7 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -79,7 +81,7 @@ fun BiometricTestScreen(
 ) {
     val context = LocalContext.current
     StandardTestScreen(
-        title = "Biometric Sensor",
+        title = stringResource(R.string.test_item_fingerprint_title),
         testId = "test_fingerprint",
         onBack = onBack,
         onPass = onPass,

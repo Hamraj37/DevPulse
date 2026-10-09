@@ -70,8 +70,6 @@ import androidx.compose.ui.unit.sp
 fun SettingsScreen(
     uiState: MainUiState = MainUiState(),
     onThemeModeChange: (String) -> Unit = {},
-    onUseSystemColorsChange: (Boolean) -> Unit = {},
-    onThemeColorChange: (String) -> Unit = {},
     onBack: (() -> Unit)? = null,
     onNavigateToExport: (() -> Unit)? = null,
     onNavigateToAbout: (() -> Unit)? = null,
@@ -85,7 +83,6 @@ fun SettingsScreen(
 
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showThemeDialog by remember { mutableStateOf(false) }
-    var showColorDialog by remember { mutableStateOf(false) }
     var showClearDataDialog by remember { mutableStateOf(false) }
     var showDonateDialog by remember { mutableStateOf(false) }
     var showPrivacyDialog by remember { mutableStateOf(false) }
@@ -189,30 +186,6 @@ fun SettingsScreen(
                 title = stringResource(R.string.lbl_theme),
                 subtitle = uiState.themeMode,
                 onClick = { showThemeDialog = true }
-            )
-
-            SettingsItemRow(
-                icon = Icons.Rounded.Palette,
-                title = stringResource(R.string.settings_use_system_colors),
-                subtitle = stringResource(R.string.settings_match_wallpaper_colors),
-                trailing = {
-                    Switch(
-                        checked = uiState.useSystemColors,
-                        onCheckedChange = { onUseSystemColorsChange(it) }
-                    )
-                }
-            )
-
-            SettingsItemRow(
-                icon = Icons.Rounded.ColorLens,
-                title = stringResource(R.string.settings_theme_color),
-                subtitle = if (uiState.useSystemColors) stringResource(R.string.settings_dynamic_material_you) else uiState.themeColor,
-                enabled = !uiState.useSystemColors,
-                onClick = {
-                    if (!uiState.useSystemColors) {
-                        showColorDialog = true
-                    }
-                }
             )
         }
 
@@ -402,45 +375,6 @@ fun SettingsScreen(
             },
             confirmButton = {
                 TextButton(onClick = { showThemeDialog = false }) {
-                    Text(stringResource(R.string.btn_cancel))
-                }
-            }
-        )
-    }
-
-    if (showColorDialog) {
-        val colorOptions = listOf("Blue", "Purple", "Green", "Orange", "Teal")
-        AlertDialog(
-            onDismissRequest = { showColorDialog = false },
-            title = { Text(text = stringResource(R.string.dialog_choose_theme_color), fontWeight = FontWeight.Bold) },
-            text = {
-                Column {
-                    colorOptions.forEach { option ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    onThemeColorChange(option)
-                                    showColorDialog = false
-                                }
-                                .padding(vertical = 8.dp)
-                        ) {
-                            RadioButton(
-                                selected = uiState.themeColor == option,
-                                onClick = {
-                                    onThemeColorChange(option)
-                                    showColorDialog = false
-                                }
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(text = option)
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showColorDialog = false }) {
                     Text(stringResource(R.string.btn_cancel))
                 }
             }

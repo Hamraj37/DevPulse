@@ -1,5 +1,7 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.Intent
@@ -77,7 +79,7 @@ fun BluetoothTestGraphic(context: Context) {
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
-                    text = "Enable Bluetooth",
+                    text = stringResource(R.string.btn_enable),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
                 )
             }
@@ -94,7 +96,7 @@ fun BluetoothTestScreen(
 ) {
     val context = LocalContext.current
     StandardTestScreen(
-        title = "Bluetooth Radio",
+        title = stringResource(R.string.test_item_bluetooth_title),
         testId = "test_bluetooth",
         onBack = onBack,
         onPass = onPass,

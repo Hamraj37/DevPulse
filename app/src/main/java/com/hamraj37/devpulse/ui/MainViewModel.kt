@@ -64,8 +64,6 @@ data class MainUiState(
     val initialTool: ToolType? = null,
     val isLoading: Boolean = false,
     val themeMode: String = "System default", // "System default", "Light", "Dark"
-    val useSystemColors: Boolean = true,
-    val themeColor: String = "Blue", // "Blue", "Purple", "Green", "Orange", "Teal"
     val updateInfo: GithubReleaseInfo? = null,
     val showUpdateDialog: Boolean = false
 )
@@ -80,13 +78,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         val savedTheme = prefs.getString("theme_mode", "System default") ?: "System default"
-        val savedSystemColors = prefs.getBoolean("use_system_colors", true)
-        val savedThemeColor = prefs.getString("theme_color", "Blue") ?: "Blue"
         _uiState.update {
             it.copy(
-                themeMode = savedTheme,
-                useSystemColors = savedSystemColors,
-                themeColor = savedThemeColor
+                themeMode = savedTheme
             )
         }
         loadStaticTelemetry()
@@ -97,16 +91,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun setThemeMode(mode: String) {
         prefs.edit().putString("theme_mode", mode).apply()
         _uiState.update { it.copy(themeMode = mode) }
-    }
-
-    fun setUseSystemColors(use: Boolean) {
-        prefs.edit().putBoolean("use_system_colors", use).apply()
-        _uiState.update { it.copy(useSystemColors = use) }
-    }
-
-    fun setThemeColor(color: String) {
-        prefs.edit().putString("theme_color", color).apply()
-        _uiState.update { it.copy(themeColor = color) }
     }
 
     fun dismissUpdateDialog() {

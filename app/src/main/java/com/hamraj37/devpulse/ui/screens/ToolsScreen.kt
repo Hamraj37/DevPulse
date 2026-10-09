@@ -95,8 +95,6 @@ fun ToolsScreen(
     onBack: (() -> Unit)? = null,
     initialTool: ToolType? = null,
     onThemeModeChange: (String) -> Unit = {},
-    onUseSystemColorsChange: (Boolean) -> Unit = {},
-    onThemeColorChange: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     if (onBack != null) {
@@ -195,15 +193,15 @@ fun ToolsScreen(
         ToolType.SETTINGS -> SettingsScreen(
             uiState = uiState,
             onThemeModeChange = onThemeModeChange,
-            onUseSystemColorsChange = onUseSystemColorsChange,
-            onThemeColorChange = onThemeColorChange,
             onBack = handleToolBack,
             onNavigateToExport = { selectedTool = ToolType.EXPORT }
         )
         ToolType.ABOUT -> AboutScreen(onBack = handleToolBack)
         null -> {
             Column(
-                modifier = modifier.fillMaxSize()
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 12.dp, vertical = 12.dp)
             ) {
                 // Top Action Header
                 DevPulseTopAppBar(

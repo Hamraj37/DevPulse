@@ -124,7 +124,7 @@ fun DisplayTestFullscreen(
         }
     } else {
         StandardTestScreen(
-            title = "Display",
+            title = stringResource(R.string.test_item_display_title),
             testId = "test_display",
             onBack = onDismiss,
             onPass = onPass,

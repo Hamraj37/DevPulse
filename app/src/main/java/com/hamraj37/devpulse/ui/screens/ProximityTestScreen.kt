@@ -1,6 +1,7 @@
 package com.hamraj37.devpulse.ui.screens
 
 import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -163,7 +164,7 @@ fun ProximityTestScreen(
 ) {
     val context = LocalContext.current
     StandardTestScreen(
-        title = "Ear Proximity Sensor",
+        title = stringResource(R.string.test_item_proximity_title),
         testId = "test_proximity",
         onBack = onBack,
         onPass = onPass,

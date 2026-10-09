@@ -1,5 +1,7 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
@@ -121,7 +123,7 @@ fun GpsTestScreen(
 ) {
     val context = LocalContext.current
     StandardTestScreen(
-        title = "GPS Location",
+        title = stringResource(R.string.test_item_gps_title),
         testId = "test_gps",
         onBack = onBack,
         onPass = onPass,

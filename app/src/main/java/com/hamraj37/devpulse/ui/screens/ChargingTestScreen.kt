@@ -155,7 +155,7 @@ fun ChargingTestScreen(
 ) {
     val context = LocalContext.current
     StandardTestScreen(
-        title = "Battery Charging",
+        title = stringResource(R.string.test_item_charging_title),
         testId = "test_charging",
         onBack = onBack,
         onPass = onPass,

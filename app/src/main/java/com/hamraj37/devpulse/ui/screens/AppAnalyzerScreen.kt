@@ -304,15 +304,19 @@ fun AppAnalyzerScreen(
 
     val apps = uiState.appInfo.appsList
 
-    val colors = remember {
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val secondaryColor = MaterialTheme.colorScheme.secondary
+    val tertiaryColor = MaterialTheme.colorScheme.tertiary
+
+    val colors = remember(primaryColor, secondaryColor, tertiaryColor) {
         listOf(
-            Color(0xFFC2185B), Color(0xFFF57C00), Color(0xFFFBC02D), Color(0xFF689F38),
-            Color(0xFF1976D2), Color(0xFF7B1FA2), Color(0xFF0097A7), Color(0xFFE64A19),
-            Color(0xFF388E3C), Color(0xFF546E7A), Color(0xFF8D6E63), Color(0xFF303F9F)
+            primaryColor, secondaryColor, tertiaryColor,
+            primaryColor.copy(alpha = 0.7f), secondaryColor.copy(alpha = 0.7f), tertiaryColor.copy(alpha = 0.7f),
+            primaryColor.copy(alpha = 0.5f), secondaryColor.copy(alpha = 0.5f), tertiaryColor.copy(alpha = 0.5f)
         )
     }
 
-    val items = remember(selectedTab, apps) {
+    val items = remember(selectedTab, apps, colors) {
         if (apps.isNotEmpty()) {
             when (selectedTab) {
                 "Categories" -> {
@@ -366,17 +370,17 @@ fun AppAnalyzerScreen(
                     val systemApps = apps.count { it.isSystemApp }
 
                     listOf(
-                        AnalyzerItem("User Applications", "Installed by user or store", userApps, Color(0xFFF57C00)),
-                        AnalyzerItem("Pre-Installed System Apps", "Built-in system applications", systemApps, Color(0xFFC2185B))
+                        AnalyzerItem("User Applications", "Installed by user or store", userApps, primaryColor),
+                        AnalyzerItem("Pre-Installed System Apps", "Built-in system applications", systemApps, secondaryColor)
                     )
                 }
             }
         } else {
             listOf(
-                AnalyzerItem("System & Tools", "Built-in system apps", 110, Color(0xFFC2185B)),
-                AnalyzerItem("Social & Communication", "Chat, social & messaging", 24, Color(0xFFF57C00)),
-                AnalyzerItem("Productivity", "Utilities & productivity", 18, Color(0xFF1976D2)),
-                AnalyzerItem("Games", "Games & media apps", 12, Color(0xFF388E3C))
+                AnalyzerItem("System & Tools", "Built-in system apps", 110, primaryColor),
+                AnalyzerItem("Social & Communication", "Chat, social & messaging", 24, secondaryColor),
+                AnalyzerItem("Productivity", "Utilities & productivity", 18, tertiaryColor),
+                AnalyzerItem("Games", "Games & media apps", 12, primaryColor)
             )
         }
     }

@@ -1,5 +1,7 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -193,7 +195,7 @@ fun LightSensorTestScreen(
 ) {
     val context = LocalContext.current
     StandardTestScreen(
-        title = "Ambient Light Sensor",
+        title = stringResource(R.string.test_item_light_title),
         testId = "test_light",
         onBack = onBack,
         onPass = onPass,

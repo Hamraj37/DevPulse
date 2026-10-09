@@ -492,7 +492,7 @@ fun ExportScreen(
                     Toast.makeText(context, context.getString(R.string.toast_failed_generate_report), Toast.LENGTH_SHORT).show()
                 }
             },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF52564A)),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             shape = RoundedCornerShape(14.dp),
             modifier = Modifier
                 .padding(vertical = 8.dp)

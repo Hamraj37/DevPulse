@@ -75,7 +75,7 @@ fun MultitouchTestScreen(
     modifier: Modifier = Modifier
 ) {
     StandardTestScreen(
-        title = "Display Touch Screen",
+        title = stringResource(R.string.test_item_touch_title),
         testId = "test_touch",
         onBack = onBack,
         onPass = onPass,
