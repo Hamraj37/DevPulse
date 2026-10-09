@@ -17,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.platform.LocalContext
-import com.hamraj37.devpulse.util.tr
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -61,7 +60,7 @@ fun BluetoothTestGraphic(context: Context) {
         }
 
         Text(
-            text = if (!hasHardware) "Bluetooth Hardware Not Supported".tr(LocalContext.current) else if (isEnabled) "Bluetooth Hardware Active & Enabled".tr(LocalContext.current) else "Bluetooth Radio Ready (Disabled)".tr(LocalContext.current),
+            text = if (!hasHardware) "Bluetooth Hardware Not Supported" else if (isEnabled) "Bluetooth Hardware Active & Enabled" else "Bluetooth Radio Ready (Disabled)",
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = if (hasHardware && isEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
             textAlign = TextAlign.Center
@@ -78,7 +77,7 @@ fun BluetoothTestGraphic(context: Context) {
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
-                    text = "Enable Bluetooth".tr(LocalContext.current),
+                    text = "Enable Bluetooth",
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
                 )
             }

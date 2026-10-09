@@ -6,14 +6,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import java.util.Locale
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.Memory
@@ -30,20 +29,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalContext
+import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.model.MemoryInfo
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
-import com.hamraj37.devpulse.util.tr
+import java.util.Locale
 
 @Composable
 fun MemoryScreen(
     memoryInfo: MemoryInfo,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     val ramTotalGb = memoryInfo.ramTotalBytes / (1024 * 1024 * 1024f)
     val ramUsedGb = memoryInfo.ramUsedBytes / (1024 * 1024 * 1024f)
     val ramFreeGb = memoryInfo.ramAvailableBytes / (1024 * 1024 * 1024f)
@@ -68,7 +67,7 @@ fun MemoryScreen(
     ) {
         // 1. RAM Card
         MemoryStorageProgressCard(
-            title = "Memory",
+            title = stringResource(R.string.tab_memory),
             path = "RAM (Volatile)",
             icon = Icons.Rounded.Memory,
             usedGb = ramUsedGb,
@@ -93,7 +92,7 @@ fun MemoryScreen(
 
         // 4. Internal Storage Card
         MemoryStorageProgressCard(
-            title = "Internal Storage",
+            title = stringResource(R.string.dashboard_internal_storage),
             path = "/data",
             icon = Icons.Rounded.SdStorage,
             usedGb = intUsedGb,
@@ -114,7 +113,6 @@ fun MemoryStorageProgressCard(
     totalGb: Float,
     pct: Int
 ) {
-    val context = LocalContext.current
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
@@ -135,20 +133,20 @@ fun MemoryStorageProgressCard(
                 ) {
                     Icon(
                         imageVector = icon,
-                        contentDescription = title.tr(context),
+                        contentDescription = title,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            text = title.tr(context),
+                            text = title,
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface,
                             maxLines = 1
                         )
                         Text(
-                            text = path.tr(context),
+                            text = path,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1
@@ -188,8 +186,8 @@ fun MemoryStorageProgressCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                val usedText = "${String.format("%.2f", usedGb)} GB of ${String.format("%.2f", totalGb)} GB Used"
-                val freeText = "${String.format("%.2f", freeGb)} GB Free"
+                val usedText = "${String.format(Locale.US, "%.2f", usedGb)} GB of ${String.format(Locale.US, "%.2f", totalGb)} GB Used"
+                val freeText = "${String.format(Locale.US, "%.2f", freeGb)} GB Free"
                 Text(
                     text = usedText,
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
@@ -209,7 +207,6 @@ fun MemoryStorageProgressCard(
 fun ZramProgressCard(
     memoryInfo: MemoryInfo
 ) {
-    val context = LocalContext.current
     val zramTotalGb = memoryInfo.zramTotalBytes / (1024 * 1024 * 1024f)
     val zramOrigGb = memoryInfo.zramOrigBytes / (1024 * 1024 * 1024f)
     val zramComprGb = memoryInfo.zramComprBytes / (1024 * 1024 * 1024f)
@@ -247,7 +244,7 @@ fun ZramProgressCard(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            text = "zRAM (RAM Swap)".tr(context),
+                            text = stringResource(R.string.memory_zram_swap),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface,
                             maxLines = 1
@@ -278,9 +275,9 @@ fun ZramProgressCard(
                 }
             }
 
-            val safeProgress = (zramPct / 100f).let { if (it.isNaN() || it.isInfinite()) 0f else it.coerceIn(0f, 1f) }
+            val safeZramProgress = (zramPct / 100f).let { if (it.isNaN() || it.isInfinite()) 0f else it.coerceIn(0f, 1f) }
             LinearProgressIndicator(
-                progress = { safeProgress },
+                progress = { safeZramProgress },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp)
@@ -294,12 +291,12 @@ fun ZramProgressCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = String.format(Locale.US, "%.2f GB Swapped (%.2f GB in RAM)", zramOrigGb, zramComprGb),
+                    text = "${String.format(Locale.US, "%.2f", zramOrigGb)} GB Uncompressed",
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = String.format(Locale.US, "Total: %.2f GB", zramTotalGb),
+                    text = "${String.format(Locale.US, "%.2f", zramComprGb)} GB in RAM",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -312,8 +309,6 @@ fun ZramProgressCard(
 @Composable
 fun MemoryScreenPreview() {
     DevPulseTheme {
-        MemoryScreen(
-            memoryInfo = MemoryInfo()
-        )
+        MemoryScreen(memoryInfo = MemoryInfo())
     }
 }

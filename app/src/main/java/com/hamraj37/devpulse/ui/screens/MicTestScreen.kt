@@ -1,5 +1,8 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -113,7 +116,7 @@ fun MicTestScreen(
     modifier: Modifier = Modifier
 ) {
     StandardTestScreen(
-        title = "Microphone",
+        title = stringResource(R.string.test_mic_title),
         testId = "test_mic",
         onBack = onBack,
         onPass = onPass,

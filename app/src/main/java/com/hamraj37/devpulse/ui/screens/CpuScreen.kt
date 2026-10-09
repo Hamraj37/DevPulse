@@ -8,12 +8,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Memory
 import androidx.compose.material.icons.rounded.Speed
@@ -27,15 +27,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.platform.LocalContext
+import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.model.CpuCoreSpeed
 import com.hamraj37.devpulse.data.model.CpuInfo
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
-import com.hamraj37.devpulse.util.tr
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -44,7 +44,6 @@ fun CpuScreen(
     modifier: Modifier = Modifier
 ) {
     val dividerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
-    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -80,7 +79,7 @@ fun CpuScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Core Frequencies".tr(context),
+                            text = stringResource(R.string.cpu_core_frequencies),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             maxLines = 1
                         )
@@ -93,7 +92,7 @@ fun CpuScreen(
                         color = MaterialTheme.colorScheme.primaryContainer
                     ) {
                         Text(
-                            text = "${cpuInfo.totalCores} Cores",
+                            text = "${cpuInfo.totalCores} " + stringResource(R.string.lbl_cores),
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -113,14 +112,14 @@ fun CpuScreen(
                 ) {
                     val coreSpeeds = cpuInfo.coreFrequencies.ifEmpty {
                         listOf(
-                            com.hamraj37.devpulse.data.model.CpuCoreSpeed(0, 1800, 800, 3200),
-                            com.hamraj37.devpulse.data.model.CpuCoreSpeed(1, 1800, 800, 3200),
-                            com.hamraj37.devpulse.data.model.CpuCoreSpeed(2, 1800, 800, 3200),
-                            com.hamraj37.devpulse.data.model.CpuCoreSpeed(3, 1800, 800, 3200),
-                            com.hamraj37.devpulse.data.model.CpuCoreSpeed(4, 2400, 800, 3200),
-                            com.hamraj37.devpulse.data.model.CpuCoreSpeed(5, 2400, 800, 3200),
-                            com.hamraj37.devpulse.data.model.CpuCoreSpeed(6, 2400, 800, 3200),
-                            com.hamraj37.devpulse.data.model.CpuCoreSpeed(7, 3200, 800, 3200)
+                            CpuCoreSpeed(0, 1800, 800, 3200),
+                            CpuCoreSpeed(1, 1800, 800, 3200),
+                            CpuCoreSpeed(2, 1800, 800, 3200),
+                            CpuCoreSpeed(3, 1800, 800, 3200),
+                            CpuCoreSpeed(4, 2400, 800, 3200),
+                            CpuCoreSpeed(5, 2400, 800, 3200),
+                            CpuCoreSpeed(6, 2400, 800, 3200),
+                            CpuCoreSpeed(7, 3200, 800, 3200)
                         )
                     }
 
@@ -136,7 +135,7 @@ fun CpuScreen(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
-                                        text = "Core ${speed.coreIndex}",
+                                        text = "${stringResource(R.string.lbl_core)} ${speed.coreIndex}",
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -177,7 +176,7 @@ fun CpuScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Processor & Graphics Architecture".tr(context),
+                        text = stringResource(R.string.cpu_processor_architecture),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -186,17 +185,17 @@ fun CpuScreen(
                 HorizontalDivider(color = dividerColor)
 
                 val cpuSpecs = listOf(
-                    "Processor" to cpuInfo.processorName,
-                    "CPU Architecture" to cpuInfo.architecture,
-                    "Supported ABIs" to cpuInfo.supportedAbis.joinToString(", "),
-                    "CPU Hardware" to cpuInfo.hardwareName,
-                    "CPU Type" to cpuInfo.cpuType,
-                    "CPU Governor" to cpuInfo.governor,
-                    "Cores" to "${cpuInfo.totalCores}",
-                    "CPU Frequency" to "${cpuInfo.minFrequencyMhz} MHz - ${cpuInfo.maxFrequencyMhz} MHz",
-                    "GPU Renderer" to cpuInfo.gpuRenderer,
-                    "GPU Vendor" to cpuInfo.gpuVendor,
-                    "GPU Version" to cpuInfo.gpuVersion
+                    stringResource(R.string.cpu_processor) to cpuInfo.processorName,
+                    stringResource(R.string.cpu_architecture) to cpuInfo.architecture,
+                    stringResource(R.string.cpu_supported_abis) to cpuInfo.supportedAbis.joinToString(", "),
+                    stringResource(R.string.cpu_hardware) to cpuInfo.hardwareName,
+                    stringResource(R.string.cpu_type) to cpuInfo.cpuType,
+                    stringResource(R.string.cpu_governor) to cpuInfo.governor,
+                    stringResource(R.string.lbl_cores) to "${cpuInfo.totalCores}",
+                    stringResource(R.string.cpu_frequency) to "${cpuInfo.minFrequencyMhz} MHz - ${cpuInfo.maxFrequencyMhz} MHz",
+                    stringResource(R.string.gpu_renderer) to cpuInfo.gpuRenderer,
+                    stringResource(R.string.gpu_vendor) to cpuInfo.gpuVendor,
+                    stringResource(R.string.gpu_version) to cpuInfo.gpuVersion
                 )
 
                 cpuSpecs.forEachIndexed { index, (label, value) ->
@@ -215,14 +214,13 @@ fun CpuItemRow(
     label: String,
     value: String
 ) {
-    val context = LocalContext.current
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
         Text(
-            text = label.tr(context),
+            text = label,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)
@@ -240,19 +238,6 @@ fun CpuItemRow(
 @Composable
 fun CpuScreenPreview() {
     DevPulseTheme {
-        CpuScreen(
-            cpuInfo = CpuInfo(
-                coreFrequencies = listOf(
-                    CpuCoreSpeed(0, 1800, 800, 3200),
-                    CpuCoreSpeed(1, 1800, 800, 3200),
-                    CpuCoreSpeed(2, 1800, 800, 3200),
-                    CpuCoreSpeed(3, 1800, 800, 3200),
-                    CpuCoreSpeed(4, 2400, 800, 3200),
-                    CpuCoreSpeed(5, 2400, 800, 3200),
-                    CpuCoreSpeed(6, 2400, 800, 3200),
-                    CpuCoreSpeed(7, 3200, 800, 3200)
-                )
-            )
-        )
+        CpuScreen(cpuInfo = CpuInfo())
     }
 }

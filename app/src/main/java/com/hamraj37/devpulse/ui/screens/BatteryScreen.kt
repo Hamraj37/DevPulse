@@ -7,14 +7,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.BatteryChargingFull
 import androidx.compose.material.icons.rounded.Bolt
@@ -28,16 +28,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.platform.LocalContext
+import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.model.BatteryInfo
 import com.hamraj37.devpulse.ui.components.LiveSparklineChart
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
-import com.hamraj37.devpulse.util.tr
 import java.util.Locale
 
 @Composable
@@ -46,7 +46,6 @@ fun BatteryScreen(
     modifier: Modifier = Modifier
 ) {
     val dividerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
-    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -84,7 +83,7 @@ fun BatteryScreen(
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     imageVector = Icons.Rounded.BatteryChargingFull,
-                                    contentDescription = "Battery Gauge",
+                                    contentDescription = null,
                                     tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(28.dp)
                                 )
@@ -95,7 +94,7 @@ fun BatteryScreen(
 
                         Column {
                             Text(
-                                text = "Battery Power State".tr(context),
+                                text = stringResource(R.string.battery_power_state),
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 maxLines = 1
@@ -132,16 +131,16 @@ fun BatteryScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    BatteryMetricChip("Current", "${String.format(Locale.US, "%.1f", batteryInfo.currentMa)} mA")
-                    BatteryMetricChip("Temp", "${batteryInfo.temperatureCelsius} °C")
-                    BatteryMetricChip("Power", "${String.format(Locale.US, "%.2f", batteryInfo.powerWatts)} W")
-                    BatteryMetricChip("Health", "${batteryInfo.healthPercent}%")
+                    BatteryMetricChip(stringResource(R.string.battery_current), "${String.format(Locale.US, "%.1f", batteryInfo.currentMa)} mA")
+                    BatteryMetricChip(stringResource(R.string.battery_temp_chip), "${batteryInfo.temperatureCelsius} °C")
+                    BatteryMetricChip(stringResource(R.string.battery_power), "${String.format(Locale.US, "%.2f", batteryInfo.powerWatts)} W")
+                    BatteryMetricChip(stringResource(R.string.battery_health), "${batteryInfo.healthPercent}%")
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "Live Power Draw Stream".tr(context),
+                    text = stringResource(R.string.battery_live_power_draw),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -174,12 +173,12 @@ fun BatteryScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Bolt,
-                        contentDescription = "Battery Details",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Battery Health & Hardware Specs".tr(context),
+                        text = stringResource(R.string.battery_health_specs),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -188,20 +187,20 @@ fun BatteryScreen(
                 HorizontalDivider(color = dividerColor)
 
                 val batterySpecs = listOf(
-                    "Health" to "${batteryInfo.health} (${batteryInfo.healthPercent}%)",
-                    "Level" to "${batteryInfo.levelPercent}%",
-                    "Status" to batteryInfo.status,
-                    "Power Source" to batteryInfo.powerSource,
-                    "Technology" to batteryInfo.technology,
-                    "Temperature" to "${batteryInfo.temperatureCelsius} °C",
-                    "Current" to "${String.format(Locale.US, "%.1f", batteryInfo.currentMa)} mA",
-                    "Power" to "${String.format(Locale.US, "%.2f", batteryInfo.powerWatts)} W",
-                    "Voltage" to "${String.format(Locale.US, "%.2f", batteryInfo.voltageVolts)} V",
-                    "Time to charge" to batteryInfo.timeToChargeFormatted,
-                    "Charge Cycles" to "${batteryInfo.chargeCycles}",
-                    "Capacity (Charged)" to "${batteryInfo.capacityChargedMah} mAh",
-                    "Capacity (Estimated)" to "${batteryInfo.capacityEstimatedMah} mAh",
-                    "Capacity (System)" to "${batteryInfo.capacitySystemMah} mAh"
+                    stringResource(R.string.battery_health) to "${batteryInfo.health} (${batteryInfo.healthPercent}%)",
+                    stringResource(R.string.battery_level) to "${batteryInfo.levelPercent}%",
+                    stringResource(R.string.battery_status) to batteryInfo.status,
+                    stringResource(R.string.battery_power_source) to batteryInfo.powerSource,
+                    stringResource(R.string.battery_technology) to batteryInfo.technology,
+                    stringResource(R.string.lbl_temperature) to "${batteryInfo.temperatureCelsius} °C",
+                    stringResource(R.string.battery_current) to "${String.format(Locale.US, "%.1f", batteryInfo.currentMa)} mA",
+                    stringResource(R.string.battery_power) to "${String.format(Locale.US, "%.2f", batteryInfo.powerWatts)} W",
+                    stringResource(R.string.lbl_voltage) to "${String.format(Locale.US, "%.2f", batteryInfo.voltageVolts)} V",
+                    stringResource(R.string.battery_time_to_charge) to batteryInfo.timeToChargeFormatted,
+                    stringResource(R.string.battery_charge_cycles) to "${batteryInfo.chargeCycles}",
+                    stringResource(R.string.battery_capacity_charged) to "${batteryInfo.capacityChargedMah} mAh",
+                    stringResource(R.string.battery_capacity_estimated) to "${batteryInfo.capacityEstimatedMah} mAh",
+                    stringResource(R.string.battery_capacity_system) to "${batteryInfo.capacitySystemMah} mAh"
                 )
 
                 batterySpecs.forEachIndexed { index, (label, value) ->
@@ -220,18 +219,28 @@ fun BatteryMetricChip(
     label: String,
     value: String
 ) {
-    val context = LocalContext.current
-    Column {
-        Text(
-            text = label.tr(context),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold, fontSize = 14.sp),
-            color = MaterialTheme.colorScheme.onSurface
-        )
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        color = MaterialTheme.colorScheme.surfaceContainerHighest
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.labelMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp
+                ),
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
     }
 }
 
@@ -240,14 +249,13 @@ fun BatteryItemRow(
     label: String,
     value: String
 ) {
-    val context = LocalContext.current
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
         Text(
-            text = label.tr(context),
+            text = label,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)
@@ -265,10 +273,6 @@ fun BatteryItemRow(
 @Composable
 fun BatteryScreenPreview() {
     DevPulseTheme {
-        BatteryScreen(
-            batteryInfo = BatteryInfo(
-                powerHistory = listOf(3.8f, 3.9f, 4.0f, 4.1f, 4.15f, 4.12f, 4.15f)
-            )
-        )
+        BatteryScreen(batteryInfo = BatteryInfo())
     }
 }

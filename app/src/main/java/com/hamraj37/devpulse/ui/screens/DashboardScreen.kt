@@ -1,7 +1,9 @@
 package com.hamraj37.devpulse.ui.screens
 
+import androidx.compose.ui.res.stringResource
 import android.content.Context
 import android.widget.Toast
+import com.hamraj37.devpulse.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -59,7 +62,6 @@ import com.hamraj37.devpulse.ui.components.CircularRamGauge
 import com.hamraj37.devpulse.ui.components.LiveSparklineChart
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
-import com.hamraj37.devpulse.util.tr
 import androidx.compose.foundation.clickable
 import androidx.compose.runtime.remember
 import java.io.File
@@ -125,7 +127,7 @@ fun DashboardScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "RAM".tr(context) + " - $ramTotalMb MB " + "Total".tr(context),
+                        text = "RAM - $ramTotalMb MB " + stringResource(R.string.lbl_total),
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold
                         ),
@@ -133,7 +135,7 @@ fun DashboardScreen(
                     )
 
                     Text(
-                        text = "$ramUsedMb MB " + "Used".tr(context),
+                        text = "$ramUsedMb MB " + stringResource(R.string.lbl_used),
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold
                         ),
@@ -167,7 +169,7 @@ fun DashboardScreen(
                         )
 
                         Text(
-                            text = "$ramFreeMb MB " + "Free".tr(context),
+                            text = "$ramFreeMb MB " + stringResource(R.string.lbl_free),
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.Bold
                             ),
@@ -201,13 +203,13 @@ fun DashboardScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Speed,
-                            contentDescription = "CPU Status",
+                            contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(22.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "CPU Core Status".tr(context),
+                            text = stringResource(R.string.cpu_core_status),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             maxLines = 1
                         )
@@ -220,7 +222,7 @@ fun DashboardScreen(
                         color = MaterialTheme.colorScheme.primaryContainer
                     ) {
                         Text(
-                            text = "${dashboardInfo.cpuCoreFrequencies.size} " + "Cores".tr(context),
+                            text = "${dashboardInfo.cpuCoreFrequencies.size} " + stringResource(R.string.lbl_cores),
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -253,7 +255,7 @@ fun DashboardScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = "Core".tr(context) + " $index",
+                                    text = stringResource(R.string.lbl_core) + " $index",
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -322,12 +324,12 @@ fun DashboardScreen(
                         }
                         Column {
                             Text(
-                                text = "Hardware Tests Report".tr(context),
+                                text = stringResource(R.string.dashboard_hardware_tests_report),
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "$completedTests " + "of".tr(context) + " $totalTests " + "Tests Completed".tr(context),
+                                text = "$completedTests " + stringResource(R.string.lbl_of) + " $totalTests " + stringResource(R.string.lbl_tests_completed),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -370,7 +372,7 @@ fun DashboardScreen(
                                 .background(Color(0xFF2E7D32))
                         )
                         Text(
-                            text = "Passed".tr(context) + ": $passedCount",
+                            text = stringResource(R.string.lbl_passed) + ": $passedCount",
                             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -384,7 +386,7 @@ fun DashboardScreen(
                                 .background(MaterialTheme.colorScheme.error)
                         )
                         Text(
-                            text = "Failed".tr(context) + ": $failedCount",
+                            text = stringResource(R.string.lbl_failed) + ": $failedCount",
                             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -398,7 +400,7 @@ fun DashboardScreen(
                                 .background(MaterialTheme.colorScheme.outline)
                         )
                         Text(
-                            text = "Pending".tr(context) + ": $pendingCount",
+                            text = stringResource(R.string.lbl_pending) + ": $pendingCount",
                             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -435,7 +437,7 @@ fun DashboardScreen(
                     )
                     Column {
                         Text(
-                            text = "Display Spec".tr(context),
+                            text = stringResource(R.string.dashboard_display_spec),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -492,7 +494,7 @@ fun DashboardScreen(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "Tools".tr(context),
+                            text = stringResource(R.string.tab_tools),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = FontWeight.Bold,
@@ -523,7 +525,7 @@ fun DashboardScreen(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "Analyze".tr(context),
+                            text = stringResource(R.string.btn_analyze),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = FontWeight.Bold,
@@ -554,7 +556,7 @@ fun DashboardScreen(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "Export".tr(context),
+                            text = stringResource(R.string.btn_export),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = FontWeight.Bold,
@@ -595,7 +597,7 @@ fun DashboardScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Internal Storage".tr(context),
+                            text = stringResource(R.string.dashboard_internal_storage),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             maxLines = 1
                         )
@@ -634,12 +636,12 @@ fun DashboardScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Free".tr(context) + ": ${String.format("%.1f", storageFreeGb)} GB",
+                        text = stringResource(R.string.lbl_free) + ": ${String.format("%.1f", storageFreeGb)} GB",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "Total".tr(context) + ": ${String.format("%.1f", storageTotalGb)} GB",
+                        text = stringResource(R.string.lbl_total) + ": ${String.format("%.1f", storageTotalGb)} GB",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -674,7 +676,7 @@ fun DashboardScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Battery State".tr(context),
+                            text = stringResource(R.string.dashboard_battery_state),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                         )
                     }
@@ -746,12 +748,12 @@ fun DashboardScreen(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            text = "Sensors".tr(context),
+                            text = stringResource(R.string.dashboard_sensors),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = "${dashboardInfo.sensorCount} " + "Active".tr(context),
+                            text = "${dashboardInfo.sensorCount} " + stringResource(R.string.lbl_active),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -779,12 +781,12 @@ fun DashboardScreen(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            text = "All Apps".tr(context),
+                            text = stringResource(R.string.dashboard_apps),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = "${dashboardInfo.appCount} " + "Installed".tr(context),
+                            text = "${dashboardInfo.appCount} " + stringResource(R.string.lbl_installed),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -820,9 +822,9 @@ fun saveTestsReport(context: Context, testsList: List<TestItem>) {
         val reportText = generateTestsReportText(testsList)
         val file = File(context.getExternalFilesDir(null) ?: context.filesDir, "devpulse_hardware_tests_report.txt")
         file.writeText(reportText)
-        Toast.makeText(context, "Report saved to ${file.name}", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, context.getString(R.string.toast_report_saved), Toast.LENGTH_LONG).show()
     } catch (e: Exception) {
-        Toast.makeText(context, "Failed to save report: ${e.message}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.toast_failed_save_report, e.message ?: ""), Toast.LENGTH_SHORT).show()
     }
 }
 

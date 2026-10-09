@@ -1,5 +1,7 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
@@ -77,15 +79,15 @@ fun WidgetsScreen(
                         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                     )
                     appWidgetManager.requestPinAppWidget(myWidget, null, successCallback)
-                    Toast.makeText(context, "$widgetName pin request sent to launcher", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_widget_pin_request_sent), Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(context, "Please long-press your home screen and select Widgets to add $widgetName", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, context.getString(R.string.toast_widget_long_press_home), Toast.LENGTH_LONG).show()
                 }
             } else {
-                Toast.makeText(context, "Please add $widgetName from your home screen widget picker", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.toast_widget_add_from_picker), Toast.LENGTH_LONG).show()
             }
         } catch (e: Exception) {
-            Toast.makeText(context, "Unable to request pin: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_unable_request_pin, e.message ?: ""), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -159,12 +161,12 @@ fun WidgetsScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("Clock Widget Preview", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
+                            Text(stringResource(R.string.widget_clock_preview), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
                             Surface(
                                 shape = RoundedCornerShape(8.dp),
                                 color = MaterialTheme.colorScheme.primaryContainer
                             ) {
-                                Text("Pin", modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                                Text(stringResource(R.string.btn_pin), modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onPrimaryContainer)
                             }
                         }
                         Spacer(modifier = Modifier.height(8.dp))
@@ -198,28 +200,28 @@ fun WidgetsScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("Large System Widget Preview", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary)
+                            Text(stringResource(R.string.widget_large_preview), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary)
                             Surface(
                                 shape = RoundedCornerShape(8.dp),
                                 color = MaterialTheme.colorScheme.secondaryContainer
                             ) {
-                                Text("Pin", modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSecondaryContainer)
+                                Text(stringResource(R.string.btn_pin), modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSecondaryContainer)
                             }
                         }
-                        Text("System Status", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+                        Text(stringResource(R.string.widget_title_large), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
 
                         Column {
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Text("Internal Storage", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text("$storageUsedGb Used", style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
+                                Text(stringResource(R.string.dashboard_internal_storage), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text("$storageUsedGb " + stringResource(R.string.lbl_used), style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
                             }
                             LinearProgressIndicator(progress = { storagePercent / 100f }, modifier = Modifier.fillMaxWidth().padding(top = 2.dp).height(6.dp).clip(CircleShape))
                         }
 
                         Column {
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Text("RAM Memory", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text("$ramUsedGb Used", style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
+                                Text(stringResource(R.string.memory_ram_memory), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text("$ramUsedGb " + stringResource(R.string.lbl_used), style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
                             }
                             LinearProgressIndicator(progress = { ramPercent / 100f }, modifier = Modifier.fillMaxWidth().padding(top = 2.dp).height(6.dp).clip(CircleShape))
                         }
@@ -248,22 +250,22 @@ fun WidgetsScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("Medium Status Widget Preview", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.tertiary)
+                            Text(stringResource(R.string.widget_medium_preview), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.tertiary)
                             Surface(
                                 shape = RoundedCornerShape(8.dp),
                                 color = MaterialTheme.colorScheme.tertiaryContainer
                             ) {
-                                Text("Pin", modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onTertiaryContainer)
+                                Text(stringResource(R.string.btn_pin), modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onTertiaryContainer)
                             }
                         }
-                        Text("DevPulse Status", style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold))
+                        Text(stringResource(R.string.widget_title_devpulse_status), style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold))
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("Storage Used", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            Text("$storageUsedGb Used", style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
+                            Text(stringResource(R.string.widget_lbl_storage_used), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text("$storageUsedGb " + stringResource(R.string.lbl_used), style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
                         }
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("RAM Used", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            Text("$ramUsedGb Used", style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
+                            Text(stringResource(R.string.widget_lbl_ram_used), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text("$ramUsedGb " + stringResource(R.string.lbl_used), style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
                         }
                     }
                 }
@@ -286,15 +288,15 @@ fun WidgetsScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("Small RAM Widget Preview", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
+                            Text(stringResource(R.string.widget_small_preview), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
                             Surface(
                                 shape = RoundedCornerShape(8.dp),
                                 color = MaterialTheme.colorScheme.primaryContainer
                             ) {
-                                Text("Pin", modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                                Text(stringResource(R.string.btn_pin), modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onPrimaryContainer)
                             }
                         }
-                        Text("RAM Used", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.widget_lbl_ram_used), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
                             text = ramUsedGb,
                             style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold, fontSize = 24.sp),
@@ -319,15 +321,15 @@ fun WidgetsScreen(
                                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                             )
                             appWidgetManager.requestPinAppWidget(myWidget, null, successCallback)
-                            Toast.makeText(context, "Widget pin request sent to launcher", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_widget_pin_request_sent), Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(context, "Please long-press your home screen and select Widgets to add DevPulse", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, context.getString(R.string.toast_widget_long_press_home), Toast.LENGTH_LONG).show()
                         }
                     } else {
-                        Toast.makeText(context, "Please add the widget from your home screen widget picker", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, context.getString(R.string.toast_widget_add_from_picker), Toast.LENGTH_LONG).show()
                     }
                 } catch (e: Exception) {
-                    Toast.makeText(context, "Unable to request widget pin: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_unable_request_pin, e.message ?: ""), Toast.LENGTH_SHORT).show()
                 }
             },
             modifier = Modifier.fillMaxWidth(),
@@ -338,7 +340,7 @@ fun WidgetsScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Icon(imageVector = Icons.Rounded.Add, contentDescription = null, modifier = Modifier.size(18.dp))
-                Text("Add Widget to Home Screen")
+                Text(stringResource(R.string.btn_add_widget_to_home))
             }
         }
 

@@ -1,5 +1,7 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -44,7 +46,6 @@ import androidx.compose.ui.platform.LocalContext
 import com.hamraj37.devpulse.data.model.CameraInfo
 import com.hamraj37.devpulse.data.model.CameraSpec
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
-import com.hamraj37.devpulse.util.tr
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -161,13 +162,13 @@ fun CameraScreen(
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        text = "Please Read This".tr(context),
+                        text = stringResource(R.string.camera_please_read_hdr),
                         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onTertiaryContainer
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "If the MegaPixel count shown is wrong, this is because some manufacturers cap maximum camera resolution to 12MP or 8MP for 3rd party apps.".tr(context),
+                        text = stringResource(R.string.camera_megapixels_disclaimer),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.9f),
                         fontSize = 13.sp,
@@ -194,7 +195,7 @@ fun CameraScreen(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "${activeSpec.facing} " + "Specifications".tr(context),
+                            text = "${activeSpec.facing} " + stringResource(R.string.camera_specifications),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -304,7 +305,7 @@ fun CameraScreen(
 
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
-                        text = "Camera Capabilities".tr(context),
+                        text = stringResource(R.string.camera_capabilities),
                         style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -330,7 +331,7 @@ fun CameraScreen(
 
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
-                        text = "Supported Photo & Video Resolutions".tr(context),
+                        text = stringResource(R.string.camera_resolutions),
                         style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -375,7 +376,7 @@ fun CameraSpecSectionHeader(title: String) {
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = title.tr(context),
+            text = title,
             style = MaterialTheme.typography.labelLarge.copy(
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.5.sp
@@ -390,14 +391,13 @@ fun CameraSpecRow(
     label: String,
     value: String
 ) {
-    val context = LocalContext.current
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
         Text(
-            text = label.tr(context),
+            text = label,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)

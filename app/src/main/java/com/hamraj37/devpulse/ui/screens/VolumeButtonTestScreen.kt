@@ -1,5 +1,8 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -15,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.platform.LocalContext
-import com.hamraj37.devpulse.util.tr
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -119,7 +121,7 @@ fun VolumeButtonTestGraphic() {
             }
 
             Text(
-                text = "Volume Up Key".tr(LocalContext.current) + ": " + (if (volUpPressed) "Pressed".tr(LocalContext.current) else "Not Pressed".tr(LocalContext.current)) + " | " + "Volume Down Key".tr(LocalContext.current) + ": " + (if (volDownPressed) "Pressed".tr(LocalContext.current) else "Not Pressed".tr(LocalContext.current)),
+                text = "Volume Up Key: " + (if (volUpPressed) "Pressed" else "Not Pressed") + " | Volume Down Key: " + (if (volDownPressed) "Pressed" else "Not Pressed"),
                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -132,7 +134,7 @@ fun VolumeButtonTestGraphic() {
                     modifier = Modifier.clickable { volUpPressed = true }
                 ) {
                     Text(
-                        text = "Simulate Vol Up".tr(LocalContext.current),
+                        text = "Simulate Vol Up",
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                         style = MaterialTheme.typography.labelMedium,
                         color = if (volUpPressed) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
@@ -145,7 +147,7 @@ fun VolumeButtonTestGraphic() {
                     modifier = Modifier.clickable { volDownPressed = true }
                 ) {
                     Text(
-                        text = "Simulate Vol Down".tr(LocalContext.current),
+                        text = "Simulate Vol Down",
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                         style = MaterialTheme.typography.labelMedium,
                         color = if (volDownPressed) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
@@ -164,7 +166,7 @@ fun VolumeButtonTestScreen(
     modifier: Modifier = Modifier
 ) {
     StandardTestScreen(
-        title = "Volume Keys",
+        title = stringResource(R.string.test_volume_title),
         testId = "test_volume",
         onBack = onBack,
         onPass = onPass,

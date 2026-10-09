@@ -369,8 +369,8 @@ class FloatingMonitorService : Service() {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Floating Monitor Overlay"
-            val descriptionText = "Displays real-time system metrics overlay on screen"
+            val name = getString(R.string.notification_channel_floating_monitor)
+            val descriptionText = getString(R.string.notification_channel_desc_floating_monitor)
             val importance = NotificationManager.IMPORTANCE_LOW
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                 description = descriptionText
@@ -390,8 +390,8 @@ class FloatingMonitorService : Service() {
         )
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("DevPulse Floating Monitor")
-            .setContentText("Live system performance overlays running")
+            .setContentTitle(getString(R.string.notification_floating_monitor_title))
+            .setContentText(getString(R.string.notification_floating_monitor_text))
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentIntent(pendingIntent)
             .setOngoing(true)

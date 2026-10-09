@@ -1,5 +1,8 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
+
 import android.content.Context
 import android.media.AudioManager
 import android.media.Ringtone
@@ -142,7 +145,7 @@ fun EarSpeakerTestScreen(
 ) {
     val context = LocalContext.current
     StandardTestScreen(
-        title = "Earpiece Speaker",
+        title = stringResource(R.string.test_ear_speaker_title),
         testId = "test_earspeaker",
         onBack = onBack,
         onPass = onPass,

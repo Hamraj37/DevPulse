@@ -15,7 +15,7 @@ class DevPulseSmallWidgetProvider : AppWidgetProvider() {
             val memInfo = MemoryTelemetry.getMemoryInfo(context)
             val ramUsedGb = String.format(Locale.US, "%.2fGB", memInfo.ramUsedBytes / (1024.0 * 1024.0 * 1024.0))
 
-            views.setTextViewText(R.id.widget_small_title, "RAM Used")
+            views.setTextViewText(R.id.widget_small_title, context.getString(R.string.widget_lbl_ram_used))
             views.setTextViewText(R.id.widget_small_value, ramUsedGb)
 
             appWidgetManager.updateAppWidget(id, views)

@@ -7,14 +7,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Android
 import androidx.compose.material.icons.rounded.Lock
@@ -29,13 +29,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalContext
+import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.model.SystemInfo
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
-import com.hamraj37.devpulse.util.tr
 
 @Composable
 fun SystemScreen(
@@ -43,7 +43,6 @@ fun SystemScreen(
     modifier: Modifier = Modifier
 ) {
     val dividerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
-    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -73,7 +72,7 @@ fun SystemScreen(
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
                             imageVector = Icons.Rounded.Android,
-                            contentDescription = "Android OS Mascot",
+                            contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(34.dp)
                         )
@@ -130,7 +129,7 @@ fun SystemScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "System Architecture & Runtime".tr(context),
+                        text = stringResource(R.string.system_architecture_runtime),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -139,24 +138,24 @@ fun SystemScreen(
                 HorizontalDivider(color = dividerColor)
 
                 val systemSpecs = listOf(
-                    "OS Name" to systemInfo.osName,
-                    "OS Version" to systemInfo.osVersion,
+                    stringResource(R.string.system_os_name) to systemInfo.osName,
+                    stringResource(R.string.system_os_version) to systemInfo.osVersion,
                     "Android Version" to systemInfo.androidVersion,
-                    "Code Name" to systemInfo.codeName,
-                    "API Level" to systemInfo.apiLevel.toString(),
-                    "Security Patch Level" to systemInfo.securityPatch,
-                    "Bootloader" to systemInfo.bootloader,
-                    "Build Number" to systemInfo.buildNumber,
-                    "Baseband" to systemInfo.basebandVersion,
-                    "Java VM" to systemInfo.javaVm,
-                    "Kernel" to systemInfo.kernelVersion,
-                    "Language" to systemInfo.language,
-                    "Timezone" to systemInfo.timezone,
+                    stringResource(R.string.system_code_name) to systemInfo.codeName,
+                    stringResource(R.string.system_api_level) to systemInfo.apiLevel.toString(),
+                    stringResource(R.string.system_security_patch) to systemInfo.securityPatch,
+                    stringResource(R.string.system_bootloader) to systemInfo.bootloader,
+                    stringResource(R.string.system_build_number) to systemInfo.buildNumber,
+                    stringResource(R.string.system_baseband) to systemInfo.basebandVersion,
+                    stringResource(R.string.system_java_vm) to systemInfo.javaVm,
+                    stringResource(R.string.system_kernel) to systemInfo.kernelVersion,
+                    stringResource(R.string.system_language) to systemInfo.language,
+                    stringResource(R.string.system_timezone) to systemInfo.timezone,
                     "OpenGL ES" to systemInfo.openGlEsVersion,
                     "Root Management Apps" to systemInfo.rootManagementApps,
-                    "SELinux" to systemInfo.seLinux,
-                    "Google Play Services" to systemInfo.googlePlayServices,
-                    "System Uptime" to systemInfo.systemUptime,
+                    stringResource(R.string.system_selinux) to systemInfo.seLinux,
+                    stringResource(R.string.system_play_services) to systemInfo.googlePlayServices,
+                    stringResource(R.string.system_uptime) to systemInfo.systemUptime,
                     "Vulkan" to systemInfo.vulkanVersion,
                     "Treble" to systemInfo.trebleSupported,
                     "Seamless Updates" to systemInfo.seamlessUpdates,
@@ -193,7 +192,7 @@ fun SystemScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "DRM Specifications".tr(context),
+                        text = stringResource(R.string.system_drm_specs),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -203,9 +202,9 @@ fun SystemScreen(
 
                 val drm = systemInfo.drmInfo
                 val drmSpecs = listOf(
-                    "Vendor" to drm.vendor,
-                    "Version" to drm.version,
-                    "Description" to drm.description,
+                    stringResource(R.string.lbl_vendor).removeSuffix(":") to drm.vendor,
+                    stringResource(R.string.lbl_version) to drm.version,
+                    stringResource(R.string.lbl_description) to drm.description,
                     "Algorithms" to drm.algorithms,
                     "Security Level" to drm.securityLevel,
                     "Max HDCP Level" to drm.maxHdcpLevel
@@ -227,14 +226,13 @@ fun SystemItemRow(
     label: String,
     value: String
 ) {
-    val context = LocalContext.current
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
         Text(
-            text = label.tr(context),
+            text = label,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)
@@ -252,8 +250,6 @@ fun SystemItemRow(
 @Composable
 fun SystemScreenPreview() {
     DevPulseTheme {
-        SystemScreen(
-            systemInfo = SystemInfo()
-        )
+        SystemScreen(systemInfo = SystemInfo())
     }
 }

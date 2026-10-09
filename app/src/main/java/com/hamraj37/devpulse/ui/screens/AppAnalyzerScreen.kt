@@ -1,5 +1,6 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -59,7 +60,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import com.hamraj37.devpulse.util.tr
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.data.model.AppSpec
@@ -294,8 +295,8 @@ fun AppAnalyzerScreen(
 
     val context = LocalContext.current
     var selectedTab by remember { mutableStateOf("Categories") }
-    val tabs = remember(context) {
-        listOf("Categories".tr(context), "Installer".tr(context), "Target SDK".tr(context), "Minimum SDK".tr(context), "App Type".tr(context))
+    val tabs = remember {
+        listOf("Categories", "Installer", "Target SDK", "Minimum SDK", "App Type")
     }
 
     var selectedCategoryItem by remember { mutableStateOf<AnalyzerItem?>(null) }
@@ -597,11 +598,11 @@ fun CategoryAppListBottomSheet(
 
                     Column {
                         Text(
-                            text = categoryItem.label.tr(context),
+                            text = categoryItem.label,
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                         )
                         Text(
-                            text = "${categoryApps.size} " + "Applications".tr(context),
+                            text = "${categoryApps.size} " + stringResource(R.string.lbl_applications),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

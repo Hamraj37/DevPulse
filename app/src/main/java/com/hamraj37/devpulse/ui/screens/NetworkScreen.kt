@@ -1,7 +1,9 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
 import android.net.TrafficStats
 import android.text.format.Formatter
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,7 +55,6 @@ import com.hamraj37.devpulse.data.model.NetworkInfo
 import com.hamraj37.devpulse.ui.components.LiveSparklineChart
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
-import com.hamraj37.devpulse.util.tr
 
 @Composable
 fun NetworkScreen(
@@ -218,7 +219,7 @@ fun NetworkScreen(
 
                             Column {
                                 Text(
-                                    text = "DOWNLOAD".tr(context),
+                                    text = stringResource(R.string.network_download),
                                     style = MaterialTheme.typography.labelSmall.copy(
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 10.sp
@@ -264,7 +265,7 @@ fun NetworkScreen(
 
                             Column {
                                 Text(
-                                    text = "UPLOAD".tr(context),
+                                    text = stringResource(R.string.network_upload),
                                     style = MaterialTheme.typography.labelSmall.copy(
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 10.sp
@@ -294,12 +295,12 @@ fun NetworkScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Live Network Traffic".tr(context),
+                                text = stringResource(R.string.network_live_traffic),
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
-                                text = "Real-time".tr(context),
+                                text = stringResource(R.string.network_realtime),
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                                 color = MaterialTheme.colorScheme.primary
                             )
@@ -337,7 +338,7 @@ fun NetworkScreen(
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(text = "Usage".tr(context), fontWeight = FontWeight.SemiBold, maxLines = 1, softWrap = false)
+                        Text(text = stringResource(R.string.network_usage), fontWeight = FontWeight.SemiBold, maxLines = 1, softWrap = false)
                     }
 
                     OutlinedButton(
@@ -354,7 +355,7 @@ fun NetworkScreen(
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(text = "Public IP".tr(context), fontWeight = FontWeight.SemiBold, maxLines = 1, softWrap = false)
+                        Text(text = stringResource(R.string.network_public_ip), fontWeight = FontWeight.SemiBold, maxLines = 1, softWrap = false)
                     }
                 }
             }
@@ -416,9 +417,9 @@ fun NetworkScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = when {
-                            isCellular -> "Detailed Mobile Data & Network Specs".tr(context)
-                            isDisconnected -> "Network Connection Status".tr(context)
-                            else -> "Detailed Wi-Fi & Network Specs".tr(context)
+                            isCellular -> "Detailed Mobile Data & Network Specs"
+                            isDisconnected -> "Network Connection Status"
+                            else -> "Detailed Wi-Fi & Network Specs"
                         },
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface
@@ -560,14 +561,13 @@ fun NetworkItemRow(
     label: String,
     value: String
 ) {
-    val context = LocalContext.current
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
         Text(
-            text = label.tr(context),
+            text = label,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)

@@ -1,5 +1,8 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
+
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -312,7 +315,7 @@ fun CompassScreen(
     ) {
         if (onBack != null) {
             DevPulseTopAppBar(
-                title = "Compass",
+                title = stringResource(R.string.compass),
                 onBack = onBack
             )
         }

@@ -1,5 +1,7 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -13,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.platform.LocalContext
-import com.hamraj37.devpulse.util.tr
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -120,7 +121,7 @@ fun ChargingTestGraphic(context: Context) {
         }
 
         Text(
-            text = if (isCharging) "Charging".tr(LocalContext.current) + " (Power Connected)" else "Connect your charger".tr(LocalContext.current),
+            text = if (isCharging) "Charging (Power Connected)" else "Connect your charger",
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = activeColor
         )
@@ -130,15 +131,15 @@ fun ChargingTestGraphic(context: Context) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                Text("Level".tr(LocalContext.current), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringResource(R.string.lbl_level), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text("$batteryLevel%", fontWeight = FontWeight.Bold)
             }
             Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                Text("Temperature".tr(LocalContext.current), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringResource(R.string.lbl_temperature), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text("${String.format(Locale.US, "%.1f", tempC)} °C", fontWeight = FontWeight.Bold)
             }
             Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                Text("Voltage".tr(LocalContext.current), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringResource(R.string.lbl_voltage), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text("$voltageMv mV", fontWeight = FontWeight.Bold)
             }
         }

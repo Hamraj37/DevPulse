@@ -1,12 +1,13 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
 import android.nfc.NfcManager
 import android.os.SystemClock
 import android.provider.Settings
-import com.hamraj37.devpulse.util.tr
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -253,7 +254,7 @@ fun AutomaticTestsScreen(
                 SadFaceIcon(isSad = hasSuggestions)
 
                 Text(
-                    text = if (hasSuggestions) "Suggestions are available".tr(context) else "All automatic tests passed".tr(context),
+                    text = if (hasSuggestions) stringResource(R.string.tests_suggestions_available) else stringResource(R.string.tests_all_passed),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
@@ -304,7 +305,7 @@ fun AutomaticTestsScreen(
 
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = item.title.tr(context),
+                                        text = item.title,
                                         style = MaterialTheme.typography.titleMedium.copy(
                                             fontWeight = FontWeight.Bold,
                                             fontSize = 16.sp
@@ -313,7 +314,7 @@ fun AutomaticTestsScreen(
                                     )
                                     Spacer(modifier = Modifier.height(2.dp))
                                     Text(
-                                        text = item.subtitle.tr(context),
+                                        text = item.subtitle,
                                         style = MaterialTheme.typography.bodyMedium.copy(
                                             fontSize = 13.5.sp
                                         ),
@@ -332,7 +333,7 @@ fun AutomaticTestsScreen(
                                             }
                                         ) {
                                             Text(
-                                                text = "Check".tr(context),
+                                                text = stringResource(R.string.btn_check),
                                                 modifier = Modifier.padding(horizontal = 18.dp, vertical = 8.dp),
                                                 style = MaterialTheme.typography.labelMedium.copy(
                                                     fontWeight = FontWeight.Bold,

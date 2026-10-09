@@ -1,12 +1,13 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
 import android.graphics.pdf.PdfDocument
 import android.net.Uri
 import android.widget.Toast
-import com.hamraj37.devpulse.util.tr
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -128,10 +129,10 @@ fun generateTextReportFile(context: Context, reportContent: String): Uri? {
 @Composable
 fun ExportScreen(
     uiState: MainUiState,
-    context: Context = LocalContext.current,
     onBack: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     if (onBack != null) {
         BackHandler { onBack() }
     }
@@ -291,7 +292,7 @@ fun ExportScreen(
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text(
-                    text = "Export Data".tr(context),
+                    text = stringResource(R.string.export_subtitle),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 22.sp
@@ -299,7 +300,7 @@ fun ExportScreen(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "Save your device information to a text file".tr(context),
+                    text = stringResource(R.string.export_desc),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
@@ -485,10 +486,10 @@ fun ExportScreen(
                         type = if (reportType == "PDF") "application/pdf" else "text/plain"
                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     }
-                    val shareIntent = Intent.createChooser(sendIntent, "Export DevPulse $reportType Report")
+                    val shareIntent = Intent.createChooser(sendIntent, context.getString(R.string.chooser_export_report, reportType))
                     context.startActivity(shareIntent)
                 } else {
-                    Toast.makeText(context, "Failed to generate report", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_failed_generate_report), Toast.LENGTH_SHORT).show()
                 }
             },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF52564A)),

@@ -15,7 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.platform.LocalContext
-import com.hamraj37.devpulse.util.tr
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -58,13 +57,13 @@ fun FingerprintTestGraphic(context: Context) {
         }
 
         Text(
-            text = if (hasFingerprint || hasFace) "Biometric Hardware Available".tr(LocalContext.current) else "Biometric Hardware Checked".tr(LocalContext.current),
+            text = if (hasFingerprint || hasFace) "Biometric Hardware Available" else "Biometric Hardware Checked",
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.primary
         )
 
         Text(
-            text = "Fingerprint Sensor: " + (if (hasFingerprint) "Supported".tr(LocalContext.current) else "N/A") + " | Face Unlock: " + (if (hasFace) "Supported".tr(LocalContext.current) else "N/A"),
+            text = "Fingerprint Sensor: " + (if (hasFingerprint) "Supported" else "N/A") + " | Face Unlock: " + (if (hasFace) "Supported" else "N/A"),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

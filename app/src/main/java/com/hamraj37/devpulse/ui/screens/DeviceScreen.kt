@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CellTower
 import androidx.compose.material.icons.rounded.PhoneAndroid
@@ -24,13 +24,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalContext
+import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.model.DeviceInfo
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
-import com.hamraj37.devpulse.util.tr
 
 @Composable
 fun DeviceScreen(
@@ -38,7 +38,6 @@ fun DeviceScreen(
     modifier: Modifier = Modifier
 ) {
     val dividerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
-    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -63,12 +62,12 @@ fun DeviceScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.PhoneAndroid,
-                        contentDescription = "Device Specifications",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Device Hardware & Identity".tr(context),
+                        text = stringResource(R.string.device_hardware_identity),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -76,23 +75,23 @@ fun DeviceScreen(
 
                 HorizontalDivider(color = dividerColor)
 
-                DeviceItemRow("Device Name", deviceInfo.deviceName)
+                DeviceItemRow(stringResource(R.string.device_name), deviceInfo.deviceName)
                 HorizontalDivider(color = dividerColor)
-                DeviceItemRow("Model", deviceInfo.model)
+                DeviceItemRow(stringResource(R.string.device_model), deviceInfo.model)
                 HorizontalDivider(color = dividerColor)
-                DeviceItemRow("Manufacturer", deviceInfo.manufacturer)
+                DeviceItemRow(stringResource(R.string.device_manufacturer), deviceInfo.manufacturer)
                 HorizontalDivider(color = dividerColor)
-                DeviceItemRow("Device Code", deviceInfo.deviceCode)
+                DeviceItemRow(stringResource(R.string.device_code), deviceInfo.deviceCode)
                 HorizontalDivider(color = dividerColor)
-                DeviceItemRow("Board", deviceInfo.board)
+                DeviceItemRow(stringResource(R.string.device_board), deviceInfo.board)
                 HorizontalDivider(color = dividerColor)
-                DeviceItemRow("Hardware", deviceInfo.hardware)
+                DeviceItemRow(stringResource(R.string.device_hardware), deviceInfo.hardware)
                 HorizontalDivider(color = dividerColor)
-                DeviceItemRow("Brand", deviceInfo.brand)
+                DeviceItemRow(stringResource(R.string.device_brand), deviceInfo.brand)
                 HorizontalDivider(color = dividerColor)
-                DeviceItemRow("Android Device ID", deviceInfo.androidDeviceId)
+                DeviceItemRow(stringResource(R.string.device_android_id), deviceInfo.androidDeviceId)
                 HorizontalDivider(color = dividerColor)
-                DeviceItemRow("Build Fingerprint", deviceInfo.buildFingerprint)
+                DeviceItemRow(stringResource(R.string.device_build_fingerprint), deviceInfo.buildFingerprint)
             }
         }
 
@@ -117,7 +116,7 @@ fun DeviceScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Network & Device Type".tr(context),
+                        text = stringResource(R.string.device_network_type_hdr),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -125,7 +124,7 @@ fun DeviceScreen(
 
                 HorizontalDivider(color = dividerColor)
 
-                DeviceItemRow("Device Type", deviceInfo.deviceType)
+                DeviceItemRow(stringResource(R.string.device_type), deviceInfo.deviceType)
                 HorizontalDivider(color = dividerColor)
 
                 Row(
@@ -134,7 +133,7 @@ fun DeviceScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "eSIM Support".tr(context),
+                        text = stringResource(R.string.device_esim_support),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.weight(1f)
@@ -144,7 +143,7 @@ fun DeviceScreen(
                         color = if (deviceInfo.esimSupported) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.secondaryContainer
                     ) {
                         Text(
-                            text = if (deviceInfo.esimSupported) "Supported" else "Not Supported",
+                            text = if (deviceInfo.esimSupported) stringResource(R.string.lbl_supported) else stringResource(R.string.lbl_not_supported),
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                             color = if (deviceInfo.esimSupported) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer
@@ -153,11 +152,11 @@ fun DeviceScreen(
                 }
                 HorizontalDivider(color = dividerColor)
 
-                DeviceItemRow("Network Type", deviceInfo.networkType)
+                DeviceItemRow(stringResource(R.string.device_network_type), deviceInfo.networkType)
                 HorizontalDivider(color = dividerColor)
-                DeviceItemRow("Network Operator 1", deviceInfo.networkOperator1)
+                DeviceItemRow(stringResource(R.string.device_operator_1), deviceInfo.networkOperator1)
                 HorizontalDivider(color = dividerColor)
-                DeviceItemRow("Network Operator 2", deviceInfo.networkOperator2)
+                DeviceItemRow(stringResource(R.string.device_operator_2), deviceInfo.networkOperator2)
             }
         }
     }
@@ -168,14 +167,13 @@ fun DeviceItemRow(
     label: String,
     value: String
 ) {
-    val context = LocalContext.current
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
         Text(
-            text = label.tr(context),
+            text = label,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)
@@ -200,15 +198,7 @@ fun DeviceScreenPreview() {
                 manufacturer = "Google",
                 brand = "google",
                 board = "husky",
-                hardware = "zuma",
-                deviceCode = "husky",
-                androidDeviceId = "a1b2c3d4e5f6g7h8",
-                buildFingerprint = "google/husky/husky:14/UD1A.230803.041/10800000:user/release-keys",
-                deviceType = "Smartphone",
-                esimSupported = true,
-                networkType = "5G NR / LTE Advanced",
-                networkOperator1 = "Jio 5G",
-                networkOperator2 = "Airtel"
+                hardware = "zuma"
             )
         )
     }

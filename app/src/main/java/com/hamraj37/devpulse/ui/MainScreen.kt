@@ -78,6 +78,7 @@ import androidx.core.content.ContextCompat
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.key
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.model.AppTab
 import com.hamraj37.devpulse.data.model.DashboardInfo
@@ -100,7 +101,6 @@ import com.hamraj37.devpulse.ui.screens.SystemScreen
 import com.hamraj37.devpulse.ui.screens.TestsScreen
 import com.hamraj37.devpulse.ui.screens.ThermalScreen
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
-import com.hamraj37.devpulse.util.tr
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.Job
@@ -235,14 +235,14 @@ fun MainScreen(
                             viewModel.dismissUpdateDialog()
                         }
                     ) {
-                        Text("Download Update")
+                        Text(stringResource(R.string.btn_download_update))
                     }
                 },
                 dismissButton = {
                     TextButton(
                         onClick = { viewModel.dismissUpdateDialog() }
                     ) {
-                        Text("Later")
+                        Text(stringResource(R.string.btn_later))
                     }
                 }
             )
@@ -307,7 +307,7 @@ fun MainScreen(
             },
             confirmButton = {
                 Button(onClick = { showAboutDialog = false }) {
-                    Text("Close")
+                    Text(stringResource(R.string.btn_close))
                 }
             }
         )
@@ -327,7 +327,7 @@ fun MainScreen(
                 )
             },
             title = {
-                Text(text = "App Settings", fontWeight = FontWeight.Bold)
+                Text(text = stringResource(R.string.btn_app_settings), fontWeight = FontWeight.Bold)
             },
             text = {
                 Column(
@@ -390,13 +390,13 @@ fun MainScreen(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text("Configure Floating Monitors")
+                        Text(stringResource(R.string.dialog_configure_floating_monitors))
                     }
                 }
             },
             confirmButton = {
                 TextButton(onClick = { showSettingsDialog = false }) {
-                    Text("Done")
+                    Text(stringResource(R.string.btn_done))
                 }
             }
         )
@@ -418,7 +418,6 @@ fun MainScreen(
         }
     }
 
-    key(uiState.appLanguageCode) {
         if (uiState.isToolsPageOpen) {
             Surface(
                 modifier = modifier
@@ -432,7 +431,6 @@ fun MainScreen(
                     onThemeModeChange = { viewModel.setThemeMode(it) },
                     onUseSystemColorsChange = { viewModel.setUseSystemColors(it) },
                     onThemeColorChange = { viewModel.setThemeColor(it) },
-                    onAppLanguageChange = { code, name -> viewModel.onAppLanguageChange(code, name) },
                     onBack = { viewModel.setToolsPageOpen(false) },
                     onNavigateToTab = { tab ->
                         viewModel.selectTab(tab)
@@ -511,7 +509,7 @@ fun MainScreen(
                                     onDismissRequest = { showTopMenu = false }
                                 ) {
                                     DropdownMenuItem(
-                                        text = { Text("Refresh Telemetry".tr(context)) },
+                                        text = { Text(stringResource(R.string.menu_refresh_telemetry)) },
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Rounded.Refresh,
@@ -528,7 +526,7 @@ fun MainScreen(
                                     HorizontalDivider()
 
                                     DropdownMenuItem(
-                                        text = { Text("App Analyzer".tr(context)) },
+                                        text = { Text(stringResource(R.string.menu_app_analyzer)) },
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Rounded.BarChart,
@@ -543,7 +541,7 @@ fun MainScreen(
                                     )
 
                                     DropdownMenuItem(
-                                        text = { Text("Wi-Fi Analyzer".tr(context)) },
+                                        text = { Text(stringResource(R.string.menu_wifi_analyzer)) },
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Rounded.Router,
@@ -558,7 +556,7 @@ fun MainScreen(
                                     )
 
                                     DropdownMenuItem(
-                                        text = { Text("Permissions".tr(context)) },
+                                        text = { Text(stringResource(R.string.menu_permissions)) },
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Rounded.Shield,
@@ -573,7 +571,7 @@ fun MainScreen(
                                     )
 
                                     DropdownMenuItem(
-                                        text = { Text("Play Integrity".tr(context)) },
+                                        text = { Text(stringResource(R.string.menu_play_integrity)) },
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Rounded.VerifiedUser,
@@ -588,7 +586,7 @@ fun MainScreen(
                                     )
 
                                     DropdownMenuItem(
-                                        text = { Text("Root Checker".tr(context)) },
+                                        text = { Text(stringResource(R.string.menu_root_checker)) },
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Rounded.AdminPanelSettings,
@@ -603,7 +601,7 @@ fun MainScreen(
                                     )
 
                                     DropdownMenuItem(
-                                        text = { Text("Data Usage".tr(context)) },
+                                        text = { Text(stringResource(R.string.menu_data_usage)) },
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Rounded.SwapHoriz,
@@ -618,7 +616,7 @@ fun MainScreen(
                                     )
 
                                     DropdownMenuItem(
-                                        text = { Text("Widgets".tr(context)) },
+                                        text = { Text(stringResource(R.string.menu_widgets)) },
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Rounded.GridView,
@@ -633,7 +631,7 @@ fun MainScreen(
                                     )
 
                                     DropdownMenuItem(
-                                        text = { Text("Export System Report".tr(context)) },
+                                        text = { Text(stringResource(R.string.menu_export_report)) },
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Rounded.PictureAsPdf,
@@ -650,7 +648,7 @@ fun MainScreen(
                                     HorizontalDivider()
 
                                     DropdownMenuItem(
-                                        text = { Text("Settings".tr(context)) },
+                                        text = { Text(stringResource(R.string.menu_settings)) },
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Rounded.Settings,
@@ -665,7 +663,7 @@ fun MainScreen(
                                     )
 
                                     DropdownMenuItem(
-                                        text = { Text("About DevPulse".tr(context)) },
+                                        text = { Text(stringResource(R.string.menu_about)) },
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = Icons.Rounded.Info,
@@ -735,7 +733,6 @@ fun MainScreen(
             }
         }
     }
-}
 }
 
 @Composable

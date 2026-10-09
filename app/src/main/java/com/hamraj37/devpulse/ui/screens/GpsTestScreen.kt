@@ -16,7 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.platform.LocalContext
-import com.hamraj37.devpulse.util.tr
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -99,7 +98,7 @@ fun GpsTestGraphic(context: Context) {
         }
 
         Text(
-            text = if (isGpsEnabled || isNetworkEnabled) "GPS Location Hardware Active".tr(LocalContext.current) else "Location Provider Disabled".tr(LocalContext.current),
+            text = if (isGpsEnabled || isNetworkEnabled) "GPS Location Hardware Active" else "Location Provider Disabled",
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = if (isGpsEnabled || isNetworkEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
         )

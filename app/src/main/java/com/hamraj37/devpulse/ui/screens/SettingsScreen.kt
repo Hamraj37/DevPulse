@@ -1,5 +1,9 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import android.app.Activity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -35,8 +39,7 @@ import androidx.compose.material.icons.rounded.PrivacyTip
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.Thermostat
-import com.hamraj37.devpulse.util.AppLanguageManager
-import com.hamraj37.devpulse.util.tr
+import androidx.compose.ui.res.stringResource
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -69,7 +72,6 @@ fun SettingsScreen(
     onThemeModeChange: (String) -> Unit = {},
     onUseSystemColorsChange: (Boolean) -> Unit = {},
     onThemeColorChange: (String) -> Unit = {},
-    onAppLanguageChange: (String, String) -> Unit = { _, _ -> },
     onBack: (() -> Unit)? = null,
     onNavigateToExport: (() -> Unit)? = null,
     onNavigateToAbout: (() -> Unit)? = null,
@@ -81,12 +83,37 @@ fun SettingsScreen(
 
     val context = LocalContext.current
 
+    var showLanguageDialog by remember { mutableStateOf(false) }
     var showThemeDialog by remember { mutableStateOf(false) }
     var showColorDialog by remember { mutableStateOf(false) }
-    var showLanguageDialog by remember { mutableStateOf(false) }
     var showClearDataDialog by remember { mutableStateOf(false) }
     var showDonateDialog by remember { mutableStateOf(false) }
     var showPrivacyDialog by remember { mutableStateOf(false) }
+
+    val supportedLanguages = remember {
+        listOf(
+            "system" to "System default",
+            "en" to "English",
+            "ru" to "Русский",
+            "hi" to "हिन्दी",
+            "es" to "Español",
+            "fr" to "Français",
+            "de" to "Deutsch",
+            "pt" to "Português",
+            "ar" to "العربية",
+            "ja" to "日本語",
+            "zh" to "中文",
+            "bn" to "বাংলা"
+        )
+    }
+
+    val currentLocales = AppCompatDelegate.getApplicationLocales()
+    val currentLangCode = if (currentLocales.isEmpty) {
+        "system"
+    } else {
+        currentLocales.get(0)?.language ?: "system"
+    }
+    val currentLanguageDisplayName = supportedLanguages.find { it.first == currentLangCode }?.second ?: "System default"
 
     val appVersionText = remember {
         try {
@@ -194,7 +221,7 @@ fun SettingsScreen(
         // Section 2: General
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
-                text = "General".tr(context),
+                text = stringResource(R.string.lbl_general),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                 modifier = Modifier.padding(start = 56.dp, bottom = 4.dp)
@@ -202,28 +229,28 @@ fun SettingsScreen(
 
             SettingsItemRow(
                 icon = Icons.Rounded.Language,
-                title = "App Language".tr(context),
-                subtitle = uiState.appLanguageName.ifBlank { "System default".tr(context) },
+                title = stringResource(R.string.settings_choose_app_language),
+                subtitle = currentLanguageDisplayName,
                 onClick = { showLanguageDialog = true }
             )
 
             SettingsItemRow(
                 icon = Icons.Rounded.Download,
-                title = "Export Data".tr(context),
-                subtitle = "Save your device information to a text file".tr(context),
+                title = stringResource(R.string.lbl_export_data),
+                subtitle = stringResource(R.string.lbl_export_data_desc),
                 onClick = {
                     if (onNavigateToExport != null) {
                         onNavigateToExport()
                     } else {
-                        Toast.makeText(context, "Opening Export Data...", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_opening_export_data), Toast.LENGTH_SHORT).show()
                     }
                 }
             )
 
             SettingsItemRow(
                 icon = Icons.Rounded.DeleteOutline,
-                title = "Clear Data",
-                subtitle = "Clear app's data and preferences",
+                title = stringResource(R.string.lbl_clear_data),
+                subtitle = stringResource(R.string.lbl_clear_data_desc),
                 onClick = { showClearDataDialog = true }
             )
         }
@@ -233,7 +260,7 @@ fun SettingsScreen(
         // Section 3: Support Us
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
-                text = "Support Us",
+                text = stringResource(R.string.btn_donate),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                 modifier = Modifier.padding(start = 56.dp, bottom = 4.dp)
@@ -241,8 +268,8 @@ fun SettingsScreen(
 
             SettingsItemRow(
                 icon = Icons.Rounded.Favorite,
-                title = "Donate",
-                subtitle = "You can show your appreciation for my work by making a small donation",
+                title = stringResource(R.string.btn_donate),
+                subtitle = stringResource(R.string.settings_donate_msg),
                 onClick = { showDonateDialog = true }
             )
         }
@@ -252,7 +279,7 @@ fun SettingsScreen(
         // Section 4: About
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
-                text = "About",
+                text = stringResource(R.string.about_title),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                 modifier = Modifier.padding(start = 56.dp, bottom = 4.dp)
@@ -260,26 +287,26 @@ fun SettingsScreen(
 
             SettingsItemRow(
                 icon = Icons.Rounded.PrivacyTip,
-                title = "Privacy Policy",
+                title = stringResource(R.string.lbl_privacy_policy),
                 onClick = {
                     try {
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://hamraj37.github.io/DevPulse/privacy.html"))
                         context.startActivity(intent)
                     } catch (_: Exception) {
-                        Toast.makeText(context, "Unable to open Privacy Policy URL", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_unable_open_privacy_policy), Toast.LENGTH_SHORT).show()
                     }
                 }
             )
 
             SettingsItemRow(
                 icon = Icons.Rounded.Info,
-                title = "App Version",
+                title = stringResource(R.string.lbl_version),
                 subtitle = appVersionText,
                 onClick = {
                     if (onNavigateToAbout != null) {
                         onNavigateToAbout()
                     } else {
-                        Toast.makeText(context, "DevPulse $appVersionText is up to date", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_app_up_to_date, appVersionText), Toast.LENGTH_SHORT).show()
                     }
                 }
             )
@@ -290,11 +317,63 @@ fun SettingsScreen(
     }
 
     // Dialogs
+    if (showLanguageDialog) {
+        AlertDialog(
+            onDismissRequest = { showLanguageDialog = false },
+            title = { Text(text = stringResource(R.string.settings_choose_app_language), fontWeight = FontWeight.Bold) },
+            text = {
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState())
+                ) {
+                    supportedLanguages.forEach { (code, name) ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    showLanguageDialog = false
+                                    val localeList = if (code == "system") {
+                                        LocaleListCompat.getEmptyLocaleList()
+                                    } else {
+                                        LocaleListCompat.forLanguageTags(code)
+                                    }
+                                    AppCompatDelegate.setApplicationLocales(localeList)
+                                    (context as? Activity)?.recreate()
+                                }
+                                .padding(vertical = 8.dp)
+                        ) {
+                            RadioButton(
+                                selected = currentLangCode == code,
+                                onClick = {
+                                    showLanguageDialog = false
+                                    val localeList = if (code == "system") {
+                                        LocaleListCompat.getEmptyLocaleList()
+                                    } else {
+                                        LocaleListCompat.forLanguageTags(code)
+                                    }
+                                    AppCompatDelegate.setApplicationLocales(localeList)
+                                    (context as? Activity)?.recreate()
+                                }
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = name)
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showLanguageDialog = false }) {
+                    Text(stringResource(R.string.btn_cancel))
+                }
+            }
+        )
+    }
+
     if (showThemeDialog) {
         val themeOptions = listOf("System default", "Light", "Dark")
         AlertDialog(
             onDismissRequest = { showThemeDialog = false },
-            title = { Text(text = "Choose Theme".tr(context), fontWeight = FontWeight.Bold) },
+            title = { Text(text = stringResource(R.string.dialog_choose_theme), fontWeight = FontWeight.Bold) },
             text = {
                 Column {
                     themeOptions.forEach { option ->
@@ -316,14 +395,14 @@ fun SettingsScreen(
                                 }
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(text = option.tr(context))
+                            Text(text = option)
                         }
                     }
                 }
             },
             confirmButton = {
                 TextButton(onClick = { showThemeDialog = false }) {
-                    Text("Cancel".tr(context))
+                    Text(stringResource(R.string.btn_cancel))
                 }
             }
         )
@@ -333,7 +412,7 @@ fun SettingsScreen(
         val colorOptions = listOf("Blue", "Purple", "Green", "Orange", "Teal")
         AlertDialog(
             onDismissRequest = { showColorDialog = false },
-            title = { Text(text = "Choose Theme Color".tr(context), fontWeight = FontWeight.Bold) },
+            title = { Text(text = stringResource(R.string.dialog_choose_theme_color), fontWeight = FontWeight.Bold) },
             text = {
                 Column {
                     colorOptions.forEach { option ->
@@ -362,49 +441,7 @@ fun SettingsScreen(
             },
             confirmButton = {
                 TextButton(onClick = { showColorDialog = false }) {
-                    Text("Cancel".tr(context))
-                }
-            }
-        )
-    }
-
-    if (showLanguageDialog) {
-        AlertDialog(
-            onDismissRequest = { showLanguageDialog = false },
-            title = { Text(text = "Choose App Language".tr(context), fontWeight = FontWeight.Bold) },
-            text = {
-                Column(
-                    modifier = Modifier.verticalScroll(rememberScrollState())
-                ) {
-                    AppLanguageManager.supportedLanguages.forEach { lang ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    onAppLanguageChange(lang.code, if (lang.code.isEmpty()) "System default" else lang.nativeName)
-                                    showLanguageDialog = false
-                                }
-                                .padding(vertical = 8.dp)
-                        ) {
-                            RadioButton(
-                                selected = (uiState.appLanguageCode == lang.code),
-                                onClick = {
-                                    onAppLanguageChange(lang.code, if (lang.code.isEmpty()) "System default" else lang.nativeName)
-                                    showLanguageDialog = false
-                                }
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = if (lang.code.isEmpty()) "System default".tr(context) else "${lang.displayName} (${lang.nativeName})"
-                            )
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showLanguageDialog = false }) {
-                    Text("Cancel".tr(context))
+                    Text(stringResource(R.string.btn_cancel))
                 }
             }
         )
@@ -413,9 +450,9 @@ fun SettingsScreen(
     if (showClearDataDialog) {
         AlertDialog(
             onDismissRequest = { showClearDataDialog = false },
-            title = { Text(text = "Clear Data".tr(context), fontWeight = FontWeight.Bold) },
+            title = { Text(text = stringResource(R.string.lbl_clear_data), fontWeight = FontWeight.Bold) },
             text = {
-                Text("Are you sure you want to clear app cache and reset preferences?".tr(context))
+                Text(stringResource(R.string.settings_clear_data_confirm_msg))
             },
             confirmButton = {
                 TextButton(
@@ -423,15 +460,15 @@ fun SettingsScreen(
                         showClearDataDialog = false
                         context.getSharedPreferences("devpulse_prefs", Context.MODE_PRIVATE).edit().clear().apply()
                         context.getSharedPreferences("devpulse_test_prefs", Context.MODE_PRIVATE).edit().clear().apply()
-                        Toast.makeText(context, "App data & preferences cleared", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_app_data_cleared), Toast.LENGTH_SHORT).show()
                     }
                 ) {
-                    Text("Clear".tr(context))
+                    Text(stringResource(R.string.btn_clear))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showClearDataDialog = false }) {
-                    Text("Cancel".tr(context))
+                    Text(stringResource(R.string.btn_cancel))
                 }
             }
         )
@@ -444,13 +481,13 @@ fun SettingsScreen(
     if (showPrivacyDialog) {
         AlertDialog(
             onDismissRequest = { showPrivacyDialog = false },
-            title = { Text(text = "Privacy Policy".tr(context), fontWeight = FontWeight.Bold) },
+            title = { Text(text = stringResource(R.string.lbl_privacy_policy), fontWeight = FontWeight.Bold) },
             text = {
-                Text("DevPulse does not collect or transmit any personal user data. All hardware telemetry, app analytics, and diagnostic logs are processed locally on your device.".tr(context))
+                Text(stringResource(R.string.settings_privacy_policy_desc))
             },
             confirmButton = {
                 TextButton(onClick = { showPrivacyDialog = false }) {
-                    Text("Close".tr(context))
+                    Text(stringResource(R.string.btn_close))
                 }
             }
         )

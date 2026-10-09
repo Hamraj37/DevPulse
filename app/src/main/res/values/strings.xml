@@ -1,3 +1,415 @@
 <resources>
+    <!-- App & General -->
     <string name="app_name">DevPulse</string>
+    <string name="app_description">Comprehensive hardware telemetry, system diagnostics, and developer toolkit for Android.</string>
+
+    <!-- Navigation Drawer & Tabs -->
+    <string name="tab_dashboard">Dashboard</string>
+    <string name="tab_device">Device</string>
+    <string name="tab_system">System</string>
+    <string name="tab_cpu">CPU</string>
+    <string name="tab_battery">Battery</string>
+    <string name="tab_network">Network</string>
+    <string name="tab_connectivity">Connectivity</string>
+    <string name="tab_display">Display</string>
+    <string name="tab_memory">Memory</string>
+    <string name="tab_camera">Camera</string>
+    <string name="tab_thermal">Thermal</string>
+    <string name="tab_sensors">Sensors</string>
+    <string name="tab_apps">Apps</string>
+    <string name="tab_tests">Tests</string>
+    <string name="tab_tools">Tools</string>
+    <string name="tab_settings">Settings</string>
+    <string name="tab_about">About</string>
+
+    <!-- Navigation & Menu Actions -->
+    <string name="menu_refresh_telemetry">Refresh Telemetry</string>
+    <string name="menu_app_analyzer">App Analyzer</string>
+    <string name="menu_wifi_analyzer">Wi-Fi Analyzer</string>
+    <string name="menu_permissions">Permissions</string>
+    <string name="menu_play_integrity">Play Integrity</string>
+    <string name="menu_root_checker">Root Checker</string>
+    <string name="menu_data_usage">Data Usage</string>
+    <string name="menu_widgets">Widgets</string>
+    <string name="menu_export_report">Export System Report</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_about">About DevPulse</string>
+
+    <!-- Common UI Actions & Buttons -->
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_clear">Clear</string>
+    <string name="btn_close">Close</string>
+    <string name="btn_grant_permission">Grant Permission</string>
+    <string name="btn_launch_app">Launch App</string>
+    <string name="btn_extract_apk">Extract APK</string>
+    <string name="btn_open_in_play">Google Play</string>
+    <string name="btn_app_settings">App Settings</string>
+    <string name="btn_check">Check</string>
+    <string name="btn_enable">Enable</string>
+    <string name="btn_analyze">Analyze</string>
+    <string name="btn_export">Export</string>
+    <string name="btn_donate">Donate</string>
+    <string name="btn_update_now">Update Now</string>
+    <string name="btn_later">Later</string>
+    <string name="btn_download_update">Download Update</string>
+    <string name="btn_ok">OK</string>
+    <string name="btn_done">Done</string>
+    <string name="btn_pin">Pin</string>
+    <string name="btn_copy_id">Copy ID</string>
+    <string name="btn_pay_upi">Pay UPI</string>
+    <string name="btn_add_widget_to_home">Add Widget to Home Screen</string>
+    <string name="btn_refresh_tools">Refresh Tools</string>
+    <string name="btn_export_full_report">Export Full System Report</string>
+
+    <!-- Common Labels & Statuses -->
+    <string name="lbl_value">Value</string>
+    <string name="lbl_version">Version</string>
+    <string name="lbl_apk_size">APK Size</string>
+    <string name="lbl_app_type">App Type</string>
+    <string name="lbl_system_app">System Application</string>
+    <string name="lbl_user_app">User Installed Application</string>
+    <string name="lbl_install_source">Install Source</string>
+    <string name="lbl_first_installed">First Installed</string>
+    <string name="lbl_last_updated">Last Updated</string>
+    <string name="lbl_quick_actions">Quick Actions</string>
+    <string name="lbl_general">General</string>
+    <string name="lbl_theme">Theme</string>
+    <string name="lbl_app_language">App Language</string>
+    <string name="lbl_export_data">Export Data</string>
+    <string name="lbl_export_data_desc">Save your device information to a text file</string>
+    <string name="lbl_clear_data">Clear Data</string>
+    <string name="lbl_clear_data_desc">Clear app\'s data and preferences</string>
+    <string name="lbl_support_us">Support Us</string>
+    <string name="lbl_about">About</string>
+    <string name="lbl_privacy_policy">Privacy Policy</string>
+    <string name="lbl_app_version">App Version</string>
+    <string name="lbl_system_default">System default</string>
+    <string name="lbl_passed">Passed</string>
+    <string name="lbl_failed">Failed</string>
+    <string name="lbl_pending">Pending</string>
+    <string name="lbl_not_tested">Not Tested</string>
+    <string name="lbl_test">Test</string>
+    <string name="lbl_status">Status:</string>
+    <string name="lbl_vendor">Vendor:</string>
+    <string name="lbl_type">Type:</string>
+    <string name="lbl_active">Active</string>
+    <string name="lbl_installed">Installed</string>
+    <string name="lbl_total">Total</string>
+    <string name="lbl_used">Used</string>
+    <string name="lbl_free">Free</string>
+    <string name="lbl_cores">Cores</string>
+    <string name="lbl_core">Core</string>
+    <string name="lbl_of">of</string>
+    <string name="lbl_tests_completed">Tests Completed</string>
+    <string name="lbl_live">LIVE</string>
+    <string name="lbl_description">Description</string>
+    <string name="lbl_yes">Yes</string>
+    <string name="lbl_no">No</string>
+    <string name="lbl_supported">Supported</string>
+    <string name="lbl_not_supported">Not Supported</string>
+    <string name="lbl_level">Level</string>
+    <string name="lbl_temperature">Temperature</string>
+    <string name="lbl_voltage">Voltage</string>
+    <string name="lbl_open_usage_settings">Open System Usage Access Settings</string>
+    <string name="lbl_applications">Applications</string>
+    <string name="lbl_categories">Categories</string>
+    <string name="lbl_installer">Installer</string>
+    <string name="lbl_target_sdk">Target SDK</string>
+    <string name="lbl_min_sdk">Minimum SDK</string>
+
+    <!-- Dialogs & Prompts -->
+    <string name="dialog_update_available_title">Update Available (%1$s)</string>
+    <string name="dialog_configure_floating_monitors">Configure Floating Monitors</string>
+    <string name="dialog_choose_theme">Choose Theme</string>
+    <string name="dialog_choose_theme_color">Choose Theme Color</string>
+    <string name="dialog_choose_app_language">Choose App Language</string>
+    <string name="dialog_data_usage_summary">Data Usage Summary</string>
+    <string name="dialog_public_ip_title">Public IP Address</string>
+
+    <!-- Support & Donation Component -->
+    <string name="support_devpulse_dev">Support DevPulse Developer</string>
+    <string name="support_devpulse_desc">DevPulse is completely free and open-source. If you find this app helpful, consider supporting its development!</string>
+    <string name="support_scan_qr_donate">Scan QR to Donate</string>
+    <string name="support_upi_payment">UPI Payment</string>
+
+    <!-- Widget Previews -->
+    <string name="widget_clock_preview">Clock Widget Preview</string>
+    <string name="widget_large_preview">Large System Widget Preview</string>
+    <string name="widget_medium_preview">Medium Status Widget Preview</string>
+    <string name="widget_small_preview">Small RAM Widget Preview</string>
+
+    <!-- Dashboard Screen -->
+    <string name="dashboard_hardware_tests_report">Hardware Tests Report</string>
+    <string name="dashboard_display_spec">Display Spec</string>
+    <string name="dashboard_internal_storage">Internal Storage</string>
+    <string name="dashboard_battery_state">Battery State</string>
+    <string name="dashboard_sensors">Sensors</string>
+    <string name="dashboard_apps">All Apps</string>
+
+    <!-- Device Specs Screen -->
+    <string name="device_hardware_identity">Device Hardware &amp; Identity</string>
+    <string name="device_name">Device Name</string>
+    <string name="device_model">Model</string>
+    <string name="device_manufacturer">Manufacturer</string>
+    <string name="device_code">Device Code</string>
+    <string name="device_board">Board</string>
+    <string name="device_hardware">Hardware</string>
+    <string name="device_brand">Brand</string>
+    <string name="device_android_id">Android Device ID</string>
+    <string name="device_build_fingerprint">Build Fingerprint</string>
+    <string name="device_network_type_hdr">Network &amp; Device Type</string>
+    <string name="device_type">Device Type</string>
+    <string name="device_esim_support">eSIM Support</string>
+    <string name="device_network_type">Network Type</string>
+    <string name="device_operator_1">Network Operator 1</string>
+    <string name="device_operator_2">Network Operator 2</string>
+
+    <!-- System Specs Screen -->
+    <string name="system_architecture_runtime">System Architecture &amp; Runtime</string>
+    <string name="system_os_name">OS Name</string>
+    <string name="system_os_version">OS Version</string>
+    <string name="system_code_name">Code Name</string>
+    <string name="system_api_level">API Level</string>
+    <string name="system_security_patch">Security Patch Level</string>
+    <string name="system_bootloader">Bootloader</string>
+    <string name="system_build_number">Build Number</string>
+    <string name="system_baseband">Baseband</string>
+    <string name="system_java_vm">Java VM</string>
+    <string name="system_kernel">Kernel</string>
+    <string name="system_language">Language</string>
+    <string name="system_timezone">Timezone</string>
+    <string name="system_selinux">SELinux</string>
+    <string name="system_play_services">Google Play Services</string>
+    <string name="system_uptime">System Uptime</string>
+    <string name="system_drm_specs">DRM Specifications</string>
+
+    <!-- CPU Specs Screen -->
+    <string name="cpu_core_status">CPU Core Status</string>
+    <string name="cpu_core_frequencies">Core Frequencies</string>
+    <string name="cpu_processor_architecture">Processor &amp; Graphics Architecture</string>
+    <string name="cpu_processor">Processor</string>
+    <string name="cpu_architecture">CPU Architecture</string>
+    <string name="cpu_supported_abis">Supported ABIs</string>
+    <string name="cpu_hardware">CPU Hardware</string>
+    <string name="cpu_type">CPU Type</string>
+    <string name="cpu_governor">CPU Governor</string>
+    <string name="cpu_frequency">CPU Frequency</string>
+    <string name="gpu_renderer">GPU Renderer</string>
+    <string name="gpu_vendor">GPU Vendor</string>
+    <string name="gpu_version">GPU Version</string>
+
+    <!-- Battery Specs Screen -->
+    <string name="battery_power_state">Battery Power State</string>
+    <string name="battery_live_power_draw">Live Power Draw Stream</string>
+    <string name="battery_health_specs">Battery Health &amp; Hardware Specs</string>
+    <string name="battery_health">Health</string>
+    <string name="battery_level">Level</string>
+    <string name="battery_status">Status</string>
+    <string name="battery_power_source">Power Source</string>
+    <string name="battery_technology">Technology</string>
+    <string name="battery_current">Current</string>
+    <string name="battery_power">Power</string>
+    <string name="battery_time_to_charge">Time to charge</string>
+    <string name="battery_charge_cycles">Charge Cycles</string>
+    <string name="battery_capacity_charged">Capacity (Charged)</string>
+    <string name="battery_capacity_estimated">Capacity (Estimated)</string>
+    <string name="battery_capacity_system">Capacity (System)</string>
+    <string name="battery_temp_chip">Temp</string>
+
+    <!-- Memory Specs Screen -->
+    <string name="memory_zram_swap">zRAM (RAM Swap)</string>
+    <string name="memory_ram_volatile">RAM (Volatile)</string>
+    <string name="memory_ram_memory">RAM Memory</string>
+
+    <!-- Network & Connectivity Specs Screens -->
+    <string name="network_download">DOWNLOAD</string>
+    <string name="network_upload">UPLOAD</string>
+    <string name="network_live_traffic">Live Network Traffic</string>
+    <string name="network_realtime">Real-time</string>
+    <string name="network_usage">Usage</string>
+    <string name="network_public_ip">Public IP</string>
+    <string name="conn_bluetooth_disabled_msg">Please enable Bluetooth to view full hardware radio capabilities.</string>
+    <string name="conn_bluetooth_disabled_hdr">Bluetooth is Disabled</string>
+    <string name="conn_wifi_capabilities">Wi-Fi Capabilities</string>
+    <string name="conn_bluetooth_capabilities">Bluetooth Capabilities</string>
+    <string name="conn_nfc_capabilities">NFC Capabilities</string>
+    <string name="conn_uwb_capabilities">Ultra Wide Band (UWB)</string>
+    <string name="conn_usb_capabilities">USB Capabilities</string>
+
+    <!-- Display Specs Screen -->
+    <string name="display_hardware_details">Display Hardware &amp; System Details</string>
+    <string name="display_refresh_rate">Refresh Rate</string>
+    <string name="display_brightness_level">Brightness Level</string>
+
+    <!-- Thermal & Sensor Specs Screens -->
+    <string name="thermal_zone_monitors">Thermal Zone Monitors</string>
+    <string name="thermal_headroom_capacity">Thermal Headroom Capacity</string>
+    <string name="sensors_available_hdr">Sensors are available on your device</string>
+    <string name="sensors_realtime_stream">Real-time stream &amp; live event listener</string>
+    <string name="sensors_live_stream_hdr">LIVE SENSOR STREAM DATA</string>
+    <string name="sensors_gps_disabled_warning">Location service is disabled. GPS/Location is required for true declination &amp; orientation calibration.</string>
+    <string name="sensors_wakeup">Wakeup</string>
+    <string name="sensors_non_wakeup">Non-wakeup</string>
+
+    <!-- Camera Specs Screen -->
+    <string name="camera_please_read_hdr">Please Read This</string>
+    <string name="camera_megapixels_disclaimer">If the MegaPixel count shown is wrong, this is because some manufacturers cap maximum camera sensor resolution in third-party app APIs.</string>
+    <string name="camera_capabilities">Camera Capabilities</string>
+    <string name="camera_resolutions">Supported Photo &amp; Video Resolutions</string>
+    <string name="camera_specifications">Specifications</string>
+
+    <!-- Apps Screen -->
+    <string name="apps_filter_placeholder">Filter apps by name or package&#8230;</string>
+
+    <!-- Tools & Inspector Screens -->
+    <string name="tools_hdr">Tools &amp; Utilities</string>
+    <string name="tools_desc">System analysis, overlays, integrity checks, &amp; exports</string>
+    <string name="app_analyzer_title">App Analyzer</string>
+    <string name="app_analyzer_subtitle">App Architecture &amp; Component Inspector</string>
+    <string name="app_analyzer_desc">Deep inspection of components, permissions, SDKs &amp; security</string>
+    <string name="data_usage_title">Data Usage</string>
+    <string name="data_usage_subtitle">Network Data Usage</string>
+    <string name="data_usage_desc">Mobile &amp; Wi-Fi data traffic per application</string>
+    <string name="data_usage_search_placeholder">Search app usage...</string>
+    <string name="data_usage_open_settings">Open System Usage Access Settings</string>
+    <string name="export_title">Export System Report</string>
+    <string name="export_subtitle">System Report Exporter</string>
+    <string name="export_desc">Export hardware diagnostics &amp; system telemetry as TXT or PDF</string>
+    <string name="floating_monitors_title">Floating Monitors</string>
+    <string name="floating_monitors_subtitle">Display live system performance overlays</string>
+    <string name="floating_monitors_perm_hdr">Display Over Apps Permission Required</string>
+    <string name="floating_monitors_perm_msg">To render floating performance indicators on top of other applications, please grant overlay permission.</string>
+    <string name="floating_monitors_preview">Live Monitor Preview</string>
+    <string name="permissions_title">Permissions</string>
+    <string name="permissions_subtitle">Permissions Manager</string>
+    <string name="permissions_desc">App permission usage across installed apps</string>
+    <string name="permissions_search_placeholder">Search permissions...</string>
+    <string name="permissions_allowed_of">allowed of</string>
+    <string name="permissions_not_requested">Not requested by installed apps</string>
+    <string name="play_integrity_title">Play Integrity</string>
+    <string name="play_integrity_subtitle">Play Integrity Attestation</string>
+    <string name="play_integrity_desc">Google Play Integrity API device &amp; app verdict</string>
+    <string name="play_integrity_attesting">Attesting Device...</string>
+    <string name="play_integrity_run_check">Run Integrity Check</string>
+    <string name="root_checker_title">Root Checker</string>
+    <string name="root_checker_subtitle">Root &amp; Security Checker</string>
+    <string name="root_checker_desc">Advanced root binary, SU files, Magisk &amp; SELinux scan</string>
+    <string name="root_checker_scanning">Scanning Root Access...</string>
+    <string name="root_checker_verify_status">Verify Root Status</string>
+    <string name="screen_time_title">Screen Time</string>
+    <string name="screen_time_subtitle">Screen Time &amp; App Usage</string>
+    <string name="screen_time_desc">Daily device screen time and application usage</string>
+    <string name="screen_time_search_placeholder">Search screen time usage...</string>
+    <string name="widgets_title">Widgets</string>
+    <string name="widgets_subtitle">Home Screen Widgets</string>
+    <string name="widgets_desc">Add DevPulse performance widgets to your home screen</string>
+    <string name="wifi_analyzer_title">Wi-Fi Analyzer</string>
+    <string name="wifi_analyzer_subtitle">Wi-Fi Network Analyzer</string>
+    <string name="wifi_analyzer_desc">Nearby Wi-Fi signals, channels &amp; security</string>
+    <string name="wifi_analyzer_search_placeholder">Search Wi-Fi networks...</string>
+
+    <!-- Settings & About Screens -->
+    <string name="settings_preferences_customization">App preferences &amp; customization</string>
+    <string name="settings_use_system_colors">Use system colors</string>
+    <string name="settings_match_wallpaper_colors">Match the colors from your wallpaper</string>
+    <string name="settings_theme_color">Theme color</string>
+    <string name="settings_clear_data_confirm_msg">Are you sure you want to clear app cache and reset preferences?</string>
+    <string name="settings_donate_msg">You can show your appreciation for my work by making a small donation</string>
+    <string name="settings_privacy_policy_desc">DevPulse does not collect or transmit any personal user data. All hardware telemetry, app analytics, and diagnostic logs are processed locally on your device.</string>
+    <string name="settings_choose_app_language">Choose App Language</string>
+    <string name="settings_choose_theme">Choose Theme</string>
+    <string name="settings_choose_theme_color">Choose Theme Color</string>
+    <string name="about_devpulse_desc">DevPulse is an all-in-one Android system intelligence tool providing real-time telemetry, hardware diagnostic tests, and system inspection.</string>
+
+    <!-- Tests & Hardware Diagnostics Prompts -->
+    <string name="tests_hdr">Hardware Diagnostic Tests</string>
+    <string name="tests_desc">Complete interactive tests to check hardware</string>
+    <string name="tests_auto_diagnostics">Automatic Diagnostics</string>
+    <string name="tests_interactive_tests">Interactive Hardware Tests</string>
+    <string name="tests_suggestions_available">Suggestions are available</string>
+    <string name="tests_all_passed">All automatic tests passed</string>
+    <string name="test_display_cycle_colors">Tap screen to cycle colors</string>
+    <string name="test_multitouch_prompt">Touch screen with multiple fingers</string>
+    <string name="test_multitouch_question">Does the screen detects multiple fingers?</string>
+    <string name="test_display_color_question">Were the screen one solid color?</string>
+    <string name="test_flashlight_question">Is the flashlight working?</string>
+    <string name="test_speaker_question">Audio is playing. Can you hear it?</string>
+    <string name="test_mic_question">Speak to the microphone. Is the progress changing?</string>
+    <string name="test_ear_speaker_question">Cover the area above the display or place your palm on the display. do you get any feedback?</string>
+    <string name="test_proximity_question">Cover the area above the display. Is the value changing?</string>
+    <string name="test_vibration_question">Shake your device. Did you feel the vibration?</string>
+    <string name="test_charging_question">Is it charging?</string>
+    <string name="test_vibration_feel_question">Can you feel the phone vibrating?</string>
+    <string name="test_bluetooth_question">Is Bluetooth hardware working?</string>
+    <string name="test_biometric_question">Is the fingerprint / biometric sensor working?</string>
+    <string name="test_gps_question">Is location / GPS fix detected?</string>
+    <string name="test_volume_question">Press the volume up or down key, do you get any feedback?</string>
+    <string name="test_generic_question">Is the test working properly?</string>
+
+    <!-- Services, Widgets & Manifest Properties -->
+    <string name="notification_channel_floating_monitor">Floating Monitor Overlay</string>
+    <string name="notification_channel_desc_floating_monitor">Displays real-time system metrics overlay on screen</string>
+    <string name="notification_floating_monitor_title">DevPulse Floating Monitor</string>
+    <string name="notification_floating_monitor_text">Live system performance overlays running</string>
+    <string name="widget_title_large">System Status (Large)</string>
+    <string name="widget_title_devpulse_status">DevPulse Status</string>
+    <string name="widget_lbl_storage_used">Storage Used</string>
+    <string name="widget_lbl_ram_used">RAM Used</string>
+    <string name="manifest_fgs_special_use_subtype">Overlay monitor for real-time telemetry display</string>
+
+    <!-- Additional About & Component Strings -->
+    <string name="about_title">About DevPulse</string>
+    <string name="about_dev_name">Hamraj37</string>
+    <string name="about_dev_role">Passionate Android Developer</string>
+    <string name="about_dev_bio">I am an independent developer dedicated to building clean, powerful, and privacy-focused Android utilities. If you enjoy using DevPulse, consider supporting the project or sharing feedback!</string>
+    <string name="about_dev_section_title">Developer Profile</string>
+    <string name="network_mobile_specs">Detailed Mobile Data &amp; Network Specs</string>
+    <string name="network_wifi_specs">Detailed Wi-Fi &amp; Network Specs</string>
+    <string name="network_conn_status">Network Connection Status</string>
+    <string name="test_accel_title">Accelerometer Sensor Test</string>
+    <string name="test_ear_speaker_title">Ear Speaker Test</string>
+    <string name="test_flashlight_title">Flashlight Test</string>
+    <string name="test_mic_title">Microphone Test</string>
+    <string name="test_speaker_title">Main Speaker Test</string>
+    <string name="test_vibration_title">Vibration Feedback Test</string>
+    <string name="test_volume_title">Volume Keys Test</string>
+    <string name="desc_back">Back</string>
+    <string name="desc_clear">Clear</string>
+    <string name="desc_refresh">Refresh</string>
+    <string name="desc_options">Options</string>
+    <string name="desc_export">Export</string>
+    <string name="compass">Compass</string>
+
+    <!-- Toast, Intent & Clipboard Strings -->
+    <string name="toast_unable_to_open_link">Unable to open link</string>
+    <string name="toast_no_email_client">No email client found</string>
+    <string name="toast_no_launch_activity">No launch activity found for %s</string>
+    <string name="toast_cannot_launch_app">Cannot launch app: %s</string>
+    <string name="toast_could_not_open_play_store">Could not open Play Store</string>
+    <string name="toast_apk_extracted">APK extracted successfully</string>
+    <string name="toast_failed_extract_apk">Failed to extract APK: %s</string>
+    <string name="toast_report_saved">Report saved successfully</string>
+    <string name="toast_failed_save_report">Failed to save report: %s</string>
+    <string name="toast_opening_system_settings">Opening System Settings...</string>
+    <string name="toast_failed_generate_report">Failed to generate report</string>
+    <string name="toast_unable_open_overlay_settings">Unable to open Overlay Settings</string>
+    <string name="toast_overlay_permission_required">Overlay permission required</string>
+    <string name="toast_running_play_integrity">Running Play Integrity Check...</string>
+    <string name="toast_play_integrity_passed">Play Integrity Attestation Passed</string>
+    <string name="toast_scanning_root">Scanning Root Status...</string>
+    <string name="toast_root_access_detected">Root Access Detected!</string>
+    <string name="toast_device_not_rooted">Device is Not Rooted</string>
+    <string name="toast_opening_export_data">Opening Export Data...</string>
+    <string name="toast_unable_open_privacy_policy">Unable to open Privacy Policy URL</string>
+    <string name="toast_app_up_to_date">DevPulse %s is up to date</string>
+    <string name="toast_app_data_cleared">App data &amp; preferences cleared</string>
+    <string name="toast_upi_copied">UPI ID copied to clipboard</string>
+    <string name="toast_tools_refreshed">Tools refreshed</string>
+    <string name="toast_widget_pin_request_sent">Widget pin request sent to launcher</string>
+    <string name="toast_widget_long_press_home">Please long-press your home screen and select Widgets to add DevPulse</string>
+    <string name="toast_widget_add_from_picker">Please add the widget from your home screen widget picker</string>
+    <string name="toast_unable_request_pin">Unable to request widget pin: %s</string>
+    <string name="chooser_export_report">Export DevPulse %s Report</string>
+    <string name="chooser_pay_via_upi">Pay via UPI</string>
+    <string name="label_upi_id">DevPulse UPI ID</string>
 </resources>

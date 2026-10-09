@@ -1,7 +1,6 @@
 package com.hamraj37.devpulse.ui
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -23,9 +22,10 @@ import com.hamraj37.devpulse.ui.screens.ProximityTestScreen
 import com.hamraj37.devpulse.ui.screens.SpeakerTestScreen
 import com.hamraj37.devpulse.ui.screens.VibrationTestScreen
 import com.hamraj37.devpulse.ui.screens.VolumeButtonTestScreen
+import androidx.appcompat.app.AppCompatActivity
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 
-class TestActivity : ComponentActivity() {
+class TestActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

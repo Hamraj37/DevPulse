@@ -1,5 +1,6 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
@@ -76,7 +77,7 @@ import com.hamraj37.devpulse.data.model.AppInfo
 import com.hamraj37.devpulse.data.model.AppSpec
 import com.hamraj37.devpulse.data.telemetry.AppCategoryFilter
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
-import com.hamraj37.devpulse.util.tr
+import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -139,7 +140,7 @@ fun AppsScreen(
                     color = MaterialTheme.colorScheme.primary
                 ) {
                     Text(
-                        text = "${appInfo.totalApps} " + "Apps".tr(context),
+                        text = "${appInfo.totalApps} " + stringResource(R.string.tab_apps),
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onPrimary,
@@ -164,7 +165,7 @@ fun AppsScreen(
                             )
                     ) {
                         Text(
-                            text = category.tr(context),
+                            text = category,
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
@@ -205,7 +206,7 @@ fun AppsScreen(
                 value = searchQuery,
                 onValueChange = onSearchQueryChange,
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Filter apps by name or package...".tr(context)) },
+                placeholder = { Text(stringResource(R.string.apps_filter_placeholder)) },
                 singleLine = true,
                 leadingIcon = {
                     Icon(
@@ -333,17 +334,17 @@ fun AppDetailBottomSheet(
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    AppDetailRow("Version".tr(context), "${app.versionName} (${app.versionCode})")
-                    AppDetailRow("APK Size".tr(context), formatApkSize(app.appSizeBytes))
-                    AppDetailRow("App Type".tr(context), if (app.isSystemApp) "System Application".tr(context) else "User Installed Application".tr(context))
-                    AppDetailRow("Install Source".tr(context), installSource)
-                    AppDetailRow("First Installed".tr(context), formatTime(app.installedTimeMs))
-                    AppDetailRow("Last Updated".tr(context), formatTime(app.updatedTimeMs))
+                    AppDetailRow(stringResource(R.string.lbl_version), "${app.versionName} (${app.versionCode})")
+                    AppDetailRow(stringResource(R.string.lbl_apk_size), formatApkSize(app.appSizeBytes))
+                    AppDetailRow(stringResource(R.string.lbl_app_type), if (app.isSystemApp) stringResource(R.string.lbl_system_app) else stringResource(R.string.lbl_user_app))
+                    AppDetailRow(stringResource(R.string.lbl_install_source), installSource)
+                    AppDetailRow(stringResource(R.string.lbl_first_installed), formatTime(app.installedTimeMs))
+                    AppDetailRow(stringResource(R.string.lbl_last_updated), formatTime(app.updatedTimeMs))
                 }
             }
 
             Text(
-                text = "Quick Actions".tr(context),
+                text = stringResource(R.string.lbl_quick_actions),
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.primary
             )
@@ -367,10 +368,10 @@ fun AppDetailBottomSheet(
                                     context.startActivity(launchIntent)
                                     onDismissRequest()
                                 } else {
-                                    Toast.makeText(context, "No launch activity found for ${app.appName}", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getString(R.string.toast_no_launch_activity, app.appName), Toast.LENGTH_SHORT).show()
                                 }
                             } catch (e: Exception) {
-                                Toast.makeText(context, "Cannot launch app: ${e.message}", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_cannot_launch_app, e.message ?: ""), Toast.LENGTH_SHORT).show()
                             }
                         },
                         modifier = Modifier.weight(1f),
@@ -387,7 +388,7 @@ fun AppDetailBottomSheet(
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
-                                text = "Launch App".tr(context),
+                                text = stringResource(R.string.btn_launch_app),
                                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
                             )
                         }
@@ -417,7 +418,7 @@ fun AppDetailBottomSheet(
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
-                                text = "Extract APK".tr(context),
+                                text = stringResource(R.string.btn_extract_apk),
                                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
                             )
                         }
@@ -444,7 +445,7 @@ fun AppDetailBottomSheet(
                                     }
                                     context.startActivity(intent)
                                 } catch (e: Exception) {
-                                    Toast.makeText(context, "Could not open Play Store", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getString(R.string.toast_could_not_open_play_store), Toast.LENGTH_SHORT).show()
                                 }
                             }
                         },
@@ -461,7 +462,7 @@ fun AppDetailBottomSheet(
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
-                                text = "Google Play".tr(context),
+                                text = stringResource(R.string.btn_open_in_play),
                                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
                             )
                         }
@@ -493,7 +494,7 @@ fun AppDetailBottomSheet(
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
-                                text = "App Settings".tr(context),
+                                text = stringResource(R.string.btn_app_settings),
                                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
                             )
                         }
@@ -588,7 +589,7 @@ private suspend fun extractApkFile(context: Context, app: AppSpec) {
             }
 
             withContext(Dispatchers.Main) {
-                Toast.makeText(context, "APK extracted to Downloads/$fileName", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.toast_apk_extracted), Toast.LENGTH_LONG).show()
             }
         } catch (e: Exception) {
             try {
@@ -606,11 +607,11 @@ private suspend fun extractApkFile(context: Context, app: AppSpec) {
                 }
 
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(context, "APK extracted to ${destFile.name}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, context.getString(R.string.toast_apk_extracted), Toast.LENGTH_LONG).show()
                 }
             } catch (ex: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(context, "Failed to extract APK: ${ex.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_failed_extract_apk, ex.message ?: ""), Toast.LENGTH_SHORT).show()
                 }
             }
         }

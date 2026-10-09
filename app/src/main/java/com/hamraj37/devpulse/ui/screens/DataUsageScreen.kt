@@ -1,5 +1,7 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import android.app.AppOpsManager
 import com.hamraj37.devpulse.data.model.AppSpec
 import android.app.usage.NetworkStats
@@ -12,7 +14,6 @@ import android.net.ConnectivityManager
 import android.net.TrafficStats
 import android.os.Build
 import android.os.Process
-import com.hamraj37.devpulse.util.tr
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -386,11 +387,11 @@ fun DataUsageScreen(
             )
             Column {
                 Text(
-                    text = "Network Data Usage".tr(context),
+                    text = stringResource(R.string.data_usage_subtitle),
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
-                    text = "Mobile & Wi-Fi data traffic per application".tr(context),
+                    text = stringResource(R.string.data_usage_desc),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -401,7 +402,7 @@ fun DataUsageScreen(
             value = searchQuery,
             onValueChange = { searchQuery = it },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Search app usage...".tr(context)) },
+            placeholder = { Text(stringResource(R.string.data_usage_search_placeholder)) },
             leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
             trailingIcon = if (searchQuery.isNotEmpty()) {
                 {
@@ -644,13 +645,13 @@ fun DataUsageScreen(
                         val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
                         context.startActivity(intent)
                     } catch (_: Exception) {
-                        Toast.makeText(context, "Opening System Settings...", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_opening_system_settings), Toast.LENGTH_SHORT).show()
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(14.dp)
             ) {
-                Text("Open System Usage Access Settings".tr(context))
+                Text(stringResource(R.string.lbl_open_usage_settings))
             }
         }
 

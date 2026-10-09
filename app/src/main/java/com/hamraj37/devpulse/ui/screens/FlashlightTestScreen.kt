@@ -1,5 +1,8 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
+
 import android.content.Context
 import android.hardware.camera2.CameraManager
 import androidx.compose.foundation.Canvas
@@ -93,7 +96,7 @@ fun FlashlightTestScreen(
 ) {
     val context = LocalContext.current
     StandardTestScreen(
-        title = "Flashlight",
+        title = stringResource(R.string.test_flashlight_title),
         testId = "test_flashlight",
         onBack = onBack,
         onPass = onPass,

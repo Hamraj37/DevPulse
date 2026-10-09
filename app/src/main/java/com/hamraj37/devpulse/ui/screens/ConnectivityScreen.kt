@@ -1,5 +1,7 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.Context
@@ -47,7 +49,6 @@ import androidx.compose.ui.unit.dp
 import com.hamraj37.devpulse.data.model.ConnectivityInfo
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
-import com.hamraj37.devpulse.util.tr
 
 @Composable
 fun ConnectivityScreen(
@@ -111,13 +112,13 @@ fun ConnectivityScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Bluetooth is Disabled".tr(context),
+                                text = stringResource(R.string.conn_bluetooth_disabled_hdr),
                                 style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                                 color = MaterialTheme.colorScheme.onErrorContainer
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "Please enable Bluetooth to view full hardware radio capabilities.".tr(context),
+                                text = stringResource(R.string.conn_bluetooth_disabled_msg),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.85f)
                             )
@@ -134,7 +135,7 @@ fun ConnectivityScreen(
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                         ) {
-                            Text("Enable".tr(context), style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold))
+                            Text(stringResource(R.string.btn_enable), style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold))
                         }
                     }
                 }
@@ -231,7 +232,7 @@ fun ConnectivitySectionCard(
                 ) {
                     Icon(
                         imageVector = icon,
-                        contentDescription = title.tr(context),
+                        contentDescription = title,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(6.dp)
                     )
@@ -240,7 +241,7 @@ fun ConnectivitySectionCard(
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Text(
-                    text = title.tr(context),
+                    text = title,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -259,14 +260,13 @@ fun ConnectivityFeatureRow(
     isSupported: Boolean,
     statusText: String? = null
 ) {
-    val context = LocalContext.current
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = label.tr(context),
+            text = label,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)
@@ -323,7 +323,7 @@ fun ConnectivityItemRow(
         verticalAlignment = Alignment.Top
     ) {
         Text(
-            text = label.tr(context),
+            text = label,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)

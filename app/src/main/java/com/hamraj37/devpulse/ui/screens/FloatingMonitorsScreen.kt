@@ -1,12 +1,13 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
-import com.hamraj37.devpulse.util.tr
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -137,11 +138,11 @@ fun FloatingMonitorsScreen(
             )
             Column {
                 Text(
-                    text = "Floating Monitors".tr(context),
+                    text = stringResource(R.string.floating_monitors_title),
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
-                    text = "Display live system performance overlays".tr(context),
+                    text = stringResource(R.string.floating_monitors_subtitle),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -161,12 +162,12 @@ fun FloatingMonitorsScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Display Over Apps Permission Required".tr(context),
+                        text = stringResource(R.string.floating_monitors_perm_hdr),
                         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onErrorContainer
                     )
                     Text(
-                        text = "To render floating performance indicators on top of other applications, please grant overlay permission.".tr(context),
+                        text = stringResource(R.string.floating_monitors_perm_msg),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onErrorContainer
                     )
@@ -183,14 +184,14 @@ fun FloatingMonitorsScreen(
                                     val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
                                     context.startActivity(intent)
                                 } catch (e2: Exception) {
-                                    Toast.makeText(context, "Unable to open Overlay Settings", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getString(R.string.toast_unable_open_overlay_settings), Toast.LENGTH_SHORT).show()
                                 }
                             }
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
                         shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text("Grant Permission".tr(context))
+                        Text(stringResource(R.string.btn_grant_permission))
                     }
                 }
             }
@@ -208,7 +209,7 @@ fun FloatingMonitorsScreen(
                     checked = fpsOverlay,
                     onCheckedChange = {
                         if (!hasOverlayPermission) {
-                            Toast.makeText(context, "Overlay permission required", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_overlay_permission_required), Toast.LENGTH_SHORT).show()
                         } else {
                             fpsOverlay = it
                             updateServiceState(cpuOverlay, ramOverlay, batteryOverlay, it)
@@ -222,7 +223,7 @@ fun FloatingMonitorsScreen(
                     checked = cpuOverlay,
                     onCheckedChange = {
                         if (!hasOverlayPermission) {
-                            Toast.makeText(context, "Overlay permission required", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_overlay_permission_required), Toast.LENGTH_SHORT).show()
                         } else {
                             cpuOverlay = it
                             updateServiceState(it, ramOverlay, batteryOverlay, fpsOverlay)
@@ -236,7 +237,7 @@ fun FloatingMonitorsScreen(
                     checked = ramOverlay,
                     onCheckedChange = {
                         if (!hasOverlayPermission) {
-                            Toast.makeText(context, "Overlay permission required", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_overlay_permission_required), Toast.LENGTH_SHORT).show()
                         } else {
                             ramOverlay = it
                             updateServiceState(cpuOverlay, it, batteryOverlay, fpsOverlay)
@@ -250,7 +251,7 @@ fun FloatingMonitorsScreen(
                     checked = batteryOverlay,
                     onCheckedChange = {
                         if (!hasOverlayPermission) {
-                            Toast.makeText(context, "Overlay permission required", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_overlay_permission_required), Toast.LENGTH_SHORT).show()
                         } else {
                             batteryOverlay = it
                             updateServiceState(cpuOverlay, ramOverlay, it, fpsOverlay)
@@ -274,7 +275,7 @@ fun FloatingMonitorsScreen(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Live Monitor Preview".tr(context),
+                        text = stringResource(R.string.floating_monitors_preview),
                         style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -292,7 +293,7 @@ fun FloatingMonitorsScreen(
                     color = MaterialTheme.colorScheme.primary
                 ) {
                     Text(
-                        text = "LIVE".tr(context),
+                        text = stringResource(R.string.lbl_live),
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onPrimary,

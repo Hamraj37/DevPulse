@@ -1,5 +1,7 @@
 package com.hamraj37.devpulse.ui.components
 
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
@@ -42,7 +44,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
 import com.hamraj37.devpulse.data.model.AppTab
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
-import com.hamraj37.devpulse.util.tr
 import kotlinx.coroutines.launch
 
 @Composable
@@ -134,16 +135,16 @@ fun DevPulseTabRow(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        val context = LocalContext.current
+                        val tabTitle = stringResource(tab.titleResId)
                         Icon(
                             imageVector = tab.icon,
-                            contentDescription = tab.title.tr(context),
+                            contentDescription = tabTitle,
                             tint = contentColor,
                             modifier = Modifier.size(18.dp)
                         )
 
                         Text(
-                            text = tab.title.tr(context),
+                            text = tabTitle,
                             color = contentColor,
                             style = MaterialTheme.typography.labelLarge.copy(
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,

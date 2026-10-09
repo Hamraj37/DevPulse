@@ -1,5 +1,7 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import android.app.AppOpsManager
 import com.hamraj37.devpulse.data.model.AppSpec
 import android.app.usage.UsageEvents
@@ -10,7 +12,6 @@ import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Process
-import com.hamraj37.devpulse.util.tr
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -409,11 +410,11 @@ fun ScreenTimeScreen(
             )
             Column {
                 Text(
-                    text = "Screen Time & App Usage".tr(context),
+                    text = stringResource(R.string.screen_time_subtitle),
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
-                    text = "Daily device screen time and application usage".tr(context),
+                    text = stringResource(R.string.screen_time_desc),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -424,7 +425,7 @@ fun ScreenTimeScreen(
             value = searchQuery,
             onValueChange = { searchQuery = it },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Search screen time usage...".tr(context)) },
+            placeholder = { Text(stringResource(R.string.screen_time_search_placeholder)) },
             leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
             trailingIcon = if (searchQuery.isNotEmpty()) {
                 {
@@ -658,13 +659,13 @@ fun ScreenTimeScreen(
                         val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
                         context.startActivity(intent)
                     } catch (_: Exception) {
-                        Toast.makeText(context, "Opening System Settings...", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.toast_opening_system_settings), Toast.LENGTH_SHORT).show()
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(14.dp)
             ) {
-                Text("Open System Usage Access Settings".tr(context))
+                Text(stringResource(R.string.lbl_open_usage_settings))
             }
         }
 

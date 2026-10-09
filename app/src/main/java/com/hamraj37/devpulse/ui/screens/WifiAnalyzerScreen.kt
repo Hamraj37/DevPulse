@@ -1,12 +1,13 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.wifi.ScanResult
 import android.net.wifi.WifiManager
 import android.os.Build
-import com.hamraj37.devpulse.util.tr
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -274,11 +275,11 @@ fun WifiAnalyzerScreen(
                     )
                     Column {
                         Text(
-                            text = "Wi-Fi Analyzer".tr(context),
+                            text = stringResource(R.string.wifi_analyzer_title),
                             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                         )
                         Text(
-                            text = "Nearby networks & signal strength".tr(context),
+                            text = stringResource(R.string.wifi_analyzer_subtitle),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -297,7 +298,7 @@ fun WifiAnalyzerScreen(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Search Wi-Fi networks...".tr(context)) },
+                placeholder = { Text(stringResource(R.string.wifi_analyzer_search_placeholder)) },
                 leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
                 trailingIcon = if (searchQuery.isNotEmpty()) {
                     {
@@ -543,7 +544,7 @@ fun WifiDetailBottomSheet(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(14.dp)
             ) {
-                Text("Close".tr(context))
+                Text(stringResource(R.string.btn_close))
             }
         }
     }

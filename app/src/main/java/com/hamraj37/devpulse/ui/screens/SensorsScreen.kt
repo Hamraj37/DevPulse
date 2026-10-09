@@ -1,5 +1,7 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -62,7 +64,6 @@ import com.hamraj37.devpulse.data.model.SensorInfo
 import com.hamraj37.devpulse.data.model.SensorSpec
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
-import com.hamraj37.devpulse.util.tr
 import java.util.Locale
 
 @Composable
@@ -114,13 +115,13 @@ fun SensorsScreen(
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "${sensorInfo.sensorCount} " + "Sensors are available on your device".tr(context),
+                        text = "${sensorInfo.sensorCount} " + stringResource(R.string.sensors_available_hdr),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Real-time stream & live event listener".tr(context),
+                        text = stringResource(R.string.sensors_realtime_stream),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -252,7 +253,7 @@ fun SensorCardItem(
                     Spacer(modifier = Modifier.height(2.dp))
 
                     Text(
-                        text = "Vendor:".tr(context) + " ${sensorSpec.vendor} | " + "Type:".tr(context) + " ${sensorSpec.typeName}",
+                        text = "Vendor: ${sensorSpec.vendor} | Type: ${sensorSpec.typeName}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1
@@ -266,7 +267,7 @@ fun SensorCardItem(
                     color = if (sensorSpec.isWakeUpSensor) OliveActiveBadge.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceContainerHighest
                 ) {
                     Text(
-                        text = if (sensorSpec.isWakeUpSensor) "Wakeup".tr(context) else "Non-wakeup".tr(context),
+                        text = if (sensorSpec.isWakeUpSensor) "Wakeup" else "Non-wakeup",
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
                         style = MaterialTheme.typography.labelSmall.copy(
                             fontWeight = FontWeight.Bold,
@@ -321,7 +322,7 @@ fun SensorCardItem(
 
                     if (isLocationOrientationSensor && !isLocationEnabled) {
                         Text(
-                            text = "Location service is disabled. GPS/Location is required for true declination & orientation calibration.".tr(context),
+                            text = "Location service is disabled. GPS/Location is required for true declination & orientation calibration.",
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.error,
                             modifier = Modifier.padding(bottom = 6.dp)
@@ -329,7 +330,7 @@ fun SensorCardItem(
                     }
 
                     Text(
-                        text = "LIVE SENSOR STREAM DATA".tr(context),
+                        text = "LIVE SENSOR STREAM DATA",
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -340,7 +341,7 @@ fun SensorCardItem(
                     if (vals != null && vals.isNotEmpty()) {
                         when (vals.size) {
                             1 -> {
-                                LiveReadingRow(label = "Value".tr(context), value = String.format(Locale.US, "%.3f", vals[0]))
+                                LiveReadingRow(label = "Value", value = String.format(Locale.US, "%.3f", vals[0]))
                             }
                             2 -> {
                                 LiveReadingRow(label = "X", value = String.format(Locale.US, "%+.3f", vals[0]))

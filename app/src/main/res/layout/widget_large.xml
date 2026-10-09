@@ -12,7 +12,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="System Status (Large)"
+        android:text="@string/widget_title_large"
         android:textColor="?attr/colorOnSurface"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -33,7 +33,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Internal Storage"
+                android:text="@string/dashboard_internal_storage"
                 android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="13sp" />
             <TextView
@@ -72,7 +72,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="RAM Memory"
+                android:text="@string/tab_memory"
                 android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="13sp" />
             <TextView

@@ -1,5 +1,8 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
+
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioManager
@@ -162,7 +165,7 @@ fun SpeakerTestScreen(
 ) {
     val context = LocalContext.current
     StandardTestScreen(
-        title = "Loudspeaker",
+        title = stringResource(R.string.test_speaker_title),
         testId = "test_speaker",
         onBack = onBack,
         onPass = onPass,

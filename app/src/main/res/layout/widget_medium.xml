@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="DevPulse Status"
+        android:text="@string/widget_title_devpulse_status"
         android:textColor="?attr/colorOnSurface"
         android:textSize="14sp"
         android:textStyle="bold"
@@ -26,7 +26,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Storage Used"
+            android:text="@string/widget_lbl_storage_used"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="12sp" />
         <TextView
@@ -47,7 +47,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="RAM Used"
+            android:text="@string/widget_lbl_ram_used"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="12sp" />
         <TextView

@@ -1,10 +1,11 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.widget.Toast
-import com.hamraj37.devpulse.util.tr
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -55,7 +56,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.ui.MainUiState
-import com.hamraj37.devpulse.util.tr
 import kotlinx.coroutines.delay
 import java.security.MessageDigest
 
@@ -68,7 +68,6 @@ data class IntegrityVerdict(
 
 @Composable
 fun PlayIntegrityScreen(
-    uiState: MainUiState,
     onBack: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
@@ -124,7 +123,7 @@ fun PlayIntegrityScreen(
 
     fun runCheck() {
         isChecking = true
-        Toast.makeText(context, "Running Play Integrity Check...", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.toast_running_play_integrity), Toast.LENGTH_SHORT).show()
     }
 
     LaunchedEffect(isChecking) {
@@ -132,7 +131,7 @@ fun PlayIntegrityScreen(
             delay(1200)
             isChecking = false
             lastCheckTime = "Just now"
-            Toast.makeText(context, "Play Integrity Attestation Passed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_play_integrity_passed), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -191,7 +190,7 @@ fun PlayIntegrityScreen(
 
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Play Integrity Status".tr(context),
+                                text = stringResource(R.string.play_integrity_title),
                                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                                 color = MaterialTheme.colorScheme.onSurface
                             )
@@ -229,7 +228,7 @@ fun PlayIntegrityScreen(
                                 contentDescription = "Run Check",
                                 modifier = Modifier.size(18.dp)
                             )
-                            Text(text = if (isChecking) "Attesting Device...".tr(context) else "Run Integrity Check".tr(context))
+                            Text(text = if (isChecking) stringResource(R.string.play_integrity_attesting) else stringResource(R.string.play_integrity_run_check))
                         }
                     }
                 }
@@ -442,14 +441,13 @@ fun IntegrityDetailRow(
     label: String,
     value: String
 ) {
-    val context = LocalContext.current
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
         Text(
-            text = label.tr(context),
+            text = label,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)

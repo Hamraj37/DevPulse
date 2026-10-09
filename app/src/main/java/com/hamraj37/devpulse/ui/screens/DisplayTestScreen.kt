@@ -1,5 +1,7 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,7 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.platform.LocalContext
-import com.hamraj37.devpulse.util.tr
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -114,7 +115,7 @@ fun DisplayTestFullscreen(
                     .padding(bottom = 56.dp)
             ) {
                 Text(
-                    text = "Tap screen to cycle colors".tr(LocalContext.current) + ": " + colorNames[colorIndex].tr(LocalContext.current) + " (${colorIndex + 1}/${colors.size})",
+                    text = stringResource(R.string.test_display_cycle_colors) + ": " + colorNames[colorIndex] + " (${colorIndex + 1}/${colors.size})",
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
                     color = Color.White,
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)

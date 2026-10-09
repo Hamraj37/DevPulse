@@ -2,6 +2,7 @@ package com.hamraj37.devpulse.ui.screens
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -52,15 +53,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.model.AppTab
 import com.hamraj37.devpulse.ui.MainUiState
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
-import com.hamraj37.devpulse.util.tr
 
 enum class ToolType {
     FLOATING_MONITORS,
@@ -80,8 +82,8 @@ enum class ToolType {
 
 data class ToolItemData(
     val type: ToolType,
-    val title: String,
-    val description: String,
+    @get:StringRes val titleRes: Int,
+    @get:StringRes val descriptionRes: Int,
     val icon: ImageVector,
     val iconBgColor: Color? = null
 )
@@ -95,7 +97,6 @@ fun ToolsScreen(
     onThemeModeChange: (String) -> Unit = {},
     onUseSystemColorsChange: (Boolean) -> Unit = {},
     onThemeColorChange: (String) -> Unit = {},
-    onAppLanguageChange: (String, String) -> Unit = { _, _ -> },
     modifier: Modifier = Modifier
 ) {
     if (onBack != null) {
@@ -110,209 +111,151 @@ fun ToolsScreen(
         listOf(
             ToolItemData(
                 type = ToolType.FLOATING_MONITORS,
-                title = "Floating Monitors",
-                description = "Live system stats, floating on screen",
+                titleRes = R.string.floating_monitors_title,
+                descriptionRes = R.string.floating_monitors_subtitle,
                 icon = Icons.Rounded.SsidChart
             ),
             ToolItemData(
                 type = ToolType.PERMISSIONS,
-                title = "Permissions",
-                description = "View the permissions requested by apps",
+                titleRes = R.string.permissions_title,
+                descriptionRes = R.string.permissions_desc,
                 icon = Icons.Rounded.Shield
             ),
             ToolItemData(
                 type = ToolType.WIFI_ANALYZER,
-                title = "Wi-Fi Analyzer",
-                description = "Scan and analyze nearby Wi-Fi networks",
+                titleRes = R.string.wifi_analyzer_title,
+                descriptionRes = R.string.wifi_analyzer_desc,
                 icon = Icons.Rounded.Router
             ),
             ToolItemData(
                 type = ToolType.DATA_USAGE,
-                title = "Data Usage",
-                description = "View Mobile and Wi-Fi Data Usage",
+                titleRes = R.string.data_usage_title,
+                descriptionRes = R.string.data_usage_desc,
                 icon = Icons.Rounded.SwapHoriz
             ),
             ToolItemData(
                 type = ToolType.SCREEN_TIME,
-                title = "Screen Time",
-                description = "View daily screen time and app usage",
+                titleRes = R.string.screen_time_title,
+                descriptionRes = R.string.screen_time_desc,
                 icon = Icons.Rounded.Smartphone
             ),
             ToolItemData(
                 type = ToolType.WIDGETS,
-                title = "Widgets",
-                description = "Preview of the widgets available",
+                titleRes = R.string.widgets_title,
+                descriptionRes = R.string.widgets_desc,
                 icon = Icons.Rounded.GridView
             ),
             ToolItemData(
                 type = ToolType.APP_ANALYZER,
-                title = "App Analyzer",
-                description = "Analyze installed apps by installer, target & min SDK",
+                titleRes = R.string.app_analyzer_title,
+                descriptionRes = R.string.app_analyzer_desc,
                 icon = Icons.Rounded.BarChart
             ),
             ToolItemData(
                 type = ToolType.PLAY_INTEGRITY,
-                title = "Play Integrity",
-                description = "Check Play Integrity API verdicts & device attestation",
+                titleRes = R.string.play_integrity_title,
+                descriptionRes = R.string.play_integrity_desc,
                 icon = Icons.Rounded.VerifiedUser
             ),
             ToolItemData(
                 type = ToolType.ROOT_CHECKER,
-                title = "Root Checker",
-                description = "Scan su binaries, Magisk, KernelSU & root access",
+                titleRes = R.string.root_checker_title,
+                descriptionRes = R.string.root_checker_desc,
                 icon = Icons.Rounded.AdminPanelSettings
             ),
             ToolItemData(
-                type = ToolType.COMPASS,
-                title = "Compass",
-                description = "Find your directions with compass",
-                icon = Icons.Rounded.Explore
-            ),
-            ToolItemData(
                 type = ToolType.EXPORT,
-                title = "Export",
-                description = "Export information to PDF or Text",
+                titleRes = R.string.btn_export,
+                descriptionRes = R.string.export_desc,
                 icon = Icons.Rounded.PictureAsPdf
             )
         )
     }
 
     val handleToolBack: () -> Unit = {
-        if (initialTool != null) {
-            onBack?.invoke()
+        if (initialTool != null && onBack != null) {
+            onBack()
         } else {
             selectedTool = null
         }
     }
 
-    if (selectedTool != null) {
-        Surface(
-            modifier = modifier
-                .fillMaxSize()
-                .statusBarsPadding(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            when (selectedTool) {
-                ToolType.FLOATING_MONITORS -> FloatingMonitorsScreen(
-                    context = context,
-                    onBack = handleToolBack
-                )
-                ToolType.PERMISSIONS -> PermissionsScreen(
-                    uiState = uiState,
-                    onBack = handleToolBack
-                )
-                ToolType.WIFI_ANALYZER -> WifiAnalyzerScreen(
-                    uiState = uiState,
-                    onNavigateToNetwork = {
-                        selectedTool = null
-                        onNavigateToTab(AppTab.NETWORK)
-                    },
-                    onBack = handleToolBack
-                )
-                ToolType.DATA_USAGE -> DataUsageScreen(
-                    uiState = uiState,
-                    onBack = handleToolBack
-                )
-                ToolType.SCREEN_TIME -> ScreenTimeScreen(
-                    context = context,
-                    onBack = handleToolBack
-                )
-                ToolType.WIDGETS -> WidgetsScreen(
-                    uiState = uiState,
-                    onBack = handleToolBack
-                )
-                ToolType.APP_ANALYZER -> AppAnalyzerScreen(
-                    uiState = uiState,
-                    onBack = handleToolBack
-                )
-                ToolType.PLAY_INTEGRITY -> PlayIntegrityScreen(
-                    uiState = uiState,
-                    onBack = handleToolBack
-                )
-                ToolType.ROOT_CHECKER -> RootCheckerScreen(
-                    uiState = uiState,
-                    onBack = handleToolBack
-                )
-                ToolType.COMPASS -> CompassScreen(
-                    context = context,
-                    onBack = handleToolBack
-                )
-                ToolType.EXPORT -> ExportScreen(
-                    uiState = uiState,
-                    context = context,
-                    onBack = handleToolBack
-                )
-                ToolType.SETTINGS -> SettingsScreen(
-                    uiState = uiState,
-                    onThemeModeChange = onThemeModeChange,
-                    onUseSystemColorsChange = onUseSystemColorsChange,
-                    onThemeColorChange = onThemeColorChange,
-                    onAppLanguageChange = onAppLanguageChange,
-                    onBack = handleToolBack,
-                    onNavigateToExport = { selectedTool = ToolType.EXPORT },
-                    onNavigateToAbout = { selectedTool = ToolType.ABOUT }
-                )
-                ToolType.ABOUT -> AboutScreen(
-                    onBack = handleToolBack
-                )
-                else -> {}
-            }
-        }
-    } else {
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            DevPulseTopAppBar(
-                title = "Developer Tools",
-                onBack = onBack,
-                actions = {
-                    Box {
-                        IconButton(onClick = { showMenu = !showMenu }) {
-                            Icon(
-                                imageVector = Icons.Rounded.MoreVert,
-                                contentDescription = "Options",
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
+    when (selectedTool) {
+        ToolType.FLOATING_MONITORS -> FloatingMonitorsScreen(onBack = handleToolBack)
+        ToolType.PERMISSIONS -> PermissionsScreen(onBack = handleToolBack)
+        ToolType.WIFI_ANALYZER -> WifiAnalyzerScreen(uiState = uiState, onBack = handleToolBack)
+        ToolType.DATA_USAGE -> DataUsageScreen(uiState = uiState, onBack = handleToolBack)
+        ToolType.SCREEN_TIME -> ScreenTimeScreen(onBack = handleToolBack)
+        ToolType.WIDGETS -> WidgetsScreen(uiState = uiState, onBack = handleToolBack)
+        ToolType.COMPASS -> CompassScreen(onBack = handleToolBack)
+        ToolType.EXPORT -> ExportScreen(uiState = uiState, onBack = handleToolBack)
+        ToolType.APP_ANALYZER -> AppAnalyzerScreen(uiState = uiState, onBack = handleToolBack)
+        ToolType.PLAY_INTEGRITY -> PlayIntegrityScreen(onBack = handleToolBack)
+        ToolType.ROOT_CHECKER -> RootCheckerScreen(uiState = uiState, onBack = handleToolBack)
+        ToolType.SETTINGS -> SettingsScreen(
+            uiState = uiState,
+            onThemeModeChange = onThemeModeChange,
+            onUseSystemColorsChange = onUseSystemColorsChange,
+            onThemeColorChange = onThemeColorChange,
+            onBack = handleToolBack,
+            onNavigateToExport = { selectedTool = ToolType.EXPORT }
+        )
+        ToolType.ABOUT -> AboutScreen(onBack = handleToolBack)
+        null -> {
+            Column(
+                modifier = modifier.fillMaxSize()
+            ) {
+                // Top Action Header
+                DevPulseTopAppBar(
+                    title = stringResource(R.string.tools_hdr),
+                    onBack = onBack,
+                    actions = {
+                        Box {
+                            IconButton(onClick = { showMenu = !showMenu }) {
+                                Icon(
+                                    imageVector = Icons.Rounded.MoreVert,
+                                    contentDescription = "Options",
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
 
-                        DropdownMenu(
-                            expanded = showMenu,
-                            onDismissRequest = { showMenu = false }
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text("Refresh Tools".tr(context)) },
-                                onClick = {
-                                    showMenu = false
-                                    Toast.makeText(context, "Tools refreshed", Toast.LENGTH_SHORT).show()
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text("Export Full System Report".tr(context)) },
-                                onClick = {
-                                    showMenu = false
-                                    selectedTool = ToolType.EXPORT
-                                }
-                            )
+                            DropdownMenu(
+                                expanded = showMenu,
+                                onDismissRequest = { showMenu = false }
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.btn_refresh_tools)) },
+                                    onClick = {
+                                        showMenu = false
+                                        Toast.makeText(context, context.getString(R.string.toast_tools_refreshed), Toast.LENGTH_SHORT).show()
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.btn_export_full_report)) },
+                                    onClick = {
+                                        showMenu = false
+                                        selectedTool = ToolType.EXPORT
+                                    }
+                                )
+                            }
                         }
                     }
-                }
-            )
+                )
 
-            // Tools List Cards
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                toolsList.forEach { tool ->
-                    ToolCardItem(
-                        tool = tool,
-                        onClick = { selectedTool = tool.type }
-                    )
+                // Tools List Cards
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    toolsList.forEach { tool ->
+                        ToolCardItem(
+                            tool = tool,
+                            onClick = { selectedTool = tool.type }
+                        )
+                    }
                 }
             }
         }
@@ -325,7 +268,8 @@ fun ToolCardItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
+    val title = stringResource(tool.titleRes)
+    val desc = stringResource(tool.descriptionRes)
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -344,7 +288,7 @@ fun ToolCardItem(
         ) {
             Icon(
                 imageVector = tool.icon,
-                contentDescription = tool.title.tr(context),
+                contentDescription = title,
                 tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(28.dp)
             )
@@ -356,7 +300,7 @@ fun ToolCardItem(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = tool.title.tr(context),
+                    text = title,
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 17.sp
@@ -368,7 +312,7 @@ fun ToolCardItem(
                 Spacer(modifier = Modifier.height(2.dp))
 
                 Text(
-                    text = tool.description.tr(context),
+                    text = desc,
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontSize = 13.5.sp
                     ),
@@ -382,9 +326,9 @@ fun ToolCardItem(
 
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-                contentDescription = "Open",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(22.dp)
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                modifier = Modifier.size(20.dp)
             )
         }
     }

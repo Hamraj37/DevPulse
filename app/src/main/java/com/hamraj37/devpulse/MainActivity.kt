@@ -1,7 +1,7 @@
 package com.hamraj37.devpulse
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -16,7 +16,7 @@ import com.hamraj37.devpulse.ui.MainScreen
 import com.hamraj37.devpulse.ui.MainViewModel
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
 

@@ -1,5 +1,7 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import android.content.Context
 import android.os.Build
 import android.widget.Toast
@@ -50,7 +52,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hamraj37.devpulse.ui.MainUiState
-import com.hamraj37.devpulse.util.tr
 import kotlinx.coroutines.delay
 import java.io.File
 
@@ -117,14 +118,14 @@ fun RootCheckerScreen(
 
     fun runScan() {
         isScanning = true
-        Toast.makeText(context, "Scanning Root Status...", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.toast_scanning_root), Toast.LENGTH_SHORT).show()
     }
 
     LaunchedEffect(isScanning) {
         if (isScanning) {
             delay(1000)
             isScanning = false
-            Toast.makeText(context, if (isRooted) "Root Access Detected!" else "Device is Not Rooted", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, if (isRooted) context.getString(R.string.toast_root_access_detected) else context.getString(R.string.toast_device_not_rooted), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -186,7 +187,7 @@ fun RootCheckerScreen(
 
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Root Status Verdict".tr(context),
+                                text = stringResource(R.string.root_checker_title),
                                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                                 color = MaterialTheme.colorScheme.onSurface
                             )
@@ -223,7 +224,7 @@ fun RootCheckerScreen(
                                 contentDescription = "Verify Root",
                                 modifier = Modifier.size(18.dp)
                             )
-                            Text(text = if (isScanning) "Scanning Root Access...".tr(context) else "Verify Root Status".tr(context))
+                            Text(text = if (isScanning) stringResource(R.string.root_checker_scanning) else stringResource(R.string.root_checker_verify_status))
                         }
                     }
                 }
@@ -361,7 +362,7 @@ fun RootCheckItemRow(
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = label.tr(context),
+                text = label,
                 style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onSurface
             )

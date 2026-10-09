@@ -1,5 +1,8 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
+
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -173,7 +176,7 @@ fun AccelerometerTestScreen(
 ) {
     val context = LocalContext.current
     StandardTestScreen(
-        title = "Accelerometer Sensor",
+        title = stringResource(R.string.test_accel_title),
         testId = "test_accel",
         onBack = onBack,
         onPass = onPass,

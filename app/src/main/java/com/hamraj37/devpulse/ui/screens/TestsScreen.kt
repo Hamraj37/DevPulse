@@ -1,5 +1,7 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import android.app.Activity
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -49,7 +51,6 @@ import com.hamraj37.devpulse.data.model.TestItem
 import com.hamraj37.devpulse.data.model.TestStatus
 import com.hamraj37.devpulse.ui.TestActivity
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
-import com.hamraj37.devpulse.util.tr
 
 @Composable
 fun TestsScreen(
@@ -102,7 +103,7 @@ fun TestsScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Hardware Diagnostic Tests".tr(context),
+                    text = stringResource(R.string.tests_hdr),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 22.sp
@@ -110,7 +111,7 @@ fun TestsScreen(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "Complete interactive tests to check hardware".tr(context),
+                    text = stringResource(R.string.tests_desc),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -121,7 +122,7 @@ fun TestsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "$completedCount " + "of".tr(context) + " $totalCount " + "Completed".tr(context),
+                        text = "$completedCount " + stringResource(R.string.lbl_of) + " $totalCount " + stringResource(R.string.lbl_tests_completed),
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -147,7 +148,7 @@ fun TestsScreen(
         // Automatic Tests Section
         if (automaticTests.isNotEmpty()) {
             Text(
-                text = "Automatic Diagnostics".tr(context) + " (${automaticTests.size})",
+                text = stringResource(R.string.tests_auto_diagnostics) + " (${automaticTests.size})",
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(start = 4.dp, top = 4.dp)
@@ -172,7 +173,7 @@ fun TestsScreen(
 
         // Interactive Tests Section
         Text(
-            text = "Interactive Hardware Tests".tr(context) + " (${interactiveTests.size})",
+            text = stringResource(R.string.tests_interactive_tests) + " (${interactiveTests.size})",
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(start = 4.dp, top = 8.dp)
@@ -253,7 +254,7 @@ fun TestCardItem(
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = test.title.tr(context),
+                        text = test.title,
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 15.5.sp
@@ -262,7 +263,7 @@ fun TestCardItem(
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = test.description.tr(context),
+                        text = test.description,
                         style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -281,9 +282,9 @@ fun TestCardItem(
             ) {
                 Text(
                     text = when (test.status) {
-                        TestStatus.PASSED -> "Passed".tr(context)
-                        TestStatus.FAILED -> "Failed".tr(context)
-                        else -> "Test".tr(context)
+                        TestStatus.PASSED -> stringResource(R.string.lbl_passed)
+                        TestStatus.FAILED -> stringResource(R.string.lbl_failed)
+                        else -> stringResource(R.string.lbl_test)
                     },
                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp),
                     style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),

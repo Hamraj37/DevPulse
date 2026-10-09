@@ -1,12 +1,13 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
-import com.hamraj37.devpulse.util.tr
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -99,24 +100,24 @@ fun DevPulseTopAppBar(
     )
 }
 
-fun getQuestionForTest(testId: String): String {
+fun getQuestionResForTest(testId: String): Int {
     return when (testId) {
-        "test_touch" -> "Does the screen detects multiple fingers?"
-        "test_display" -> "Were the screen one solid color?"
-        "test_flashlight" -> "Is the flashlight working?"
-        "test_speaker" -> "Audio is playing. Can you hear it?"
-        "test_earspeaker" -> "Audio is playing. Can you hear it?"
-        "test_mic" -> "Speak to the microphone. Is the progress changing?"
-        "test_proximity" -> "Cover the area above the display or place your palm on the display. do you get any feedback?"
-        "test_light" -> "Cover the area above the display. Is the value changing?"
-        "test_accel" -> "Shake your device. Did you feel the vibration?"
-        "test_charging" -> "Is it charging?"
-        "test_vibration" -> "Can you feel the phone vibrating?"
-        "test_bluetooth" -> "Is Bluetooth hardware working?"
-        "test_fingerprint" -> "Is the fingerprint / biometric sensor working?"
-        "test_gps" -> "Is location / GPS fix detected?"
-        "test_volume" -> "Press the volume up or down key, do you get any feedback?"
-        else -> "Is the test working properly?"
+        "test_touch" -> R.string.test_multitouch_question
+        "test_display" -> R.string.test_display_color_question
+        "test_flashlight" -> R.string.test_flashlight_question
+        "test_speaker" -> R.string.test_speaker_question
+        "test_earspeaker" -> R.string.test_ear_speaker_question
+        "test_mic" -> R.string.test_mic_question
+        "test_proximity" -> R.string.test_proximity_question
+        "test_light" -> R.string.test_proximity_question
+        "test_accel" -> R.string.test_vibration_question
+        "test_charging" -> R.string.test_charging_question
+        "test_vibration" -> R.string.test_vibration_feel_question
+        "test_bluetooth" -> R.string.test_bluetooth_question
+        "test_fingerprint" -> R.string.test_biometric_question
+        "test_gps" -> R.string.test_gps_question
+        "test_volume" -> R.string.test_volume_question
+        else -> R.string.test_generic_question
     }
 }
 
@@ -143,7 +144,7 @@ fun StandardTestScreen(
             .background(if (isDarkBackground) Color.Black else MaterialTheme.colorScheme.background)
     ) {
         DevPulseTopAppBar(
-            title = title.tr(context),
+            title = title,
             onBack = onBack,
             containerColor = appBarBg,
             titleContentColor = appBarFg,
@@ -174,7 +175,7 @@ fun StandardTestScreen(
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 Text(
-                    text = getQuestionForTest(testId).tr(context),
+                    text = stringResource(getQuestionResForTest(testId)),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Medium
@@ -224,7 +225,7 @@ fun StandardTestScreen(
                             }
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(
-                                text = "No".tr(context),
+                                text = stringResource(R.string.lbl_no),
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 16.sp
@@ -263,7 +264,7 @@ fun StandardTestScreen(
                             }
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(
-                                text = "Yes".tr(context),
+                                text = stringResource(R.string.lbl_yes),
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 16.sp
@@ -411,19 +412,19 @@ fun DonateDialog(
                     OutlinedButton(
                         onClick = {
                             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            val clip = ClipData.newPlainText("DevPulse UPI ID", upiId)
+                            val clip = ClipData.newPlainText(context.getString(R.string.label_upi_id), upiId)
                             clipboard.setPrimaryClip(clip)
-                            Toast.makeText(context, "UPI ID ($upiId) copied to clipboard", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_upi_copied), Toast.LENGTH_SHORT).show()
                         },
                         modifier = Modifier.weight(1f)
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.ContentCopy,
-                            contentDescription = "Copy UPI ID",
+                            contentDescription = null,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("Copy ID", fontSize = 13.sp)
+                        Text(stringResource(R.string.btn_copy_id), fontSize = 13.sp)
                     }
 
                     Button(
@@ -431,12 +432,12 @@ fun DonateDialog(
                             try {
                                 val uri = Uri.parse("upi://pay?pa=$upiId&pn=Hamraj37&cu=INR")
                                 val intent = Intent(Intent.ACTION_VIEW, uri)
-                                context.startActivity(Intent.createChooser(intent, "Pay via UPI"))
+                                context.startActivity(Intent.createChooser(intent, context.getString(R.string.chooser_pay_via_upi)))
                             } catch (_: Exception) {
                                 val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                val clip = ClipData.newPlainText("DevPulse UPI ID", upiId)
+                                val clip = ClipData.newPlainText(context.getString(R.string.label_upi_id), upiId)
                                 clipboard.setPrimaryClip(clip)
-                                Toast.makeText(context, "No UPI app found. UPI ID copied: $upiId", Toast.LENGTH_LONG).show()
+                                Toast.makeText(context, context.getString(R.string.toast_upi_copied), Toast.LENGTH_LONG).show()
                             }
                         },
                         modifier = Modifier.weight(1f)
@@ -447,14 +448,14 @@ fun DonateDialog(
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("Pay UPI", fontSize = 13.sp)
+                        Text(stringResource(R.string.btn_pay_upi), fontSize = 13.sp)
                     }
                 }
             }
         },
         confirmButton = {
             TextButton(onClick = onDismissRequest) {
-                Text("Close")
+                Text(stringResource(R.string.btn_close))
             }
         }
     )

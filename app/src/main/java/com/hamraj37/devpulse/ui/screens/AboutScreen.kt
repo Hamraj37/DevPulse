@@ -1,5 +1,8 @@
 package com.hamraj37.devpulse.ui.screens
 
+import com.hamraj37.devpulse.R
+import androidx.compose.ui.res.stringResource
+
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -61,14 +64,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hamraj37.devpulse.R
 
 private fun openUrl(context: Context, url: String) {
     try {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         context.startActivity(intent)
     } catch (_: Exception) {
-        Toast.makeText(context, "Unable to open link", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.toast_unable_to_open_link), Toast.LENGTH_SHORT).show()
     }
 }
 
@@ -80,7 +82,7 @@ private fun openEmail(context: Context) {
         }
         context.startActivity(intent)
     } catch (_: Exception) {
-        Toast.makeText(context, "No email client found", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.toast_no_email_client), Toast.LENGTH_SHORT).show()
     }
 }
 
@@ -118,7 +120,7 @@ fun AboutScreen(
     ) {
         if (onBack != null) {
             DevPulseTopAppBar(
-                title = "About DevPulse",
+                title = stringResource(R.string.about_title),
                 onBack = onBack
             )
         }
@@ -154,7 +156,7 @@ fun AboutScreen(
                     Box(contentAlignment = Alignment.Center) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                            contentDescription = "DevPulse Logo",
+                            contentDescription = stringResource(R.string.app_name),
                             modifier = Modifier.size(68.dp)
                         )
                     }
@@ -182,7 +184,7 @@ fun AboutScreen(
                 )
 
                 Text(
-                    text = "DevPulse is a simple and powerful Android application which gives you complete information about your Mobile device with advanced user interfaces",
+                    text = stringResource(R.string.about_devpulse_desc),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -212,7 +214,7 @@ fun AboutScreen(
                             modifier = Modifier.size(18.dp)
                         )
                         Text(
-                            text = "Donate",
+                            text = stringResource(R.string.btn_donate),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                         )
                     }
@@ -287,13 +289,13 @@ fun AboutScreen(
                 }
 
                 Text(
-                    text = "Hamraj37",
+                    text = stringResource(R.string.about_dev_name),
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Text(
-                    text = "Passionate Android Developer",
+                    text = stringResource(R.string.about_dev_role),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
