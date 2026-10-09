@@ -137,6 +137,12 @@ fun MainScreen(
     val context = LocalContext.current
 
     val requiredPermissions = remember { getRequiredPermissions() }
+    val ungrantedPermissions = remember(context) {
+        requiredPermissions.filter { permission ->
+            ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED
+        }
+    }
+    var showPermissionDialog by remember { mutableStateOf(ungrantedPermissions.isNotEmpty()) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
@@ -145,14 +151,47 @@ fun MainScreen(
     }
 
     LaunchedEffect(Unit) {
-        val ungranted = requiredPermissions.filter { permission ->
-            ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED
-        }
-        if (ungranted.isNotEmpty()) {
-            permissionLauncher.launch(ungranted.toTypedArray())
-        } else {
+        if (ungrantedPermissions.isEmpty()) {
             viewModel.refreshTelemetry()
         }
+    }
+
+    if (showPermissionDialog && ungrantedPermissions.isNotEmpty()) {
+        AlertDialog(
+            onDismissRequest = {
+                showPermissionDialog = false
+                viewModel.refreshTelemetry()
+            },
+            title = {
+                Text(
+                    text = stringResource(R.string.dialog_permissions_title),
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Text(text = stringResource(R.string.dialog_permissions_desc))
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showPermissionDialog = false
+                        permissionLauncher.launch(ungrantedPermissions.toTypedArray())
+                    }
+                ) {
+                    Text(text = stringResource(R.string.btn_grant_permission))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showPermissionDialog = false
+                        viewModel.refreshTelemetry()
+                    }
+                ) {
+                    Text(text = stringResource(R.string.btn_later))
+                }
+            }
+        )
     }
 
     val tabs = AppTab.entriesOrdered

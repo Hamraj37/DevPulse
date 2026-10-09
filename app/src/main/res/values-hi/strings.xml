@@ -124,6 +124,8 @@
     <string name="apps_top_storage_occupying">सबसे अधिक स्टोरेज लेने वाले ऐप्स</string>
 
     <!-- Dialogs & Prompts -->
+    <string name="dialog_permissions_title">अनुमतियाँ आवश्यक हैं</string>
+    <string name="dialog_permissions_desc">DevPulse को हार्डवेयर जांच, वाई-फाई स्कैन, कैमरा टेस्ट और सिस्टम टेलीमेट्री के लिए अनुमतियों की आवश्यकता है। पूरी कार्यक्षमता के लिए कृपया अनुमतियाँ प्रदान करें।</string>
     <string name="dialog_update_available_title">अपडेट उपलब्ध है (%1$s)</string>
     <string name="dialog_configure_floating_monitors">फ्लोटिंग मॉनिटर्स कॉन्फ़िगर करें</string>
     <string name="dialog_choose_theme">थीम चुनें</string>

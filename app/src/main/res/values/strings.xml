@@ -123,6 +123,8 @@
     <string name="apps_top_storage_occupying">Top Storage Occupying Apps</string>
 
     <!-- Dialogs & Prompts -->
+    <string name="dialog_permissions_title">Permissions Required</string>
+    <string name="dialog_permissions_desc">DevPulse needs permissions for hardware diagnostics, Wi-Fi scans, camera tests, and system telemetry. Please grant the required permissions for full functionality.</string>
     <string name="dialog_update_available_title">Update Available (%1$s)</string>
     <string name="dialog_configure_floating_monitors">Configure Floating Monitors</string>
     <string name="dialog_choose_theme">Choose Theme</string>

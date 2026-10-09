@@ -123,6 +123,8 @@
     <string name="apps_top_storage_occupying">সবচেয়ে বেশি স্টোরেজ ব্যবহারকারী অ্যাপসমূহ</string>
 
     <!-- Dialogs & Prompts -->
+    <string name="dialog_permissions_title">অনুমতি প্রয়োজন</string>
+    <string name="dialog_permissions_desc">DevPulse এর হার্ডওয়্যার ডায়াগনস্টিকস, ওয়াই-ফাই স্ক্যান, ক্যামেরা পরীক্ষা এবং সিস্টেম টেলিমেট্রির জন্য অনুমতি প্রয়োজন। সমস্ত ফিচার ব্যবহারের জন্য দয়া করে প্রয়োজনীয় অনুমতি প্রদান করুন।</string>
     <string name="dialog_update_available_title">নতুন আপডেট উপলব্ধ (%1$s)</string>
     <string name="dialog_configure_floating_monitors">ফ্লোটিং মনিটর কনফিগার করুন</string>
     <string name="dialog_choose_theme">থিম বেছে নিন</string>

@@ -123,6 +123,8 @@
     <string name="apps_top_storage_occupying">Приложения, занимающие больше всего памяти</string>
 
     <!-- Dialogs & Prompts -->
+    <string name="dialog_permissions_title">Требуются разрешения</string>
+    <string name="dialog_permissions_desc">DevPulse требуются разрешения для диагностики оборудования, сканирования Wi-Fi, проверки камеры и системной телеметрии. Пожалуйста, предоставите разрешения для полной функциональности.</string>
     <string name="dialog_update_available_title">Доступно обновление (%1$s)</string>
     <string name="dialog_configure_floating_monitors">Настройка плавающих индикаторов</string>
     <string name="dialog_choose_theme">Выберите тему</string>

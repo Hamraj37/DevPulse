@@ -123,6 +123,8 @@
     <string name="apps_top_storage_occupying">占用存储空间最多的应用</string>
 
     <!-- Dialogs & Prompts -->
+    <string name="dialog_permissions_title">需要权限</string>
+    <string name="dialog_permissions_desc">DevPulse 需要权限来进行硬件诊断、Wi-Fi 扫描、相机测试和系统遥测。请授予所需权限以获得完整功能。</string>
     <string name="dialog_update_available_title">有可用更新 (%1$s)</string>
     <string name="dialog_configure_floating_monitors">配置悬浮监视器</string>
     <string name="dialog_choose_theme">选择主题</string>
