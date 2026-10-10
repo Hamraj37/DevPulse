@@ -65,6 +65,7 @@ data class MainUiState(
     val isLoading: Boolean = false,
     val themeMode: String = "System default", // "System default", "Light", "Dark"
     val themePalette: String = "Monet", // "Monet", "Red", "Blue", "Green", "Yellow", "Olive"
+    val isMonetEnabled: Boolean = true,
     val updateInfo: GithubReleaseInfo? = null,
     val showUpdateDialog: Boolean = false,
     val activeTestId: String? = null
@@ -81,10 +82,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     init {
         val savedTheme = prefs.getString("theme_mode", "System default") ?: "System default"
         val savedPalette = prefs.getString("theme_palette", "Monet") ?: "Monet"
+        val savedMonet = prefs.getBoolean("is_monet_enabled", true)
         _uiState.update {
             it.copy(
                 themeMode = savedTheme,
-                themePalette = savedPalette
+                themePalette = savedPalette,
+                isMonetEnabled = savedMonet
             )
         }
         loadStaticTelemetry()
@@ -98,8 +101,32 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun setThemePalette(palette: String) {
-        prefs.edit().putString("theme_palette", palette).apply()
-        _uiState.update { it.copy(themePalette = palette) }
+        val isMonet = palette == "Monet" || palette == "Dynamic" || palette == "Monet (Dynamic)"
+        prefs.edit()
+            .putString("theme_palette", palette)
+            .putBoolean("is_monet_enabled", isMonet)
+            .apply()
+        _uiState.update { it.copy(themePalette = palette, isMonetEnabled = isMonet) }
+    }
+
+    fun setMonetEnabled(enabled: Boolean) {
+        prefs.edit().putBoolean("is_monet_enabled", enabled).apply()
+        _uiState.update { state ->
+            val newPalette = if (enabled) {
+                "Monet"
+            } else if (state.themePalette == "Monet" || state.themePalette == "Dynamic") {
+                "Olive"
+            } else {
+                state.themePalette
+            }
+            if (newPalette != state.themePalette) {
+                prefs.edit().putString("theme_palette", newPalette).apply()
+            }
+            state.copy(
+                isMonetEnabled = enabled,
+                themePalette = newPalette
+            )
+        }
     }
 
     fun dismissUpdateDialog() {

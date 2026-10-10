@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 
             DevPulseTheme(
                 darkTheme = darkTheme,
+                isMonetEnabled = uiState.isMonetEnabled,
                 themePalette = uiState.themePalette
             ) {
                 Surface(

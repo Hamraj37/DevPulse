@@ -224,30 +224,21 @@ private val YellowLightColorScheme = lightColorScheme(
 @Composable
 fun DevPulseTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    isMonetEnabled: Boolean = true,
     themePalette: String = "Monet",
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
-    val colorScheme = when (themePalette) {
-        "Monet", "Dynamic", "Monet (Dynamic)" -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-            } else {
-                if (darkTheme) OliveDarkColorScheme else OliveLightColorScheme
-            }
+    val colorScheme = when {
+        isMonetEnabled && (themePalette == "Monet" || themePalette == "Dynamic" || themePalette == "Monet (Dynamic)") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-        "Red" -> if (darkTheme) RedDarkColorScheme else RedLightColorScheme
-        "Blue" -> if (darkTheme) BlueDarkColorScheme else BlueLightColorScheme
-        "Green" -> if (darkTheme) GreenDarkColorScheme else GreenLightColorScheme
-        "Yellow" -> if (darkTheme) YellowDarkColorScheme else YellowLightColorScheme
-        "Olive" -> if (darkTheme) OliveDarkColorScheme else OliveLightColorScheme
-        else -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-            } else {
-                if (darkTheme) OliveDarkColorScheme else OliveLightColorScheme
-            }
-        }
+        themePalette == "Red" -> if (darkTheme) RedDarkColorScheme else RedLightColorScheme
+        themePalette == "Blue" -> if (darkTheme) BlueDarkColorScheme else BlueLightColorScheme
+        themePalette == "Green" -> if (darkTheme) GreenDarkColorScheme else GreenLightColorScheme
+        themePalette == "Yellow" -> if (darkTheme) YellowDarkColorScheme else YellowLightColorScheme
+        themePalette == "Olive" -> if (darkTheme) OliveDarkColorScheme else OliveLightColorScheme
+        else -> if (darkTheme) OliveDarkColorScheme else OliveLightColorScheme
     }
 
     MaterialTheme(

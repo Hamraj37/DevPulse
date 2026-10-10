@@ -71,6 +71,7 @@ fun SettingsScreen(
     uiState: MainUiState = MainUiState(),
     onThemeModeChange: (String) -> Unit = {},
     onThemePaletteChange: (String) -> Unit = {},
+    onMonetToggle: (Boolean) -> Unit = {},
     onBack: (() -> Unit)? = null,
     onNavigateToExport: (() -> Unit)? = null,
     onNavigateToAbout: (() -> Unit)? = null,
@@ -185,6 +186,19 @@ fun SettingsScreen(
                 title = stringResource(R.string.lbl_theme),
                 subtitle = uiState.themeMode,
                 onClick = { showThemeDialog = true }
+            )
+
+            SettingsItemRow(
+                icon = Icons.Rounded.ColorLens,
+                title = stringResource(R.string.settings_dynamic_material_you),
+                subtitle = stringResource(R.string.settings_match_wallpaper_colors),
+                trailing = {
+                    Switch(
+                        checked = uiState.isMonetEnabled,
+                        onCheckedChange = { onMonetToggle(it) }
+                    )
+                },
+                onClick = { onMonetToggle(!uiState.isMonetEnabled) }
             )
 
             SettingsItemRow(
