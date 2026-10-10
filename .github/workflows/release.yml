@@ -1,107 +1,101 @@
 name: Android CI/CD Pipeline
-
 on:
-  workflow_dispatch:
-
+workflow_dispatch:
 permissions:
-  contents: write
-
+contents: write
 jobs:
-  build-and-test:
-    name: Build & Test Android App
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - name: Checkout Code & Git LFS Assets
-        uses: actions/checkout@v4
-        with:
-          lfs: true
-          fetch-depth: 0
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'gradle'
-
-      - name: Make Gradle Wrapper Executable
-        run: chmod +x gradlew
-
-      - name: Run Unit Tests
-        run: ./gradlew app:testDebugUnitTest --stacktrace
-
-      - name: Build Signed Release APK
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew app:assembleRelease --stacktrace
-
-      - name: Build Debug APK
-        run: ./gradlew app:assembleDebug --stacktrace
-
-      - name: Upload Release APK Artifact
-        uses: actions/upload-artifact@v4
-        if: success()
-        with:
-          name: DevPulse-Release-APK
-          path: app/build/outputs/apk/release/app-release.apk
-          if-no-files-found: ignore
-
-      - name: Upload Debug APK Artifact
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: DevPulse-Debug-APK
-          path: app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: ignore
-
-      - name: Extract App Version Name
-        id: get_version
-        run: |
-          VERSION_NAME=$(grep -oP 'versionName\s*=\s*"\K[^"]+' app/build.gradle.kts || echo "1.0.0")
-          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
-
-      - name: Generate Changelog
-        id: changelog
-        run: |
-          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          if [ -n "$PREV_TAG" ]; then
-            CHANGELOG=$(git log ${PREV_TAG}..HEAD --pretty=format:"- %s" --no-merges)
-          else
-            CHANGELOG=$(git log -n 15 --pretty=format:"- %s" --no-merges)
-          fi
-          echo "changelog<<EOF" >> $GITHUB_OUTPUT
-          echo "$CHANGELOG" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        if: success()
-        with:
-          tag_name: v${{ steps.get_version.outputs.version_name }}
-          name: DevPulse v${{ steps.get_version.outputs.version_name }}
-          body: |
-            ## DevPulse Android Telemetry & Diagnostic App ⚡
-            
-            ### Package Information
-            - **Version**: ${{ steps.get_version.outputs.version_name }}
-            - **Target SDK**: Android 11+ (API 30–36)
-            
-            ### 📝 Changelog
-            ${{ steps.changelog.outputs.changelog }}
-            
-            ### Features
-            - Real-time hardware telemetry streams (RAM, per-core CPU MHz, Battery, zRAM Swap).
-            - Hardware Diagnostic Suite with 14 interactive & automated hardware tests.
-            - Widevine DRM, Dual SIM carrier names, and system details.
-            - Jetpack Compose & Material 3 UI with Monet dynamic theming.
-          files: |
-            app/build/outputs/apk/release/app-release.apk
-            app/build/outputs/apk/debug/app-debug.apk
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+build-and-test:
+name: Build & Test Android App
+runs-on: ubuntu-latest
+permissions:
+contents: write
+steps:
+- name: Checkout Code & Git LFS Assets
+uses: actions/checkout@v4
+with:
+lfs: true
+fetch-depth: 0
+- name: Set up JDK 17
+uses: actions/setup-java@v4
+with:
+distribution: 'temurin'
+java-version: '17'
+cache: 'gradle'
+- name: Make Gradle Wrapper Executable
+run: chmod +x gradlew
+- name: Run Unit Tests
+run: ./gradlew app:testDebugUnitTest --stacktrace
+- name: Build Signed Release APK
+env:
+KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+run: ./gradlew app:assembleRelease --stacktrace
+- name: Build Debug APK
+run: ./gradlew app:assembleDebug --stacktrace
+- name: Upload Release APK Artifact
+uses: actions/upload-artifact@v4
+if: success()
+with:
+name: DevPulse-Release-APK
+path: app/build/outputs/apk/release/app-release.apk
+if-no-files-found: ignore
+- name: Upload Debug APK Artifact
+uses: actions/upload-artifact@v4
+if: always()
+with:
+name: DevPulse-Debug-APK
+path: app/build/outputs/apk/debug/app-debug.apk
+if-no-files-found: ignore
+- name: Extract App Version Name
+id: get_version
+run: |
+VERSION_NAME=$(grep -oP 'versionName\s*=\s*"\K[^"]+' app/build.gradle.kts || echo "1.0.0")
+echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+- name: Generate Changelog
+id: changelog
+run: |
+PREV_TAG=(git describe --tags --abbrev=0 2>/dev/null || echo "")
+if [ -n "$PREV_TAG" ]; then
+CHANGELOG=$(git log{PREV_TAG}..HEAD --pretty=format:"- %s" --no-merges)
+else
+CHANGELOG=(git log -n 15 --pretty=format:"- %s" --no-merges)
+fi/dev/null || echo '')
+RANGE=([ -n 'PREV_TAG' ] && echo '{PREV_TAG}..HEAD' || echo 'HEAD')
+FEATS=(git logRANGE --grep='^feat' --pretty=format:'- %s ([%h](https://github.com/{{ github.repository }}/commit/%H))' --no-merges)
+FIXES=(git logRANGE --grep='^fix' --pretty=format:'- %s ([`%h`](https://github.com/{{ github.repository }}/commit/%H))' --no-merges)
+OTHERS=(git logRANGE --invert-grep --grep='^feat|^fix' --pretty=format:'- %s ([%h](https://github.com/${{ github.repository }}/commit/%H))' --no-merges)
+CHANGELOG=''
+[ -n 'FEATS' ] && CHANGELOG+='#### 🚀 Features\nFEATS\n\n'
+[ -n '$FIXES' ] && CHANGELOG+=$'#### 🐛 Bug Fixes\nFIXES\n\n'
+[ -n 'OTHERS' ] && CHANGELOG+='#### 🔧 Maintenance & Improvements\n$OTHERS\n\n'" type="suggestion">
+echo "changelog<<EOF" >> $GITHUB_OUTPUT
+echo "$CHANGELOG" >> $GITHUB_OUTPUT
+echo "EOF" >> $GITHUB_OUTPUT>GITHUB_OUTPUT
+echo -e '{CHANGELOG:-No notable changes in this release.}' >>$GITHUB_OUTPUT
+[ -n 'COMPARE_URL' ] && echo -e '\n---\nCOMPARE_URL' >>$GITHUB_OUTPUT
+echo 'EOF' >> $GITHUB_OUTPUT" type="suggestion">
+- name: Create GitHub Release
+uses: softprops/action-gh-release@v2
+if: success()
+with:
+tag_name: v${{ steps.get_version.outputs.version_name }}
+name: DevPulse v${{ steps.get_version.outputs.version_name }}
+body: |
+## DevPulse Android Telemetry & Diagnostic App ⚡
+### Package Information
+- Version: ${{ steps.get_version.outputs.version_name }}
+- Target SDK: Android 11+ (API 30–36)
+### 📝 Changelog
+${{ steps.changelog.outputs.changelog }}
+### Features
+- Real-time hardware telemetry streams (RAM, per-core CPU MHz, Battery, zRAM Swap).
+- Hardware Diagnostic Suite with 14 interactive & automated hardware tests.
+- Widevine DRM, Dual SIM carrier names, and system details.
+- Jetpack Compose & Material 3 UI with Monet dynamic theming. 🔒 Security Notice: Always verify that the SHA-256 signature of downloaded APKs matches the pipeline build output before testing on physical hardware." type="suggestion">
+files: |
+app/build/outputs/apk/release/app-release.apk
+app/build/outputs/apk/debug/app-debug.apk
+env:
+GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
