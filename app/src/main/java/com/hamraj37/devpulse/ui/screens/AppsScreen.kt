@@ -101,9 +101,9 @@ fun AppsScreen(
     // Filter apps list based on query and category
     val filteredApps = remember(appInfo.appsList, searchQuery, categoryFilter) {
         appInfo.appsList.filter { app ->
-            val matchesCategory = when (categoryFilter) {
-                AppCategoryFilter.USER.displayName, "User" -> !app.isSystemApp
-                AppCategoryFilter.SYSTEM.displayName, "System" -> app.isSystemApp
+            val matchesCategory = when {
+                categoryFilter == AppCategoryFilter.USER.displayName || categoryFilter == "User" -> !app.isSystemApp
+                categoryFilter == AppCategoryFilter.SYSTEM.displayName || categoryFilter == "System" -> app.isSystemApp
                 else -> true
             }
             val matchesSearch = searchQuery.isEmpty() ||
@@ -150,14 +150,14 @@ fun AppsScreen(
                 }
 
                 // Category Chips
-                AppCategoryFilter.entries.map { it.displayName }.forEach { category ->
-                    val isSelected = categoryFilter == category
+                AppCategoryFilter.entries.forEach { categoryEnum ->
+                    val isSelected = categoryFilter == categoryEnum.displayName
                     Surface(
                         shape = RoundedCornerShape(16.dp),
                         color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
                         modifier = Modifier
                             .clip(RoundedCornerShape(16.dp))
-                            .clickable { onCategoryFilterChange(category) }
+                            .clickable { onCategoryFilterChange(categoryEnum.displayName) }
                             .border(
                                 width = if (isSelected) 1.5.dp else 0.dp,
                                 color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
@@ -165,7 +165,7 @@ fun AppsScreen(
                             )
                     ) {
                         Text(
-                            text = category,
+                            text = stringResource(categoryEnum.titleResId),
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium

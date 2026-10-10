@@ -959,4 +959,54 @@
     <string name="battery_fully_charged">সম্পূর্ণ চার্জড</string>
     <string name="carrier_cellular_network">সেলুলার নেটওয়ার্ক</string>
     <string name="network_wi_fi">ওয়াই-ফাই (Wi-Fi)</string>
+
+    <!-- App Category Filter Strings -->
+    <string name="app_category_filter_all">সব</string>
+    <string name="app_category_filter_user">ব্যবহারকারী (User)</string>
+    <string name="app_category_filter_system">সিস্টেম (System)</string>
+    <string name="app_category_filter_analyze">বিশ্লেষণ (Analyze)</string>
+
+    <!-- Number & Unit Formatting Strings -->
+    <string name="fmt_ram_total">RAM - %d MB মোট (Total)</string>
+    <string name="fmt_ram_used">%d MB ব্যবহৃত (Used)</string>
+    <string name="fmt_ram_free">%d MB ফাঁকা (Free)</string>
+    <string name="fmt_cores_count">%d কোর</string>
+    <string name="fmt_core_index">কোর %d</string>
+    <string name="fmt_mhz">%d MHz</string>
+    <string name="fmt_tests_completed">%1$d / %2$d টেস্ট সম্পূর্ণ</string>
+    <string name="fmt_pct">%d%%</string>
+    <string name="fmt_passed_count">সফল: %d</string>
+    <string name="fmt_failed_count">ব্যর্থ: %d</string>
+    <string name="fmt_pending_count">বাকি: %d</string>
+    <string name="fmt_storage_free">ফাঁকা: %.1f GB</string>
+    <string name="fmt_storage_total">মোট: %.1f GB</string>
+    <string name="fmt_battery_subtext">%1$s | %2$.2fV | হেলথ %3$d%%</string>
+    <string name="fmt_battery_temp">%.1f ℃</string>
+    <string name="fmt_active_count">%d সক্রিয়</string>
+    <string name="fmt_installed_count">%d ইনস্টল করা</string>
+    <string name="fmt_display_inches_hz">%.1f\" | 120 Hz</string>
+
+    <!-- System Screen String Resources -->
+    <string name="fmt_system_android_version_letter">Android %1$s - %2$s</string>
+    <string name="fmt_system_released_date">প্রকাশিত: %s</string>
+    <string name="system_android_version">Android সংস্করণ</string>
+    <string name="system_opengl_es">OpenGL ES</string>
+    <string name="system_root_apps">রুট ম্যানেজমেন্ট অ্যাপস</string>
+    <string name="system_vulkan">Vulkan</string>
+    <string name="system_treble">Treble সমর্থন</string>
+    <string name="system_seamless_updates">সিমলেস আপডেট (A/B)</string>
+    <string name="system_dynamic_partitions">ডায়নামিক পার্টিশন</string>
+    <string name="system_drm_algorithms">অ্যালগরিদম</string>
+    <string name="system_drm_security_level">সিকিউরিটি লেভেল</string>
+    <string name="system_drm_max_hdcp">সর্বোচ্চ HDCP লেভেল</string>
+
+    <string name="fmt_cpu_freq_range">%1$d MHz - %2$d MHz</string>
+
+    <!-- Battery Unit Formatting Strings -->
+    <string name="fmt_ma">%.1f mA</string>
+    <string name="fmt_watts">%.2f W</string>
+    <string name="fmt_voltage">%.2f V</string>
+    <string name="fmt_mah">%d mAh</string>
+    <string name="fmt_battery_health_pct">%1$s (%2$d%%)</string>
+    <string name="fmt_bullet_item">• %s</string>
 </resources>

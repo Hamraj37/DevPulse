@@ -83,7 +83,7 @@ fun SystemScreen(
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Android ${systemInfo.androidVersion} - ${systemInfo.versionLetter}",
+                        text = stringResource(R.string.fmt_system_android_version_letter, systemInfo.androidVersion, systemInfo.versionLetter),
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.ExtraBold,
                             color = MaterialTheme.colorScheme.onSurface
@@ -99,7 +99,7 @@ fun SystemScreen(
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "Released : ${systemInfo.releaseDate}",
+                        text = stringResource(R.string.fmt_system_released_date, systemInfo.releaseDate),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1
@@ -140,7 +140,7 @@ fun SystemScreen(
                 val systemSpecs = listOf(
                     stringResource(R.string.system_os_name) to systemInfo.osName,
                     stringResource(R.string.system_os_version) to systemInfo.osVersion,
-                    "Android Version" to systemInfo.androidVersion,
+                    stringResource(R.string.system_android_version) to systemInfo.androidVersion,
                     stringResource(R.string.system_code_name) to systemInfo.codeName,
                     stringResource(R.string.system_api_level) to systemInfo.apiLevel.toString(),
                     stringResource(R.string.system_security_patch) to systemInfo.securityPatch,
@@ -151,15 +151,15 @@ fun SystemScreen(
                     stringResource(R.string.system_kernel) to systemInfo.kernelVersion,
                     stringResource(R.string.system_language) to systemInfo.language,
                     stringResource(R.string.system_timezone) to systemInfo.timezone,
-                    "OpenGL ES" to systemInfo.openGlEsVersion,
-                    "Root Management Apps" to systemInfo.rootManagementApps,
+                    stringResource(R.string.system_opengl_es) to systemInfo.openGlEsVersion,
+                    stringResource(R.string.system_root_apps) to systemInfo.rootManagementApps,
                     stringResource(R.string.system_selinux) to systemInfo.seLinux,
                     stringResource(R.string.system_play_services) to systemInfo.googlePlayServices,
                     stringResource(R.string.system_uptime) to systemInfo.systemUptime,
-                    "Vulkan" to systemInfo.vulkanVersion,
-                    "Treble" to systemInfo.trebleSupported,
-                    "Seamless Updates" to systemInfo.seamlessUpdates,
-                    "Dynamic Partitions" to systemInfo.dynamicPartitions
+                    stringResource(R.string.system_vulkan) to systemInfo.vulkanVersion,
+                    stringResource(R.string.system_treble) to systemInfo.trebleSupported,
+                    stringResource(R.string.system_seamless_updates) to systemInfo.seamlessUpdates,
+                    stringResource(R.string.system_dynamic_partitions) to systemInfo.dynamicPartitions
                 )
 
                 systemSpecs.forEachIndexed { index, (label, value) ->
@@ -205,9 +205,9 @@ fun SystemScreen(
                     stringResource(R.string.lbl_vendor).removeSuffix(":") to drm.vendor,
                     stringResource(R.string.lbl_version) to drm.version,
                     stringResource(R.string.lbl_description) to drm.description,
-                    "Algorithms" to drm.algorithms,
-                    "Security Level" to drm.securityLevel,
-                    "Max HDCP Level" to drm.maxHdcpLevel
+                    stringResource(R.string.system_drm_algorithms) to drm.algorithms,
+                    stringResource(R.string.system_drm_security_level) to drm.securityLevel,
+                    stringResource(R.string.system_drm_max_hdcp) to drm.maxHdcpLevel
                 )
 
                 drmSpecs.forEachIndexed { index, (label, value) ->

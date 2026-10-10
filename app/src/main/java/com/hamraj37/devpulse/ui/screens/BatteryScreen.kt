@@ -38,7 +38,6 @@ import com.hamraj37.devpulse.data.model.BatteryInfo
 import com.hamraj37.devpulse.ui.components.LiveSparklineChart
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.ActiveBadge
-import java.util.Locale
 
 @Composable
 fun BatteryScreen(
@@ -115,7 +114,7 @@ fun BatteryScreen(
                         color = MaterialTheme.colorScheme.primaryContainer
                     ) {
                         Text(
-                            text = "${batteryInfo.levelPercent}%",
+                            text = stringResource(R.string.fmt_pct, batteryInfo.levelPercent),
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -131,10 +130,10 @@ fun BatteryScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    BatteryMetricChip(stringResource(R.string.battery_current), "${String.format(Locale.US, "%.1f", batteryInfo.currentMa)} mA")
-                    BatteryMetricChip(stringResource(R.string.battery_temp_chip), "${batteryInfo.temperatureCelsius} °C")
-                    BatteryMetricChip(stringResource(R.string.battery_power), "${String.format(Locale.US, "%.2f", batteryInfo.powerWatts)} W")
-                    BatteryMetricChip(stringResource(R.string.battery_health), "${batteryInfo.healthPercent}%")
+                    BatteryMetricChip(stringResource(R.string.battery_current), stringResource(R.string.fmt_ma, batteryInfo.currentMa))
+                    BatteryMetricChip(stringResource(R.string.battery_temp_chip), stringResource(R.string.fmt_battery_temp, batteryInfo.temperatureCelsius))
+                    BatteryMetricChip(stringResource(R.string.battery_power), stringResource(R.string.fmt_watts, batteryInfo.powerWatts))
+                    BatteryMetricChip(stringResource(R.string.battery_health), stringResource(R.string.fmt_pct, batteryInfo.healthPercent))
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -187,20 +186,20 @@ fun BatteryScreen(
                 HorizontalDivider(color = dividerColor)
 
                 val batterySpecs = listOf(
-                    stringResource(R.string.battery_health) to "${batteryInfo.health} (${batteryInfo.healthPercent}%)",
-                    stringResource(R.string.battery_level) to "${batteryInfo.levelPercent}%",
+                    stringResource(R.string.battery_health) to stringResource(R.string.fmt_battery_health_pct, batteryInfo.health, batteryInfo.healthPercent),
+                    stringResource(R.string.battery_level) to stringResource(R.string.fmt_pct, batteryInfo.levelPercent),
                     stringResource(R.string.battery_status) to batteryInfo.status,
                     stringResource(R.string.battery_power_source) to batteryInfo.powerSource,
                     stringResource(R.string.battery_technology) to batteryInfo.technology,
-                    stringResource(R.string.lbl_temperature) to "${batteryInfo.temperatureCelsius} °C",
-                    stringResource(R.string.battery_current) to "${String.format(Locale.US, "%.1f", batteryInfo.currentMa)} mA",
-                    stringResource(R.string.battery_power) to "${String.format(Locale.US, "%.2f", batteryInfo.powerWatts)} W",
-                    stringResource(R.string.lbl_voltage) to "${String.format(Locale.US, "%.2f", batteryInfo.voltageVolts)} V",
+                    stringResource(R.string.lbl_temperature) to stringResource(R.string.fmt_battery_temp, batteryInfo.temperatureCelsius),
+                    stringResource(R.string.battery_current) to stringResource(R.string.fmt_ma, batteryInfo.currentMa),
+                    stringResource(R.string.battery_power) to stringResource(R.string.fmt_watts, batteryInfo.powerWatts),
+                    stringResource(R.string.lbl_voltage) to stringResource(R.string.fmt_voltage, batteryInfo.voltageVolts),
                     stringResource(R.string.battery_time_to_charge) to batteryInfo.timeToChargeFormatted,
-                    stringResource(R.string.battery_charge_cycles) to "${batteryInfo.chargeCycles}",
-                    stringResource(R.string.battery_capacity_charged) to "${batteryInfo.capacityChargedMah} mAh",
-                    stringResource(R.string.battery_capacity_estimated) to "${batteryInfo.capacityEstimatedMah} mAh",
-                    stringResource(R.string.battery_capacity_system) to "${batteryInfo.capacitySystemMah} mAh"
+                    stringResource(R.string.battery_charge_cycles) to (if (batteryInfo.chargeCycles > 0) batteryInfo.chargeCycles.toString() else stringResource(R.string.lbl_not_supported)),
+                    stringResource(R.string.battery_capacity_charged) to stringResource(R.string.fmt_mah, batteryInfo.capacityChargedMah),
+                    stringResource(R.string.battery_capacity_estimated) to stringResource(R.string.fmt_mah, batteryInfo.capacityEstimatedMah),
+                    stringResource(R.string.battery_capacity_system) to stringResource(R.string.fmt_mah, batteryInfo.capacitySystemMah)
                 )
 
                 batterySpecs.forEachIndexed { index, (label, value) ->

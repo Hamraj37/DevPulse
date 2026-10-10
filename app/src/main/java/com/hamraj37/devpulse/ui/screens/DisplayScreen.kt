@@ -192,7 +192,7 @@ fun DisplayScreen(
                                 color = if (isCurrent) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh
                             ) {
                                 Text(
-                                    text = "• $rate",
+                                    text = stringResource(R.string.fmt_bullet_item, rate),
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                                     style = MaterialTheme.typography.labelSmall.copy(
                                         fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Normal

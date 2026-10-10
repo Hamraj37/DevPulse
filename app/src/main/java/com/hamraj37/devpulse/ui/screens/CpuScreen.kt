@@ -92,7 +92,7 @@ fun CpuScreen(
                         color = MaterialTheme.colorScheme.primaryContainer
                     ) {
                         Text(
-                            text = "${cpuInfo.totalCores} " + stringResource(R.string.lbl_cores),
+                            text = stringResource(R.string.fmt_cores_count, cpuInfo.totalCores),
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -135,12 +135,12 @@ fun CpuScreen(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
-                                        text = "${stringResource(R.string.lbl_core)} ${speed.coreIndex}",
+                                        text = stringResource(R.string.fmt_core_index, speed.coreIndex),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                     Text(
-                                        text = "${speed.currentMhz} MHz",
+                                        text = stringResource(R.string.fmt_mhz, speed.currentMhz),
                                         style = MaterialTheme.typography.bodyMedium.copy(
                                             fontWeight = FontWeight.Bold,
                                             fontSize = 13.sp
@@ -191,8 +191,8 @@ fun CpuScreen(
                     stringResource(R.string.cpu_hardware) to cpuInfo.hardwareName,
                     stringResource(R.string.cpu_type) to cpuInfo.cpuType,
                     stringResource(R.string.cpu_governor) to cpuInfo.governor,
-                    stringResource(R.string.lbl_cores) to "${cpuInfo.totalCores}",
-                    stringResource(R.string.cpu_frequency) to "${cpuInfo.minFrequencyMhz} MHz - ${cpuInfo.maxFrequencyMhz} MHz",
+                    stringResource(R.string.lbl_cores) to stringResource(R.string.fmt_cores_count, cpuInfo.totalCores),
+                    stringResource(R.string.cpu_frequency) to stringResource(R.string.fmt_cpu_freq_range, cpuInfo.minFrequencyMhz, cpuInfo.maxFrequencyMhz),
                     stringResource(R.string.gpu_renderer) to cpuInfo.gpuRenderer,
                     stringResource(R.string.gpu_vendor) to cpuInfo.gpuVendor,
                     stringResource(R.string.gpu_version) to cpuInfo.gpuVersion

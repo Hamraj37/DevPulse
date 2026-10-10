@@ -959,4 +959,54 @@
     <string name="battery_fully_charged">Fully Charged</string>
     <string name="carrier_cellular_network">Cellular Network</string>
     <string name="network_wi_fi">Wi-Fi</string>
+
+    <!-- App Category Filter Strings -->
+    <string name="app_category_filter_all">All</string>
+    <string name="app_category_filter_user">User</string>
+    <string name="app_category_filter_system">System</string>
+    <string name="app_category_filter_analyze">Analyze</string>
+
+    <!-- Number & Unit Formatting Strings -->
+    <string name="fmt_ram_total">RAM - %d MB Total</string>
+    <string name="fmt_ram_used">%d MB Used</string>
+    <string name="fmt_ram_free">%d MB Free</string>
+    <string name="fmt_cores_count">%d Cores</string>
+    <string name="fmt_core_index">Core %d</string>
+    <string name="fmt_mhz">%d MHz</string>
+    <string name="fmt_tests_completed">%1$d of %2$d Tests Completed</string>
+    <string name="fmt_pct">%d%%</string>
+    <string name="fmt_passed_count">Passed: %d</string>
+    <string name="fmt_failed_count">Failed: %d</string>
+    <string name="fmt_pending_count">Pending: %d</string>
+    <string name="fmt_storage_free">Free: %.1f GB</string>
+    <string name="fmt_storage_total">Total: %.1f GB</string>
+    <string name="fmt_battery_subtext">%1$s | %2$.2fV | Health %3$d%%</string>
+    <string name="fmt_battery_temp">%.1f ℃</string>
+    <string name="fmt_active_count">%d Active</string>
+    <string name="fmt_installed_count">%d Installed</string>
+    <string name="fmt_display_inches_hz">%.1f\" | 120 Hz</string>
+
+    <!-- System Screen String Resources -->
+    <string name="fmt_system_android_version_letter">Android %1$s - %2$s</string>
+    <string name="fmt_system_released_date">Released: %s</string>
+    <string name="system_android_version">Android Version</string>
+    <string name="system_opengl_es">OpenGL ES</string>
+    <string name="system_root_apps">Root Management Apps</string>
+    <string name="system_vulkan">Vulkan</string>
+    <string name="system_treble">Treble</string>
+    <string name="system_seamless_updates">Seamless Updates</string>
+    <string name="system_dynamic_partitions">Dynamic Partitions</string>
+    <string name="system_drm_algorithms">Algorithms</string>
+    <string name="system_drm_security_level">Security Level</string>
+    <string name="system_drm_max_hdcp">Max HDCP Level</string>
+
+    <string name="fmt_cpu_freq_range">%1$d MHz - %2$d MHz</string>
+
+    <!-- Battery Unit Formatting Strings -->
+    <string name="fmt_ma">%.1f mA</string>
+    <string name="fmt_watts">%.2f W</string>
+    <string name="fmt_voltage">%.2f V</string>
+    <string name="fmt_mah">%d mAh</string>
+    <string name="fmt_battery_health_pct">%1$s (%2$d%%)</string>
+    <string name="fmt_bullet_item">• %s</string>
 </resources>

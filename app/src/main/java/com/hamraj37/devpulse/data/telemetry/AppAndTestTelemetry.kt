@@ -11,11 +11,11 @@ import com.hamraj37.devpulse.data.model.TestItem
 import com.hamraj37.devpulse.data.model.TestStatus
 import java.io.File
 
-enum class AppCategoryFilter(val displayName: String) {
-    ALL("All"),
-    USER("User"),
-    SYSTEM("System"),
-    ANALYZE("Analyze");
+enum class AppCategoryFilter(@androidx.annotation.StringRes val titleResId: Int, val displayName: String) {
+    ALL(R.string.app_category_filter_all, "All"),
+    USER(R.string.app_category_filter_user, "User"),
+    SYSTEM(R.string.app_category_filter_system, "System"),
+    ANALYZE(R.string.app_category_filter_analyze, "Analyze");
 
     companion object {
         val DEFAULT = USER

@@ -127,7 +127,7 @@ fun DashboardScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "RAM - $ramTotalMb MB " + stringResource(R.string.lbl_total),
+                        text = stringResource(R.string.fmt_ram_total, ramTotalMb),
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold
                         ),
@@ -135,7 +135,7 @@ fun DashboardScreen(
                     )
 
                     Text(
-                        text = "$ramUsedMb MB " + stringResource(R.string.lbl_used),
+                        text = stringResource(R.string.fmt_ram_used, ramUsedMb),
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold
                         ),
@@ -169,7 +169,7 @@ fun DashboardScreen(
                         )
 
                         Text(
-                            text = "$ramFreeMb MB " + stringResource(R.string.lbl_free),
+                            text = stringResource(R.string.fmt_ram_free, ramFreeMb),
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.Bold
                             ),
@@ -222,7 +222,7 @@ fun DashboardScreen(
                         color = MaterialTheme.colorScheme.primaryContainer
                     ) {
                         Text(
-                            text = "${dashboardInfo.cpuCoreFrequencies.size} " + stringResource(R.string.lbl_cores),
+                            text = stringResource(R.string.fmt_cores_count, dashboardInfo.cpuCoreFrequencies.size),
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -255,12 +255,12 @@ fun DashboardScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = stringResource(R.string.lbl_core) + " $index",
+                                    text = stringResource(R.string.fmt_core_index, index),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                                 Text(
-                                    text = "$mhz MHz",
+                                    text = stringResource(R.string.fmt_mhz, mhz),
                                     style = MaterialTheme.typography.bodyMedium.copy(
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 13.sp
@@ -329,7 +329,7 @@ fun DashboardScreen(
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "$completedTests " + stringResource(R.string.lbl_of) + " $totalTests " + stringResource(R.string.lbl_tests_completed),
+                                text = stringResource(R.string.fmt_tests_completed, completedTests, totalTests),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -341,7 +341,7 @@ fun DashboardScreen(
                         color = MaterialTheme.colorScheme.primaryContainer
                     ) {
                         Text(
-                            text = "${(testProgress * 100).toInt()}%",
+                            text = stringResource(R.string.fmt_pct, (testProgress * 100).toInt()),
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -372,7 +372,7 @@ fun DashboardScreen(
                                 .background(ActiveBadge)
                         )
                         Text(
-                            text = stringResource(R.string.lbl_passed) + ": $passedCount",
+                            text = stringResource(R.string.fmt_passed_count, passedCount),
                             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -386,7 +386,7 @@ fun DashboardScreen(
                                 .background(MaterialTheme.colorScheme.error)
                         )
                         Text(
-                            text = stringResource(R.string.lbl_failed) + ": $failedCount",
+                            text = stringResource(R.string.fmt_failed_count, failedCount),
                             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -400,7 +400,7 @@ fun DashboardScreen(
                                 .background(MaterialTheme.colorScheme.outline)
                         )
                         Text(
-                            text = stringResource(R.string.lbl_pending) + ": $pendingCount",
+                            text = stringResource(R.string.fmt_pending_count, pendingCount),
                             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -453,7 +453,7 @@ fun DashboardScreen(
                     color = MaterialTheme.colorScheme.primaryContainer
                 ) {
                     Text(
-                        text = "${dashboardInfo.displaySizeInches}\" | 120 Hz",
+                        text = stringResource(R.string.fmt_display_inches_hz, dashboardInfo.displaySizeInches),
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -610,7 +610,7 @@ fun DashboardScreen(
                         color = MaterialTheme.colorScheme.primaryContainer
                     ) {
                         Text(
-                            text = "$storagePct%",
+                            text = stringResource(R.string.fmt_pct, storagePct),
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -636,12 +636,12 @@ fun DashboardScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = stringResource(R.string.lbl_free) + ": ${String.format("%.1f", storageFreeGb)} GB",
+                        text = stringResource(R.string.fmt_storage_free, storageFreeGb),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = stringResource(R.string.lbl_total) + ": ${String.format("%.1f", storageTotalGb)} GB",
+                        text = stringResource(R.string.fmt_storage_total, storageTotalGb),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -686,7 +686,7 @@ fun DashboardScreen(
                         color = MaterialTheme.colorScheme.primaryContainer
                     ) {
                         Text(
-                            text = "${dashboardInfo.batteryLevel}%",
+                            text = stringResource(R.string.fmt_pct, dashboardInfo.batteryLevel),
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -710,12 +710,12 @@ fun DashboardScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "${dashboardInfo.batteryChargingStatus} | ${dashboardInfo.batteryVoltage}V | Health ${dashboardInfo.batteryHealthPercent}%",
+                        text = stringResource(R.string.fmt_battery_subtext, dashboardInfo.batteryChargingStatus, dashboardInfo.batteryVoltage, dashboardInfo.batteryHealthPercent),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "${dashboardInfo.batteryTemp} °C",
+                        text = stringResource(R.string.fmt_battery_temp, dashboardInfo.batteryTemp),
                         style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -753,7 +753,7 @@ fun DashboardScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = "${dashboardInfo.sensorCount} " + stringResource(R.string.lbl_active),
+                            text = stringResource(R.string.fmt_active_count, dashboardInfo.sensorCount),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -786,7 +786,7 @@ fun DashboardScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = "${dashboardInfo.appCount} " + stringResource(R.string.lbl_installed),
+                            text = stringResource(R.string.fmt_installed_count, dashboardInfo.appCount),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface
                         )

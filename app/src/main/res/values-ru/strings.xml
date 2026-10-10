@@ -959,4 +959,54 @@
     <string name="battery_fully_charged">Полностью заряжена</string>
     <string name="carrier_cellular_network">Сотовая сеть</string>
     <string name="network_wi_fi">Wi-Fi</string>
+
+    <!-- App Category Filter Strings -->
+    <string name="app_category_filter_all">Все</string>
+    <string name="app_category_filter_user">Пользовательские</string>
+    <string name="app_category_filter_system">Системные</string>
+    <string name="app_category_filter_analyze">Анализ</string>
+
+    <!-- Number & Unit Formatting Strings -->
+    <string name="fmt_ram_total">ОЗУ - %d МБ Всего</string>
+    <string name="fmt_ram_used">%d МБ Использовано</string>
+    <string name="fmt_ram_free">%d МБ Свободно</string>
+    <string name="fmt_cores_count">%d ядер</string>
+    <string name="fmt_core_index">Ядро %d</string>
+    <string name="fmt_mhz">%d МГц</string>
+    <string name="fmt_tests_completed">%1$d из %2$d тестов завершено</string>
+    <string name="fmt_pct">%d%%</string>
+    <string name="fmt_passed_count">Пройдено: %d</string>
+    <string name="fmt_failed_count">Провалено: %d</string>
+    <string name="fmt_pending_count">В очереди: %d</string>
+    <string name="fmt_storage_free">Свободно: %.1f ГБ</string>
+    <string name="fmt_storage_total">Всего: %.1f ГБ</string>
+    <string name="fmt_battery_subtext">%1$s | %2$.2f В | Состояние %3$d%%</string>
+    <string name="fmt_battery_temp">%.1f ℃</string>
+    <string name="fmt_active_count">%d Активных</string>
+    <string name="fmt_installed_count">%d Установлено</string>
+    <string name="fmt_display_inches_hz">%.1f\" | 120 Гц</string>
+
+    <!-- System Screen String Resources -->
+    <string name="fmt_system_android_version_letter">Android %1$s - %2$s</string>
+    <string name="fmt_system_released_date">Релиз: %s</string>
+    <string name="system_android_version">Версия Android</string>
+    <string name="system_opengl_es">OpenGL ES</string>
+    <string name="system_root_apps">Менеджеры Root</string>
+    <string name="system_vulkan">Vulkan</string>
+    <string name="system_treble">Поддержка Treble</string>
+    <string name="system_seamless_updates">Бесшовные обновления (A/B)</string>
+    <string name="system_dynamic_partitions">Динамические разделы</string>
+    <string name="system_drm_algorithms">Алгоритмы</string>
+    <string name="system_drm_security_level">Уровень безопасности</string>
+    <string name="system_drm_max_hdcp">Макс. уровень HDCP</string>
+
+    <string name="fmt_cpu_freq_range">%1$d МГц - %2$d МГц</string>
+
+    <!-- Battery Unit Formatting Strings -->
+    <string name="fmt_ma">%.1f мА</string>
+    <string name="fmt_watts">%.2f Вт</string>
+    <string name="fmt_voltage">%.2f В</string>
+    <string name="fmt_mah">%d мАч</string>
+    <string name="fmt_battery_health_pct">%1$s (%2$d%%)</string>
+    <string name="fmt_bullet_item">• %s</string>
 </resources>
