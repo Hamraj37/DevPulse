@@ -85,6 +85,22 @@ import com.hamraj37.devpulse.data.model.DashboardInfo
 import com.hamraj37.devpulse.data.model.DeviceInfo
 import com.hamraj37.devpulse.data.model.TestStatus
 import com.hamraj37.devpulse.ui.components.DevPulseTabRow
+import com.hamraj37.devpulse.ui.screens.AccelerometerTestScreen
+import com.hamraj37.devpulse.ui.screens.AutomaticTestsScreen
+import com.hamraj37.devpulse.ui.screens.BiometricTestScreen
+import com.hamraj37.devpulse.ui.screens.BluetoothTestScreen
+import com.hamraj37.devpulse.ui.screens.ChargingTestScreen
+import com.hamraj37.devpulse.ui.screens.DisplayTestScreen
+import com.hamraj37.devpulse.ui.screens.EarSpeakerTestScreen
+import com.hamraj37.devpulse.ui.screens.FlashlightTestScreen
+import com.hamraj37.devpulse.ui.screens.GpsTestScreen
+import com.hamraj37.devpulse.ui.screens.LightSensorTestScreen
+import com.hamraj37.devpulse.ui.screens.MicTestScreen
+import com.hamraj37.devpulse.ui.screens.MultitouchTestScreen
+import com.hamraj37.devpulse.ui.screens.ProximityTestScreen
+import com.hamraj37.devpulse.ui.screens.SpeakerTestScreen
+import com.hamraj37.devpulse.ui.screens.VibrationTestScreen
+import com.hamraj37.devpulse.ui.screens.VolumeButtonTestScreen
 import com.hamraj37.devpulse.ui.screens.AppsScreen
 import com.hamraj37.devpulse.ui.screens.BatteryScreen
 import com.hamraj37.devpulse.ui.screens.CameraScreen
@@ -441,8 +457,10 @@ fun MainScreen(
         )
     }
 
-    BackHandler(enabled = uiState.selectedTab != AppTab.DASHBOARD || uiState.isToolsPageOpen) {
-        if (uiState.isToolsPageOpen) {
+    BackHandler(enabled = uiState.selectedTab != AppTab.DASHBOARD || uiState.isToolsPageOpen || uiState.activeTestId != null) {
+        if (uiState.activeTestId != null) {
+            viewModel.closeActiveTest()
+        } else if (uiState.isToolsPageOpen) {
             viewModel.setToolsPageOpen(false)
         } else {
             viewModel.selectTab(AppTab.DASHBOARD)
@@ -457,7 +475,93 @@ fun MainScreen(
         }
     }
 
-        if (uiState.isToolsPageOpen) {
+        if (uiState.activeTestId != null) {
+            Surface(
+                modifier = modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                val testId = uiState.activeTestId!!
+                when (testId) {
+                    "automatic" -> AutomaticTestsScreen(onBack = { viewModel.closeActiveTest() })
+                    "test_touch" -> MultitouchTestScreen(
+                        onBack = { viewModel.closeActiveTest() },
+                        onPass = { viewModel.updateTestStatus("test_touch", TestStatus.PASSED); viewModel.closeActiveTest() },
+                        onFail = { viewModel.updateTestStatus("test_touch", TestStatus.FAILED); viewModel.closeActiveTest() }
+                    )
+                    "test_display" -> DisplayTestScreen(
+                        onBack = { viewModel.closeActiveTest() },
+                        onPass = { viewModel.updateTestStatus("test_display", TestStatus.PASSED); viewModel.closeActiveTest() },
+                        onFail = { viewModel.updateTestStatus("test_display", TestStatus.FAILED); viewModel.closeActiveTest() }
+                    )
+                    "test_flashlight" -> FlashlightTestScreen(
+                        onBack = { viewModel.closeActiveTest() },
+                        onPass = { viewModel.updateTestStatus("test_flashlight", TestStatus.PASSED); viewModel.closeActiveTest() },
+                        onFail = { viewModel.updateTestStatus("test_flashlight", TestStatus.FAILED); viewModel.closeActiveTest() }
+                    )
+                    "test_speaker" -> SpeakerTestScreen(
+                        onBack = { viewModel.closeActiveTest() },
+                        onPass = { viewModel.updateTestStatus("test_speaker", TestStatus.PASSED); viewModel.closeActiveTest() },
+                        onFail = { viewModel.updateTestStatus("test_speaker", TestStatus.FAILED); viewModel.closeActiveTest() }
+                    )
+                    "test_earspeaker" -> EarSpeakerTestScreen(
+                        onBack = { viewModel.closeActiveTest() },
+                        onPass = { viewModel.updateTestStatus("test_earspeaker", TestStatus.PASSED); viewModel.closeActiveTest() },
+                        onFail = { viewModel.updateTestStatus("test_earspeaker", TestStatus.FAILED); viewModel.closeActiveTest() }
+                    )
+                    "test_mic" -> MicTestScreen(
+                        onBack = { viewModel.closeActiveTest() },
+                        onPass = { viewModel.updateTestStatus("test_mic", TestStatus.PASSED); viewModel.closeActiveTest() },
+                        onFail = { viewModel.updateTestStatus("test_mic", TestStatus.FAILED); viewModel.closeActiveTest() }
+                    )
+                    "test_proximity" -> ProximityTestScreen(
+                        onBack = { viewModel.closeActiveTest() },
+                        onPass = { viewModel.updateTestStatus("test_proximity", TestStatus.PASSED); viewModel.closeActiveTest() },
+                        onFail = { viewModel.updateTestStatus("test_proximity", TestStatus.FAILED); viewModel.closeActiveTest() }
+                    )
+                    "test_light" -> LightSensorTestScreen(
+                        onBack = { viewModel.closeActiveTest() },
+                        onPass = { viewModel.updateTestStatus("test_light", TestStatus.PASSED); viewModel.closeActiveTest() },
+                        onFail = { viewModel.updateTestStatus("test_light", TestStatus.FAILED); viewModel.closeActiveTest() }
+                    )
+                    "test_accel" -> AccelerometerTestScreen(
+                        onBack = { viewModel.closeActiveTest() },
+                        onPass = { viewModel.updateTestStatus("test_accel", TestStatus.PASSED); viewModel.closeActiveTest() },
+                        onFail = { viewModel.updateTestStatus("test_accel", TestStatus.FAILED); viewModel.closeActiveTest() }
+                    )
+                    "test_charging" -> ChargingTestScreen(
+                        onBack = { viewModel.closeActiveTest() },
+                        onPass = { viewModel.updateTestStatus("test_charging", TestStatus.PASSED); viewModel.closeActiveTest() },
+                        onFail = { viewModel.updateTestStatus("test_charging", TestStatus.FAILED); viewModel.closeActiveTest() }
+                    )
+                    "test_vibration" -> VibrationTestScreen(
+                        onBack = { viewModel.closeActiveTest() },
+                        onPass = { viewModel.updateTestStatus("test_vibration", TestStatus.PASSED); viewModel.closeActiveTest() },
+                        onFail = { viewModel.updateTestStatus("test_vibration", TestStatus.FAILED); viewModel.closeActiveTest() }
+                    )
+                    "test_bluetooth" -> BluetoothTestScreen(
+                        onBack = { viewModel.closeActiveTest() },
+                        onPass = { viewModel.updateTestStatus("test_bluetooth", TestStatus.PASSED); viewModel.closeActiveTest() },
+                        onFail = { viewModel.updateTestStatus("test_bluetooth", TestStatus.FAILED); viewModel.closeActiveTest() }
+                    )
+                    "test_fingerprint" -> BiometricTestScreen(
+                        onBack = { viewModel.closeActiveTest() },
+                        onPass = { viewModel.updateTestStatus("test_fingerprint", TestStatus.PASSED); viewModel.closeActiveTest() },
+                        onFail = { viewModel.updateTestStatus("test_fingerprint", TestStatus.FAILED); viewModel.closeActiveTest() }
+                    )
+                    "test_gps" -> GpsTestScreen(
+                        onBack = { viewModel.closeActiveTest() },
+                        onPass = { viewModel.updateTestStatus("test_gps", TestStatus.PASSED); viewModel.closeActiveTest() },
+                        onFail = { viewModel.updateTestStatus("test_gps", TestStatus.FAILED); viewModel.closeActiveTest() }
+                    )
+                    "test_volume" -> VolumeButtonTestScreen(
+                        onBack = { viewModel.closeActiveTest() },
+                        onPass = { viewModel.updateTestStatus("test_volume", TestStatus.PASSED); viewModel.closeActiveTest() },
+                        onFail = { viewModel.updateTestStatus("test_volume", TestStatus.FAILED); viewModel.closeActiveTest() }
+                    )
+                    else -> viewModel.closeActiveTest()
+                }
+            }
+        } else if (uiState.isToolsPageOpen) {
             Surface(
                 modifier = modifier
                     .fillMaxSize()
@@ -782,7 +886,8 @@ fun TabContentScreen(
     onSelectCamera: (String) -> Unit = {},
     onAppSearchQueryChange: (String) -> Unit = {},
     onAppCategoryFilterChange: (String) -> Unit = {},
-    onUpdateTestStatus: (String, TestStatus) -> Unit = { _, _ -> }
+    onUpdateTestStatus: (String, TestStatus) -> Unit = { _, _ -> },
+    onStartTest: (String) -> Unit = {}
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -827,7 +932,8 @@ fun TabContentScreen(
             )
             AppTab.TESTS -> TestsScreen(
                 testsList = uiState.testsList,
-                onUpdateTestStatus = onUpdateTestStatus
+                onUpdateTestStatus = onUpdateTestStatus,
+                onStartTest = onStartTest
             )
         }
     }
@@ -848,7 +954,8 @@ fun TabContentScreen(
         onSelectCamera = { viewModel.selectCamera(it) },
         onAppSearchQueryChange = { viewModel.setAppSearchQuery(it) },
         onAppCategoryFilterChange = { viewModel.setAppCategoryFilter(it) },
-        onUpdateTestStatus = { testId, status -> viewModel.updateTestStatus(testId, status) }
+        onUpdateTestStatus = { testId, status -> viewModel.updateTestStatus(testId, status) },
+        onStartTest = { viewModel.openTest(it) }
     )
 }
 

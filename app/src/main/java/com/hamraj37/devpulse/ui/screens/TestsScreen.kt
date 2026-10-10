@@ -2,10 +2,6 @@ package com.hamraj37.devpulse.ui.screens
 
 import com.hamraj37.devpulse.R
 import androidx.compose.ui.res.stringResource
-import android.app.Activity
-import android.content.Intent
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,7 +45,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.data.model.TestItem
 import com.hamraj37.devpulse.data.model.TestStatus
-import com.hamraj37.devpulse.ui.TestActivity
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
 
@@ -57,25 +52,9 @@ import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
 fun TestsScreen(
     testsList: List<TestItem>,
     onUpdateTestStatus: (String, TestStatus) -> Unit,
+    onStartTest: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    var currentTestingTestId by remember { mutableStateOf<String?>(null) }
-
-    val testLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        val testId = currentTestingTestId
-        if (testId != null) {
-            if (result.resultCode == Activity.RESULT_OK) {
-                onUpdateTestStatus(testId, TestStatus.PASSED)
-            } else if (result.resultCode == Activity.RESULT_CANCELED) {
-                onUpdateTestStatus(testId, TestStatus.FAILED)
-            }
-            currentTestingTestId = null
-        }
-    }
-
     val completedCount = testsList.count { it.status == TestStatus.PASSED || it.status == TestStatus.FAILED }
     val totalCount = testsList.size.coerceAtLeast(15)
     val progressPct = completedCount.toFloat() / totalCount.toFloat()
@@ -162,10 +141,7 @@ fun TestsScreen(
                         onClick = {
                             onUpdateTestStatus(test.id, TestStatus.RUNNING)
                             onUpdateTestStatus(test.id, TestStatus.PASSED)
-                            val intent = Intent(context, TestActivity::class.java).apply {
-                                putExtra(TestActivity.EXTRA_TEST_ID, "automatic")
-                            }
-                            context.startActivity(intent)
+                            onStartTest("automatic")
                         }
                     )
                 }
@@ -185,12 +161,8 @@ fun TestsScreen(
                 TestCardItem(
                     test = test,
                     onClick = {
-                        currentTestingTestId = test.id
                         onUpdateTestStatus(test.id, TestStatus.RUNNING)
-                        val intent = Intent(context, TestActivity::class.java).apply {
-                            putExtra(TestActivity.EXTRA_TEST_ID, test.id)
-                        }
-                        testLauncher.launch(intent)
+                        onStartTest(test.id)
                     }
                 )
             }

@@ -57,11 +57,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".ui.TestActivity"
-            android:exported="false"
-            android:theme="@style/Theme.DevPulse" />
-
         <service
             android:name=".service.FloatingMonitorService"
             android:enabled="true"

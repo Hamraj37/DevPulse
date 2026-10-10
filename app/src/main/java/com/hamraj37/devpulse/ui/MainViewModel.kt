@@ -65,7 +65,8 @@ data class MainUiState(
     val isLoading: Boolean = false,
     val themeMode: String = "System default", // "System default", "Light", "Dark"
     val updateInfo: GithubReleaseInfo? = null,
-    val showUpdateDialog: Boolean = false
+    val showUpdateDialog: Boolean = false,
+    val activeTestId: String? = null
 )
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -128,6 +129,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun openTool(toolType: ToolType? = null) {
         _uiState.update { it.copy(isToolsPageOpen = true, initialTool = toolType) }
+    }
+
+    fun openTest(testId: String) {
+        _uiState.update { it.copy(activeTestId = testId) }
+    }
+
+    fun closeActiveTest() {
+        _uiState.update { it.copy(activeTestId = null) }
     }
 
     fun selectCamera(cameraId: String) {
