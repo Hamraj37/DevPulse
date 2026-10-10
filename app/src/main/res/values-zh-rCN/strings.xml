@@ -878,7 +878,7 @@
     <string name="display_timeout_minutes_format">%d 分钟</string>
 
     <!-- Network & Connectivity Telemetry Strings -->
-    <string name="geo_location_fallback">新德里，德里，印度</string>
+    <string name="geo_location_fallback">位置不可用</string>
     <string name="data_state_connected">已连接</string>
     <string name="data_state_connecting">正在连接</string>
     <string name="data_state_suspended">已挂起</string>
@@ -953,6 +953,10 @@
     <string name="manifest_fgs_special_use_subtype">实时遥测悬浮窗监视器</string>
     <string name="location_not_available">位置不可用</string>
     <string name="battery_time_calculating">正在计算...</string>
+    <string name="battery_time_remaining_hours_mins">预计还可使用 %1$d 小时 %2$d 分钟</string>
+    <string name="battery_time_remaining_mins">预计还可使用 %d 分钟</string>
+    <string name="battery_time_remaining_hours">预计还可使用 %d 小时</string>
+    <string name="battery_fully_charged">已充满电</string>
     <string name="carrier_cellular_network">蜂窝移动网络</string>
     <string name="network_wi_fi">Wi-Fi</string>
 </resources>

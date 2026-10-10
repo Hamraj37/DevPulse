@@ -879,7 +879,7 @@
     <string name="display_timeout_minutes_format">%d Minutes</string>
 
     <!-- Network & Connectivity Telemetry Strings -->
-    <string name="geo_location_fallback">New Delhi, Delhi, India</string>
+    <string name="geo_location_fallback">Location Unavailable</string>
     <string name="data_state_connected">Connected</string>
     <string name="data_state_connecting">Connecting</string>
     <string name="data_state_suspended">Suspended</string>
@@ -953,6 +953,10 @@
 
     <string name="location_not_available">Location Unavailable</string>
     <string name="battery_time_calculating">Calculating...</string>
+    <string name="battery_time_remaining_hours_mins">%1$d hrs %2$d mins remaining</string>
+    <string name="battery_time_remaining_mins">%d mins remaining</string>
+    <string name="battery_time_remaining_hours">%d hrs remaining</string>
+    <string name="battery_fully_charged">Fully Charged</string>
     <string name="carrier_cellular_network">Cellular Network</string>
     <string name="network_wi_fi">Wi-Fi</string>
 </resources>

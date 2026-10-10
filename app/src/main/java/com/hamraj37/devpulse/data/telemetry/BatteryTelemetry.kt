@@ -136,20 +136,54 @@ object BatteryTelemetry {
             }
 
             val timeToChargeFormatted = if (isCharging) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    val timeRemainingMs = try { bm?.computeChargeTimeRemaining() ?: -1L } catch (_: Throwable) { -1L }
-                    if (timeRemainingMs > 0) {
-                        val minutes = (timeRemainingMs / (1000 * 60)).toInt()
-                        val hours = minutes / 60
-                        val mins = minutes % 60
-                        if (hours > 0) {
-                            context.getString(R.string.battery_time_until_full_hours_mins, hours, mins)
-                        } else {
-                            context.getString(R.string.battery_time_until_full_mins, mins)
+                if (batteryPct >= 100) {
+                    context.getString(R.string.battery_fully_charged)
+                } else {
+                    var hwRemainingMins = -1
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        val timeRemainingMs = try { bm?.computeChargeTimeRemaining() ?: -1L } catch (_: Throwable) { -1L }
+                        if (timeRemainingMs > 0) {
+                            hwRemainingMins = (timeRemainingMs / (1000 * 60)).toInt()
                         }
-                    } else context.getString(R.string.battery_time_calculating)
-                } else context.getString(R.string.battery_time_calculating)
-            } else context.getString(R.string.battery_status_discharging)
+                    }
+
+                    val totalMins = if (hwRemainingMins > 0) {
+                        hwRemainingMins
+                    } else {
+                        val remainingMah = (capacityEstimatedMah * (100 - batteryPct) / 100f).coerceAtLeast(100f)
+                        val effectiveMa = if (currentMa in 100f..10000f) currentMa else 1500f
+                        ((remainingMah / effectiveMa) * 60f).toInt().coerceIn(5, 600)
+                    }
+
+                    val hours = totalMins / 60
+                    val mins = totalMins % 60
+                    if (hours > 0 && mins > 0) {
+                        context.getString(R.string.battery_time_until_full_hours_mins, hours, mins)
+                    } else if (hours > 0) {
+                        context.getString(R.string.battery_time_until_full_hours_mins, hours, 0)
+                    } else {
+                        context.getString(R.string.battery_time_until_full_mins, mins.coerceAtLeast(1))
+                    }
+                }
+            } else {
+                if (batteryPct <= 0) {
+                    context.getString(R.string.battery_time_remaining_mins, 0)
+                } else {
+                    val availableMah = (capacityEstimatedMah * batteryPct / 100f).coerceAtLeast(50f)
+                    val effectiveMa = if (currentMa in 100f..5000f) currentMa else 380f
+                    val totalMins = ((availableMah / effectiveMa) * 60f).toInt().coerceIn(10, 2880)
+
+                    val hours = totalMins / 60
+                    val mins = totalMins % 60
+                    if (hours > 0 && mins > 0) {
+                        context.getString(R.string.battery_time_remaining_hours_mins, hours, mins)
+                    } else if (hours > 0) {
+                        context.getString(R.string.battery_time_remaining_hours, hours)
+                    } else {
+                        context.getString(R.string.battery_time_remaining_mins, mins.coerceAtLeast(1))
+                    }
+                }
+            }
 
             val usbStatusStr = if (isCharging) {
                 context.getString(R.string.battery_usb_charging_format, powerSource)

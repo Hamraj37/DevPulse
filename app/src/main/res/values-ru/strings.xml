@@ -878,7 +878,7 @@
     <string name="display_timeout_minutes_format">%d минут</string>
 
     <!-- Network & Connectivity Telemetry Strings -->
-    <string name="geo_location_fallback">Нью-Дели, Дели, Индия</string>
+    <string name="geo_location_fallback">Геолокация недоступна</string>
     <string name="data_state_connected">Подключено</string>
     <string name="data_state_connecting">Подключение</string>
     <string name="data_state_suspended">Приостановлено</string>
@@ -953,6 +953,10 @@
     <string name="manifest_fgs_special_use_subtype">Монитор наложения для отображения телеметрии в реальном времени</string>
     <string name="location_not_available">Геолокация недоступна</string>
     <string name="battery_time_calculating">Вычисление...</string>
+    <string name="battery_time_remaining_hours_mins">Осталось %1$d ч %2$d мин</string>
+    <string name="battery_time_remaining_mins">Осталось %d мин</string>
+    <string name="battery_time_remaining_hours">Осталось %d ч</string>
+    <string name="battery_fully_charged">Полностью заряжена</string>
     <string name="carrier_cellular_network">Сотовая сеть</string>
     <string name="network_wi_fi">Wi-Fi</string>
 </resources>
