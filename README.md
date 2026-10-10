@@ -94,6 +94,13 @@ Interactive and automated hardware diagnostic tests with persistent results save
    ./gradlew app:testDebugUnitTest
    ```
 
+5. **Automated CI/CD & Telegram Release Announcements**:
+   The GitHub Actions workflow (`.github/workflows/release.yml`) automatically builds release APKs, calculates SHA-256 checksums, extracts commit changelogs, creates GitHub Releases, and sends release announcements to the [DevPulse Telegram Channel](https://t.me/DevPulseApp).
+   To enable Telegram release notifications, configure these secrets in **Repository Settings → Secrets and variables → Actions**:
+   * `TELEGRAM_BOT_TOKEN`: Bot token from Telegram's `@BotFather`.
+   * `TELEGRAM_CHAT_ID`: Telegram channel or group ID (e.g. `@DevPulseApp`).
+
+
 ---
 
 ## 📱 App Navigation & Navigation Back-Press Strategy

@@ -174,4 +174,47 @@ jobs:
             app/build/outputs/apk/debug/app-debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send Telegram Release Announcement
+        if: success()
+        continue-on-error: true
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID || '@DevPulseApp' }}
+          VERSION_NAME: ${{ steps.get_version.outputs.version_name }}
+          REL_SHA: ${{ steps.checksums.outputs.rel_sha }}
+          CHANGELOG: ${{ steps.changelog.outputs.changelog }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ]; then
+            echo "TELEGRAM_BOT_TOKEN is not configured in secrets. Skipping Telegram announcement."
+            exit 0
+          fi
+
+          # Clean Markdown headers to HTML bold format for Telegram
+          FORMATTED_CHANGELOG=$(echo "$CHANGELOG" | sed -E 's/####\s*(.*)/<b>\1<\/b>/g' | sed -E 's/###\s*(.*)/<b>\1<\/b>/g')
+
+          TELEGRAM_MSG=$(cat <<EOF
+          🚀 <b>DevPulse v${VERSION_NAME} Released!</b>
+
+          <b>📋 What's Changed:</b>
+          ${FORMATTED_CHANGELOG}
+
+          <b>📦 Direct Download Links:</b>
+          • <a href="https://github.com/Hamraj37/DevPulse/releases/download/v${VERSION_NAME}/app-release.apk">Download Release APK</a>
+          • <a href="https://github.com/Hamraj37/DevPulse/releases/tag/v${VERSION_NAME}">View Release on GitHub</a>
+
+          <b>🛡️ SHA-256 Checksum:</b>
+          <code>${REL_SHA}</code>
+
+          <b>💬 Community Channel:</b>
+          Join <a href="https://t.me/DevPulseApp">@DevPulseApp</a> for updates & feedback!
+          EOF
+          )
+
+          curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d "chat_id=${TELEGRAM_CHAT_ID}" \
+            -d "parse_mode=HTML" \
+            -d "disable_web_page_preview=true" \
+            --data-urlencode "text=${TELEGRAM_MSG}"
+
           
