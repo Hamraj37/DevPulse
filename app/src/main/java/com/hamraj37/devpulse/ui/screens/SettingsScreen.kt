@@ -205,8 +205,8 @@ fun SettingsScreen(
                 icon = Icons.Rounded.Palette,
                 title = stringResource(R.string.settings_theme_color),
                 subtitle = when (uiState.themePalette) {
-                    "Monet", "Dynamic", "Monet (Dynamic)" -> "Monet (Dynamic)"
                     "Olive" -> "Olive (Default)"
+                    "Monet", "Dynamic", "Monet (Dynamic)" -> "Olive (Default)"
                     else -> uiState.themePalette
                 },
                 onClick = { showThemePaletteDialog = true }
@@ -408,7 +408,6 @@ fun SettingsScreen(
 
     if (showThemePaletteDialog) {
         val paletteOptions = listOf(
-            "Monet" to ("Monet (Dynamic)" to androidx.compose.ui.graphics.Color(0xFF829827)),
             "Red" to ("Red" to androidx.compose.ui.graphics.Color(0xFFB3261E)),
             "Blue" to ("Blue" to androidx.compose.ui.graphics.Color(0xFF1B62B2)),
             "Green" to ("Green" to androidx.compose.ui.graphics.Color(0xFF2D6A4F)),
@@ -422,7 +421,7 @@ fun SettingsScreen(
                 Column {
                     paletteOptions.forEach { (key, info) ->
                         val (label, color) = info
-                        val isSelected = uiState.themePalette == key || (key == "Monet" && (uiState.themePalette == "Dynamic" || uiState.themePalette == "Monet (Dynamic)"))
+                        val isSelected = uiState.themePalette == key
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier

@@ -101,12 +101,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun setThemePalette(palette: String) {
-        val isMonet = palette == "Monet" || palette == "Dynamic" || palette == "Monet (Dynamic)"
         prefs.edit()
             .putString("theme_palette", palette)
-            .putBoolean("is_monet_enabled", isMonet)
+            .putBoolean("is_monet_enabled", false)
             .apply()
-        _uiState.update { it.copy(themePalette = palette, isMonetEnabled = isMonet) }
+        _uiState.update { it.copy(themePalette = palette, isMonetEnabled = false) }
     }
 
     fun setMonetEnabled(enabled: Boolean) {
