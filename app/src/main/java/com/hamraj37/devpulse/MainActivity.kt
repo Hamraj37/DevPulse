@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
             DevPulseTheme(
                 darkTheme = darkTheme,
-                dynamicColor = true
+                themePalette = uiState.themePalette
             ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),

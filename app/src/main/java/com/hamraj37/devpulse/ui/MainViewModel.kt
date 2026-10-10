@@ -64,6 +64,7 @@ data class MainUiState(
     val initialTool: ToolType? = null,
     val isLoading: Boolean = false,
     val themeMode: String = "System default", // "System default", "Light", "Dark"
+    val themePalette: String = "Monet", // "Monet", "Red", "Blue", "Green", "Yellow", "Olive"
     val updateInfo: GithubReleaseInfo? = null,
     val showUpdateDialog: Boolean = false,
     val activeTestId: String? = null
@@ -79,9 +80,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         val savedTheme = prefs.getString("theme_mode", "System default") ?: "System default"
+        val savedPalette = prefs.getString("theme_palette", "Monet") ?: "Monet"
         _uiState.update {
             it.copy(
-                themeMode = savedTheme
+                themeMode = savedTheme,
+                themePalette = savedPalette
             )
         }
         loadStaticTelemetry()
@@ -92,6 +95,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun setThemeMode(mode: String) {
         prefs.edit().putString("theme_mode", mode).apply()
         _uiState.update { it.copy(themeMode = mode) }
+    }
+
+    fun setThemePalette(palette: String) {
+        prefs.edit().putString("theme_palette", palette).apply()
+        _uiState.update { it.copy(themePalette = palette) }
     }
 
     fun dismissUpdateDialog() {

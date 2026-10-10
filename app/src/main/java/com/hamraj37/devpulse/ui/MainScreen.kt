@@ -572,6 +572,7 @@ fun MainScreen(
                     uiState = uiState,
                     initialTool = uiState.initialTool,
                     onThemeModeChange = { viewModel.setThemeMode(it) },
+                    onThemePaletteChange = { viewModel.setThemePalette(it) },
                     onBack = { viewModel.setToolsPageOpen(false) },
                     onNavigateToTab = { tab ->
                         viewModel.selectTab(tab)

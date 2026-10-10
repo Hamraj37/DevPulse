@@ -70,6 +70,7 @@ import androidx.compose.ui.unit.sp
 fun SettingsScreen(
     uiState: MainUiState = MainUiState(),
     onThemeModeChange: (String) -> Unit = {},
+    onThemePaletteChange: (String) -> Unit = {},
     onBack: (() -> Unit)? = null,
     onNavigateToExport: (() -> Unit)? = null,
     onNavigateToAbout: (() -> Unit)? = null,
@@ -83,6 +84,7 @@ fun SettingsScreen(
 
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showThemeDialog by remember { mutableStateOf(false) }
+    var showThemePaletteDialog by remember { mutableStateOf(false) }
     var showClearDataDialog by remember { mutableStateOf(false) }
     var showDonateDialog by remember { mutableStateOf(false) }
     var showPrivacyDialog by remember { mutableStateOf(false) }
@@ -183,6 +185,17 @@ fun SettingsScreen(
                 title = stringResource(R.string.lbl_theme),
                 subtitle = uiState.themeMode,
                 onClick = { showThemeDialog = true }
+            )
+
+            SettingsItemRow(
+                icon = Icons.Rounded.Palette,
+                title = stringResource(R.string.settings_theme_color),
+                subtitle = when (uiState.themePalette) {
+                    "Monet", "Dynamic", "Monet (Dynamic)" -> "Monet (Dynamic)"
+                    "Olive" -> "Olive (Default)"
+                    else -> uiState.themePalette
+                },
+                onClick = { showThemePaletteDialog = true }
             )
         }
 
@@ -373,6 +386,60 @@ fun SettingsScreen(
             },
             confirmButton = {
                 TextButton(onClick = { showThemeDialog = false }) {
+                    Text(stringResource(R.string.btn_cancel))
+                }
+            }
+        )
+    }
+
+    if (showThemePaletteDialog) {
+        val paletteOptions = listOf(
+            "Monet" to ("Monet (Dynamic)" to androidx.compose.ui.graphics.Color(0xFF829827)),
+            "Red" to ("Red" to androidx.compose.ui.graphics.Color(0xFFB3261E)),
+            "Blue" to ("Blue" to androidx.compose.ui.graphics.Color(0xFF1B62B2)),
+            "Green" to ("Green" to androidx.compose.ui.graphics.Color(0xFF2D6A4F)),
+            "Yellow" to ("Yellow" to androidx.compose.ui.graphics.Color(0xFF755B00)),
+            "Olive" to ("Olive (Default)" to androidx.compose.ui.graphics.Color(0xFF6B8E23))
+        )
+        AlertDialog(
+            onDismissRequest = { showThemePaletteDialog = false },
+            title = { Text(text = stringResource(R.string.dialog_choose_theme_color), fontWeight = FontWeight.Bold) },
+            text = {
+                Column {
+                    paletteOptions.forEach { (key, info) ->
+                        val (label, color) = info
+                        val isSelected = uiState.themePalette == key || (key == "Monet" && (uiState.themePalette == "Dynamic" || uiState.themePalette == "Monet (Dynamic)"))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    onThemePaletteChange(key)
+                                    showThemePaletteDialog = false
+                                }
+                                .padding(vertical = 8.dp)
+                        ) {
+                            RadioButton(
+                                selected = isSelected,
+                                onClick = {
+                                    onThemePaletteChange(key)
+                                    showThemePaletteDialog = false
+                                }
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Surface(
+                                modifier = Modifier.size(20.dp),
+                                shape = androidx.compose.foundation.shape.CircleShape,
+                                color = color
+                            ) {}
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(text = label)
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showThemePaletteDialog = false }) {
                     Text(stringResource(R.string.btn_cancel))
                 }
             }
