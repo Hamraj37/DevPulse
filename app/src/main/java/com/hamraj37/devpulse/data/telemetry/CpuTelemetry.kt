@@ -1,6 +1,8 @@
 package com.hamraj37.devpulse.data.telemetry
 
+import android.content.Context
 import android.os.Build
+import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.model.CpuCoreSpeed
 import com.hamraj37.devpulse.data.model.CpuInfo
 import java.io.File
@@ -10,7 +12,7 @@ object CpuTelemetry {
     @Volatile
     private var cachedGpuInfo: Triple<String, String, String>? = null
 
-    fun getCpuInfo(): CpuInfo {
+    fun getCpuInfo(context: Context? = null): CpuInfo {
         return try {
             val coresCount = Runtime.getRuntime().availableProcessors().coerceAtLeast(1)
             val coreSpeeds = mutableListOf<CpuCoreSpeed>()
@@ -34,20 +36,13 @@ object CpuTelemetry {
                     maxFreq = readFrequencyFile("/sys/devices/system/cpu/cpu$i/cpufreq/cpuinfo_max_freq")
                 }
 
-                val timeMs = System.currentTimeMillis()
+                val minMhz = if (minFreq > 0) minFreq / 1000 else 0L
+                val maxMhz = if (maxFreq > 0) maxFreq / 1000 else 0L
                 val curMhz = if (curFreq > 0) {
                     curFreq / 1000
                 } else {
-                    val baseMhz = when (i % 3) {
-                        0 -> 1400L
-                        1 -> 2200L
-                        else -> 2800L
-                    }
-                    val jitter = ((timeMs / 120 + i * 137) % 350) - 175
-                    (baseMhz + jitter).coerceIn(800L, 3200L)
+                    minMhz
                 }
-                val minMhz = if (minFreq > 0) minFreq / 1000 else 800L
-                val maxMhz = if (maxFreq > 0) maxFreq / 1000 else 2840L
 
                 if (minMhz < overallMinMhz) overallMinMhz = minMhz
                 if (maxMhz > overallMaxMhz) overallMaxMhz = maxMhz
@@ -65,17 +60,24 @@ object CpuTelemetry {
             if (overallMinMhz == Long.MAX_VALUE) overallMinMhz = 800L
             if (overallMaxMhz == 0L) overallMaxMhz = 2840L
 
-            val cpuHardware = readCpuHardwareFromProc() ?: (Build.HARDWARE ?: "ARM Hardware")
+            val armHwFallback = context?.getString(R.string.cpu_fallback_arm_hardware) ?: "ARM Hardware"
+            val cpuHardware = readCpuHardwareFromProc() ?: (Build.HARDWARE ?: armHwFallback)
             val governor = readGovernor()
 
             val gpuInfo = cachedGpuInfo ?: getGpuInfo().also { cachedGpuInfo = it }
 
+            val cpuTypeStr = if (context != null) {
+                if (coresCount >= 8) context.getString(R.string.cpu_type_octa_core_format, coresCount) else context.getString(R.string.cpu_type_cores_format, coresCount)
+            } else {
+                if (coresCount >= 8) "Octa-Core ($coresCount Cores)" else "$coresCount Cores"
+            }
+
             CpuInfo(
-                processorName = getProcessorName(cpuHardware),
+                processorName = getProcessorName(cpuHardware, context),
                 architecture = System.getProperty("os.arch") ?: "arm64-v8a",
                 supportedAbis = Build.SUPPORTED_ABIS?.toList() ?: listOf("arm64-v8a", "armeabi-v7a"),
                 hardwareName = cpuHardware,
-                cpuType = if (coresCount >= 8) "Octa-Core ($coresCount Cores)" else "$coresCount Cores",
+                cpuType = cpuTypeStr,
                 governor = governor,
                 totalCores = coresCount,
                 minFrequencyMhz = overallMinMhz,
@@ -94,7 +96,6 @@ object CpuTelemetry {
         return try {
             val coresCount = Runtime.getRuntime().availableProcessors().coerceAtLeast(1)
             val freqs = mutableListOf<Long>()
-            val timeMs = System.currentTimeMillis()
             for (i in 0 until coresCount) {
                 var curFreq = readFrequencyFile("/sys/devices/system/cpu/cpu$i/cpufreq/scaling_cur_freq")
                 if (curFreq <= 0) {
@@ -103,19 +104,13 @@ object CpuTelemetry {
                 val curMhz = if (curFreq > 0) {
                     curFreq / 1000
                 } else {
-                    val baseMhz = when (i % 3) {
-                        0 -> 1400L
-                        1 -> 2200L
-                        else -> 2800L
-                    }
-                    val jitter = ((timeMs / 120 + i * 137) % 350) - 175
-                    (baseMhz + jitter).coerceIn(800L, 3200L)
+                    0L
                 }
                 freqs.add(curMhz)
             }
             freqs
         } catch (_: Throwable) {
-            listOf(1800L, 1800L, 1800L, 1800L, 2400L, 2400L, 2400L, 3200L)
+            emptyList()
         }
     }
 
@@ -184,7 +179,7 @@ object CpuTelemetry {
         }
     }
 
-    private fun formatSocMarketingName(rawModel: String, hardware: String): String {
+    private fun formatSocMarketingName(rawModel: String, hardware: String, ctx: Context? = null): String {
         val model = rawModel.trim()
         val hw = hardware.trim()
         val combined = "$model $hw".lowercase()
@@ -247,17 +242,17 @@ object CpuTelemetry {
             }
             else -> {
                 when {
-                    hw.contains("qcom", true) || hw.contains("sm", true) -> "Qualcomm Snapdragon ($hw)"
-                    hw.contains("exynos", true) || hw.contains("samsung", true) -> "Samsung Exynos ($hw)"
-                    hw.contains("mt", true) || hw.contains("mediatek", true) -> "MediaTek Dimensity ($hw)"
-                    hw.contains("tensor", true) || hw.contains("zuma", true) -> "Google Tensor ($hw)"
-                    else -> "ARM Processor ($hw)"
+                    hw.contains("qcom", true) || hw.contains("sm", true) -> ctx?.getString(R.string.cpu_soc_qualcomm_format, hw) ?: "Qualcomm Snapdragon ($hw)"
+                    hw.contains("exynos", true) || hw.contains("samsung", true) -> ctx?.getString(R.string.cpu_soc_exynos_format, hw) ?: "Samsung Exynos ($hw)"
+                    hw.contains("mt", true) || hw.contains("mediatek", true) -> ctx?.getString(R.string.cpu_soc_mediatek_format, hw) ?: "MediaTek Dimensity ($hw)"
+                    hw.contains("tensor", true) || hw.contains("zuma", true) -> ctx?.getString(R.string.cpu_soc_tensor_format, hw) ?: "Google Tensor ($hw)"
+                    else -> ctx?.getString(R.string.cpu_soc_arm_format, hw) ?: "ARM Processor ($hw)"
                 }
             }
         }
     }
 
-    private fun getProcessorName(hardware: String): String {
+    private fun getProcessorName(hardware: String, ctx: Context? = null): String {
         val rawModel = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             try { Build.SOC_MODEL } catch (_: Throwable) { "" }
         } else ""
@@ -269,7 +264,7 @@ object CpuTelemetry {
             ?: ""
 
         val candidate = rawModel.ifEmpty { propModel }
-        return formatSocMarketingName(candidate, hardware)
+        return formatSocMarketingName(candidate, hardware, ctx)
     }
 
     private fun getGpuInfo(): Triple<String, String, String> {

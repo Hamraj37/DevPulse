@@ -760,4 +760,199 @@
     <string name="chooser_export_report">Экспорт отчета DevPulse %s</string>
     <string name="chooser_pay_via_upi">Оплата через UPI</string>
     <string name="label_upi_id">DevPulse UPI ID</string>
+
+    <!-- Telemetry System & Device Strings -->
+    <string name="device_type_smartphone">Смартфон</string>
+    <string name="device_type_tablet">Планшет</string>
+    <string name="device_type_emulator_smartphone">Эмулятор / Смартфон</string>
+    <string name="lbl_generic_android_device">Устройство Android</string>
+    <string name="lbl_generic">Общий</string>
+    <string name="lbl_unknown">неизвестно</string>
+    <string name="lbl_unknown_capital">Неизвестно</string>
+    <string name="bootloader_locked">Заблокирован</string>
+    <string name="bootloader_unlocked">Разблокирован</string>
+    <string name="bootloader_unlock_supported">Поддерживает разблокировку</string>
+    <string name="selinux_enforcing">Enforcing (Принудительный)</string>
+    <string name="selinux_permissive">Permissive (Разрешающий)</string>
+    <string name="lbl_rooted">С Root-правами</string>
+    <string name="lbl_not_rooted">Без Root-прав</string>
+    <string name="lbl_not_available">Недоступно</string>
+    <string name="lbl_yes_ab">Да (A/B)</string>
+    <string name="lbl_linux_kernel">Ядро Linux</string>
+    <string name="network_cellular_wifi">Сотовая связь / Wi-Fi</string>
+    <string name="sim_1_not_inserted">SIM 1 (Не вставлена)</string>
+    <string name="sim_2_not_inserted">SIM 2 (Не вставлена)</string>
+
+    <!-- Battery Telemetry Strings -->
+    <string name="battery_status_charging">Заряжается</string>
+    <string name="battery_status_discharging">Разряжается</string>
+    <string name="battery_status_full">Заряжена</string>
+    <string name="battery_status_not_charging">Не заряжается</string>
+    <string name="battery_power_source_ac">Сетевое ЗУ (AC)</string>
+    <string name="battery_power_source_usb">Порт USB</string>
+    <string name="battery_power_source_wireless">Беспроводная зарядка</string>
+    <string name="battery_power_source_dock">Док-станция</string>
+    <string name="battery_power_source_connected">Подключено</string>
+    <string name="battery_power_source_battery">Батарея</string>
+    <string name="battery_health_good">Отличное (Good)</string>
+    <string name="battery_health_overheat">Перегрев (Overheat)</string>
+    <string name="battery_health_dead">Неисправна (Dead)</string>
+    <string name="battery_health_over_voltage">Перенапряжение (Over Voltage)</string>
+    <string name="battery_health_cold">Переохлаждение (Cold)</string>
+    <string name="battery_health_unspecified_failure">Сбой аккумулятора</string>
+    <string name="battery_tech_li_ion">Li-ion</string>
+    <string name="battery_usb_charging_format">Зарядка через USB (%s)</string>
+    <string name="battery_time_until_full_hours_mins">%1$d ч %2$d мин до полной зарядки</string>
+    <string name="battery_time_until_full_mins">%d мин до полной зарядки</string>
+    <string name="battery_time_until_full_fallback">42 мин до полной зарядки</string>
+    <string name="battery_time_remaining_fallback">Осталось 14 ч 20 мин</string>
+
+    <!-- Camera Telemetry Strings -->
+    <string name="camera_front">Фронтальная камера</string>
+    <string name="camera_ultra_wide">Сверхширокоугольная камера</string>
+    <string name="camera_telephoto">Телефото камера</string>
+    <string name="camera_back">Основная камера</string>
+    <string name="camera_external">Внешняя камера</string>
+    <string name="camera_lens_placement_front">Спереди (Селфи)</string>
+    <string name="camera_lens_placement_ultra_wide">Сзади (Сверхширокоугольная)</string>
+    <string name="camera_lens_placement_telephoto">Сзади (Телефото)</string>
+    <string name="camera_lens_placement_main">Сзади (Основная)</string>
+    <string name="camera_lens_placement_external">Внешняя</string>
+    <string name="camera_af_auto_focus">Автофокус</string>
+    <string name="camera_af_continuous_picture">Непрерывный фото</string>
+    <string name="camera_af_continuous_video">Непрерывный видео</string>
+    <string name="camera_af_macro">Макро</string>
+    <string name="camera_af_edof">EDOF</string>
+    <string name="camera_af_off_manual">Выкл / Вручную</string>
+    <string name="camera_video_stab_eis">EIS (Стабилизация видео)</string>
+    <string name="camera_video_stab_ois">OIS / Стабилизация предпросмотра</string>
+    <string name="camera_scene_auto">Авто</string>
+    <string name="camera_scene_face_priority">Приоритет лица</string>
+    <string name="camera_scene_action">Спорт / Движение</string>
+    <string name="camera_scene_portrait">Портрет</string>
+    <string name="camera_scene_landscape">Пейзаж</string>
+    <string name="camera_scene_night">Ночь</string>
+    <string name="camera_scene_hdr">HDR</string>
+    <string name="camera_scene_steady_photo">Стабилизация фото</string>
+    <string name="camera_scene_sunset">Закат</string>
+    <string name="camera_scene_party">Вечеринка</string>
+    <string name="camera_scene_candlelight">Свечи</string>
+    <string name="camera_scene_barcode">Штрихкод</string>
+    <string name="camera_scene_high_speed_video">Скоростное видео</string>
+    <string name="camera_wb_auto">Авто</string>
+    <string name="camera_wb_daylight">Дневной свет</string>
+    <string name="camera_wb_cloudy">Облачно</string>
+    <string name="camera_wb_incandescent">Лампа накаливания</string>
+    <string name="camera_wb_fluorescent">Люминесцентный</string>
+    <string name="camera_wb_shade">Тень</string>
+    <string name="camera_focus_calibrated">Калиброван (CALIBRATED)</string>
+    <string name="camera_focus_approximate">Приблизительно (APPROXIMATE)</string>
+    <string name="camera_focus_uncalibrated">Не калиброван (UNCALIBRATED)</string>
+    <string name="camera_cfa_rggb">RGGB (Bayer)</string>
+    <string name="camera_cfa_grbg">GRBG (Bayer)</string>
+    <string name="camera_cfa_gbrg">GBRG (Bayer)</string>
+    <string name="camera_cfa_bggr">BGGR (Bayer)</string>
+    <string name="camera_cfa_rgb">RGB</string>
+    <string name="camera_cfa_monochrome">Монохромный</string>
+    <string name="camera_cfa_custom">Bayer / Пользовательский</string>
+
+    <!-- CPU Telemetry Strings -->
+    <string name="cpu_fallback_arm_hardware">Аппаратное обеспечение ARM</string>
+    <string name="cpu_type_octa_core_format">Восьмиядерный (%d ядер)</string>
+    <string name="cpu_type_cores_format">%d ядер</string>
+    <string name="cpu_soc_qualcomm_format">Qualcomm Snapdragon (%s)</string>
+    <string name="cpu_soc_exynos_format">Samsung Exynos (%s)</string>
+    <string name="cpu_soc_mediatek_format">MediaTek Dimensity (%s)</string>
+    <string name="cpu_soc_tensor_format">Google Tensor (%s)</string>
+    <string name="cpu_soc_arm_format">Процессор ARM (%s)</string>
+
+    <!-- Display Telemetry Strings -->
+    <string name="display_brightness_mode_adaptive">Автоматическая (Adaptive)</string>
+    <string name="display_brightness_mode_manual">Ручная (Manual)</string>
+    <string name="display_orientation_portrait">Книжная (Portrait)</string>
+    <string name="display_orientation_landscape">Альбомная (Landscape)</string>
+    <string name="display_screen_name_builtin">Встроенный экран</string>
+    <string name="display_physical_size_format">%.1f дюймов</string>
+    <string name="display_timeout_seconds_format">%d секунд</string>
+    <string name="display_timeout_1_minute">1 минута</string>
+    <string name="display_timeout_minutes_format">%d минут</string>
+
+    <!-- Network & Connectivity Telemetry Strings -->
+    <string name="geo_location_fallback">Нью-Дели, Дели, Индия</string>
+    <string name="data_state_connected">Подключено</string>
+    <string name="data_state_connecting">Подключение</string>
+    <string name="data_state_suspended">Приостановлено</string>
+    <string name="roaming_active">Роуминг активен</string>
+    <string name="roaming_home_network">Не в роуминге (Домашняя сеть)</string>
+    <string name="lbl_off">Выкл</string>
+    <string name="lease_dynamic_cellular">Динамическая сотовая аренда</string>
+    <string name="network_mobile_data_format">Мобильные данные %s</string>
+    <string name="network_mobile_data_type_format">Мобильные данные (%s)</string>
+    <string name="security_usim_aka">Аутентификация USIM / AKA</string>
+    <string name="mobile_signal_strong">Отличный (-82 dBm)</string>
+    <string name="wifi_location_service_disabled_ssid">Геолокация выключена (требуется для Wi-Fi SSID)</string>
+    <string name="wifi_location_permission_required_ssid">Требуется разрешение на геолокацию для Wi-Fi SSID</string>
+    <string name="wifi_location_service_disabled_bssid">Служба геолокации отключена</string>
+    <string name="wifi_permission_required">Требуется разрешение</string>
+    <string name="carrier_no_carrier">Нет оператора</string>
+    <string name="lbl_none">Нет</string>
+    <string name="network_no_signal">Нет сигнала</string>
+    <string name="lbl_unavailable">Недоступно</string>
+    <string name="lbl_enabled">Включено</string>
+    <string name="usb_debugging_active">Отладка по USB активна</string>
+
+    <!-- Install Source Telemetry Strings -->
+    <string name="install_source_package_installer">Установщик пакетов</string>
+    <string name="install_source_amazon">Amazon Appstore</string>
+    <string name="install_source_samsung">Samsung Galaxy Store</string>
+    <string name="install_source_huawei">Huawei AppGallery</string>
+    <string name="install_source_xiaomi">Xiaomi GetApps</string>
+    <string name="install_source_oppo">OPPO App Market</string>
+    <string name="install_source_vivo">Vivo App Store</string>
+    <string name="install_source_adb">ADB / Стороннее приложение</string>
+    <string name="install_source_system_app">Предустановленное системное приложение</string>
+    <string name="install_source_side_loaded_unknown">Стороннее / Неизвестно</string>
+
+    <!-- Thermal & Sensor Telemetry Strings -->
+    <string name="thermal_status_normal_cool">Норма (Прохладно)</string>
+    <string name="thermal_status_warm">Тепло</string>
+    <string name="thermal_status_elevated">Повышенная температура</string>
+    <string name="thermal_zone_type_soc">Система на кристалле (SoC)</string>
+    <string name="thermal_zone_type_battery">Батарея</string>
+    <string name="thermal_zone_type_camera">Сенсор камеры</string>
+    <string name="thermal_zone_type_cpu">Группа ядер ЦП</string>
+    <string name="thermal_zone_type_gpu">Подсистема ГП</string>
+    <string name="thermal_zone_type_ambient">Окружающая среда</string>
+    <string name="lbl_unknown_sensor">Неизвестный датчик</string>
+    <string name="lbl_generic_vendor">Стандартный производитель</string>
+    <string name="sensor_type_accelerometer">Акселерометр</string>
+    <string name="sensor_type_magnetometer">Магнитометр</string>
+    <string name="sensor_type_gyroscope">Гироскоп</string>
+    <string name="sensor_type_ambient_light">Датчик освещенности</string>
+    <string name="sensor_type_barometer">Барометр (Давление)</string>
+    <string name="sensor_type_proximity">Датчик приближения</string>
+    <string name="sensor_type_gravity">Датчик гравитации</string>
+    <string name="sensor_type_linear_acceleration">Линейное ускорение</string>
+    <string name="sensor_type_rotation_vector">Вектор вращения</string>
+    <string name="sensor_type_orientation">Ориентация (Устарело)</string>
+    <string name="sensor_type_relative_humidity">Относительная влажность</string>
+    <string name="sensor_type_ambient_temp">Температура среды</string>
+    <string name="sensor_type_step_counter">Счетчик шагов</string>
+    <string name="sensor_type_step_detector">Детектор шагов</string>
+    <string name="sensor_type_heart_rate">Датчик пульса</string>
+    <string name="sensor_type_stationary_detector">Детектор покоя</string>
+    <string name="sensor_type_motion_detector">Детектор движения</string>
+    <string name="sensor_type_hardware_format">Аппаратный датчик (Тип %d)</string>
+
+    <!-- Widget Formatting Strings -->
+    <string name="widget_used_gb_short_format">%.2f ГБ</string>
+    <string name="widget_used_gb_format">Использовано %.2f ГБ</string>
+    <string name="widget_temp_format">Темп: %.1f ℃</string>
+    <string name="widget_battery_format">Батарея: %d%%</string>
+
+    <string name="manifest_fgs_special_use_subtype">Монитор наложения для отображения телеметрии в реальном времени</string>
+    <string name="location_not_available">Геолокация недоступна</string>
+    <string name="battery_time_calculating">Вычисление...</string>
+    <string name="carrier_cellular_network">Сотовая сеть</string>
+    <string name="network_wi_fi">Wi-Fi</string>
 </resources>

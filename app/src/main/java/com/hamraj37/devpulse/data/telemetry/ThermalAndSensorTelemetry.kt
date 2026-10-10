@@ -5,6 +5,7 @@ import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.os.Build
 import android.os.PowerManager
+import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.model.SensorInfo
 import com.hamraj37.devpulse.data.model.SensorSpec
 import com.hamraj37.devpulse.data.model.ThermalInfo
@@ -47,12 +48,12 @@ object ThermalAndSensorTelemetry {
             }
 
             val defaultZones = listOf(
-                ThermalZone("soc-thermal", 42.1f, "System On Chip"),
-                ThermalZone("battery", 35.0f, "Battery"),
-                ThermalZone("camera-sensor", 36.5f, "Camera Sensor"),
-                ThermalZone("cpu-cluster0", 38.2f, "CPU Core Group"),
-                ThermalZone("gpu-subsys", 40.8f, "GPU Subsystem"),
-                ThermalZone("sys-ambient", 34.4f, "System Ambient")
+                ThermalZone("soc-thermal", 42.1f, context.getString(R.string.thermal_zone_type_soc)),
+                ThermalZone("battery", 35.0f, context.getString(R.string.thermal_zone_type_battery)),
+                ThermalZone("camera-sensor", 36.5f, context.getString(R.string.thermal_zone_type_camera)),
+                ThermalZone("cpu-cluster0", 38.2f, context.getString(R.string.thermal_zone_type_cpu)),
+                ThermalZone("gpu-subsys", 40.8f, context.getString(R.string.thermal_zone_type_gpu)),
+                ThermalZone("sys-ambient", 34.4f, context.getString(R.string.thermal_zone_type_ambient))
             )
 
             if (zones.size < 3) {
@@ -78,9 +79,9 @@ object ThermalAndSensorTelemetry {
             val thermalHeadroom = if (thermalHeadroomRaw.isNaN() || thermalHeadroomRaw.isInfinite()) 0.85f else thermalHeadroomRaw
 
             val overallStatus = when {
-                thermalHeadroom > 0.8f -> "Normal (Cool)"
-                thermalHeadroom > 0.5f -> "Warm"
-                else -> "Elevated Temperature"
+                thermalHeadroom > 0.8f -> context.getString(R.string.thermal_status_normal_cool)
+                thermalHeadroom > 0.5f -> context.getString(R.string.thermal_status_warm)
+                else -> context.getString(R.string.thermal_status_elevated)
             }
 
             ThermalInfo(
@@ -104,10 +105,10 @@ object ThermalAndSensorTelemetry {
                     val isWakeup = sensor.isWakeUpSensor
 
                     SensorSpec(
-                        name = sensor.name ?: "Unknown Sensor",
-                        vendor = sensor.vendor ?: "Generic Vendor",
+                        name = sensor.name ?: context.getString(R.string.lbl_unknown_sensor),
+                        vendor = sensor.vendor ?: context.getString(R.string.lbl_generic_vendor),
                         type = sensor.type,
-                        typeName = getSensorTypeName(sensor.type),
+                        typeName = getSensorTypeName(context, sensor.type),
                         isWakeUpSensor = isWakeup,
                         version = sensor.version,
                         powerMa = sensor.power,
@@ -129,26 +130,26 @@ object ThermalAndSensorTelemetry {
         }
     }
 
-    private fun getSensorTypeName(type: Int): String {
+    private fun getSensorTypeName(context: Context, type: Int): String {
         return when (type) {
-            Sensor.TYPE_ACCELEROMETER -> "Accelerometer"
-            Sensor.TYPE_MAGNETIC_FIELD -> "Magnetometer"
-            Sensor.TYPE_GYROSCOPE -> "Gyroscope"
-            Sensor.TYPE_LIGHT -> "Ambient Light"
-            Sensor.TYPE_PRESSURE -> "Barometer (Pressure)"
-            Sensor.TYPE_PROXIMITY -> "Proximity"
-            Sensor.TYPE_GRAVITY -> "Gravity"
-            Sensor.TYPE_LINEAR_ACCELERATION -> "Linear Acceleration"
-            Sensor.TYPE_ROTATION_VECTOR -> "Rotation Vector"
-            Sensor.TYPE_ORIENTATION -> "Orientation (Legacy)"
-            Sensor.TYPE_RELATIVE_HUMIDITY -> "Relative Humidity"
-            Sensor.TYPE_AMBIENT_TEMPERATURE -> "Ambient Temp"
-            Sensor.TYPE_STEP_COUNTER -> "Step Counter"
-            Sensor.TYPE_STEP_DETECTOR -> "Step Detector"
-            Sensor.TYPE_HEART_RATE -> "Heart Rate"
-            Sensor.TYPE_STATIONARY_DETECT -> "Stationary Detector"
-            Sensor.TYPE_MOTION_DETECT -> "Motion Detector"
-            else -> "Hardware Sensor (Type $type)"
+            Sensor.TYPE_ACCELEROMETER -> context.getString(R.string.sensor_type_accelerometer)
+            Sensor.TYPE_MAGNETIC_FIELD -> context.getString(R.string.sensor_type_magnetometer)
+            Sensor.TYPE_GYROSCOPE -> context.getString(R.string.sensor_type_gyroscope)
+            Sensor.TYPE_LIGHT -> context.getString(R.string.sensor_type_ambient_light)
+            Sensor.TYPE_PRESSURE -> context.getString(R.string.sensor_type_barometer)
+            Sensor.TYPE_PROXIMITY -> context.getString(R.string.sensor_type_proximity)
+            Sensor.TYPE_GRAVITY -> context.getString(R.string.sensor_type_gravity)
+            Sensor.TYPE_LINEAR_ACCELERATION -> context.getString(R.string.sensor_type_linear_acceleration)
+            Sensor.TYPE_ROTATION_VECTOR -> context.getString(R.string.sensor_type_rotation_vector)
+            Sensor.TYPE_ORIENTATION -> context.getString(R.string.sensor_type_orientation)
+            Sensor.TYPE_RELATIVE_HUMIDITY -> context.getString(R.string.sensor_type_relative_humidity)
+            Sensor.TYPE_AMBIENT_TEMPERATURE -> context.getString(R.string.sensor_type_ambient_temp)
+            Sensor.TYPE_STEP_COUNTER -> context.getString(R.string.sensor_type_step_counter)
+            Sensor.TYPE_STEP_DETECTOR -> context.getString(R.string.sensor_type_step_detector)
+            Sensor.TYPE_HEART_RATE -> context.getString(R.string.sensor_type_heart_rate)
+            Sensor.TYPE_STATIONARY_DETECT -> context.getString(R.string.sensor_type_stationary_detector)
+            Sensor.TYPE_MOTION_DETECT -> context.getString(R.string.sensor_type_motion_detector)
+            else -> context.getString(R.string.sensor_type_hardware_format, type)
         }
     }
 }

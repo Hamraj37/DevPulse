@@ -6,7 +6,6 @@ import android.content.Context
 import android.widget.RemoteViews
 import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.telemetry.MemoryTelemetry
-import java.util.Locale
 
 class DevPulseMediumWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
@@ -15,10 +14,10 @@ class DevPulseMediumWidgetProvider : AppWidgetProvider() {
             val memInfo = MemoryTelemetry.getMemoryInfo(context)
 
             val storageUsed = memInfo.internalStorageUsedBytes
-            val storageUsedGb = String.format(Locale.US, "%.2fGB Used", storageUsed / (1024.0 * 1024.0 * 1024.0))
+            val storageUsedGb = context.getString(R.string.widget_used_gb_format, storageUsed / (1024.0 * 1024.0 * 1024.0))
 
             val ramUsed = memInfo.ramUsedBytes
-            val ramUsedGb = String.format(Locale.US, "%.2fGB Used", ramUsed / (1024.0 * 1024.0 * 1024.0))
+            val ramUsedGb = context.getString(R.string.widget_used_gb_format, ramUsed / (1024.0 * 1024.0 * 1024.0))
 
             views.setTextViewText(R.id.widget_medium_storage_text, storageUsedGb)
             views.setTextViewText(R.id.widget_medium_ram_text, ramUsedGb)

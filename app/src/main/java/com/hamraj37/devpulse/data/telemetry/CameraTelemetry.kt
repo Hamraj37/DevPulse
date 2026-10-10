@@ -8,6 +8,7 @@ import android.hardware.camera2.CameraManager
 import android.hardware.camera2.CameraMetadata
 import android.os.Build
 import android.util.Size
+import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.model.CameraInfo
 import com.hamraj37.devpulse.data.model.CameraSpec
 import java.util.Locale
@@ -18,7 +19,7 @@ object CameraTelemetry {
     fun getCameraInfo(context: Context): CameraInfo {
         return try {
             val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as? CameraManager
-                ?: return CameraInfo(cameras = getFallbackCameraSpecs())
+                ?: return CameraInfo(cameras = getFallbackCameraSpecs(context))
 
             val specs = mutableListOf<CameraSpec>()
             val cameraIds = try { cameraManager.cameraIdList } catch (_: Throwable) { emptyArray() }
@@ -38,23 +39,23 @@ object CameraTelemetry {
                     val minFocal = rawFocalLengths.minOrNull() ?: 4.0f
 
                     val facingStr = when (facingInt) {
-                        CameraCharacteristics.LENS_FACING_FRONT -> "Front Camera"
+                        CameraCharacteristics.LENS_FACING_FRONT -> context.getString(R.string.camera_front)
                         CameraCharacteristics.LENS_FACING_BACK -> {
-                            if (minFocal < 3.0f) "Ultra Wide Camera"
-                            else if (minFocal > 6.0f) "Telephoto Camera"
-                            else "Back Camera"
+                            if (minFocal < 3.0f) context.getString(R.string.camera_ultra_wide)
+                            else if (minFocal > 6.0f) context.getString(R.string.camera_telephoto)
+                            else context.getString(R.string.camera_back)
                         }
-                        else -> "External Camera"
+                        else -> context.getString(R.string.camera_external)
                     }
 
                     val lensPlacementStr = when (facingInt) {
-                        CameraCharacteristics.LENS_FACING_FRONT -> "Front Facing (Selfie)"
+                        CameraCharacteristics.LENS_FACING_FRONT -> context.getString(R.string.camera_lens_placement_front)
                         CameraCharacteristics.LENS_FACING_BACK -> {
-                            if (minFocal < 3.0f) "Back Facing (Ultra Wide)"
-                            else if (minFocal > 6.0f) "Back Facing (Telephoto)"
-                            else "Back Facing (Main)"
+                            if (minFocal < 3.0f) context.getString(R.string.camera_lens_placement_ultra_wide)
+                            else if (minFocal > 6.0f) context.getString(R.string.camera_lens_placement_telephoto)
+                            else context.getString(R.string.camera_lens_placement_main)
                         }
-                        else -> "External"
+                        else -> context.getString(R.string.camera_lens_placement_external)
                     }
 
                     val mpDouble = (pxWidth.toDouble() * pxHeight.toDouble()) / 1000000.0
@@ -108,14 +109,14 @@ object CameraTelemetry {
 
                     val afModes = chars.get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES)?.map { mode ->
                         when (mode) {
-                            CameraMetadata.CONTROL_AF_MODE_AUTO -> "Auto Focus"
-                            CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE -> "Continuous Picture"
-                            CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_VIDEO -> "Continuous Video"
-                            CameraMetadata.CONTROL_AF_MODE_MACRO -> "Macro"
-                            CameraMetadata.CONTROL_AF_MODE_EDOF -> "EDOF"
-                            else -> "Off / Manual"
+                            CameraMetadata.CONTROL_AF_MODE_AUTO -> context.getString(R.string.camera_af_auto_focus)
+                            CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE -> context.getString(R.string.camera_af_continuous_picture)
+                            CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_VIDEO -> context.getString(R.string.camera_af_continuous_video)
+                            CameraMetadata.CONTROL_AF_MODE_MACRO -> context.getString(R.string.camera_af_macro)
+                            CameraMetadata.CONTROL_AF_MODE_EDOF -> context.getString(R.string.camera_af_edof)
+                            else -> context.getString(R.string.camera_af_off_manual)
                         }
-                    }?.distinct() ?: listOf("Auto Focus", "Continuous Picture")
+                    }?.distinct() ?: listOf(context.getString(R.string.camera_af_auto_focus), context.getString(R.string.camera_af_continuous_picture))
 
                     val aeModes = chars.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_MODES)?.map { mode ->
                         when (mode) {
@@ -130,15 +131,21 @@ object CameraTelemetry {
 
                     val awbModes = chars.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES)?.map { mode ->
                         when (mode) {
-                            CameraMetadata.CONTROL_AWB_MODE_AUTO -> "Auto"
-                            CameraMetadata.CONTROL_AWB_MODE_DAYLIGHT -> "Daylight"
-                            CameraMetadata.CONTROL_AWB_MODE_CLOUDY_DAYLIGHT -> "Cloudy"
-                            CameraMetadata.CONTROL_AWB_MODE_INCANDESCENT -> "Incandescent"
-                            CameraMetadata.CONTROL_AWB_MODE_FLUORESCENT -> "Fluorescent"
-                            CameraMetadata.CONTROL_AWB_MODE_SHADE -> "Shade"
+                            CameraMetadata.CONTROL_AWB_MODE_AUTO -> context.getString(R.string.camera_wb_auto)
+                            CameraMetadata.CONTROL_AWB_MODE_DAYLIGHT -> context.getString(R.string.camera_wb_daylight)
+                            CameraMetadata.CONTROL_AWB_MODE_CLOUDY_DAYLIGHT -> context.getString(R.string.camera_wb_cloudy)
+                            CameraMetadata.CONTROL_AWB_MODE_INCANDESCENT -> context.getString(R.string.camera_wb_incandescent)
+                            CameraMetadata.CONTROL_AWB_MODE_FLUORESCENT -> context.getString(R.string.camera_wb_fluorescent)
+                            CameraMetadata.CONTROL_AWB_MODE_SHADE -> context.getString(R.string.camera_wb_shade)
                             else -> "Mode_$mode"
                         }
-                    }?.distinct() ?: listOf("Auto", "Daylight", "Cloudy", "Incandescent", "Fluorescent")
+                    }?.distinct() ?: listOf(
+                        context.getString(R.string.camera_wb_auto),
+                        context.getString(R.string.camera_wb_daylight),
+                        context.getString(R.string.camera_wb_cloudy),
+                        context.getString(R.string.camera_wb_incandescent),
+                        context.getString(R.string.camera_wb_fluorescent)
+                    )
 
                     val oisModes = chars.get(CameraCharacteristics.LENS_INFO_AVAILABLE_OPTICAL_STABILIZATION)
                     val videoStabInts = chars.get(CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES)?.toList()
@@ -148,31 +155,36 @@ object CameraTelemetry {
                     val videoStabModes = videoStabInts?.map { mode ->
                         when (mode) {
                             CameraMetadata.CONTROL_VIDEO_STABILIZATION_MODE_OFF -> "OFF"
-                            CameraMetadata.CONTROL_VIDEO_STABILIZATION_MODE_ON -> "EIS (Video Stabilization)"
-                            2 -> "OIS / Preview Stabilization"
+                            CameraMetadata.CONTROL_VIDEO_STABILIZATION_MODE_ON -> context.getString(R.string.camera_video_stab_eis)
+                            2 -> context.getString(R.string.camera_video_stab_ois)
                             else -> "Mode_$mode"
                         }
-                    }?.distinct() ?: listOf("OFF", "EIS (Video Stabilization)", "OIS / Preview Stabilization")
+                    }?.distinct() ?: listOf("OFF", context.getString(R.string.camera_video_stab_eis), context.getString(R.string.camera_video_stab_ois))
 
                     val sceneModesInt = chars.get(CameraCharacteristics.CONTROL_AVAILABLE_SCENE_MODES)?.toList()
                     val sceneModes = sceneModesInt?.map { mode ->
                         when (mode) {
-                            CameraMetadata.CONTROL_SCENE_MODE_DISABLED -> "Auto / Disabled"
-                            CameraMetadata.CONTROL_SCENE_MODE_FACE_PRIORITY -> "Face Priority"
-                            CameraMetadata.CONTROL_SCENE_MODE_ACTION -> "Action"
-                            CameraMetadata.CONTROL_SCENE_MODE_PORTRAIT -> "Portrait"
-                            CameraMetadata.CONTROL_SCENE_MODE_LANDSCAPE -> "Landscape"
-                            CameraMetadata.CONTROL_SCENE_MODE_NIGHT -> "Night"
-                            CameraMetadata.CONTROL_SCENE_MODE_HDR -> "HDR"
-                            CameraMetadata.CONTROL_SCENE_MODE_STEADYPHOTO -> "Steady Photo"
-                            CameraMetadata.CONTROL_SCENE_MODE_SUNSET -> "Sunset"
-                            CameraMetadata.CONTROL_SCENE_MODE_PARTY -> "Party"
-                            CameraMetadata.CONTROL_SCENE_MODE_CANDLELIGHT -> "Candlelight"
-                            CameraMetadata.CONTROL_SCENE_MODE_BARCODE -> "Barcode"
-                            CameraMetadata.CONTROL_SCENE_MODE_HIGH_SPEED_VIDEO -> "High Speed Video"
+                            CameraMetadata.CONTROL_SCENE_MODE_DISABLED -> context.getString(R.string.camera_scene_auto)
+                            CameraMetadata.CONTROL_SCENE_MODE_FACE_PRIORITY -> context.getString(R.string.camera_scene_face_priority)
+                            CameraMetadata.CONTROL_SCENE_MODE_ACTION -> context.getString(R.string.camera_scene_action)
+                            CameraMetadata.CONTROL_SCENE_MODE_PORTRAIT -> context.getString(R.string.camera_scene_portrait)
+                            CameraMetadata.CONTROL_SCENE_MODE_LANDSCAPE -> context.getString(R.string.camera_scene_landscape)
+                            CameraMetadata.CONTROL_SCENE_MODE_NIGHT -> context.getString(R.string.camera_scene_night)
+                            CameraMetadata.CONTROL_SCENE_MODE_HDR -> context.getString(R.string.camera_scene_hdr)
+                            CameraMetadata.CONTROL_SCENE_MODE_STEADYPHOTO -> context.getString(R.string.camera_scene_steady_photo)
+                            CameraMetadata.CONTROL_SCENE_MODE_SUNSET -> context.getString(R.string.camera_scene_sunset)
+                            CameraMetadata.CONTROL_SCENE_MODE_PARTY -> context.getString(R.string.camera_scene_party)
+                            CameraMetadata.CONTROL_SCENE_MODE_CANDLELIGHT -> context.getString(R.string.camera_scene_candlelight)
+                            CameraMetadata.CONTROL_SCENE_MODE_BARCODE -> context.getString(R.string.camera_scene_barcode)
+                            CameraMetadata.CONTROL_SCENE_MODE_HIGH_SPEED_VIDEO -> context.getString(R.string.camera_scene_high_speed_video)
                             else -> "Mode_$mode"
                         }
-                    }?.distinct() ?: listOf("Auto", "Night", "HDR", "Portrait")
+                    }?.distinct() ?: listOf(
+                        context.getString(R.string.camera_scene_auto),
+                        context.getString(R.string.camera_scene_night),
+                        context.getString(R.string.camera_scene_hdr),
+                        context.getString(R.string.camera_scene_portrait)
+                    )
 
                     val testPatternsInt = chars.get(CameraCharacteristics.SENSOR_AVAILABLE_TEST_PATTERN_MODES)?.toList()
                     val testPatterns = testPatternsInt?.map { mode ->
@@ -252,9 +264,9 @@ object CameraTelemetry {
                         ?: listOf(0.0f)
 
                     val focusCalib = when (chars.get(CameraCharacteristics.LENS_INFO_FOCUS_DISTANCE_CALIBRATION)) {
-                        CameraCharacteristics.LENS_INFO_FOCUS_DISTANCE_CALIBRATION_CALIBRATED -> "CALIBRATED"
-                        CameraCharacteristics.LENS_INFO_FOCUS_DISTANCE_CALIBRATION_APPROXIMATE -> "APPROXIMATE"
-                        else -> "UNCALIBRATED"
+                        CameraCharacteristics.LENS_INFO_FOCUS_DISTANCE_CALIBRATION_CALIBRATED -> context.getString(R.string.camera_focus_calibrated)
+                        CameraCharacteristics.LENS_INFO_FOCUS_DISTANCE_CALIBRATION_APPROXIMATE -> context.getString(R.string.camera_focus_approximate)
+                        else -> context.getString(R.string.camera_focus_uncalibrated)
                     }
 
                     val capabilities = chars.get(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES)?.map { cap ->
@@ -276,13 +288,13 @@ object CameraTelemetry {
                     val streamsStr = "Raw: $maxRaw, Processed: $maxProc, Stalling: $maxStall"
 
                     val cfaStr = when (chars.get(CameraCharacteristics.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT)) {
-                        CameraMetadata.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_RGGB -> "RGGB (Bayer)"
-                        CameraMetadata.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_GRBG -> "GRBG (Bayer)"
-                        CameraMetadata.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_GBRG -> "GBRG (Bayer)"
-                        CameraMetadata.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_BGGR -> "BGGR (Bayer)"
-                        CameraMetadata.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_RGB -> "RGB"
-                        CameraMetadata.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_MONO -> "Monochrome"
-                        else -> "Bayer / Custom"
+                        CameraMetadata.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_RGGB -> context.getString(R.string.camera_cfa_rggb)
+                        CameraMetadata.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_GRBG -> context.getString(R.string.camera_cfa_grbg)
+                        CameraMetadata.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_GBRG -> context.getString(R.string.camera_cfa_gbrg)
+                        CameraMetadata.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_BGGR -> context.getString(R.string.camera_cfa_bggr)
+                        CameraMetadata.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_RGB -> context.getString(R.string.camera_cfa_rgb)
+                        CameraMetadata.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_MONO -> context.getString(R.string.camera_cfa_monochrome)
+                        else -> context.getString(R.string.camera_cfa_custom)
                     }
 
                     val tsSource = when (chars.get(CameraCharacteristics.SENSOR_INFO_TIMESTAMP_SOURCE)) {
@@ -355,10 +367,10 @@ object CameraTelemetry {
             if (specs.isNotEmpty()) {
                 CameraInfo(cameras = specs)
             } else {
-                CameraInfo(cameras = getFallbackCameraSpecs())
+                CameraInfo(cameras = getFallbackCameraSpecs(context))
             }
         } catch (_: Throwable) {
-            CameraInfo(cameras = getFallbackCameraSpecs())
+            CameraInfo(cameras = getFallbackCameraSpecs(context))
         }
     }
 
@@ -442,46 +454,74 @@ object CameraTelemetry {
         }
     }
 
-    private fun getFallbackCameraSpecs(): List<CameraSpec> {
+    private fun getFallbackCameraSpecs(context: Context): List<CameraSpec> {
         return listOf(
             CameraSpec(
                 cameraId = "0",
-                facing = "Back Camera",
-                resolutionMp = "50 MP • Main Back Camera (8192 x 6144)",
+                facing = context.getString(R.string.camera_back),
+                resolutionMp = "50 MP • ${context.getString(R.string.camera_back)} (8192 x 6144)",
                 pixelSize = "1.22 µm",
                 focalLengths = listOf(4.25f, 5.59f),
                 apertures = listOf(1.8f, 2.2f),
                 supportedPhotoResolutions = listOf("8192x6144 (50 MP)", "4096x3072 (13 MP)", "3840x2160 (8 MP)"),
                 supportedVideoResolutions = listOf("4K UHD (3840x2160)", "1080p FHD (1920x1080)"),
-                autoFocusModes = listOf("Continuous Picture", "Continuous Video", "Auto Focus", "Macro"),
+                autoFocusModes = listOf(
+                    context.getString(R.string.camera_af_continuous_picture),
+                    context.getString(R.string.camera_af_continuous_video),
+                    context.getString(R.string.camera_af_auto_focus),
+                    context.getString(R.string.camera_af_macro)
+                ),
                 autoExposureModes = listOf("OFF", "ON", "ON_AUTO_FLASH", "ON_ALWAYS_FLASH"),
-                sceneModes = listOf("Auto", "Night", "HDR", "Portrait", "Action"),
-                whiteBalanceModes = listOf("Auto", "Daylight", "Cloudy", "Incandescent", "Fluorescent"),
+                sceneModes = listOf(
+                    context.getString(R.string.camera_scene_auto),
+                    context.getString(R.string.camera_scene_night),
+                    context.getString(R.string.camera_scene_hdr),
+                    context.getString(R.string.camera_scene_portrait),
+                    context.getString(R.string.camera_scene_action)
+                ),
+                whiteBalanceModes = listOf(
+                    context.getString(R.string.camera_wb_auto),
+                    context.getString(R.string.camera_wb_daylight),
+                    context.getString(R.string.camera_wb_cloudy),
+                    context.getString(R.string.camera_wb_incandescent),
+                    context.getString(R.string.camera_wb_fluorescent)
+                ),
                 opticalStabilizationSupported = true,
                 aberrationCorrectionSupported = true,
                 hardwareLevel = "FULL",
-                lensPlacement = "Back Facing (Main)",
+                lensPlacement = context.getString(R.string.camera_lens_placement_main),
                 sensorSize = "6.40 x 4.80 mm (1/2.55\")",
                 pixelArraySize = "8192 x 6144",
                 flashAvailable = true
             ),
             CameraSpec(
                 cameraId = "1",
-                facing = "Front Camera",
-                resolutionMp = "16 MP • Front Camera (4608 x 3456)",
+                facing = context.getString(R.string.camera_front),
+                resolutionMp = "16 MP • ${context.getString(R.string.camera_front)} (4608 x 3456)",
                 pixelSize = "1.00 µm",
                 focalLengths = listOf(2.65f),
                 apertures = listOf(2.0f),
                 supportedPhotoResolutions = listOf("4608x3456 (16 MP)", "3840x2160 (8 MP)", "1920x1080 (2 MP)"),
                 supportedVideoResolutions = listOf("4K UHD (3840x2160)", "1080p FHD (1920x1080)"),
-                autoFocusModes = listOf("Auto Focus", "Continuous Picture"),
+                autoFocusModes = listOf(
+                    context.getString(R.string.camera_af_auto_focus),
+                    context.getString(R.string.camera_af_continuous_picture)
+                ),
                 autoExposureModes = listOf("OFF", "ON", "ON_AUTO_FLASH"),
-                sceneModes = listOf("Auto", "Portrait", "HDR"),
-                whiteBalanceModes = listOf("Auto", "Daylight", "Cloudy"),
+                sceneModes = listOf(
+                    context.getString(R.string.camera_scene_auto),
+                    context.getString(R.string.camera_scene_portrait),
+                    context.getString(R.string.camera_scene_hdr)
+                ),
+                whiteBalanceModes = listOf(
+                    context.getString(R.string.camera_wb_auto),
+                    context.getString(R.string.camera_wb_daylight),
+                    context.getString(R.string.camera_wb_cloudy)
+                ),
                 opticalStabilizationSupported = false,
                 aberrationCorrectionSupported = true,
                 hardwareLevel = "FULL",
-                lensPlacement = "Front Facing (Selfie)",
+                lensPlacement = context.getString(R.string.camera_lens_placement_front),
                 sensorSize = "5.76 x 4.29 mm (1/3.1\")",
                 pixelArraySize = "4608 x 3456",
                 flashAvailable = false

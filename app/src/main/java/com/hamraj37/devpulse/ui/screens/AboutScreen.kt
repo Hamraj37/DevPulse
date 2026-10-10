@@ -354,7 +354,7 @@ fun AboutScreen(
                 )
 
                 Button(
-                    onClick = { openUrl(context, "https://t.me/DevPulseApp") },
+                    onClick = { openUrl(context, "https://t.me/+cA1JevItp88zZDY1") },
                     shape = CircleShape,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,

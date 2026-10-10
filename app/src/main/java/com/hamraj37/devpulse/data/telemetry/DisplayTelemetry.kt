@@ -6,6 +6,7 @@ import android.os.Build
 import android.provider.Settings
 import android.util.DisplayMetrics
 import android.view.WindowManager
+import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.model.DisplayInfo
 import java.util.Locale
 import kotlin.math.round
@@ -64,7 +65,7 @@ object DisplayTelemetry {
             val heightInches = heightPx / ydpi
             val diagonal = sqrt((widthInches * widthInches + heightInches * heightInches).toDouble())
             val diagonalVal = if (diagonal in 3.0..15.0) (round(diagonal * 10.0) / 10.0) else 5.9
-            val physicalSizeStr = "$diagonalVal inches"
+            val physicalSizeStr = context.getString(R.string.display_physical_size_format, diagonalVal)
 
             val refreshRatesSet = mutableSetOf<Float>()
             val currentRefreshRate = try { display?.refreshRate ?: 120.0f } catch (_: Throwable) { 120.0f }
@@ -112,7 +113,7 @@ object DisplayTelemetry {
             } catch (_: Throwable) {
                 true
             }
-            val hdrSupportedStr = if (isHdrSupportedBool) "Supported" else "Not Supported"
+            val hdrSupportedStr = if (isHdrSupportedBool) context.getString(R.string.lbl_supported) else context.getString(R.string.lbl_not_supported)
             val hdrCapabilitiesStr = hdrCapsList.joinToString(", ")
 
             val isWideGamut = try {
@@ -124,7 +125,7 @@ object DisplayTelemetry {
             } catch (_: Throwable) {
                 true
             }
-            val wideColorGamutStr = if (isWideGamut) "Supported" else "Not Supported"
+            val wideColorGamutStr = if (isWideGamut) context.getString(R.string.lbl_supported) else context.getString(R.string.lbl_not_supported)
 
             val rawBrightness = try {
                 Settings.System.getInt(context.contentResolver, Settings.System.SCREEN_BRIGHTNESS)
@@ -141,9 +142,9 @@ object DisplayTelemetry {
                 Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC
             }
             val brightnessModeStr = if (brightnessModeInt == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC) {
-                "Adaptive"
+                context.getString(R.string.display_brightness_mode_adaptive)
             } else {
-                "Manual"
+                context.getString(R.string.display_brightness_mode_manual)
             }
 
             val timeoutMs = try {
@@ -153,16 +154,16 @@ object DisplayTelemetry {
             }
             val timeoutSec = timeoutMs / 1000
             val screenTimeoutStr = when {
-                timeoutSec < 60 -> "$timeoutSec Seconds"
-                timeoutSec == 60 -> "1 Minute"
-                timeoutSec % 60 == 0 -> "${timeoutSec / 60} Minutes"
-                else -> "$timeoutSec Seconds"
+                timeoutSec < 60 -> context.getString(R.string.display_timeout_seconds_format, timeoutSec)
+                timeoutSec == 60 -> context.getString(R.string.display_timeout_1_minute)
+                timeoutSec % 60 == 0 -> context.getString(R.string.display_timeout_minutes_format, timeoutSec / 60)
+                else -> context.getString(R.string.display_timeout_seconds_format, timeoutSec)
             }
 
             val orientationStr = if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                "Landscape"
+                context.getString(R.string.display_orientation_landscape)
             } else {
-                "Portrait"
+                context.getString(R.string.display_orientation_portrait)
             }
 
             DisplayInfo(
@@ -180,7 +181,7 @@ object DisplayTelemetry {
                 brightnessMode = brightnessModeStr,
                 screenTimeout = screenTimeoutStr,
                 orientation = orientationStr,
-                screenName = "Built-in screen",
+                screenName = context.getString(R.string.display_screen_name_builtin),
                 resolutionWidthPx = widthPx,
                 resolutionHeightPx = heightPx,
                 resolutionCategory = category,

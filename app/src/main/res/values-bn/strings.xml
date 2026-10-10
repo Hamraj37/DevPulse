@@ -760,4 +760,199 @@
     <string name="chooser_export_report">DevPulse %s রিপোর্ট এক্সপোর্ট করুন</string>
     <string name="chooser_pay_via_upi">UPI দিয়ে পেমেন্ট করুন</string>
     <string name="label_upi_id">DevPulse UPI ID</string>
+
+    <!-- Telemetry System & Device Strings -->
+    <string name="device_type_smartphone">স্মার্টফোন</string>
+    <string name="device_type_tablet">ট্যাবলেট</string>
+    <string name="device_type_emulator_smartphone">ইমুলেটর / স্মার্টফোন</string>
+    <string name="lbl_generic_android_device">অ্যান্ড্রয়েড ডিভাইস</string>
+    <string name="lbl_generic">জেনেরিক</string>
+    <string name="lbl_unknown">অজানা</string>
+    <string name="lbl_unknown_capital">অজানা</string>
+    <string name="bootloader_locked">লক করা (Locked)</string>
+    <string name="bootloader_unlocked">আনলকড (Unlocked)</string>
+    <string name="bootloader_unlock_supported">আনলক সমর্থিত</string>
+    <string name="selinux_enforcing">Enforcing (সক্রিয়)</string>
+    <string name="selinux_permissive">Permissive</string>
+    <string name="lbl_rooted">রুট করা (Rooted)</string>
+    <string name="lbl_not_rooted">রুট করা নেই (Not Rooted)</string>
+    <string name="lbl_not_available">উপলব্ধ নয়</string>
+    <string name="lbl_yes_ab">হ্যাঁ (A/B)</string>
+    <string name="lbl_linux_kernel">লিনাক্স কার্নেল (Linux Kernel)</string>
+    <string name="network_cellular_wifi">সেলুলার / ওয়াই-ফাই</string>
+    <string name="sim_1_not_inserted">SIM 1 (ঢোকানো হয়নি)</string>
+    <string name="sim_2_not_inserted">SIM 2 (ঢোকানো হয়নি)</string>
+
+    <!-- Battery Telemetry Strings -->
+    <string name="battery_status_charging">চার্জ হচ্ছে</string>
+    <string name="battery_status_discharging">ডিসচার্জ হচ্ছে</string>
+    <string name="battery_status_full">ফুল চার্জড</string>
+    <string name="battery_status_not_charging">চার্জ হচ্ছে না</string>
+    <string name="battery_power_source_ac">AC চার্জার</string>
+    <string name="battery_power_source_usb">USB পোর্ট</string>
+    <string name="battery_power_source_wireless">ওয়্যারলেস চার্জার</string>
+    <string name="battery_power_source_dock">ডক</string>
+    <string name="battery_power_source_connected">সংযুক্ত</string>
+    <string name="battery_power_source_battery">ব্যাটারি</string>
+    <string name="battery_health_good">ভালো (Good)</string>
+    <string name="battery_health_overheat">অতিরিক্ত গরম (Overheat)</string>
+    <string name="battery_health_dead">নষ্ট (Dead)</string>
+    <string name="battery_health_over_voltage">ওভার ভোল্টেজ (Over Voltage)</string>
+    <string name="battery_health_cold">অতিরিক্ত ঠান্ডা (Cold)</string>
+    <string name="battery_health_unspecified_failure">অনির্দিষ্ট ত্রুটি</string>
+    <string name="battery_tech_li_ion">Li-ion</string>
+    <string name="battery_usb_charging_format">USB চার্জিং (%s)</string>
+    <string name="battery_time_until_full_hours_mins">ফুল হতে %1$d ঘণ্টা %2$d মিনিট বাকি</string>
+    <string name="battery_time_until_full_mins">ফুল হতে %d মিনিট বাকি</string>
+    <string name="battery_time_until_full_fallback">ফুল হতে ৪২ মিনিট বাকি</string>
+    <string name="battery_time_remaining_fallback">১৪ ঘণ্টা ২০ মিনিট বাকি</string>
+
+    <!-- Camera Telemetry Strings -->
+    <string name="camera_front">ফ্রন্ট ক্যামেরা</string>
+    <string name="camera_ultra_wide">আল্ট্রা ওয়াইড ক্যামেরা</string>
+    <string name="camera_telephoto">টেলিফটো ক্যামেরা</string>
+    <string name="camera_back">ব্যাক ক্যামেরা</string>
+    <string name="camera_external">এক্সটার্নাল ক্যামেরা</string>
+    <string name="camera_lens_placement_front">ফ্রন্ট ফেসিং (সেলফি)</string>
+    <string name="camera_lens_placement_ultra_wide">ব্যাক ফেসিং (আল্ট্রা ওয়াইড)</string>
+    <string name="camera_lens_placement_telephoto">ব্যাক ফেসিং (টেলিফটো)</string>
+    <string name="camera_lens_placement_main">ব্যাক ফেসিং (প্রধান)</string>
+    <string name="camera_lens_placement_external">এক্সটার্নাল</string>
+    <string name="camera_af_auto_focus">অটো ফোকাস</string>
+    <string name="camera_af_continuous_picture">কন্টিনিউয়াস পিকচার</string>
+    <string name="camera_af_continuous_video">কন্টিনিউয়াস ভিডিও</string>
+    <string name="camera_af_macro">ম্যাক্রো</string>
+    <string name="camera_af_edof">EDOF</string>
+    <string name="camera_af_off_manual">বন্ধ / ম্যানুয়াল</string>
+    <string name="camera_video_stab_eis">EIS (ভিডিও স্ট্যাবিলাইজেশন)</string>
+    <string name="camera_video_stab_ois">OIS / প্রিভিউ স্ট্যাবিলাইজেশন</string>
+    <string name="camera_scene_auto">অটো</string>
+    <string name="camera_scene_face_priority">ফেস প্রায়োরিটি</string>
+    <string name="camera_scene_action">অ্যাকশন</string>
+    <string name="camera_scene_portrait">পোর্ট্রেট</string>
+    <string name="camera_scene_landscape">ল্যান্ডস্কেপ</string>
+    <string name="camera_scene_night">নাইট</string>
+    <string name="camera_scene_hdr">HDR</string>
+    <string name="camera_scene_steady_photo">স্টেডি ফটো</string>
+    <string name="camera_scene_sunset">সূর্যাস্ত</string>
+    <string name="camera_scene_party">পার্টি</string>
+    <string name="camera_scene_candlelight">মোমবাতি</string>
+    <string name="camera_scene_barcode">বারকোড</string>
+    <string name="camera_scene_high_speed_video">হাই স্পিড ভিডিও</string>
+    <string name="camera_wb_auto">অটো</string>
+    <string name="camera_wb_daylight">ডেলাইট</string>
+    <string name="camera_wb_cloudy">মেঘলা</string>
+    <string name="camera_wb_incandescent">ইনক্যান্ডিসেন্ট</string>
+    <string name="camera_wb_fluorescent">ফ্লুরোসেন্ট</string>
+    <string name="camera_wb_shade">ছায়া</string>
+    <string name="camera_focus_calibrated">ক্যালিব্রেটেড (CALIBRATED)</string>
+    <string name="camera_focus_approximate">আনুমানিক (APPROXIMATE)</string>
+    <string name="camera_focus_uncalibrated">আনক্যালিব্রেটেড (UNCALIBRATED)</string>
+    <string name="camera_cfa_rggb">RGGB (Bayer)</string>
+    <string name="camera_cfa_grbg">GRBG (Bayer)</string>
+    <string name="camera_cfa_gbrg">GBRG (Bayer)</string>
+    <string name="camera_cfa_bggr">BGGR (Bayer)</string>
+    <string name="camera_cfa_rgb">RGB</string>
+    <string name="camera_cfa_monochrome">মোনোক্রোম</string>
+    <string name="camera_cfa_custom">বায়ার / কাস্টম</string>
+
+    <!-- CPU Telemetry Strings -->
+    <string name="cpu_fallback_arm_hardware">ARM হার্ডওয়্যার</string>
+    <string name="cpu_type_octa_core_format">অক্টা-কোর (%d কোর)</string>
+    <string name="cpu_type_cores_format">%d কোর</string>
+    <string name="cpu_soc_qualcomm_format">কোয়ালকম স্ন্যাপড্রাগন (%s)</string>
+    <string name="cpu_soc_exynos_format">স্যামসাং এক্সিনোস (%s)</string>
+    <string name="cpu_soc_mediatek_format">মিডিয়াটেক ডাইমেনসিটি (%s)</string>
+    <string name="cpu_soc_tensor_format">গুগল টেনসর (%s)</string>
+    <string name="cpu_soc_arm_format">ARM প্রসেসর (%s)</string>
+
+    <!-- Display Telemetry Strings -->
+    <string name="display_brightness_mode_adaptive">অ্যাডাপ্টিভ (Adaptive)</string>
+    <string name="display_brightness_mode_manual">ম্যানুয়াল (Manual)</string>
+    <string name="display_orientation_portrait">পোর্ট্রেট (Portrait)</string>
+    <string name="display_orientation_landscape">ল্যান্ডস্কেপ (Landscape)</string>
+    <string name="display_screen_name_builtin">বিল্ট-ইন স্ক্রিন</string>
+    <string name="display_physical_size_format">%.1f ইঞ্চি</string>
+    <string name="display_timeout_seconds_format">%d সেকেন্ড</string>
+    <string name="display_timeout_1_minute">১ মিনিট</string>
+    <string name="display_timeout_minutes_format">%d মিনিট</string>
+
+    <!-- Network & Connectivity Telemetry Strings -->
+    <string name="geo_location_fallback">নয়াদিল্লি, দিল্লি, ভারত</string>
+    <string name="data_state_connected">সংযুক্ত</string>
+    <string name="data_state_connecting">সংযুক্ত হচ্ছে</string>
+    <string name="data_state_suspended">স্থগিত (Suspended)</string>
+    <string name="roaming_active">রোমিং সক্রিয়</string>
+    <string name="roaming_home_network">রোমিং নেই (হোম নেটওয়ার্ক)</string>
+    <string name="lbl_off">বন্ধ (Off)</string>
+    <string name="lease_dynamic_cellular">ডায়নামিক সেলুলার ইজারা</string>
+    <string name="network_mobile_data_format">%s মোবাইল ডেটা</string>
+    <string name="network_mobile_data_type_format">মোবাইল ডেটা (%s)</string>
+    <string name="security_usim_aka">USIM / AKA প্রমাণীকরণ</string>
+    <string name="mobile_signal_strong">শক্তিশালী (-82 dBm)</string>
+    <string name="wifi_location_service_disabled_ssid">লোকেশন সার্ভিস বন্ধ (Wi-Fi SSID এর জন্য প্রয়োজনীয়)</string>
+    <string name="wifi_location_permission_required_ssid">Wi-Fi SSID এর জন্য লোকেশন অনুমতি প্রয়োজন</string>
+    <string name="wifi_location_service_disabled_bssid">লোকেশন সার্ভিস বন্ধ</string>
+    <string name="wifi_permission_required">অনুমতি প্রয়োজন</string>
+    <string name="carrier_no_carrier">কোনো সিম নেই</string>
+    <string name="lbl_none">কিছুই না</string>
+    <string name="network_no_signal">কোনো সিগন্যাল নেই</string>
+    <string name="lbl_unavailable">অনুপলব্ধ</string>
+    <string name="lbl_enabled">সক্ষম</string>
+    <string name="usb_debugging_active">USB ডিবাগিং সক্রিয়</string>
+
+    <!-- Install Source Telemetry Strings -->
+    <string name="install_source_package_installer">প্যাকেজ ইনস্টলার</string>
+    <string name="install_source_amazon">অ্যামাজন অ্যাপস্টোর</string>
+    <string name="install_source_samsung">স্যামসাং গ্যালাক্সি স্টোর</string>
+    <string name="install_source_huawei">হুয়াওয়ে অ্যাপগ্যালারি</string>
+    <string name="install_source_xiaomi">শাওমি গেটঅ্যাপস</string>
+    <string name="install_source_oppo">OPPO অ্যাপ মার্কেট</string>
+    <string name="install_source_vivo">Vivo অ্যাপ স্টোর</string>
+    <string name="install_source_adb">ADB / সাইড-লোড করা</string>
+    <string name="install_source_system_app">প্রি-ইনস্টল করা সিস্টেম অ্যাপ</string>
+    <string name="install_source_side_loaded_unknown">সাইড-লোড করা / অজানা</string>
+
+    <!-- Thermal & Sensor Telemetry Strings -->
+    <string name="thermal_status_normal_cool">স্বাভাবিক (Cool)</string>
+    <string name="thermal_status_warm">গরম (Warm)</string>
+    <string name="thermal_status_elevated">উচ্চ তাপমাত্রা (Elevated)</string>
+    <string name="thermal_zone_type_soc">সিস্টেম অন চিপ (SoC)</string>
+    <string name="thermal_zone_type_battery">ব্যাটারি</string>
+    <string name="thermal_zone_type_camera">ক্যামেরা সেন্সর</string>
+    <string name="thermal_zone_type_cpu">CPU কোর গ্রুপ</string>
+    <string name="thermal_zone_type_gpu">GPU সাবসিস্টেম</string>
+    <string name="thermal_zone_type_ambient">সিস্টেম অ্যাম্বিয়েন্ট</string>
+    <string name="lbl_unknown_sensor">অজানা সেন্সর</string>
+    <string name="lbl_generic_vendor">জেনেরিক ভেন্ডর</string>
+    <string name="sensor_type_accelerometer">অ্যাক্সেলেরোমিটার</string>
+    <string name="sensor_type_magnetometer">ম্যাগনেটোমিটার</string>
+    <string name="sensor_type_gyroscope">জাইরোস্কোপ</string>
+    <string name="sensor_type_ambient_light">অ্যাম্বিয়েন্ট লাইট</string>
+    <string name="sensor_type_barometer">ব্যারোমিটার (চাপ)</string>
+    <string name="sensor_type_proximity">প্রক্সিমিটি</string>
+    <string name="sensor_type_gravity">গ্র্যাভিটি</string>
+    <string name="sensor_type_linear_acceleration">লিনিয়ার অ্যাক্সিলারেশন</string>
+    <string name="sensor_type_rotation_vector">রোটেশন ভেক্টর</string>
+    <string name="sensor_type_orientation">ওরিয়েন্টেশন (লেগ্যাসি)</string>
+    <string name="sensor_type_relative_humidity">আপেক্ষিক আর্দ্রতা</string>
+    <string name="sensor_type_ambient_temp">অ্যাম্বিয়েন্ট তাপমাত্রা</string>
+    <string name="sensor_type_step_counter">স্টেপ কাউন্টার</string>
+    <string name="sensor_type_step_detector">স্টেপ ডিটেক্টর</string>
+    <string name="sensor_type_heart_rate">হার্ট রেট</string>
+    <string name="sensor_type_stationary_detector">স্টেশনারি ডিটেক্টর</string>
+    <string name="sensor_type_motion_detector">মোশন ডিটেক্টর</string>
+    <string name="sensor_type_hardware_format">হার্ডওয়্যার সেন্সর (টাইপ %d)</string>
+
+    <!-- Widget Formatting Strings -->
+    <string name="widget_used_gb_short_format">%.2f GB</string>
+    <string name="widget_used_gb_format">%.2f GB ব্যবহৃত</string>
+    <string name="widget_temp_format">তাপমাত্রা: %.1f ℃</string>
+    <string name="widget_battery_format">ব্যাটারি: %d%%</string>
+
+    <string name="manifest_fgs_special_use_subtype">রিয়েল-টাইম টেলিমেট্রি ডিসপ্লের জন্য ওভারলে মনিটর</string>
+    <string name="location_not_available">অবস্থান পাওয়া যায়নি</string>
+    <string name="battery_time_calculating">হিসাব করা হচ্ছে...</string>
+    <string name="carrier_cellular_network">সেলুলার নেটওয়ার্ক</string>
+    <string name="network_wi_fi">ওয়াই-ফাই (Wi-Fi)</string>
 </resources>

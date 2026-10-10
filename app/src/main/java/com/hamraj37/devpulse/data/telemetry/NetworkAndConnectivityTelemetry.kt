@@ -15,6 +15,7 @@ import android.nfc.NfcAdapter
 import android.os.Build
 import android.provider.Settings
 import android.telephony.TelephonyManager
+import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.model.ConnectivityInfo
 import com.hamraj37.devpulse.data.model.NetworkInfo
 import java.net.Inet4Address
@@ -177,7 +178,7 @@ object NetworkAndConnectivityTelemetry {
                 } catch (_: Throwable) {}
             }
         }
-        return "New Delhi, Delhi, India"
+        return context.getString(R.string.geo_location_fallback)
     }
 
     private fun buildCellularNetworkInfo(
@@ -271,15 +272,15 @@ object NetworkAndConnectivityTelemetry {
 
         val dataStateRaw = try { telephonyManager?.dataState } catch (_: Throwable) { null }
         val dataStateStr = when (dataStateRaw) {
-            TelephonyManager.DATA_CONNECTED -> "Connected"
-            TelephonyManager.DATA_CONNECTING -> "Connecting"
-            TelephonyManager.DATA_SUSPENDED -> "Suspended"
-            TelephonyManager.DATA_DISCONNECTED -> "Disconnected"
-            else -> "Connected"
+            TelephonyManager.DATA_CONNECTED -> context.getString(R.string.data_state_connected)
+            TelephonyManager.DATA_CONNECTING -> context.getString(R.string.data_state_connecting)
+            TelephonyManager.DATA_SUSPENDED -> context.getString(R.string.data_state_suspended)
+            TelephonyManager.DATA_DISCONNECTED -> context.getString(R.string.network_disconnected)
+            else -> context.getString(R.string.data_state_connected)
         }
 
         val isRoaming = try { telephonyManager?.isNetworkRoaming == true } catch (_: Throwable) { false }
-        val roamingStr = if (isRoaming) "Roaming Active" else "Not Roaming (Home Network)"
+        val roamingStr = if (isRoaming) context.getString(R.string.roaming_active) else context.getString(R.string.roaming_home_network)
 
         val netOp = try { telephonyManager?.networkOperator } catch (_: Throwable) { null }
         val simOp = try { telephonyManager?.simOperator } catch (_: Throwable) { null }
@@ -308,19 +309,19 @@ object NetworkAndConnectivityTelemetry {
             isCellularDataActive = true,
             networkOperatorName = fullOperatorName,
             networkType = networkTypeStr,
-            ssid = "$fullOperatorName Mobile Data",
+            ssid = context.getString(R.string.network_mobile_data_format, fullOperatorName),
             ipAddress = cellIpV4.ifEmpty { "10.124.85.192" },
             ipv6Address = cellIpV6.ifEmpty { "2409:4081:120:34a::12" },
             gateway = "10.124.85.1",
             subnetMask = "255.255.255.252",
             dns1 = "8.8.8.8",
-            leaseDuration = "Dynamic cellular lease",
+            leaseDuration = context.getString(R.string.lease_dynamic_cellular),
             interfaceName = cellInterface.ifEmpty { "rmnet_data0" },
             linkSpeed = if (is5G) "650 Mbps" else "150 Mbps",
             channel = "N78 / Band 40",
             frequency = if (is5G) "3500 MHz (5G NR)" else "2300 MHz (LTE)",
-            wifiStandard = "Mobile Data ($networkTypeStr)",
-            securityType = "USIM / AKA Authentication",
+            wifiStandard = context.getString(R.string.network_mobile_data_type_format, networkTypeStr),
+            securityType = context.getString(R.string.security_usim_aka),
             publicIp = "157.32.184.92",
             location = geoLoc,
             wifiBadge = badgePill,
@@ -329,7 +330,7 @@ object NetworkAndConnectivityTelemetry {
             roamingState = roamingStr,
             mccMnc = mccMncStr,
             countryMcc = countryMccStr,
-            mobileSignal = "Strong (-82 dBm)",
+            mobileSignal = context.getString(R.string.mobile_signal_strong),
             downloadSpeed = speed.downloadSpeedFormatted,
             uploadSpeed = speed.uploadSpeedFormatted,
             downloadSpeedBytesPerSec = speed.downloadBytesPerSec,
@@ -405,9 +406,9 @@ object NetworkAndConnectivityTelemetry {
                 ssid = cleanSsid
             } else {
                 if (!isLocationServiceEnabled) {
-                    ssid = "Location Service Disabled (Required for Wi-Fi SSID)"
+                    ssid = context.getString(R.string.wifi_location_service_disabled_ssid)
                 } else if (!hasLocationPermission) {
-                    ssid = "Location Permission Required for Wi-Fi SSID"
+                    ssid = context.getString(R.string.wifi_location_permission_required_ssid)
                 }
             }
 
@@ -416,18 +417,18 @@ object NetworkAndConnectivityTelemetry {
                 bssid = rawBssid
             } else {
                 if (!isLocationServiceEnabled) {
-                    bssid = "Location Service Disabled"
+                    bssid = context.getString(R.string.wifi_location_service_disabled_bssid)
                 } else if (!hasLocationPermission) {
-                    bssid = "Permission Required"
+                    bssid = context.getString(R.string.wifi_permission_required)
                 }
             }
         } else {
             if (!isLocationServiceEnabled) {
-                ssid = "Location Service Disabled (Required for Wi-Fi SSID)"
-                bssid = "Location Service Disabled"
+                ssid = context.getString(R.string.wifi_location_service_disabled_ssid)
+                bssid = context.getString(R.string.wifi_location_service_disabled_bssid)
             } else if (!hasLocationPermission) {
-                ssid = "Location Permission Required for Wi-Fi SSID"
-                bssid = "Permission Required"
+                ssid = context.getString(R.string.wifi_location_permission_required_ssid)
+                bssid = context.getString(R.string.wifi_permission_required)
             }
         }
 
@@ -567,30 +568,30 @@ object NetworkAndConnectivityTelemetry {
         return NetworkInfo(
             activeConnectionType = "DISCONNECTED",
             isCellularDataActive = false,
-            networkOperatorName = "No Carrier",
-            networkType = "None",
-            ssid = "No Active Network",
-            ipAddress = "Disconnected",
-            ipv6Address = "Disconnected",
+            networkOperatorName = context.getString(R.string.carrier_no_carrier),
+            networkType = context.getString(R.string.lbl_none),
+            ssid = context.getString(R.string.network_no_active_network),
+            ipAddress = context.getString(R.string.network_disconnected),
+            ipv6Address = context.getString(R.string.network_disconnected),
             gateway = "0.0.0.0",
             subnetMask = "0.0.0.0",
-            dns1 = "None",
-            leaseDuration = "None",
+            dns1 = context.getString(R.string.lbl_none),
+            leaseDuration = context.getString(R.string.lbl_none),
             interfaceName = "none",
             linkSpeed = "0 Mbps",
-            channel = "None",
-            frequency = "None",
-            wifiStandard = "None",
-            securityType = "None",
-            publicIp = "Unavailable",
+            channel = context.getString(R.string.lbl_none),
+            frequency = context.getString(R.string.lbl_none),
+            wifiStandard = context.getString(R.string.lbl_none),
+            securityType = context.getString(R.string.lbl_none),
+            publicIp = context.getString(R.string.lbl_unavailable),
             location = geoLoc,
-            wifiBadge = "Offline",
+            wifiBadge = context.getString(R.string.network_offline),
             isConnected = false,
-            dataState = "Disconnected",
-            roamingState = "Off",
-            mccMnc = "None",
-            countryMcc = "None",
-            mobileSignal = "No Signal",
+            dataState = context.getString(R.string.network_disconnected),
+            roamingState = context.getString(R.string.lbl_off),
+            mccMnc = context.getString(R.string.lbl_none),
+            countryMcc = context.getString(R.string.lbl_none),
+            mobileSignal = context.getString(R.string.network_no_signal),
             downloadSpeed = "0 KB/s",
             uploadSpeed = "0 KB/s",
             downloadSpeedBytesPerSec = 0L,
@@ -676,16 +677,16 @@ object NetworkAndConnectivityTelemetry {
 
                 nfcSupported = hasNfc,
                 nfcEnabled = isNfcEnabled,
-                nfcStatus = if (isNfcEnabled) "Enabled" else if (hasNfc) "Disabled" else "Not Supported",
+                nfcStatus = if (isNfcEnabled) context.getString(R.string.lbl_enabled) else if (hasNfc) context.getString(R.string.conn_disabled) else context.getString(R.string.lbl_not_supported),
                 secureNfcSupported = hasNfc,
 
                 uwbSupported = hasUwb,
-                uwbStatus = if (hasUwb) "Supported" else "Not Supported",
+                uwbStatus = if (hasUwb) context.getString(R.string.lbl_supported) else context.getString(R.string.lbl_not_supported),
 
                 usbHostSupported = hasUsbHost,
                 usbAccessorySupported = hasUsbAccessory,
                 usbDebuggingEnabled = isUsbDebuggingOn,
-                usbStatus = if (isUsbDebuggingOn) "USB Debugging Active" else "Connected"
+                usbStatus = if (isUsbDebuggingOn) context.getString(R.string.usb_debugging_active) else context.getString(R.string.data_state_connected)
             )
         } catch (_: Throwable) {
             ConnectivityInfo()

@@ -761,4 +761,198 @@
     <string name="chooser_export_report">Export DevPulse %s Report</string>
     <string name="chooser_pay_via_upi">Pay via UPI</string>
     <string name="label_upi_id">DevPulse UPI ID</string>
+
+    <!-- Telemetry System & Device Strings -->
+    <string name="device_type_smartphone">Smartphone</string>
+    <string name="device_type_tablet">Tablet</string>
+    <string name="device_type_emulator_smartphone">Emulator / Smartphone</string>
+    <string name="lbl_generic_android_device">Android Device</string>
+    <string name="lbl_generic">Generic</string>
+    <string name="lbl_unknown">unknown</string>
+    <string name="lbl_unknown_capital">Unknown</string>
+    <string name="bootloader_locked">Locked</string>
+    <string name="bootloader_unlocked">Unlocked</string>
+    <string name="bootloader_unlock_supported">Unlock Supported</string>
+    <string name="selinux_enforcing">Enforcing</string>
+    <string name="selinux_permissive">Permissive</string>
+    <string name="lbl_rooted">Rooted</string>
+    <string name="lbl_not_rooted">Not Rooted</string>
+    <string name="lbl_not_available">Not Available</string>
+    <string name="lbl_yes_ab">Yes (A/B)</string>
+    <string name="lbl_linux_kernel">Linux Kernel</string>
+    <string name="network_cellular_wifi">Cellular / Wi-Fi</string>
+    <string name="sim_1_not_inserted">SIM 1 (Not Inserted)</string>
+    <string name="sim_2_not_inserted">SIM 2 (Not Inserted)</string>
+
+    <!-- Battery Telemetry Strings -->
+    <string name="battery_status_charging">Charging</string>
+    <string name="battery_status_discharging">Discharging</string>
+    <string name="battery_status_full">Full</string>
+    <string name="battery_status_not_charging">Not Charging</string>
+    <string name="battery_power_source_ac">AC Charger</string>
+    <string name="battery_power_source_usb">USB Port</string>
+    <string name="battery_power_source_wireless">Wireless</string>
+    <string name="battery_power_source_dock">Dock</string>
+    <string name="battery_power_source_connected">Connected</string>
+    <string name="battery_power_source_battery">Battery</string>
+    <string name="battery_health_good">Good</string>
+    <string name="battery_health_overheat">Overheat</string>
+    <string name="battery_health_dead">Dead</string>
+    <string name="battery_health_over_voltage">Over Voltage</string>
+    <string name="battery_health_cold">Cold</string>
+    <string name="battery_health_unspecified_failure">Unspecified Failure</string>
+    <string name="battery_tech_li_ion">Li-ion</string>
+    <string name="battery_usb_charging_format">USB Charging (%s)</string>
+    <string name="battery_time_until_full_hours_mins">%1$d hrs %2$d mins until full</string>
+    <string name="battery_time_until_full_mins">%d mins until full</string>
+    <string name="battery_time_until_full_fallback">42 mins until full</string>
+    <string name="battery_time_remaining_fallback">14 hrs 20 mins remaining</string>
+
+    <!-- Camera Telemetry Strings -->
+    <string name="camera_front">Front Camera</string>
+    <string name="camera_ultra_wide">Ultra Wide Camera</string>
+    <string name="camera_telephoto">Telephoto Camera</string>
+    <string name="camera_back">Back Camera</string>
+    <string name="camera_external">External Camera</string>
+    <string name="camera_lens_placement_front">Front Facing (Selfie)</string>
+    <string name="camera_lens_placement_ultra_wide">Back Facing (Ultra Wide)</string>
+    <string name="camera_lens_placement_telephoto">Back Facing (Telephoto)</string>
+    <string name="camera_lens_placement_main">Back Facing (Main)</string>
+    <string name="camera_lens_placement_external">External</string>
+    <string name="camera_af_auto_focus">Auto Focus</string>
+    <string name="camera_af_continuous_picture">Continuous Picture</string>
+    <string name="camera_af_continuous_video">Continuous Video</string>
+    <string name="camera_af_macro">Macro</string>
+    <string name="camera_af_edof">EDOF</string>
+    <string name="camera_af_off_manual">Off / Manual</string>
+    <string name="camera_video_stab_eis">EIS (Video Stabilization)</string>
+    <string name="camera_video_stab_ois">OIS / Preview Stabilization</string>
+    <string name="camera_scene_auto">Auto</string>
+    <string name="camera_scene_face_priority">Face Priority</string>
+    <string name="camera_scene_action">Action</string>
+    <string name="camera_scene_portrait">Portrait</string>
+    <string name="camera_scene_landscape">Landscape</string>
+    <string name="camera_scene_night">Night</string>
+    <string name="camera_scene_hdr">HDR</string>
+    <string name="camera_scene_steady_photo">Steady Photo</string>
+    <string name="camera_scene_sunset">Sunset</string>
+    <string name="camera_scene_party">Party</string>
+    <string name="camera_scene_candlelight">Candlelight</string>
+    <string name="camera_scene_barcode">Barcode</string>
+    <string name="camera_scene_high_speed_video">High Speed Video</string>
+    <string name="camera_wb_auto">Auto</string>
+    <string name="camera_wb_daylight">Daylight</string>
+    <string name="camera_wb_cloudy">Cloudy</string>
+    <string name="camera_wb_incandescent">Incandescent</string>
+    <string name="camera_wb_fluorescent">Fluorescent</string>
+    <string name="camera_wb_shade">Shade</string>
+    <string name="camera_focus_calibrated">CALIBRATED</string>
+    <string name="camera_focus_approximate">APPROXIMATE</string>
+    <string name="camera_focus_uncalibrated">UNCALIBRATED</string>
+    <string name="camera_cfa_rggb">RGGB (Bayer)</string>
+    <string name="camera_cfa_grbg">GRBG (Bayer)</string>
+    <string name="camera_cfa_gbrg">GBRG (Bayer)</string>
+    <string name="camera_cfa_bggr">BGGR (Bayer)</string>
+    <string name="camera_cfa_rgb">RGB</string>
+    <string name="camera_cfa_monochrome">Monochrome</string>
+    <string name="camera_cfa_custom">Bayer / Custom</string>
+
+    <!-- CPU Telemetry Strings -->
+    <string name="cpu_fallback_arm_hardware">ARM Hardware</string>
+    <string name="cpu_type_octa_core_format">Octa-Core (%d Cores)</string>
+    <string name="cpu_type_cores_format">%d Cores</string>
+    <string name="cpu_soc_qualcomm_format">Qualcomm Snapdragon (%s)</string>
+    <string name="cpu_soc_exynos_format">Samsung Exynos (%s)</string>
+    <string name="cpu_soc_mediatek_format">MediaTek Dimensity (%s)</string>
+    <string name="cpu_soc_tensor_format">Google Tensor (%s)</string>
+    <string name="cpu_soc_arm_format">ARM Processor (%s)</string>
+
+    <!-- Display Telemetry Strings -->
+    <string name="display_brightness_mode_adaptive">Adaptive</string>
+    <string name="display_brightness_mode_manual">Manual</string>
+    <string name="display_orientation_portrait">Portrait</string>
+    <string name="display_orientation_landscape">Landscape</string>
+    <string name="display_screen_name_builtin">Built-in screen</string>
+    <string name="display_physical_size_format">%.1f inches</string>
+    <string name="display_timeout_seconds_format">%d Seconds</string>
+    <string name="display_timeout_1_minute">1 Minute</string>
+    <string name="display_timeout_minutes_format">%d Minutes</string>
+
+    <!-- Network & Connectivity Telemetry Strings -->
+    <string name="geo_location_fallback">New Delhi, Delhi, India</string>
+    <string name="data_state_connected">Connected</string>
+    <string name="data_state_connecting">Connecting</string>
+    <string name="data_state_suspended">Suspended</string>
+    <string name="roaming_active">Roaming Active</string>
+    <string name="roaming_home_network">Not Roaming (Home Network)</string>
+    <string name="lbl_off">Off</string>
+    <string name="lease_dynamic_cellular">Dynamic cellular lease</string>
+    <string name="network_mobile_data_format">%s Mobile Data</string>
+    <string name="network_mobile_data_type_format">Mobile Data (%s)</string>
+    <string name="security_usim_aka">USIM / AKA Authentication</string>
+    <string name="mobile_signal_strong">Strong (-82 dBm)</string>
+    <string name="wifi_location_service_disabled_ssid">Location Service Disabled (Required for Wi-Fi SSID)</string>
+    <string name="wifi_location_permission_required_ssid">Location Permission Required for Wi-Fi SSID</string>
+    <string name="wifi_location_service_disabled_bssid">Location Service Disabled</string>
+    <string name="wifi_permission_required">Permission Required</string>
+    <string name="carrier_no_carrier">No Carrier</string>
+    <string name="lbl_none">None</string>
+    <string name="network_no_signal">No Signal</string>
+    <string name="lbl_unavailable">Unavailable</string>
+    <string name="lbl_enabled">Enabled</string>
+    <string name="usb_debugging_active">USB Debugging Active</string>
+
+    <!-- Install Source Telemetry Strings -->
+    <string name="install_source_package_installer">Package Installer</string>
+    <string name="install_source_amazon">Amazon Appstore</string>
+    <string name="install_source_samsung">Samsung Galaxy Store</string>
+    <string name="install_source_huawei">Huawei AppGallery</string>
+    <string name="install_source_xiaomi">Xiaomi GetApps</string>
+    <string name="install_source_oppo">OPPO App Market</string>
+    <string name="install_source_vivo">Vivo App Store</string>
+    <string name="install_source_adb">ADB / Side-loaded</string>
+    <string name="install_source_system_app">Pre-installed System App</string>
+    <string name="install_source_side_loaded_unknown">Side-loaded / Unknown</string>
+
+    <!-- Thermal & Sensor Telemetry Strings -->
+    <string name="thermal_status_normal_cool">Normal (Cool)</string>
+    <string name="thermal_status_warm">Warm</string>
+    <string name="thermal_status_elevated">Elevated Temperature</string>
+    <string name="thermal_zone_type_soc">System On Chip</string>
+    <string name="thermal_zone_type_battery">Battery</string>
+    <string name="thermal_zone_type_camera">Camera Sensor</string>
+    <string name="thermal_zone_type_cpu">CPU Core Group</string>
+    <string name="thermal_zone_type_gpu">GPU Subsystem</string>
+    <string name="thermal_zone_type_ambient">System Ambient</string>
+    <string name="lbl_unknown_sensor">Unknown Sensor</string>
+    <string name="lbl_generic_vendor">Generic Vendor</string>
+    <string name="sensor_type_accelerometer">Accelerometer</string>
+    <string name="sensor_type_magnetometer">Magnetometer</string>
+    <string name="sensor_type_gyroscope">Gyroscope</string>
+    <string name="sensor_type_ambient_light">Ambient Light</string>
+    <string name="sensor_type_barometer">Barometer (Pressure)</string>
+    <string name="sensor_type_proximity">Proximity</string>
+    <string name="sensor_type_gravity">Gravity</string>
+    <string name="sensor_type_linear_acceleration">Linear Acceleration</string>
+    <string name="sensor_type_rotation_vector">Rotation Vector</string>
+    <string name="sensor_type_orientation">Orientation (Legacy)</string>
+    <string name="sensor_type_relative_humidity">Relative Humidity</string>
+    <string name="sensor_type_ambient_temp">Ambient Temp</string>
+    <string name="sensor_type_step_counter">Step Counter</string>
+    <string name="sensor_type_step_detector">Step Detector</string>
+    <string name="sensor_type_heart_rate">Heart Rate</string>
+    <string name="sensor_type_stationary_detector">Stationary Detector</string>
+    <string name="sensor_type_motion_detector">Motion Detector</string>
+    <string name="sensor_type_hardware_format">Hardware Sensor (Type %d)</string>
+
+    <!-- Widget Formatting Strings -->
+    <string name="widget_used_gb_short_format">%.2f GB</string>
+    <string name="widget_used_gb_format">%.2f GB Used</string>
+    <string name="widget_temp_format">Temp: %.1f ℃</string>
+    <string name="widget_battery_format">Battery: %d%%</string>
+
+    <string name="location_not_available">Location Unavailable</string>
+    <string name="battery_time_calculating">Calculating...</string>
+    <string name="carrier_cellular_network">Cellular Network</string>
+    <string name="network_wi_fi">Wi-Fi</string>
 </resources>

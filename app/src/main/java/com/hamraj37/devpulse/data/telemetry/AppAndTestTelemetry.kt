@@ -42,14 +42,14 @@ object AppAndTestTelemetry {
 
             when (installerPackage) {
                 "com.android.vending" -> "Google Play Store"
-                "com.google.android.packageinstaller", "com.android.packageinstaller" -> "Package Installer"
-                "com.amazon.venezia" -> "Amazon Appstore"
-                "com.sec.android.app.samsungapps" -> "Samsung Galaxy Store"
-                "com.huawei.appmarket" -> "Huawei AppGallery"
-                "com.xiaomi.mipicks" -> "Xiaomi GetApps"
-                "com.oppo.market" -> "OPPO App Market"
-                "com.vivo.appstore" -> "Vivo App Store"
-                "adb" -> "ADB / Side-loaded"
+                "com.google.android.packageinstaller", "com.android.packageinstaller" -> context.getString(R.string.install_source_package_installer)
+                "com.amazon.venezia" -> context.getString(R.string.install_source_amazon)
+                "com.sec.android.app.samsungapps" -> context.getString(R.string.install_source_samsung)
+                "com.huawei.appmarket" -> context.getString(R.string.install_source_huawei)
+                "com.xiaomi.mipicks" -> context.getString(R.string.install_source_xiaomi)
+                "com.oppo.market" -> context.getString(R.string.install_source_oppo)
+                "com.vivo.appstore" -> context.getString(R.string.install_source_vivo)
+                "adb" -> context.getString(R.string.install_source_adb)
                 null -> {
                     try {
                         val appInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -59,12 +59,12 @@ object AppAndTestTelemetry {
                             pm.getApplicationInfo(packageName, 0)
                         }
                         if ((appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0) {
-                            "Pre-installed System App"
+                            context.getString(R.string.install_source_system_app)
                         } else {
-                            "Side-loaded / Unknown"
+                            context.getString(R.string.install_source_side_loaded_unknown)
                         }
                     } catch (_: Exception) {
-                        "Side-loaded / Unknown"
+                        context.getString(R.string.install_source_side_loaded_unknown)
                     }
                 }
                 else -> {

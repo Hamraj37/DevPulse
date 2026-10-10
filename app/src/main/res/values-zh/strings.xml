@@ -760,4 +760,199 @@
     <string name="chooser_export_report">导出 DevPulse %s 报告</string>
     <string name="chooser_pay_via_upi">通过 UPI 支付</string>
     <string name="label_upi_id">DevPulse UPI ID</string>
+
+    <!-- Telemetry System & Device Strings -->
+    <string name="device_type_smartphone">智能手机</string>
+    <string name="device_type_tablet">平板电脑</string>
+    <string name="device_type_emulator_smartphone">模拟器 / 智能手机</string>
+    <string name="lbl_generic_android_device">Android 设备</string>
+    <string name="lbl_generic">通用</string>
+    <string name="lbl_unknown">未知</string>
+    <string name="lbl_unknown_capital">未知</string>
+    <string name="bootloader_locked">已锁定 (Locked)</string>
+    <string name="bootloader_unlocked">已解锁 (Unlocked)</string>
+    <string name="bootloader_unlock_supported">支持解锁</string>
+    <string name="selinux_enforcing">强制模式 (Enforcing)</string>
+    <string name="selinux_permissive">宽容模式 (Permissive)</string>
+    <string name="lbl_rooted">已 Root</string>
+    <string name="lbl_not_rooted">未 Root</string>
+    <string name="lbl_not_available">不可用</string>
+    <string name="lbl_yes_ab">是 (A/B 分区)</string>
+    <string name="lbl_linux_kernel">Linux 内核</string>
+    <string name="network_cellular_wifi">蜂窝网络 / Wi-Fi</string>
+    <string name="sim_1_not_inserted">SIM 卡 1 (未插入)</string>
+    <string name="sim_2_not_inserted">SIM 卡 2 (未插入)</string>
+
+    <!-- Battery Telemetry Strings -->
+    <string name="battery_status_charging">正在充电</string>
+    <string name="battery_status_discharging">正在放电</string>
+    <string name="battery_status_full">已充满</string>
+    <string name="battery_status_not_charging">未充电</string>
+    <string name="battery_power_source_ac">交流电充电器 (AC)</string>
+    <string name="battery_power_source_usb">USB 接口</string>
+    <string name="battery_power_source_wireless">无线充电</string>
+    <string name="battery_power_source_dock">底座</string>
+    <string name="battery_power_source_connected">已连接</string>
+    <string name="battery_power_source_battery">电池供电</string>
+    <string name="battery_health_good">良好 (Good)</string>
+    <string name="battery_health_overheat">过热 (Overheat)</string>
+    <string name="battery_health_dead">损坏 (Dead)</string>
+    <string name="battery_health_over_voltage">过压 (Over Voltage)</string>
+    <string name="battery_health_cold">过冷 (Cold)</string>
+    <string name="battery_health_unspecified_failure">未指定的故障</string>
+    <string name="battery_tech_li_ion">Li-ion</string>
+    <string name="battery_usb_charging_format">USB 充电中 (%s)</string>
+    <string name="battery_time_until_full_hours_mins">距离充满还需 %1$d 小时 %2$d 分钟</string>
+    <string name="battery_time_until_full_mins">距离充满还需 %d 分钟</string>
+    <string name="battery_time_until_full_fallback">距离充满还需 42 分钟</string>
+    <string name="battery_time_remaining_fallback">预计还可使用 14 小时 20 分钟</string>
+
+    <!-- Camera Telemetry Strings -->
+    <string name="camera_front">前置摄像头</string>
+    <string name="camera_ultra_wide">超广角摄像头</string>
+    <string name="camera_telephoto">长焦摄像头</string>
+    <string name="camera_back">后置主摄像头</string>
+    <string name="camera_external">外接摄像头</string>
+    <string name="camera_lens_placement_front">前置 (自拍)</string>
+    <string name="camera_lens_placement_ultra_wide">后置 (超广角)</string>
+    <string name="camera_lens_placement_telephoto">后置 (长焦)</string>
+    <string name="camera_lens_placement_main">后置 (主摄)</string>
+    <string name="camera_lens_placement_external">外接</string>
+    <string name="camera_af_auto_focus">自动对焦</string>
+    <string name="camera_af_continuous_picture">连续图像对焦</string>
+    <string name="camera_af_continuous_video">连续视频对焦</string>
+    <string name="camera_af_macro">微距</string>
+    <string name="camera_af_edof">景深拓展 (EDOF)</string>
+    <string name="camera_af_off_manual">关闭 / 手动</string>
+    <string name="camera_video_stab_eis">EIS (电子视频防抖)</string>
+    <string name="camera_video_stab_ois">OIS (光学/预览防抖)</string>
+    <string name="camera_scene_auto">自动</string>
+    <string name="camera_scene_face_priority">人脸优先</string>
+    <string name="camera_scene_action">运动</string>
+    <string name="camera_scene_portrait">人像</string>
+    <string name="camera_scene_landscape">风景</string>
+    <string name="camera_scene_night">夜景</string>
+    <string name="camera_scene_hdr">HDR</string>
+    <string name="camera_scene_steady_photo">防抖拍照</string>
+    <string name="camera_scene_sunset">日落</string>
+    <string name="camera_scene_party">派对</string>
+    <string name="camera_scene_candlelight">烛光</string>
+    <string name="camera_scene_barcode">条形码扫描</string>
+    <string name="camera_scene_high_speed_video">高速视频</string>
+    <string name="camera_wb_auto">自动</string>
+    <string name="camera_wb_daylight">日光</string>
+    <string name="camera_wb_cloudy">阴天</string>
+    <string name="camera_wb_incandescent">白炽灯</string>
+    <string name="camera_wb_fluorescent">荧光灯</string>
+    <string name="camera_wb_shade">阴影</string>
+    <string name="camera_focus_calibrated">已校准 (CALIBRATED)</string>
+    <string name="camera_focus_approximate">近似 (APPROXIMATE)</string>
+    <string name="camera_focus_uncalibrated">未校准 (UNCALIBRATED)</string>
+    <string name="camera_cfa_rggb">RGGB (Bayer)</string>
+    <string name="camera_cfa_grbg">GRBG (Bayer)</string>
+    <string name="camera_cfa_gbrg">GBRG (Bayer)</string>
+    <string name="camera_cfa_bggr">BGGR (Bayer)</string>
+    <string name="camera_cfa_rgb">RGB</string>
+    <string name="camera_cfa_monochrome">黑白单色</string>
+    <string name="camera_cfa_custom">Bayer / 自定义</string>
+
+    <!-- CPU Telemetry Strings -->
+    <string name="cpu_fallback_arm_hardware">ARM 硬件</string>
+    <string name="cpu_type_octa_core_format">八核 (%d 核心)</string>
+    <string name="cpu_type_cores_format">%d 核心</string>
+    <string name="cpu_soc_qualcomm_format">高通骁龙 (%s)</string>
+    <string name="cpu_soc_exynos_format">三星猎户座 Exynos (%s)</string>
+    <string name="cpu_soc_mediatek_format">联发科天玑 (%s)</string>
+    <string name="cpu_soc_tensor_format">谷歌 Tensor (%s)</string>
+    <string name="cpu_soc_arm_format">ARM 处理器 (%s)</string>
+
+    <!-- Display Telemetry Strings -->
+    <string name="display_brightness_mode_adaptive">自动调节 (Adaptive)</string>
+    <string name="display_brightness_mode_manual">手动调节 (Manual)</string>
+    <string name="display_orientation_portrait">竖屏 (Portrait)</string>
+    <string name="display_orientation_landscape">横屏 (Landscape)</string>
+    <string name="display_screen_name_builtin">内置屏幕</string>
+    <string name="display_physical_size_format">%.1f 英寸</string>
+    <string name="display_timeout_seconds_format">%d 秒</string>
+    <string name="display_timeout_1_minute">1 分钟</string>
+    <string name="display_timeout_minutes_format">%d 分钟</string>
+
+    <!-- Network & Connectivity Telemetry Strings -->
+    <string name="geo_location_fallback">新德里，德里，印度</string>
+    <string name="data_state_connected">已连接</string>
+    <string name="data_state_connecting">正在连接</string>
+    <string name="data_state_suspended">已挂起</string>
+    <string name="roaming_active">漫游已激活</string>
+    <string name="roaming_home_network">非漫游 (归属网络)</string>
+    <string name="lbl_off">关闭</string>
+    <string name="lease_dynamic_cellular">动态蜂窝租约</string>
+    <string name="network_mobile_data_format">%s 移动数据</string>
+    <string name="network_mobile_data_type_format">移动数据 (%s)</string>
+    <string name="security_usim_aka">USIM / AKA 身份验证</string>
+    <string name="mobile_signal_strong">信号强 (-82 dBm)</string>
+    <string name="wifi_location_service_disabled_ssid">位置服务已禁用 (获取 Wi-Fi SSID 所需)</string>
+    <string name="wifi_location_permission_required_ssid">获取 Wi-Fi SSID 需要位置权限</string>
+    <string name="wifi_location_service_disabled_bssid">位置服务已禁用</string>
+    <string name="wifi_permission_required">需要权限</string>
+    <string name="carrier_no_carrier">无运营商卡</string>
+    <string name="lbl_none">无</string>
+    <string name="network_no_signal">无信号</string>
+    <string name="lbl_unavailable">不可用</string>
+    <string name="lbl_enabled">已启用</string>
+    <string name="usb_debugging_active">USB 调试已开启</string>
+
+    <!-- Install Source Telemetry Strings -->
+    <string name="install_source_package_installer">软件包安装程序</string>
+    <string name="install_source_amazon">Amazon Appstore</string>
+    <string name="install_source_samsung">三星 Galaxy Store</string>
+    <string name="install_source_huawei">华为应用市场 AppGallery</string>
+    <string name="install_source_xiaomi">小米应用商店 GetApps</string>
+    <string name="install_source_oppo">OPPO 应用商店</string>
+    <string name="install_source_vivo">Vivo 应用商店</string>
+    <string name="install_source_adb">ADB / 侧载安装</string>
+    <string name="install_source_system_app">预装系统应用</string>
+    <string name="install_source_side_loaded_unknown">侧载 / 未知来源</string>
+
+    <!-- Thermal & Sensor Telemetry Strings -->
+    <string name="thermal_status_normal_cool">正常 (凉爽)</string>
+    <string name="thermal_status_warm">偏热 (Warm)</string>
+    <string name="thermal_status_elevated">温度升高 (Elevated)</string>
+    <string name="thermal_zone_type_soc">SoC 芯片系统</string>
+    <string name="thermal_zone_type_battery">电池</string>
+    <string name="thermal_zone_type_camera">摄像头传感器</string>
+    <string name="thermal_zone_type_cpu">CPU 核心组</string>
+    <string name="thermal_zone_type_gpu">GPU 图形子系统</string>
+    <string name="thermal_zone_type_ambient">系统环境</string>
+    <string name="lbl_unknown_sensor">未知传感器</string>
+    <string name="lbl_generic_vendor">通用厂商</string>
+    <string name="sensor_type_accelerometer">加速度计</string>
+    <string name="sensor_type_magnetometer">磁力计 (电子罗盘)</string>
+    <string name="sensor_type_gyroscope">陀螺仪</string>
+    <string name="sensor_type_ambient_light">环境光传感器</string>
+    <string name="sensor_type_barometer">气压计 (压力)</string>
+    <string name="sensor_type_proximity">距离传感器</string>
+    <string name="sensor_type_gravity">重力传感器</string>
+    <string name="sensor_type_linear_acceleration">线性加速度计</string>
+    <string name="sensor_type_rotation_vector">旋转矢量传感器</string>
+    <string name="sensor_type_orientation">方向传感器 (旧版)</string>
+    <string name="sensor_type_relative_humidity">相对湿度传感器</string>
+    <string name="sensor_type_ambient_temp">环境温度传感器</string>
+    <string name="sensor_type_step_counter">计步器</string>
+    <string name="sensor_type_step_detector">步态检测器</string>
+    <string name="sensor_type_heart_rate">心率传感器</string>
+    <string name="sensor_type_stationary_detector">静止检测器</string>
+    <string name="sensor_type_motion_detector">运动检测器</string>
+    <string name="sensor_type_hardware_format">硬件传感器 (类型 %d)</string>
+
+    <!-- Widget Formatting Strings -->
+    <string name="widget_used_gb_short_format">%.2f GB</string>
+    <string name="widget_used_gb_format">已用 %.2f GB</string>
+    <string name="widget_temp_format">温度: %.1f ℃</string>
+    <string name="widget_battery_format">电量: %d%%</string>
+
+    <string name="manifest_fgs_special_use_subtype">实时遥测悬浮窗监视器</string>
+    <string name="location_not_available">位置不可用</string>
+    <string name="battery_time_calculating">正在计算...</string>
+    <string name="carrier_cellular_network">蜂窝移动网络</string>
+    <string name="network_wi_fi">Wi-Fi</string>
 </resources>

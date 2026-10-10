@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
 import android.os.Build
+import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.model.BatteryInfo
 import java.io.File
 import java.util.Collections
@@ -34,34 +35,34 @@ object BatteryTelemetry {
                     statusInt == BatteryManager.BATTERY_STATUS_FULL
 
             val statusStr = when (statusInt) {
-                BatteryManager.BATTERY_STATUS_CHARGING -> "Charging"
-                BatteryManager.BATTERY_STATUS_DISCHARGING -> "Discharging"
-                BatteryManager.BATTERY_STATUS_FULL -> "Full"
-                BatteryManager.BATTERY_STATUS_NOT_CHARGING -> "Not Charging"
-                else -> if (isCharging) "Charging" else "Discharging"
+                BatteryManager.BATTERY_STATUS_CHARGING -> context.getString(R.string.battery_status_charging)
+                BatteryManager.BATTERY_STATUS_DISCHARGING -> context.getString(R.string.battery_status_discharging)
+                BatteryManager.BATTERY_STATUS_FULL -> context.getString(R.string.battery_status_full)
+                BatteryManager.BATTERY_STATUS_NOT_CHARGING -> context.getString(R.string.battery_status_not_charging)
+                else -> if (isCharging) context.getString(R.string.battery_status_charging) else context.getString(R.string.battery_status_discharging)
             }
 
             val chargePlug = batteryStatus?.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) ?: -1
             val powerSource = when {
-                chargePlug == BatteryManager.BATTERY_PLUGGED_AC -> "AC Charger"
-                chargePlug == BatteryManager.BATTERY_PLUGGED_USB -> "USB Port"
-                chargePlug == BatteryManager.BATTERY_PLUGGED_WIRELESS -> "Wireless"
-                chargePlug == 4 -> "Dock"
-                else -> if (isCharging) "Connected" else "Battery"
+                chargePlug == BatteryManager.BATTERY_PLUGGED_AC -> context.getString(R.string.battery_power_source_ac)
+                chargePlug == BatteryManager.BATTERY_PLUGGED_USB -> context.getString(R.string.battery_power_source_usb)
+                chargePlug == BatteryManager.BATTERY_PLUGGED_WIRELESS -> context.getString(R.string.battery_power_source_wireless)
+                chargePlug == 4 -> context.getString(R.string.battery_power_source_dock)
+                else -> if (isCharging) context.getString(R.string.battery_power_source_connected) else context.getString(R.string.battery_power_source_battery)
             }
 
             val healthInt = batteryStatus?.getIntExtra(BatteryManager.EXTRA_HEALTH, -1) ?: -1
             val healthStr = when (healthInt) {
-                BatteryManager.BATTERY_HEALTH_GOOD -> "Good"
-                BatteryManager.BATTERY_HEALTH_OVERHEAT -> "Overheat"
-                BatteryManager.BATTERY_HEALTH_DEAD -> "Dead"
-                BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> "Over Voltage"
-                BatteryManager.BATTERY_HEALTH_COLD -> "Cold"
-                BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE -> "Unspecified Failure"
-                else -> "Good"
+                BatteryManager.BATTERY_HEALTH_GOOD -> context.getString(R.string.battery_health_good)
+                BatteryManager.BATTERY_HEALTH_OVERHEAT -> context.getString(R.string.battery_health_overheat)
+                BatteryManager.BATTERY_HEALTH_DEAD -> context.getString(R.string.battery_health_dead)
+                BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> context.getString(R.string.battery_health_over_voltage)
+                BatteryManager.BATTERY_HEALTH_COLD -> context.getString(R.string.battery_health_cold)
+                BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE -> context.getString(R.string.battery_health_unspecified_failure)
+                else -> context.getString(R.string.battery_health_good)
             }
 
-            val tech = batteryStatus?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY)?.takeIf { it.isNotBlank() } ?: "Li-ion"
+            val tech = batteryStatus?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY)?.takeIf { it.isNotBlank() } ?: context.getString(R.string.battery_tech_li_ion)
             val voltageRaw = batteryStatus?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1) ?: 4150
             val voltageVolts = if (voltageRaw > 0) voltageRaw / 1000f else 4.15f
 
@@ -82,11 +83,7 @@ object BatteryTelemetry {
                 currentAbs > 10_000 -> currentAbs / 1_000f
                 // Milliamperes (OEM drivers like Samsung/Xiaomi returning mA between 1 and 10,000)
                 currentAbs in 1..10_000 -> currentAbs.toFloat()
-                // 0 or unsupported by hardware driver -> dynamic telemetry fallback
-                else -> {
-                    val jitter = ((System.currentTimeMillis() / 200) % 70).toFloat()
-                    if (isCharging) (1150f + jitter) else (420f + jitter)
-                }
+                else -> 0f
             }
 
             val powerWatts = voltageVolts * (currentMa / 1000f)
@@ -103,17 +100,14 @@ object BatteryTelemetry {
                 val cycleCount = batteryStatus?.getIntExtra(BatteryManager.EXTRA_CYCLE_COUNT, -1) ?: -1
                 if (cycleCount > 0) chargeCycles = cycleCount
             }
-            if (chargeCycles <= 0) {
-                chargeCycles = 142
-            }
 
             val capacitySystemMah = getBatteryCapacity(context, batteryStatus)
-            val healthPercent = when (healthStr) {
-                "Good" -> (100 - (chargeCycles / 60)).coerceIn(80, 100)
-                "Overheat", "Cold" -> 90
-                "Over Voltage" -> 85
-                "Dead", "Unspecified Failure" -> 50
-                else -> 98
+            val healthPercent = when (healthInt) {
+                BatteryManager.BATTERY_HEALTH_GOOD -> if (chargeCycles > 0) (100 - (chargeCycles / 60)).coerceIn(80, 100) else 100
+                BatteryManager.BATTERY_HEALTH_OVERHEAT, BatteryManager.BATTERY_HEALTH_COLD -> 90
+                BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> 85
+                BatteryManager.BATTERY_HEALTH_DEAD, BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE -> 50
+                else -> 100
             }
 
             val chargeCounterRaw = try {
@@ -148,12 +142,20 @@ object BatteryTelemetry {
                         val minutes = (timeRemainingMs / (1000 * 60)).toInt()
                         val hours = minutes / 60
                         val mins = minutes % 60
-                        if (hours > 0) "$hours hrs $mins mins until full" else "$mins mins until full"
-                    } else "42 mins until full"
-                } else "42 mins until full"
-            } else "14 hrs 20 mins remaining"
+                        if (hours > 0) {
+                            context.getString(R.string.battery_time_until_full_hours_mins, hours, mins)
+                        } else {
+                            context.getString(R.string.battery_time_until_full_mins, mins)
+                        }
+                    } else context.getString(R.string.battery_time_calculating)
+                } else context.getString(R.string.battery_time_calculating)
+            } else context.getString(R.string.battery_status_discharging)
 
-            val usbStatusStr = if (isCharging) "USB Charging ($powerSource)" else "Discharging"
+            val usbStatusStr = if (isCharging) {
+                context.getString(R.string.battery_usb_charging_format, powerSource)
+            } else {
+                context.getString(R.string.battery_status_discharging)
+            }
 
             BatteryInfo(
                 currentMa = currentMa,

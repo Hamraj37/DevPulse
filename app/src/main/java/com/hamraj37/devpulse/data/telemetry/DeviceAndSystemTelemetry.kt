@@ -9,6 +9,7 @@ import android.os.SystemClock
 import android.provider.Settings
 import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
+import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.model.DeviceInfo
 import com.hamraj37.devpulse.data.model.DrmDetails
 import com.hamraj37.devpulse.data.model.SystemInfo
@@ -47,27 +48,27 @@ object DeviceAndSystemTelemetry {
             val deviceType = try {
                 val sw = context.resources.configuration.smallestScreenWidthDp
                 when {
-                    Build.FINGERPRINT.contains("generic") || Build.MODEL.contains("google_sdk") || Build.HARDWARE.contains("goldfish") || Build.HARDWARE.contains("ranchu") -> "Emulator / Smartphone"
-                    sw >= 600 -> "Tablet"
-                    else -> "Smartphone"
+                    Build.FINGERPRINT.contains("generic") || Build.MODEL.contains("google_sdk") || Build.HARDWARE.contains("goldfish") || Build.HARDWARE.contains("ranchu") -> context.getString(R.string.device_type_emulator_smartphone)
+                    sw >= 600 -> context.getString(R.string.device_type_tablet)
+                    else -> context.getString(R.string.device_type_smartphone)
                 }
             } catch (_: Throwable) {
-                "Smartphone"
+                context.getString(R.string.device_type_smartphone)
             }
 
             DeviceInfo(
                 deviceName = deviceName,
-                model = Build.MODEL.ifEmpty { "Android Device" },
-                manufacturer = Build.MANUFACTURER.ifEmpty { "Generic" },
-                deviceCode = Build.DEVICE.ifEmpty { "generic" },
-                board = Build.BOARD.ifEmpty { "unknown" },
-                hardware = Build.HARDWARE.ifEmpty { "unknown" },
-                brand = Build.BRAND.ifEmpty { "android" },
+                model = Build.MODEL.ifEmpty { context.getString(R.string.lbl_generic_android_device) },
+                manufacturer = Build.MANUFACTURER.ifEmpty { context.getString(R.string.lbl_generic) },
+                deviceCode = Build.DEVICE.ifEmpty { context.getString(R.string.lbl_unknown) },
+                board = Build.BOARD.ifEmpty { context.getString(R.string.lbl_unknown) },
+                hardware = Build.HARDWARE.ifEmpty { context.getString(R.string.lbl_unknown) },
+                brand = Build.BRAND.ifEmpty { context.getString(R.string.lbl_unknown) },
                 androidDeviceId = androidId,
-                buildFingerprint = Build.FINGERPRINT.ifEmpty { "unknown" },
+                buildFingerprint = Build.FINGERPRINT.ifEmpty { context.getString(R.string.lbl_unknown) },
                 deviceType = deviceType,
                 esimSupported = esimSupported,
-                networkType = getNetworkTypeString(tm),
+                networkType = getNetworkTypeString(context, tm),
                 networkOperator1 = sim1Op,
                 networkOperator2 = sim2Op
             )
@@ -79,7 +80,17 @@ object DeviceAndSystemTelemetry {
     fun getSystemInfo(context: Context): SystemInfo {
         return try {
             val sdkInt = Build.VERSION.SDK_INT
-            val releaseStr = Build.VERSION.RELEASE.ifEmpty { "$sdkInt" }
+            val releaseStr = Build.VERSION.RELEASE.ifEmpty {
+                when (sdkInt) {
+                    36 -> "16"
+                    35 -> "15"
+                    34 -> "14"
+                    33 -> "13"
+                    31, 32 -> "12"
+                    30 -> "11"
+                    else -> "$sdkInt"
+                }
+            }
             val codeName = if (Build.VERSION.CODENAME.isNotBlank() && !Build.VERSION.CODENAME.equals("REL", ignoreCase = true)) {
                 Build.VERSION.CODENAME
             } else {
@@ -87,10 +98,10 @@ object DeviceAndSystemTelemetry {
             }
 
             val securityPatch = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                try { Build.VERSION.SECURITY_PATCH } catch (_: Throwable) { "Unknown" }
-            } else "Unknown"
+                try { Build.VERSION.SECURITY_PATCH } catch (_: Throwable) { context.getString(R.string.lbl_unknown_capital) }
+            } else context.getString(R.string.lbl_unknown_capital)
 
-            val kernelVersion = getKernelVersion()
+            val kernelVersion = getKernelVersion(context)
             val defaultLocale = Locale.getDefault()
             val language = try {
                 val langName = defaultLocale.getDisplayLanguage(Locale.ENGLISH)
@@ -133,22 +144,22 @@ object DeviceAndSystemTelemetry {
                 releaseDate = getReleaseDate(sdkInt),
                 apiLevel = sdkInt,
                 securityPatch = securityPatch,
-                bootloader = getBootloaderVersion(),
-                buildNumber = Build.DISPLAY.ifEmpty { Build.ID.ifEmpty { "unknown" } },
-                basebandVersion = getBasebandVersion(),
+                bootloader = getBootloaderVersion(context),
+                buildNumber = Build.DISPLAY.ifEmpty { Build.ID.ifEmpty { context.getString(R.string.lbl_unknown) } },
+                basebandVersion = getBasebandVersion(context),
                 javaVm = (System.getProperty("java.vm.name") ?: "ART") + " " + (System.getProperty("java.vm.version") ?: "2.1.0"),
                 kernelVersion = kernelVersion,
                 language = language,
                 timezone = timeZone,
                 openGlEsVersion = "OpenGL ES 3.2",
-                rootManagementApps = if (isRooted()) "Rooted" else "Not Rooted",
-                seLinux = getSELinuxStatus(),
+                rootManagementApps = if (isRooted()) context.getString(R.string.lbl_rooted) else context.getString(R.string.lbl_not_rooted),
+                seLinux = getSELinuxStatus(context),
                 googlePlayServices = getGooglePlayServicesVersion(context),
                 systemUptime = uptime,
                 vulkanVersion = "Vulkan 1.3",
-                trebleSupported = "Yes",
-                seamlessUpdates = "Yes (A/B)",
-                dynamicPartitions = "Yes",
+                trebleSupported = context.getString(R.string.lbl_yes),
+                seamlessUpdates = context.getString(R.string.lbl_yes_ab),
+                dynamicPartitions = context.getString(R.string.lbl_yes),
                 drmInfo = drm
             )
         } catch (_: Throwable) {
@@ -167,22 +178,22 @@ object DeviceAndSystemTelemetry {
         }
     }
 
-    private fun getBootloaderVersion(): String {
+    private fun getBootloaderVersion(context: Context): String {
         val lockState = getSystemProperty("ro.boot.flash.locked")
-        if (lockState == "1") return "Locked"
-        if (lockState == "0") return "Unlocked"
+        if (lockState == "1") return context.getString(R.string.bootloader_locked)
+        if (lockState == "0") return context.getString(R.string.bootloader_unlocked)
 
         val vbmetaState = getSystemProperty("ro.boot.vbmeta.device_state")
-        if (vbmetaState != null && vbmetaState.isNotBlank()) {
+        if (!vbmetaState.isNullOrBlank()) {
             return vbmetaState.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
         }
 
         val verifiedBootState = getSystemProperty("ro.boot.verifiedbootstate")
-        if (verifiedBootState == "orange") return "Unlocked"
-        if (verifiedBootState == "green") return "Locked"
+        if (verifiedBootState == "orange") return context.getString(R.string.bootloader_unlocked)
+        if (verifiedBootState == "green") return context.getString(R.string.bootloader_locked)
         
         val oemUnlock = getSystemProperty("ro.oem_unlock_supported")
-        if (oemUnlock == "1") return "Unlock Supported"
+        if (oemUnlock == "1") return context.getString(R.string.bootloader_unlock_supported)
 
         val b1 = Build.BOOTLOADER
         if (b1.isNotEmpty() && !b1.equals("unknown", ignoreCase = true)) {
@@ -200,7 +211,7 @@ object DeviceAndSystemTelemetry {
         if (!b4.isNullOrBlank()) {
             return b4
         }
-        return "Unknown"
+        return context.getString(R.string.lbl_unknown_capital)
     }
 
     private fun getCodeName(sdkInt: Int): String {
@@ -239,32 +250,32 @@ object DeviceAndSystemTelemetry {
         }
     }
 
-    private fun getBasebandVersion(): String {
+    private fun getBasebandVersion(context: Context): String {
         return try {
-            Build.getRadioVersion() ?: "Unknown"
+            Build.getRadioVersion() ?: context.getString(R.string.lbl_unknown_capital)
         } catch (_: Throwable) {
-            "Unknown"
+            context.getString(R.string.lbl_unknown_capital)
         }
     }
 
-    private fun getKernelVersion(): String {
+    private fun getKernelVersion(context: Context): String {
         return try {
             val file = File("/proc/version")
             if (file.exists()) {
                 val text = file.readText().trim()
                 if (text.length > 70) text.substring(0, 70) + "..." else text
-            } else System.getProperty("os.version") ?: "Linux Kernel"
+            } else System.getProperty("os.version") ?: context.getString(R.string.lbl_linux_kernel)
         } catch (_: Throwable) {
-            System.getProperty("os.version") ?: "Linux Kernel"
+            System.getProperty("os.version") ?: context.getString(R.string.lbl_linux_kernel)
         }
     }
 
-    private fun getSELinuxStatus(): String {
+    private fun getSELinuxStatus(context: Context): String {
         return try {
             val file = File("/sys/fs/selinux/enforce")
-            if (file.exists() && file.readText().trim() == "1") "Enforcing" else "Permissive"
+            if (file.exists() && file.readText().trim() == "1") context.getString(R.string.selinux_enforcing) else context.getString(R.string.selinux_permissive)
         } catch (_: Throwable) {
-            "Enforcing"
+            context.getString(R.string.selinux_enforcing)
         }
     }
 
@@ -286,7 +297,7 @@ object DeviceAndSystemTelemetry {
             val info = context.packageManager.getPackageInfo("com.google.android.gms", 0)
             "${info.versionName} (${if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) info.longVersionCode else @Suppress("DEPRECATION") info.versionCode})"
         } catch (_: Throwable) {
-            "Not Available"
+            context.getString(R.string.lbl_not_available)
         }
     }
 
@@ -350,9 +361,9 @@ object DeviceAndSystemTelemetry {
         }
     }
 
-    private fun getNetworkTypeString(tm: TelephonyManager?): String {
+    private fun getNetworkTypeString(context: Context, tm: TelephonyManager?): String {
         return try {
-            if (tm == null) return "Cellular / Wi-Fi"
+            if (tm == null) return context.getString(R.string.network_cellular_wifi)
             val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 try {
                     tm.dataNetworkType
@@ -368,16 +379,16 @@ object DeviceAndSystemTelemetry {
                 TelephonyManager.NETWORK_TYPE_LTE -> "4G LTE"
                 TelephonyManager.NETWORK_TYPE_HSDPA, TelephonyManager.NETWORK_TYPE_HSPA, TelephonyManager.NETWORK_TYPE_HSPAP, TelephonyManager.NETWORK_TYPE_UMTS -> "3G WCDMA"
                 TelephonyManager.NETWORK_TYPE_EDGE, TelephonyManager.NETWORK_TYPE_GPRS -> "2G GSM"
-                else -> "Cellular / Wi-Fi"
+                else -> context.getString(R.string.network_cellular_wifi)
             }
         } catch (_: Throwable) {
-            "Cellular / Wi-Fi"
+            context.getString(R.string.network_cellular_wifi)
         }
     }
 
     private fun getDualSimOperators(context: Context, tm: TelephonyManager?): Pair<String, String> {
-        var op1 = "SIM 1 (Not Inserted)"
-        var op2 = "SIM 2 (Not Inserted)"
+        var op1 = context.getString(R.string.sim_1_not_inserted)
+        var op2 = context.getString(R.string.sim_2_not_inserted)
 
         try {
             val subManager = context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as? SubscriptionManager
@@ -436,12 +447,34 @@ object DeviceAndSystemTelemetry {
     private fun getCustomOsName(): String {
         val manufacturer = Build.MANUFACTURER.lowercase(Locale.ROOT)
         val brand = Build.BRAND.lowercase(Locale.ROOT)
-        val model = Build.MODEL.lowercase(Locale.ROOT)
         val fingerprint = Build.FINGERPRINT.lowercase(Locale.ROOT)
         
         val isOnePlus = manufacturer.contains("oneplus") || brand.contains("oneplus") || fingerprint.contains("oneplus")
         val isRealme = manufacturer.contains("realme") || brand.contains("realme") || fingerprint.contains("realme")
         val isOppo = manufacturer.contains("oppo") || brand.contains("oppo") || manufacturer.contains("oplus") || brand.contains("oplus")
+
+        val crdroidVer = getSystemProperty("ro.crdroid.version")
+            ?: getSystemProperty("ro.crdroid.display.version")
+            ?: getSystemProperty("ro.crdroid.build.version")
+        if (!crdroidVer.isNullOrBlank()) return "crDroid"
+
+        val lineageVer = getSystemProperty("ro.lineage.version")
+            ?: getSystemProperty("ro.lineage.display.version")
+        if (!lineageVer.isNullOrBlank()) return "LineageOS"
+
+        val peVer = getSystemProperty("ro.pixelexperience.version")
+            ?: getSystemProperty("ro.pe.version")
+        if (!peVer.isNullOrBlank()) return "PixelExperience"
+
+        val evoVer = getSystemProperty("ro.evolution.version")
+            ?: getSystemProperty("ro.evo.version")
+        if (!evoVer.isNullOrBlank()) return "Evolution X"
+
+        val risingVer = getSystemProperty("ro.rising.version")
+        if (!risingVer.isNullOrBlank()) return "RisingOS"
+
+        val matrixxVer = getSystemProperty("ro.matrixx.version")
+        if (!matrixxVer.isNullOrBlank()) return "Project Matrixx"
 
         val hyperOsVersion = getSystemProperty("ro.mi.os.version.name")
         if (!hyperOsVersion.isNullOrBlank()) return "HyperOS"
@@ -464,18 +497,45 @@ object DeviceAndSystemTelemetry {
         val emuiVersion = getSystemProperty("ro.build.version.emui")
         if (!emuiVersion.isNullOrBlank()) return "EMUI"
 
-        val vivoOs = getSystemProperty("ro.vivo.os.name")
-        if (!vivoOs.isNullOrBlank()) return vivoOs
+        val magicVersion = getSystemProperty("ro.build.version.magic")
+        if (!magicVersion.isNullOrBlank()) return "MagicOS"
 
-        // Fallback checks using display ID or standard OS names
-        val displayId = Build.DISPLAY.lowercase(Locale.ROOT)
-        if (displayId.contains("oxygen")) return "OxygenOS"
-        if (displayId.contains("coloros")) return "ColorOS"
-        if (displayId.contains("realme")) return "Realme UI"
-        if (displayId.contains("miui")) return "MIUI"
-        if (displayId.contains("hyperos")) return "HyperOS"
-        if (displayId.contains("emui")) return "EMUI"
-        if (displayId.contains("funtouch")) return "Funtouch OS"
+        val vivoOs = getSystemProperty("ro.vivo.os.name") ?: getSystemProperty("ro.iqoo.os.name")
+        if (!vivoOs.isNullOrBlank()) {
+            if (vivoOs.contains("origin", ignoreCase = true)) return "OriginOS"
+            if (vivoOs.contains("funtouch", ignoreCase = true)) return "Funtouch OS"
+            return vivoOs
+        }
+
+        val nothingVer = getSystemProperty("ro.nothing.version")
+        if (!nothingVer.isNullOrBlank()) return "Nothing OS"
+
+        val xosVer = getSystemProperty("ro.xos.version")
+        if (!xosVer.isNullOrBlank()) return "XOS"
+
+        val hiosVer = getSystemProperty("ro.hios.version")
+        if (!hiosVer.isNullOrBlank()) return "HiOS"
+
+        // Fallback checks using modversion, display ID, or standard OS names
+        val modVer = getSystemProperty("ro.modversion") ?: ""
+        val displayId = Build.DISPLAY
+        val combinedRomInfo = "$modVer $displayId".lowercase(Locale.ROOT)
+
+        if (combinedRomInfo.contains("crdroid")) return "crDroid"
+        if (combinedRomInfo.contains("lineage")) return "LineageOS"
+        if (combinedRomInfo.contains("pixelexperience")) return "PixelExperience"
+        if (combinedRomInfo.contains("evolution")) return "Evolution X"
+        if (combinedRomInfo.contains("risingos")) return "RisingOS"
+        if (combinedRomInfo.contains("matrixx")) return "Project Matrixx"
+        if (combinedRomInfo.contains("oxygen")) return "OxygenOS"
+        if (combinedRomInfo.contains("coloros")) return "ColorOS"
+        if (combinedRomInfo.contains("realme")) return "Realme UI"
+        if (combinedRomInfo.contains("miui")) return "MIUI"
+        if (combinedRomInfo.contains("hyperos")) return "HyperOS"
+        if (combinedRomInfo.contains("emui")) return "EMUI"
+        if (combinedRomInfo.contains("originos") || combinedRomInfo.contains("origin os") || combinedRomInfo.contains("origin")) return "OriginOS"
+        if (combinedRomInfo.contains("funtouch")) return "Funtouch OS"
+        if (combinedRomInfo.contains("nothing")) return "Nothing OS"
 
         return when {
             manufacturer.contains("samsung") || brand.contains("samsung") -> "One UI"
@@ -483,7 +543,10 @@ object DeviceAndSystemTelemetry {
             manufacturer.contains("xiaomi") || brand.contains("xiaomi") || manufacturer.contains("poco") || manufacturer.contains("redmi") -> "HyperOS / MIUI"
             isRealme -> "Realme UI"
             isOppo -> "ColorOS"
-            manufacturer.contains("vivo") || brand.contains("vivo") || manufacturer.contains("iqoo") -> "Funtouch OS"
+            manufacturer.contains("vivo") || brand.contains("vivo") || manufacturer.contains("iqoo") -> {
+                val osVer = (getSystemProperty("ro.vivo.os.version") ?: "") + " " + Build.DISPLAY
+                if (osVer.contains("origin", ignoreCase = true)) "OriginOS" else "OriginOS / Funtouch OS"
+            }
             manufacturer.contains("motorola") || brand.contains("motorola") -> "My UX / Hello UI"
             manufacturer.contains("google") || brand.contains("google") -> "Pixel UI"
             manufacturer.contains("nothing") || brand.contains("nothing") -> "Nothing OS"
@@ -492,30 +555,234 @@ object DeviceAndSystemTelemetry {
         }
     }
 
+    private fun cleanVersionString(raw: String): String {
+        val s = raw.trim()
+        if (s.isBlank() || s.equals("unknown", ignoreCase = true)) return ""
+        
+        val cleanedText = s.replace(Regex("(?i)^(OS|V|v|ColorOS|OxygenOS|Realme\\s*UI|Funtouch\\s*OS|OriginOS|Origin\\s*OS|Nothing\\s*OS|MIUI|HyperOS|EMUI|crDroidAndroid|crDroid|LineageOS)\\s*[-_]?"), "")
+        
+        val match = Regex("""\d+(\.\d+)+""").find(cleanedText)
+        if (match != null) {
+            return match.value
+        }
+        
+        val singleDigitMatch = Regex("""\d+""").find(cleanedText)
+        if (singleDigitMatch != null) {
+            return singleDigitMatch.value
+        }
+
+        return cleanedText
+    }
+
+    private fun parseCrDroidVersion(defaultVersion: String): String? {
+        val props = listOfNotNull(
+            getSystemProperty("ro.crdroid.version"),
+            getSystemProperty("ro.crdroid.display.version"),
+            getSystemProperty("ro.crdroid.build.version"),
+            getSystemProperty("ro.crdroid.os.version"),
+            getSystemProperty("ro.modversion"),
+            getSystemProperty("ro.build.display.id"),
+            Build.DISPLAY
+        )
+
+        for (prop in props) {
+            if (prop.isBlank() || prop.equals("unknown", ignoreCase = true)) continue
+
+            // 1. First look for explicit v10.11 / v10.x format (v followed by digits.digits)
+            val vMatch = Regex("(?i)v(\\d+\\.\\d+)").find(prop)
+            if (vMatch != null) {
+                val ver = vMatch.groupValues[1]
+                if (ver != defaultVersion && ver != "14.0" && ver != "15.0" && ver != "13.0" && ver != "12.0") {
+                    return ver
+                }
+            }
+
+            // 2. Extract all decimal numbers e.g. ["14.0", "10.11"] and take non-Android base version
+            val allDecimals = Regex("""\d+\.\d+""").findAll(prop).map { it.value }.toList()
+            val crVer = allDecimals.lastOrNull { 
+                it != defaultVersion && it != "14.0" && it != "15.0" && it != "13.0" && it != "12.0" 
+            }
+            if (crVer != null) {
+                return crVer
+            }
+
+            // 3. Clean string if pure version number e.g. "10.11"
+            val cleaned = cleanVersionString(prop)
+            if (cleaned.isNotBlank() && cleaned != "14.0" && cleaned != "15.0" && cleaned != "13.0" && cleaned != defaultVersion) {
+                return cleaned
+            }
+        }
+        return null
+    }
+
     private fun getCustomOsVersion(defaultVersion: String): String {
+        // 1. crDroid Detection
+        val modVer = getSystemProperty("ro.modversion") ?: ""
+        val crDisplay = getSystemProperty("ro.crdroid.version") 
+            ?: getSystemProperty("ro.crdroid.display.version") 
+            ?: getSystemProperty("ro.crdroid.build.version") 
+            ?: ""
+        val displayId = Build.DISPLAY
+
+        if (crDisplay.isNotBlank() || modVer.contains("crDroid", ignoreCase = true) || displayId.contains("crDroid", ignoreCase = true)) {
+            val crdroidVer = parseCrDroidVersion(defaultVersion)
+            if (!crdroidVer.isNullOrBlank()) {
+                return crdroidVer
+            }
+        }
+
+        // 2. Samsung One UI Detection
+        val samsungOneUiProp = getSystemProperty("ro.build.version.oneui")
+        if (!samsungOneUiProp.isNullOrBlank()) {
+            val num = samsungOneUiProp.toIntOrNull()
+            if (num != null && num >= 10000) {
+                val major = num / 10000
+                val minor = (num % 10000) / 100
+                return if (minor > 0) "$major.$minor" else "$major.0"
+            }
+        }
+        try {
+            val semIntField = Build.VERSION::class.java.getDeclaredField("SEM_PLATFORM_INT")
+            val semInt = semIntField.getInt(null)
+            if (semInt >= 90000) {
+                val major = (semInt - 90000) / 10000
+                val minor = ((semInt - 90000) % 10000) / 100
+                return if (minor > 0) "$major.$minor" else "$major.0"
+            }
+        } catch (_: Throwable) {}
+
+        val samsungSemProp = getSystemProperty("ro.build.version.sem")
+        if (!samsungSemProp.isNullOrBlank()) {
+            val cleaned = cleanVersionString(samsungSemProp)
+            if (cleaned.isNotBlank()) return cleaned
+        }
+
+        // 3. Xiaomi / Redmi / Poco (HyperOS / MIUI)
         val hyperOsVersion = getSystemProperty("ro.mi.os.version.name")
-        if (!hyperOsVersion.isNullOrBlank()) return hyperOsVersion
+        if (!hyperOsVersion.isNullOrBlank()) {
+            val cleaned = cleanVersionString(hyperOsVersion)
+            if (cleaned.isNotBlank()) return cleaned
+        }
 
         val miuiVersion = getSystemProperty("ro.miui.ui.version.name")
-        if (!miuiVersion.isNullOrBlank()) return miuiVersion
+        if (!miuiVersion.isNullOrBlank()) {
+            val cleaned = cleanVersionString(miuiVersion)
+            if (cleaned.isNotBlank()) return cleaned
+        }
 
+        // 4. OnePlus / Oppo / Realme (ColorOS / OxygenOS / Realme UI)
         val oplusDisplayVersion = getSystemProperty("ro.build.version.oplusrom.display")
-        if (!oplusDisplayVersion.isNullOrBlank()) return oplusDisplayVersion
+        if (!oplusDisplayVersion.isNullOrBlank()) {
+            val cleaned = cleanVersionString(oplusDisplayVersion)
+            if (cleaned.isNotBlank()) return cleaned
+        }
 
         val oplusVersion = getSystemProperty("ro.build.version.oplusrom")
-        if (!oplusVersion.isNullOrBlank()) return oplusVersion
+        if (!oplusVersion.isNullOrBlank()) {
+            val cleaned = cleanVersionString(oplusVersion)
+            if (cleaned.isNotBlank()) return cleaned
+        }
 
         val oxygenVersion = getSystemProperty("ro.oxygen.version")
+        if (!oxygenVersion.isNullOrBlank()) {
+            val cleaned = cleanVersionString(oxygenVersion)
+            if (cleaned.isNotBlank()) return cleaned
+        }
+
         val buildOxygenVersion = getSystemProperty("ro.build.version.oxygen")
-        if (!oxygenVersion.isNullOrBlank()) return oxygenVersion
-        if (!buildOxygenVersion.isNullOrBlank()) return buildOxygenVersion
+        if (!buildOxygenVersion.isNullOrBlank()) {
+            val cleaned = cleanVersionString(buildOxygenVersion)
+            if (cleaned.isNotBlank()) return cleaned
+        }
 
+        val realmeVersion = getSystemProperty("ro.realme.version")
+        if (!realmeVersion.isNullOrBlank()) {
+            val cleaned = cleanVersionString(realmeVersion)
+            if (cleaned.isNotBlank()) return cleaned
+        }
+
+        // 5. Vivo / iQOO (OriginOS / Funtouch OS)
+        val vivoOsVersion = getSystemProperty("ro.vivo.os.version")
+            ?: getSystemProperty("ro.iqoo.os.version")
+            ?: getSystemProperty("ro.vivo.os.build.display.id")
+            ?: getSystemProperty("ro.funtouch.version")
+            ?: getSystemProperty("ro.vivo.product.version")
+        if (!vivoOsVersion.isNullOrBlank()) {
+            val cleaned = cleanVersionString(vivoOsVersion)
+            if (cleaned.isNotBlank()) return cleaned
+        }
+
+        // 6. Nothing OS
+        val nothingVersion = getSystemProperty("ro.nothing.version")
+        if (!nothingVersion.isNullOrBlank()) {
+            val cleaned = cleanVersionString(nothingVersion)
+            if (cleaned.isNotBlank()) return cleaned
+        }
+
+        // 7. Huawei / Honor (EMUI / MagicOS)
         val emuiVersion = getSystemProperty("ro.build.version.emui")
-        if (!emuiVersion.isNullOrBlank()) return emuiVersion
+        if (!emuiVersion.isNullOrBlank()) {
+            val cleaned = cleanVersionString(emuiVersion)
+            if (cleaned.isNotBlank()) return cleaned
+        }
 
-        val vivoOs = getSystemProperty("ro.vivo.os.version")
-        if (!vivoOs.isNullOrBlank()) return vivoOs
-        
-        return defaultVersion
+        val magicOsVersion = getSystemProperty("ro.build.version.magic")
+        if (!magicOsVersion.isNullOrBlank()) {
+            val cleaned = cleanVersionString(magicOsVersion)
+            if (cleaned.isNotBlank()) return cleaned
+        }
+
+        // 8. Motorola (Hello UI / My UX)
+        val motVersion = getSystemProperty("ro.mot.build.customer.version")
+        if (!motVersion.isNullOrBlank()) {
+            val cleaned = cleanVersionString(motVersion)
+            if (cleaned.isNotBlank()) return cleaned
+        }
+
+        // 9. Transsion (Infinix XOS / Tecno HiOS / Itel itelOS)
+        val xosVersion = getSystemProperty("ro.xos.version")
+        if (!xosVersion.isNullOrBlank()) {
+            val cleaned = cleanVersionString(xosVersion)
+            if (cleaned.isNotBlank()) return cleaned
+        }
+
+        val hiosVersion = getSystemProperty("ro.hios.version")
+        if (!hiosVersion.isNullOrBlank()) {
+            val cleaned = cleanVersionString(hiosVersion)
+            if (cleaned.isNotBlank()) return cleaned
+        }
+
+        // 10. Other Custom ROMs (LineageOS, PixelExperience, Evolution X, etc.)
+        val lineageVersion = getSystemProperty("ro.lineage.version") ?: getSystemProperty("ro.lineage.display.version")
+        if (!lineageVersion.isNullOrBlank()) {
+            val cleaned = cleanVersionString(lineageVersion)
+            if (cleaned.isNotBlank()) return cleaned
+        }
+
+        val evoVersion = getSystemProperty("ro.evolution.version") ?: getSystemProperty("ro.evo.version")
+        if (!evoVersion.isNullOrBlank()) {
+            val cleaned = cleanVersionString(evoVersion)
+            if (cleaned.isNotBlank()) return cleaned
+        }
+
+        val peVersion = getSystemProperty("ro.pixelexperience.version") ?: getSystemProperty("ro.pe.version")
+        if (!peVersion.isNullOrBlank()) {
+            val cleaned = cleanVersionString(peVersion)
+            if (cleaned.isNotBlank()) return cleaned
+        }
+
+        // Check modversion and display ID for Lineage / custom ROM build strings
+        val fallbackModVer = getSystemProperty("ro.modversion") ?: ""
+        val fallbackDisplayId = Build.DISPLAY
+        val combinedRomInfo = "$fallbackModVer $fallbackDisplayId"
+
+        if (combinedRomInfo.contains("Lineage", ignoreCase = true)) {
+            val matches = Regex("""(?i)v?(\d+\.\d+)""").findAll(combinedRomInfo).map { it.groupValues[1] }.toList()
+            val targetVer = matches.firstOrNull()
+            if (targetVer != null) return targetVer
+        }
+
+        val fallbackClean = cleanVersionString(defaultVersion)
+        return if (fallbackClean.isNotBlank()) fallbackClean else defaultVersion
     }
 }
