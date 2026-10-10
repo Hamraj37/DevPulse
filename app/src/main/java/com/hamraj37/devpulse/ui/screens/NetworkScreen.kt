@@ -535,7 +535,7 @@ fun NetworkScreen(
     }
 
     if (showPublicIpDialog) {
-        val carrierOrIsp = if (isCellular) networkInfo.networkOperatorName else "Reliance Jio Infocomm Ltd"
+        val carrierOrIsp = if (isCellular) networkInfo.networkOperatorName else networkInfo.networkOperatorName.ifEmpty { stringResource(R.string.network_wi_fi) }
         AlertDialog(
             onDismissRequest = { showPublicIpDialog = false },
             title = { Text(text = stringResource(R.string.network_public_ip_title), fontWeight = FontWeight.Bold) },
