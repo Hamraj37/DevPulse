@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.data.model.TestItem
 import com.hamraj37.devpulse.data.model.TestStatus
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
-import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
+import com.hamraj37.devpulse.ui.theme.ActiveBadge
 
 @Composable
 fun TestsScreen(
@@ -250,7 +250,7 @@ fun TestCardItem(
                 Surface(
                     shape = RoundedCornerShape(12.dp),
                     color = when (test.status) {
-                        TestStatus.PASSED -> OliveActiveBadge.copy(alpha = 0.15f)
+                        TestStatus.PASSED -> ActiveBadge.copy(alpha = 0.15f)
                         TestStatus.FAILED -> MaterialTheme.colorScheme.errorContainer
                         else -> MaterialTheme.colorScheme.surfaceContainerHigh
                     },
@@ -265,7 +265,7 @@ fun TestCardItem(
                             },
                             contentDescription = null,
                             tint = when (test.status) {
-                                TestStatus.PASSED -> OliveActiveBadge
+                                TestStatus.PASSED -> ActiveBadge
                                 TestStatus.FAILED -> MaterialTheme.colorScheme.error
                                 else -> MaterialTheme.colorScheme.primary
                             },
@@ -297,7 +297,7 @@ fun TestCardItem(
             Surface(
                 shape = RoundedCornerShape(12.dp),
                 color = when (test.status) {
-                    TestStatus.PASSED -> OliveActiveBadge
+                    TestStatus.PASSED -> ActiveBadge
                     TestStatus.FAILED -> MaterialTheme.colorScheme.error
                     else -> MaterialTheme.colorScheme.surfaceContainerHigh
                 }

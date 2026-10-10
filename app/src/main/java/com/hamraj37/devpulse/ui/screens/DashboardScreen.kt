@@ -61,7 +61,7 @@ import com.hamraj37.devpulse.data.model.TestStatus
 import com.hamraj37.devpulse.ui.components.CircularRamGauge
 import com.hamraj37.devpulse.ui.components.LiveSparklineChart
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
-import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
+import com.hamraj37.devpulse.ui.theme.ActiveBadge
 import androidx.compose.foundation.clickable
 import androidx.compose.runtime.remember
 import java.io.File
@@ -369,7 +369,7 @@ fun DashboardScreen(
                             modifier = Modifier
                                 .size(8.dp)
                                 .clip(CircleShape)
-                                .background(OliveActiveBadge)
+                                .background(ActiveBadge)
                         )
                         Text(
                             text = stringResource(R.string.lbl_passed) + ": $passedCount",

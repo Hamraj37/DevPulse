@@ -205,8 +205,8 @@ fun SettingsScreen(
                 icon = Icons.Rounded.Palette,
                 title = stringResource(R.string.settings_theme_color),
                 subtitle = when (uiState.themePalette) {
-                    "Olive" -> "Olive (Default)"
-                    "Monet", "Dynamic", "Monet (Dynamic)" -> "Olive (Default)"
+                    "Red" -> "Red (Default)"
+                    "Monet", "Dynamic", "Monet (Dynamic)", "Olive" -> "Red (Default)"
                     else -> uiState.themePalette
                 },
                 onClick = { showThemePaletteDialog = true }
@@ -408,11 +408,10 @@ fun SettingsScreen(
 
     if (showThemePaletteDialog) {
         val paletteOptions = listOf(
-            "Red" to ("Red" to androidx.compose.ui.graphics.Color(0xFFB3261E)),
+            "Red" to ("Red (Default)" to androidx.compose.ui.graphics.Color(0xFFB3261E)),
             "Blue" to ("Blue" to androidx.compose.ui.graphics.Color(0xFF1B62B2)),
             "Green" to ("Green" to androidx.compose.ui.graphics.Color(0xFF2D6A4F)),
-            "Yellow" to ("Yellow" to androidx.compose.ui.graphics.Color(0xFF755B00)),
-            "Olive" to ("Olive (Default)" to androidx.compose.ui.graphics.Color(0xFF6B8E23))
+            "Yellow" to ("Yellow" to androidx.compose.ui.graphics.Color(0xFF755B00))
         )
         AlertDialog(
             onDismissRequest = { showThemePaletteDialog = false },

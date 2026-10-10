@@ -11,47 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-private val OliveDarkColorScheme = darkColorScheme(
-    primary = OliveActiveBadge,
-    onPrimary = OliveOnPrimary,
-    primaryContainer = OliveDarkSurfaceVariant,
-    onPrimaryContainer = OlivePrimaryContainer,
-    secondary = OliveSecondary,
-    onSecondary = OliveOnSecondary,
-    secondaryContainer = OliveDarkBanner,
-    onSecondaryContainer = OliveSecondaryContainer,
-    tertiary = OliveTertiary,
-    background = OliveDarkBackground,
-    surface = OliveDarkSurface,
-    surfaceContainer = OliveDarkSurfaceVariant,
-    surfaceContainerLow = OliveDarkSurfaceVariant,
-    surfaceContainerHigh = OliveDarkBanner,
-    surfaceContainerHighest = OliveDarkChipBg,
-    surfaceVariant = OliveDarkSurfaceVariant,
-    onSurface = Color(0xFFE2E3D8),
-    onSurfaceVariant = Color(0xFFC4C8BA)
-)
 
-private val OliveLightColorScheme = lightColorScheme(
-    primary = OlivePrimary,
-    onPrimary = OliveOnPrimary,
-    primaryContainer = OlivePrimaryContainer,
-    onPrimaryContainer = OliveOnPrimaryContainer,
-    secondary = OliveSecondary,
-    onSecondary = OliveOnSecondary,
-    secondaryContainer = OliveSecondaryContainer,
-    onSecondaryContainer = OliveOnSecondaryContainer,
-    tertiary = OliveTertiary,
-    background = OliveLightBackground,
-    surface = OliveLightSurface,
-    surfaceContainer = OliveLightCard,
-    surfaceContainerLow = OliveLightCard,
-    surfaceContainerHigh = OliveLightSurfaceVariant,
-    surfaceContainerHighest = OliveLightChipBg,
-    surfaceVariant = OliveLightSurfaceVariant,
-    onSurface = Color(0xFF1A1D16),
-    onSurfaceVariant = Color(0xFF44483D)
-)
 
 private val RedDarkColorScheme = darkColorScheme(
     primary = RedPrimaryDark,
@@ -224,8 +184,8 @@ private val YellowLightColorScheme = lightColorScheme(
 @Composable
 fun DevPulseTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    isMonetEnabled: Boolean = true,
-    themePalette: String = "Monet",
+    isMonetEnabled: Boolean = false,
+    themePalette: String = "Red",
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
@@ -237,8 +197,7 @@ fun DevPulseTheme(
         themePalette == "Blue" -> if (darkTheme) BlueDarkColorScheme else BlueLightColorScheme
         themePalette == "Green" -> if (darkTheme) GreenDarkColorScheme else GreenLightColorScheme
         themePalette == "Yellow" -> if (darkTheme) YellowDarkColorScheme else YellowLightColorScheme
-        themePalette == "Olive" -> if (darkTheme) OliveDarkColorScheme else OliveLightColorScheme
-        else -> if (darkTheme) OliveDarkColorScheme else OliveLightColorScheme
+        else -> if (darkTheme) RedDarkColorScheme else RedLightColorScheme
     }
 
     MaterialTheme(

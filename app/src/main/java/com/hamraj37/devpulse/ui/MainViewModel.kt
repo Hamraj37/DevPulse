@@ -64,8 +64,8 @@ data class MainUiState(
     val initialTool: ToolType? = null,
     val isLoading: Boolean = false,
     val themeMode: String = "System default", // "System default", "Light", "Dark"
-    val themePalette: String = "Monet", // "Monet", "Red", "Blue", "Green", "Yellow", "Olive"
-    val isMonetEnabled: Boolean = true,
+    val themePalette: String = "Red", // "Red", "Blue", "Green", "Yellow"
+    val isMonetEnabled: Boolean = false,
     val updateInfo: GithubReleaseInfo? = null,
     val showUpdateDialog: Boolean = false,
     val activeTestId: String? = null
@@ -81,8 +81,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         val savedTheme = prefs.getString("theme_mode", "System default") ?: "System default"
-        val savedPalette = prefs.getString("theme_palette", "Monet") ?: "Monet"
-        val savedMonet = prefs.getBoolean("is_monet_enabled", true)
+        val savedPalette = prefs.getString("theme_palette", "Red") ?: "Red"
+        val savedMonet = prefs.getBoolean("is_monet_enabled", false)
         _uiState.update {
             it.copy(
                 themeMode = savedTheme,
@@ -113,8 +113,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _uiState.update { state ->
             val newPalette = if (enabled) {
                 "Monet"
-            } else if (state.themePalette == "Monet" || state.themePalette == "Dynamic") {
-                "Olive"
+            } else if (state.themePalette == "Monet" || state.themePalette == "Dynamic" || state.themePalette == "Olive") {
+                "Red"
             } else {
                 state.themePalette
             }

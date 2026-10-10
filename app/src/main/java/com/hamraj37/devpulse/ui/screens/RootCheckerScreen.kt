@@ -51,7 +51,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hamraj37.devpulse.ui.MainUiState
-import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
+import com.hamraj37.devpulse.ui.theme.ActiveBadge
 import kotlinx.coroutines.delay
 import java.io.File
 
@@ -194,7 +194,7 @@ fun RootCheckerScreen(
                             Text(
                                 text = if (isRooted) stringResource(R.string.root_checker_status_rooted) else stringResource(R.string.root_checker_status_not_rooted),
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                                color = if (isRooted) MaterialTheme.colorScheme.error else OliveActiveBadge
+                                color = if (isRooted) MaterialTheme.colorScheme.error else ActiveBadge
                             )
                         }
                     }

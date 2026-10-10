@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.data.model.ThermalInfo
 import com.hamraj37.devpulse.data.model.ThermalZone
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
-import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
+import com.hamraj37.devpulse.ui.theme.ActiveBadge
 import java.util.Locale
 
 @Composable
@@ -101,7 +101,7 @@ fun ThermalScreen(
                             Text(
                                 text = stringResource(R.string.lbl_status) + " " + thermalInfo.overallStatus,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = OliveActiveBadge,
+                                color = ActiveBadge,
                                 maxLines = 1
                             )
                         }
@@ -146,7 +146,7 @@ fun ThermalScreen(
                         .fillMaxWidth()
                         .height(8.dp)
                         .clip(RoundedCornerShape(4.dp)),
-                    color = OliveActiveBadge,
+                    color = ActiveBadge,
                     trackColor = MaterialTheme.colorScheme.surfaceContainerHighest
                 )
             }
@@ -190,7 +190,7 @@ fun ThermalCardItem(
     val (tempColor, tempLabel) = when {
         temp >= 48f -> Color(0xFFE53935) to highLabel
         temp >= 40f -> Color(0xFFFB8C00) to warmLabel
-        else -> OliveActiveBadge to normalLabel
+        else -> ActiveBadge to normalLabel
     }
 
     Card(

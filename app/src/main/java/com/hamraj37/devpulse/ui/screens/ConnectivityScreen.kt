@@ -48,7 +48,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hamraj37.devpulse.data.model.ConnectivityInfo
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
-import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
+import com.hamraj37.devpulse.ui.theme.ActiveBadge
 
 @Composable
 fun ConnectivityScreen(
@@ -294,7 +294,7 @@ fun ConnectivityFeatureRow(
                 Icon(
                     imageVector = if (isSupported) Icons.Rounded.CheckCircle else Icons.Rounded.Cancel,
                     contentDescription = null,
-                    tint = if (isSupported) OliveActiveBadge else MaterialTheme.colorScheme.error,
+                    tint = if (isSupported) ActiveBadge else MaterialTheme.colorScheme.error,
                     modifier = Modifier.size(20.dp)
                 )
                 Text(

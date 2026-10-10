@@ -37,7 +37,7 @@ import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.model.BatteryInfo
 import com.hamraj37.devpulse.ui.components.LiveSparklineChart
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
-import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
+import com.hamraj37.devpulse.ui.theme.ActiveBadge
 import java.util.Locale
 
 @Composable
@@ -102,7 +102,7 @@ fun BatteryScreen(
                             Text(
                                 text = batteryInfo.usbStatus,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = OliveActiveBadge,
+                                color = ActiveBadge,
                                 maxLines = 1
                             )
                         }

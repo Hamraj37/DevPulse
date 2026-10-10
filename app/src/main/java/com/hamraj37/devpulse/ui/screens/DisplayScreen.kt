@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import com.hamraj37.devpulse.data.model.DisplayInfo
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
-import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
+import com.hamraj37.devpulse.ui.theme.ActiveBadge
 
 @Composable
 fun DisplayScreen(
@@ -104,7 +104,7 @@ fun DisplayScreen(
 
                         Surface(
                             shape = RoundedCornerShape(8.dp),
-                            color = OliveActiveBadge
+                            color = ActiveBadge
                         ) {
                             Text(
                                 text = displayInfo.screenName,

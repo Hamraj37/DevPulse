@@ -54,7 +54,7 @@ import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.data.model.NetworkInfo
 import com.hamraj37.devpulse.ui.components.LiveSparklineChart
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
-import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
+import com.hamraj37.devpulse.ui.theme.ActiveBadge
 
 @Composable
 fun NetworkScreen(
@@ -95,7 +95,7 @@ fun NetworkScreen(
 
     val badgeColor = when {
         isDisconnected -> MaterialTheme.colorScheme.error
-        else -> OliveActiveBadge
+        else -> ActiveBadge
     }
 
     val bannerSubtitle = when {

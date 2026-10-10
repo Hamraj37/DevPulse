@@ -55,7 +55,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.ui.MainUiState
-import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
+import com.hamraj37.devpulse.ui.theme.ActiveBadge
 import kotlinx.coroutines.delay
 import java.security.MessageDigest
 
@@ -198,7 +198,7 @@ fun PlayIntegrityScreen(
                             Text(
                                 text = if (playServicesInfo.first) stringResource(R.string.play_integrity_device_meets_integrity) else stringResource(R.string.play_integrity_play_services_check_required),
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = if (playServicesInfo.first) OliveActiveBadge else MaterialTheme.colorScheme.error,
+                                color = if (playServicesInfo.first) ActiveBadge else MaterialTheme.colorScheme.error,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
@@ -439,7 +439,7 @@ fun IntegrityVerdictRow(
 
         Surface(
             shape = RoundedCornerShape(10.dp),
-            color = if (badgeText != null) MaterialTheme.colorScheme.surfaceContainerHigh else if (isPassed) OliveActiveBadge else MaterialTheme.colorScheme.error
+            color = if (badgeText != null) MaterialTheme.colorScheme.surfaceContainerHigh else if (isPassed) ActiveBadge else MaterialTheme.colorScheme.error
         ) {
             Row(
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),

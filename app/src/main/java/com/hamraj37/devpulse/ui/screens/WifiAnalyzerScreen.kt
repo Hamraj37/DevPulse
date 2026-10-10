@@ -61,7 +61,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
+import com.hamraj37.devpulse.ui.theme.ActiveBadge
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -470,7 +470,7 @@ fun WifiAnalyzerScreen(
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     filteredResults.forEach { item ->
                         val badgeColor = when (item.signalQuality) {
-                            "Best" -> OliveActiveBadge
+                            "Best" -> ActiveBadge
                             "Fair" -> MaterialTheme.colorScheme.tertiary
                             else -> MaterialTheme.colorScheme.error
                         }
@@ -577,7 +577,7 @@ fun WifiDetailBottomSheet(
     onDismissRequest: () -> Unit
 ) {
     val badgeColor = when (item.signalQuality) {
-        "Best" -> OliveActiveBadge
+        "Best" -> ActiveBadge
         "Fair" -> MaterialTheme.colorScheme.tertiary
         else -> MaterialTheme.colorScheme.error
     }

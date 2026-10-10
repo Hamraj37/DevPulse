@@ -64,7 +64,7 @@ import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.data.model.SensorInfo
 import com.hamraj37.devpulse.data.model.SensorSpec
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
-import com.hamraj37.devpulse.ui.theme.OliveActiveBadge
+import com.hamraj37.devpulse.ui.theme.ActiveBadge
 import java.util.Locale
 
 @Composable
@@ -267,7 +267,7 @@ fun SensorCardItem(
 
                     Surface(
                         shape = RoundedCornerShape(8.dp),
-                        color = if (sensorSpec.isWakeUpSensor) OliveActiveBadge.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceContainerHighest
+                        color = if (sensorSpec.isWakeUpSensor) ActiveBadge.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceContainerHighest
                     ) {
                         Text(
                             text = if (sensorSpec.isWakeUpSensor) stringResource(R.string.sensors_wakeup) else stringResource(R.string.sensors_non_wakeup),
@@ -276,7 +276,7 @@ fun SensorCardItem(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 11.sp
                             ),
-                            color = if (sensorSpec.isWakeUpSensor) OliveActiveBadge else MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = if (sensorSpec.isWakeUpSensor) ActiveBadge else MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1
                         )
                     }
