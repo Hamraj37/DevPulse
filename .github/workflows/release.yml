@@ -66,18 +66,75 @@ jobs:
           VERSION_NAME=$(grep -oP 'versionName\s*=\s*"\K[^"]+' app/build.gradle.kts || echo "1.0.0")
           echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
 
-      - name: Generate Changelog
+      - name: Generate Professional Changelog
         id: changelog
         run: |
           PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          COMMIT_RANGE="HEAD"
           if [ -n "$PREV_TAG" ]; then
-            CHANGELOG=$(git log ${PREV_TAG}..HEAD --pretty=format:"- %s" --no-merges)
+            COMMIT_RANGE="${PREV_TAG}..HEAD"
           else
-            CHANGELOG=$(git log -n 15 --pretty=format:"- %s" --no-merges)
+            COMMIT_RANGE="HEAD~15..HEAD"
           fi
+
+          RAW_COMMITS=$(git log$COMMIT_RANGE --pretty=format:"%h|%s" --no-merges 2>/dev/null || git log -n 15 --pretty=format:"%h|%s" --no-merges)
+
+          FEATS=""
+          FIXES=""
+          PERF=""
+          OTHERS=""
+
+          while IFS='|' read -r hash subject; do
+            [ -z "$hash" ] && continue
+            
+            case "$subject" in
+              feat*|Feat*)
+                clean_msg=$(echo "$subject" | sed -E 's/^[Ff]eat(\([^)]+\))?:\s*//')
+                FEATS+="- $clean_msg (\`$hash\`)"$'\n'
+                ;;
+              fix*|Fix*)
+                clean_msg=$(echo "$subject" | sed -E 's/^[Ff]ix(\([^)]+\))?:\s*//')
+                FIXES+="- $clean_msg (\`$hash\`)"$'\n'
+                ;;
+              perf*|Perf*)
+                clean_msg=$(echo "$subject" | sed -E 's/^[Pp]erf(\([^)]+\))?:\s*//')
+                PERF+="- $clean_msg (\`$hash\`)"$'\n'
+                ;;
+              *)
+                OTHERS+="- $subject (\`$hash\`)"$'\n'
+                ;;
+            esac
+          done <<< "$RAW_COMMITS"
+
+          CHANGELOG=""
+          if [ -n "$FEATS" ]; then
+            CHANGELOG+="#### 🚀 Features & Enhancements"$'\n'"$FEATS"$'\n'
+          fi
+          if [ -n "$FIXES" ]; then
+            CHANGELOG+="#### 🐛 Bug Fixes & Stability"$'\n'"$FIXES"$'\n'
+          fi
+          if [ -n "$PERF" ]; then
+            CHANGELOG+="#### ⚡ Performance Improvements"$'\n'"$PERF"$'\n'
+          fi
+          if [ -n "$OTHERS" ]; then
+            CHANGELOG+="#### 🛠️ Maintenance & Other Changes"$'\n'"$OTHERS"$'\n'
+          fi
+
+          if [ -z "$CHANGELOG" ]; then
+            CHANGELOG="*General bug fixes and performance improvements.*"$'\n'
+          fi
+
           echo "changelog<<EOF" >> $GITHUB_OUTPUT
           echo "$CHANGELOG" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Calculate Release File Checksums
+        id: checksums
+        run: |
+          REL_SHA=$(sha256sum app/build/outputs/apk/release/app-release.apk | awk '{print $1}')
+          DBG_SHA=$(sha256sum app/build/outputs/apk/debug/app-debug.apk | awk '{print $1}')
+          echo "rel_sha=$REL_SHA" >> $GITHUB_OUTPUT
+          echo "dbg_sha=$DBG_SHA" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -86,22 +143,35 @@ jobs:
           tag_name: v${{ steps.get_version.outputs.version_name }}
           name: DevPulse v${{ steps.get_version.outputs.version_name }}
           body: |
-            ## DevPulse Android Telemetry & Diagnostic App ⚡
-            
-            ### Package Information
-            - **Version**: ${{ steps.get_version.outputs.version_name }}
-            - **Target SDK**: Android 11+ (API 30–36)
-            
-            ### 📝 Changelog
+            ## DevPulse v${{ steps.get_version.outputs.version_name }}
+
+            ### 📦 Build Overview
+            | Property | Detail |
+            | :--- | :--- |
+            | **Version** | `${{ steps.get_version.outputs.version_name }}` |
+            | **Target Platform** | Android 11+ (API 30–36) |
+            | **Build Engine** | Gradle & OpenJDK 17 (Temurin) |
+            | **Release Date** | ${{ github.event.repository.updated_at }} |
+
+            ---
+
+            ### 📋 What's Changed
             ${{ steps.changelog.outputs.changelog }}
-            
-            ### Features
-            - Real-time hardware telemetry streams (RAM, per-core CPU MHz, Battery, zRAM Swap).
-            - Hardware Diagnostic Suite with 14 interactive & automated hardware tests.
-            - Widevine DRM, Dual SIM carrier names, and system details.
-            - Jetpack Compose & Material 3 UI with Monet dynamic theming.
+
+            ---
+
+            ### 🛡️ Checksums (SHA-256)
+            ```text
+            app-release.apk: ${{ steps.checksums.outputs.rel_sha }}
+            app-debug.apk:   ${{ steps.checksums.outputs.dbg_sha }}
+            ```
+
+            ---
+
+            > **Note:** For optimal telemetry access (per-core CPU frequencies and zRAM stats), ensure required runtime permissions are granted upon launch.
           files: |
             app/build/outputs/apk/release/app-release.apk
             app/build/outputs/apk/debug/app-debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
