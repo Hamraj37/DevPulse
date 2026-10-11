@@ -955,7 +955,12 @@
 
     <string name="location_not_available">Location Unavailable</string>
     <string name="battery_time_calculating">Calculating...</string>
+    <string name="battery_time_until_full_1hour_mins">1 hr %d mins until full</string>
+    <string name="battery_time_until_full_1hour">1 hr until full</string>
+    <string name="battery_time_until_full_hours">%d hrs until full</string>
     <string name="battery_time_remaining_hours_mins">%1$d hrs %2$d mins remaining</string>
+    <string name="battery_time_remaining_1hour_mins">1 hr %d mins remaining</string>
+    <string name="battery_time_remaining_1hour">1 hr remaining</string>
     <string name="battery_time_remaining_mins">%d mins remaining</string>
     <string name="battery_time_remaining_hours">%d hrs remaining</string>
     <string name="battery_fully_charged">Fully Charged</string>

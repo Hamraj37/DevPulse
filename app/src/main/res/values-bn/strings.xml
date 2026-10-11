@@ -955,7 +955,12 @@
     <string name="manifest_fgs_special_use_subtype">রিয়েল-টাইম টেলিমেট্রি ডিসপ্লের জন্য ওভারলে মনিটর</string>
     <string name="location_not_available">অবস্থান পাওয়া যায়নি</string>
     <string name="battery_time_calculating">হিসাব করা হচ্ছে...</string>
+    <string name="battery_time_until_full_1hour_mins">১ ঘণ্টা %d মিনিট বাকি</string>
+    <string name="battery_time_until_full_1hour">১ ঘণ্টা বাকি</string>
+    <string name="battery_time_until_full_hours">%d ঘণ্টা বাকি</string>
     <string name="battery_time_remaining_hours_mins">%1$d ঘণ্টা %2$d মিনিট বাকি</string>
+    <string name="battery_time_remaining_1hour_mins">১ ঘণ্টা %d মিনিট বাকি</string>
+    <string name="battery_time_remaining_1hour">১ ঘণ্টা বাকি</string>
     <string name="battery_time_remaining_mins">%d মিনিট বাকি</string>
     <string name="battery_time_remaining_hours">%d ঘণ্টা বাকি</string>
     <string name="battery_fully_charged">সম্পূর্ণ চার্জড</string>

@@ -955,7 +955,12 @@
     <string name="manifest_fgs_special_use_subtype">Монитор наложения для отображения телеметрии в реальном времени</string>
     <string name="location_not_available">Геолокация недоступна</string>
     <string name="battery_time_calculating">Вычисление...</string>
+    <string name="battery_time_until_full_1hour_mins">1 ч %d мин до полной</string>
+    <string name="battery_time_until_full_1hour">1 ч до полной</string>
+    <string name="battery_time_until_full_hours">%d ч до полной</string>
     <string name="battery_time_remaining_hours_mins">Осталось %1$d ч %2$d мин</string>
+    <string name="battery_time_remaining_1hour_mins">Остался 1 ч %d мин</string>
+    <string name="battery_time_remaining_1hour">Остался 1 ч</string>
     <string name="battery_time_remaining_mins">Осталось %d мин</string>
     <string name="battery_time_remaining_hours">Осталось %d ч</string>
     <string name="battery_fully_charged">Полностью заряжена</string>

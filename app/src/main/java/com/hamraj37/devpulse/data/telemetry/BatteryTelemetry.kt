@@ -14,6 +14,41 @@ import kotlin.math.abs
 object BatteryTelemetry {
 
     private val powerHistoryList = Collections.synchronizedList(mutableListOf<Float>())
+    @Volatile
+    private var smoothedCurrentMa: Float = -1f
+    @Volatile
+    private var smoothedEstimatedMins: Float = -1f
+    @Volatile
+    private var lastChargingState: Boolean? = null
+
+    private fun getSmoothedCurrentMa(instantMa: Float, isCharging: Boolean): Float {
+        if (lastChargingState != isCharging) {
+            lastChargingState = isCharging
+            smoothedCurrentMa = instantMa
+            smoothedEstimatedMins = -1f
+            return instantMa
+        }
+        if (smoothedCurrentMa <= 0f || instantMa <= 0f) {
+            smoothedCurrentMa = instantMa
+            return instantMa
+        }
+        smoothedCurrentMa = 0.15f * instantMa + 0.85f * smoothedCurrentMa
+        return smoothedCurrentMa
+    }
+
+    private fun getSmoothedTimeMins(rawMins: Float): Int {
+        if (smoothedEstimatedMins <= 0f) {
+            smoothedEstimatedMins = rawMins
+            return Math.round(rawMins)
+        }
+        smoothedEstimatedMins = 0.10f * rawMins + 0.90f * smoothedEstimatedMins
+        val mins = Math.round(smoothedEstimatedMins)
+        return if (mins > 30) {
+            ((mins + 2) / 5) * 5
+        } else {
+            mins
+        }
+    }
 
     fun getBatteryInfo(context: Context): BatteryInfo {
         return try {
@@ -30,19 +65,19 @@ object BatteryTelemetry {
             val scale = batteryStatus?.getIntExtra(BatteryManager.EXTRA_SCALE, -1) ?: -1
             val batteryPct = if (level >= 0 && scale > 0) (level * 100 / scale.toFloat()).toInt() else 85
 
+            val chargePlug = batteryStatus?.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) ?: -1
+            val isPluggedIn = chargePlug > 0
             val statusInt = batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
             val isCharging = statusInt == BatteryManager.BATTERY_STATUS_CHARGING ||
                     statusInt == BatteryManager.BATTERY_STATUS_FULL
 
             val statusStr = when (statusInt) {
                 BatteryManager.BATTERY_STATUS_CHARGING -> context.getString(R.string.battery_status_charging)
-                BatteryManager.BATTERY_STATUS_DISCHARGING -> context.getString(R.string.battery_status_discharging)
-                BatteryManager.BATTERY_STATUS_FULL -> context.getString(R.string.battery_status_full)
                 BatteryManager.BATTERY_STATUS_NOT_CHARGING -> context.getString(R.string.battery_status_not_charging)
-                else -> if (isCharging) context.getString(R.string.battery_status_charging) else context.getString(R.string.battery_status_discharging)
+                BatteryManager.BATTERY_STATUS_FULL -> context.getString(R.string.battery_status_full)
+                BatteryManager.BATTERY_STATUS_DISCHARGING -> context.getString(R.string.battery_status_discharging)
+                else -> if (isPluggedIn && !isCharging) context.getString(R.string.battery_status_not_charging) else if (isCharging) context.getString(R.string.battery_status_charging) else context.getString(R.string.battery_status_discharging)
             }
-
-            val chargePlug = batteryStatus?.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) ?: -1
             val powerSource = when {
                 chargePlug == BatteryManager.BATTERY_PLUGGED_AC -> context.getString(R.string.battery_power_source_ac)
                 chargePlug == BatteryManager.BATTERY_PLUGGED_USB -> context.getString(R.string.battery_power_source_usb)
@@ -69,13 +104,23 @@ object BatteryTelemetry {
             val tempRaw = batteryStatus?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1) ?: 320
             val tempCelsius = if (tempRaw != -1) tempRaw / 10f else 32.0f
 
-            val rawCurrent = try {
+            val rawCurrentNow = try {
                 bm?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW) ?: 0
             } catch (_: Throwable) {
                 0
             }
 
+            val rawCurrentAvg = if (rawCurrentNow == 0) {
+                try {
+                    bm?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE) ?: 0
+                } catch (_: Throwable) {
+                    0
+                }
+            } else 0
+
+            val rawCurrent = if (rawCurrentNow != 0) rawCurrentNow else rawCurrentAvg
             val currentAbs = abs(rawCurrent)
+
             val currentMa: Float = when {
                 // Nanoamperes (> 10 million)
                 currentAbs > 10_000_000 -> currentAbs / 1_000_000f
@@ -83,10 +128,22 @@ object BatteryTelemetry {
                 currentAbs > 10_000 -> currentAbs / 1_000f
                 // Milliamperes (OEM drivers like Samsung/Xiaomi returning mA between 1 and 10,000)
                 currentAbs in 1..10_000 -> currentAbs.toFloat()
-                else -> 0f
+                else -> {
+                    if (isCharging) {
+                        when (chargePlug) {
+                            BatteryManager.BATTERY_PLUGGED_AC -> 1800f
+                            BatteryManager.BATTERY_PLUGGED_USB -> 700f
+                            BatteryManager.BATTERY_PLUGGED_WIRELESS -> 1000f
+                            else -> 1200f
+                        }
+                    } else {
+                        380f
+                    }
+                }
             }
 
-            val powerWatts = voltageVolts * (currentMa / 1000f)
+            val activeCurrentMa = getSmoothedCurrentMa(currentMa, isCharging)
+            val powerWatts = voltageVolts * (activeCurrentMa / 1000f)
 
             synchronized(powerHistoryList) {
                 powerHistoryList.add(powerWatts)
@@ -150,45 +207,50 @@ object BatteryTelemetry {
                     val totalMins = if (hwRemainingMins > 0) {
                         hwRemainingMins
                     } else {
-                        val remainingMah = (capacityEstimatedMah * (100 - batteryPct) / 100f).coerceAtLeast(100f)
-                        val effectiveMa = if (currentMa in 100f..10000f) currentMa else 1500f
-                        ((remainingMah / effectiveMa) * 60f).toInt().coerceIn(5, 600)
+                        val remainingMah = (capacityEstimatedMah * (100 - batteryPct) / 100f).coerceAtLeast(10f)
+                        val effectiveMa = if (activeCurrentMa >= 50f) activeCurrentMa else 1200f
+                        val cvFactor = if (batteryPct > 80) 1.0f + ((batteryPct - 80) * 0.015f) else 1.0f
+                        val rawMins = (remainingMah / effectiveMa) * 60f * cvFactor
+                        getSmoothedTimeMins(rawMins).coerceIn(1, 600)
                     }
 
                     val hours = totalMins / 60
                     val mins = totalMins % 60
-                    if (hours > 0 && mins > 0) {
-                        context.getString(R.string.battery_time_until_full_hours_mins, hours, mins)
-                    } else if (hours > 0) {
-                        context.getString(R.string.battery_time_until_full_hours_mins, hours, 0)
-                    } else {
-                        context.getString(R.string.battery_time_until_full_mins, mins.coerceAtLeast(1))
+                    when {
+                        hours == 1 && mins > 0 -> context.getString(R.string.battery_time_until_full_1hour_mins, mins)
+                        hours == 1 -> context.getString(R.string.battery_time_until_full_1hour)
+                        hours > 1 && mins > 0 -> context.getString(R.string.battery_time_until_full_hours_mins, hours, mins)
+                        hours > 1 -> context.getString(R.string.battery_time_until_full_hours, hours)
+                        else -> context.getString(R.string.battery_time_until_full_mins, mins.coerceAtLeast(1))
                     }
                 }
             } else {
                 if (batteryPct <= 0) {
                     context.getString(R.string.battery_time_remaining_mins, 0)
                 } else {
-                    val availableMah = (capacityEstimatedMah * batteryPct / 100f).coerceAtLeast(50f)
-                    val effectiveMa = if (currentMa in 100f..5000f) currentMa else 380f
-                    val totalMins = ((availableMah / effectiveMa) * 60f).toInt().coerceIn(10, 2880)
+                    val availableMah = (capacityEstimatedMah * batteryPct / 100f).coerceAtLeast(10f)
+                    val effectiveMa = if (activeCurrentMa >= 50f) activeCurrentMa else 380f
+                    val rawMins = (availableMah / effectiveMa) * 60f
+                    val totalMins = getSmoothedTimeMins(rawMins).coerceIn(1, 2880)
 
                     val hours = totalMins / 60
                     val mins = totalMins % 60
-                    if (hours > 0 && mins > 0) {
-                        context.getString(R.string.battery_time_remaining_hours_mins, hours, mins)
-                    } else if (hours > 0) {
-                        context.getString(R.string.battery_time_remaining_hours, hours)
-                    } else {
-                        context.getString(R.string.battery_time_remaining_mins, mins.coerceAtLeast(1))
+                    when {
+                        hours == 1 && mins > 0 -> context.getString(R.string.battery_time_remaining_1hour_mins, mins)
+                        hours == 1 -> context.getString(R.string.battery_time_remaining_1hour)
+                        hours > 1 && mins > 0 -> context.getString(R.string.battery_time_remaining_hours_mins, hours, mins)
+                        hours > 1 -> context.getString(R.string.battery_time_remaining_hours, hours)
+                        else -> context.getString(R.string.battery_time_remaining_mins, mins.coerceAtLeast(1))
                     }
                 }
             }
 
-            val usbStatusStr = if (isCharging) {
-                context.getString(R.string.battery_usb_charging_format, powerSource)
-            } else {
-                context.getString(R.string.battery_status_discharging)
+            val usbStatusStr = when {
+                statusInt == BatteryManager.BATTERY_STATUS_NOT_CHARGING -> context.getString(R.string.battery_status_not_charging)
+                statusInt == BatteryManager.BATTERY_STATUS_FULL -> context.getString(R.string.battery_status_full)
+                isCharging -> context.getString(R.string.battery_usb_charging_format, powerSource)
+                isPluggedIn -> context.getString(R.string.battery_status_not_charging)
+                else -> context.getString(R.string.battery_status_discharging)
             }
 
             BatteryInfo(
