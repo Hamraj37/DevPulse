@@ -952,7 +952,6 @@
     <string name="widget_temp_format">温度: %.1f ℃</string>
     <string name="widget_battery_format">电量: %d%%</string>
 
-    <string name="manifest_fgs_special_use_subtype">实时遥测悬浮窗监视器</string>
     <string name="location_not_available">位置不可用</string>
     <string name="battery_time_calculating">正在计算...</string>
     <string name="battery_time_until_full_1hour_mins">还需 1 小时 %d 分钟充满</string>

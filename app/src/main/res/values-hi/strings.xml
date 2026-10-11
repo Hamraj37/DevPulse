@@ -953,7 +953,6 @@
     <string name="widget_temp_format">तापमान: %.1f ℃</string>
     <string name="widget_battery_format">बैटरी: %d%%</string>
 
-    <string name="manifest_fgs_special_use_subtype">रीअल-टाइम टेलीमेट्री प्रदर्शन के लिए ओवरले मॉनिटर</string>
     <string name="location_not_available">स्थान अनुपलब्ध है</string>
     <string name="battery_time_calculating">गणना की जा रही है...</string>
     <string name="battery_time_until_full_1hour_mins">1 घंटा %d मिनट शेष</string>

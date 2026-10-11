@@ -952,7 +952,6 @@
     <string name="widget_temp_format">Темп: %.1f ℃</string>
     <string name="widget_battery_format">Батарея: %d%%</string>
 
-    <string name="manifest_fgs_special_use_subtype">Монитор наложения для отображения телеметрии в реальном времени</string>
     <string name="location_not_available">Геолокация недоступна</string>
     <string name="battery_time_calculating">Вычисление...</string>
     <string name="battery_time_until_full_1hour_mins">1 ч %d мин до полной</string>

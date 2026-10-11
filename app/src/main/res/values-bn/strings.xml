@@ -952,7 +952,6 @@
     <string name="widget_temp_format">তাপমাত্রা: %.1f ℃</string>
     <string name="widget_battery_format">ব্যাটারি: %d%%</string>
 
-    <string name="manifest_fgs_special_use_subtype">রিয়েল-টাইম টেলিমেট্রি ডিসপ্লের জন্য ওভারলে মনিটর</string>
     <string name="location_not_available">অবস্থান পাওয়া যায়নি</string>
     <string name="battery_time_calculating">হিসাব করা হচ্ছে...</string>
     <string name="battery_time_until_full_1hour_mins">১ ঘণ্টা %d মিনিট বাকি</string>
