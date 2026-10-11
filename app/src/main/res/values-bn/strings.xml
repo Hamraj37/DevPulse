@@ -1009,4 +1009,11 @@
     <string name="fmt_mah">%d mAh</string>
     <string name="fmt_battery_health_pct">%1$s (%2$d%%)</string>
     <string name="fmt_bullet_item">• %s</string>
+
+    <!-- Camera Unit Formatting Strings -->
+    <string name="fmt_camera_specs_header">%s স্পেসিফিকেশন</string>
+    <string name="fmt_camera_id_level">ক্যামেরা আইডি: %1$s • লেভেল: %2$s</string>
+    <string name="camera_ois_supported">সমর্থিত (হার্ডওয়্যার OIS)</string>
+    <string name="camera_flash_hardware">হ্যাঁ (হার্ডওয়্যার টর্চ/ফ্ল্যাশ)</string>
+    <string name="camera_flash_none">কোনো ফ্ল্যাশ নেই</string>
 </resources>

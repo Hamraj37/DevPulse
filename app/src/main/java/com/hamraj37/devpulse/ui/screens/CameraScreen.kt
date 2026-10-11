@@ -195,13 +195,13 @@ fun CameraScreen(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "${activeSpec.facing} " + stringResource(R.string.camera_specifications),
+                            text = stringResource(R.string.fmt_camera_specs_header, activeSpec.facing),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Camera ID: ${activeSpec.cameraId} • Level: ${activeSpec.hardwareLevel.substringBefore(" ")}",
+                            text = stringResource(R.string.fmt_camera_id_level, activeSpec.cameraId, activeSpec.hardwareLevel.substringBefore(" ")),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1
@@ -234,7 +234,7 @@ fun CameraScreen(
                 HorizontalDivider(color = dividerColor)
                 CameraSpecRow(stringResource(R.string.camera_apertures), activeSpec.apertures.joinToString(", ") { "f/$it" })
                 HorizontalDivider(color = dividerColor)
-                CameraSpecRow(stringResource(R.string.camera_ois), if (activeSpec.opticalStabilizationSupported) "Supported (Hardware OIS)" else stringResource(R.string.lbl_not_supported))
+                CameraSpecRow(stringResource(R.string.camera_ois), if (activeSpec.opticalStabilizationSupported) stringResource(R.string.camera_ois_supported) else stringResource(R.string.lbl_not_supported))
                 HorizontalDivider(color = dividerColor)
                 CameraSpecRow(stringResource(R.string.camera_focus_distance_calibration), activeSpec.focusDistanceCalibration)
                 HorizontalDivider(color = dividerColor)
@@ -281,7 +281,7 @@ fun CameraScreen(
 
                 // Section 4: Video, Flash & Features
                 CameraSpecSectionHeader(stringResource(R.string.camera_sec_video_flash))
-                CameraSpecRow(stringResource(R.string.camera_flash_available), if (activeSpec.flashAvailable) "Yes (Hardware Torch/Flash)" else "No Flash")
+                CameraSpecRow(stringResource(R.string.camera_flash_available), if (activeSpec.flashAvailable) stringResource(R.string.camera_flash_hardware) else stringResource(R.string.camera_flash_none))
                 HorizontalDivider(color = dividerColor)
                 CameraSpecRow(stringResource(R.string.camera_video_stabilization), activeSpec.videoStabilizationModes.joinToString(", "))
                 HorizontalDivider(color = dividerColor)

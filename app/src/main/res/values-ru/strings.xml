@@ -1009,4 +1009,11 @@
     <string name="fmt_mah">%d мАч</string>
     <string name="fmt_battery_health_pct">%1$s (%2$d%%)</string>
     <string name="fmt_bullet_item">• %s</string>
+
+    <!-- Camera Unit Formatting Strings -->
+    <string name="fmt_camera_specs_header">Характеристики: %s</string>
+    <string name="fmt_camera_id_level">ID камеры: %1$s • Уровень: %2$s</string>
+    <string name="camera_ois_supported">Поддерживается (Аппаратный OIS)</string>
+    <string name="camera_flash_hardware">Да (Аппаратная вспышка/фонарик)</string>
+    <string name="camera_flash_none">Нет вспышки</string>
 </resources>

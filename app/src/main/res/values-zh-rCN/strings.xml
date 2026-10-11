@@ -1009,4 +1009,11 @@
     <string name="fmt_mah">%d mAh</string>
     <string name="fmt_battery_health_pct">%1$s (%2$d%%)</string>
     <string name="fmt_bullet_item">• %s</string>
+
+    <!-- Camera Unit Formatting Strings -->
+    <string name="fmt_camera_specs_header">%s 规格</string>
+    <string name="fmt_camera_id_level">摄像头 ID: %1$s • 级别: %2$s</string>
+    <string name="camera_ois_supported">支持 (硬件光学防抖 OIS)</string>
+    <string name="camera_flash_hardware">是 (硬件闪光灯/手电筒)</string>
+    <string name="camera_flash_none">无闪光灯</string>
 </resources>
