@@ -866,6 +866,8 @@
     <string name="cpu_soc_mediatek_format">MediaTek Dimensity (%s)</string>
     <string name="cpu_soc_tensor_format">Google Tensor (%s)</string>
     <string name="cpu_soc_arm_format">ARM Processor (%s)</string>
+    <string name="cpu_soc_snapdragon_format">Snapdragon %1$s (%2$s)</string>
+    <string name="cpu_soc_model_hw_format">%1$s (%2$s)</string>
 
     <!-- Display Telemetry Strings -->
     <string name="display_brightness_mode_adaptive">Adaptive</string>
@@ -984,7 +986,7 @@
     <string name="fmt_battery_temp">%.1f ℃</string>
     <string name="fmt_active_count">%d Active</string>
     <string name="fmt_installed_count">%d Installed</string>
-    <string name="fmt_display_inches_hz">%.1f\" | 120 Hz</string>
+    <string name="fmt_display_inches_hz">%1$.1f\" | %2$s</string>
 
     <!-- System Screen String Resources -->
     <string name="fmt_system_android_version_letter">Android %1$s - %2$s</string>
@@ -1016,4 +1018,52 @@
     <string name="camera_ois_supported">Supported (Hardware OIS)</string>
     <string name="camera_flash_hardware">Yes (Hardware Torch/Flash)</string>
     <string name="camera_flash_none">No Flash</string>
+
+    <!-- Display Telemetry Formatting Strings -->
+    <string name="fmt_display_resolution_category">%1$d x %2$d Pixels (%3$s)</string>
+    <string name="fmt_display_density_bucket">%1$d dpi (%2$s)</string>
+    <string name="fmt_refresh_rate_hz">%.1f Hz</string>
+
+    <!-- Camera Telemetry Formatting Strings -->
+    <string name="fmt_camera_res_mp">%1$s • %2$s (%3$d x %4$d)</string>
+    <string name="fmt_camera_effective_mp">%.1f MP (%d x %d)</string>
+    <string name="fmt_pixel_pitch_binned">%.2f µm (%.2f µm binned)</string>
+    <string name="fmt_pixel_pitch">%.2f µm</string>
+    <string name="fmt_focal_length_equiv">%.2f mm (%dmm equiv)</string>
+    <string name="fmt_focal_length">%.2f mm</string>
+    <string name="fmt_ev_compensation_step">1/%.0f EV (%.1f to +%.1f EV)</string>
+    <string name="fmt_ae_af_awb_regions">AE: %1$d, AF: %2$d, AWB: %3$d</string>
+    <string name="fmt_max_output_streams">Raw: %1$d, Processed: %2$d, Stalling: %3$d</string>
+    <string name="fmt_mp_int">%d MP</string>
+    <string name="fmt_mp_float">%.1f MP</string>
+
+    <!-- System Telemetry Formatting Strings -->
+    <string name="fmt_uptime_days">%1$dd %2$dh %3$dm %4$ds</string>
+    <string name="fmt_uptime_hours">%1$dh %2$dm %3$ds</string>
+    <string name="fmt_timezone">%1$s (%2$s / %3$s)</string>
+    <string name="fmt_language_country">%1$s (%2$s, %3$s)</string>
+    <string name="fmt_language">%1$s (%2$s)</string>
+
+    <!-- Memory Telemetry Formatting Strings -->
+    <string name="fmt_memory_used_of_total">%.2f GB of %.2f GB Used</string>
+    <string name="fmt_memory_free">%.2f GB Free</string>
+
+    <!-- Network Telemetry Formatting Strings -->
+    <string name="fmt_speed_mbs">%.1f MB/s</string>
+    <string name="fmt_speed_kbs">%.1f KB/s</string>
+    <string name="fmt_speed_bs">%d B/s</string>
+    <string name="fmt_speed_zero">0 KB/s</string>
+    <string name="fmt_link_speed_mbps">%d Mbps</string>
+    <string name="fmt_freq_mhz">%d MHz</string>
+    <string name="fmt_wifi_channel">CH %d</string>
+
+    <!-- Thermal Formatting Strings -->
+    <string name="fmt_thermal_zones_count">%d Zones</string>
+    <string name="fmt_fps">%d FPS</string>
+    <string name="lbl_offline">Offline</string>
+
+    <!-- Donate Dialog Strings -->
+    <string name="donate_support_title">Donate &amp; Support</string>
+    <string name="donate_support_body">DevPulse is completely ad-free and open source! Your donation supports ongoing development.</string>
+    <string name="donate_upi_id_label">UPI ID for Donation</string>
 </resources>

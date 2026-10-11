@@ -109,6 +109,7 @@ class TelemetryRepository(private val context: Context) {
                     testsTotal = currentTests.size.coerceAtLeast(16),
                     displaySummary = "${display.resolutionWidthPx} x ${display.resolutionHeightPx}",
                     displaySizeInches = display.physicalSizeInches.takeIf { it > 0 } ?: 6.7,
+                    refreshRate = display.refreshRate,
                     storageTotalBytes = memory.internalStorageTotalBytes,
                     storageUsedBytes = memory.internalStorageUsedBytes,
                     storageFreeBytes = memory.internalStorageFreeBytes,

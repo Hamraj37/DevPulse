@@ -111,16 +111,9 @@ fun CpuScreen(
                     maxItemsInEachRow = 4
                 ) {
                     val coreSpeeds = cpuInfo.coreFrequencies.ifEmpty {
-                        listOf(
-                            CpuCoreSpeed(0, 1800, 800, 3200),
-                            CpuCoreSpeed(1, 1800, 800, 3200),
-                            CpuCoreSpeed(2, 1800, 800, 3200),
-                            CpuCoreSpeed(3, 1800, 800, 3200),
-                            CpuCoreSpeed(4, 2400, 800, 3200),
-                            CpuCoreSpeed(5, 2400, 800, 3200),
-                            CpuCoreSpeed(6, 2400, 800, 3200),
-                            CpuCoreSpeed(7, 3200, 800, 3200)
-                        )
+                        List(cpuInfo.totalCores.coerceAtLeast(1)) { idx ->
+                            CpuCoreSpeed(idx, 0L, cpuInfo.minFrequencyMhz, cpuInfo.maxFrequencyMhz)
+                        }
                     }
 
                     coreSpeeds.forEach { speed ->
@@ -140,12 +133,12 @@ fun CpuScreen(
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                     Text(
-                                        text = stringResource(R.string.fmt_mhz, speed.currentMhz),
+                                        text = if (speed.currentMhz > 0) stringResource(R.string.fmt_mhz, speed.currentMhz) else stringResource(R.string.lbl_offline),
                                         style = MaterialTheme.typography.bodyMedium.copy(
                                             fontWeight = FontWeight.Bold,
                                             fontSize = 13.sp
                                         ),
-                                        color = MaterialTheme.colorScheme.onSurface
+                                        color = if (speed.currentMhz > 0) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             }

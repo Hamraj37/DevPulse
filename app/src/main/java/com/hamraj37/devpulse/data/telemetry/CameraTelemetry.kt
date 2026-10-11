@@ -59,11 +59,11 @@ object CameraTelemetry {
                     }
 
                     val mpDouble = (pxWidth.toDouble() * pxHeight.toDouble()) / 1000000.0
-                    val mpFormatted = formatMpString(mpDouble)
-                    val resolutionMp = "$mpFormatted • $facingStr ($pxWidth x $pxHeight)"
+                    val mpFormatted = formatMpString(context, mpDouble)
+                    val resolutionMp = context.getString(R.string.fmt_camera_res_mp, mpFormatted, facingStr, pxWidth, pxHeight)
 
                     val binnedMpDouble = (binnedWidth.toDouble() * binnedHeight.toDouble()) / 1000000.0
-                    val effectiveMpStr = String.format(Locale.US, "%.1f MP (%d x %d)", binnedMpDouble, binnedWidth, binnedHeight)
+                    val effectiveMpStr = context.getString(R.string.fmt_camera_effective_mp, binnedMpDouble, binnedWidth, binnedHeight)
 
                     val physicalSize = chars.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE)
                     val sensorSizeStr = if (physicalSize != null && physicalSize.width > 0 && physicalSize.height > 0) {
@@ -226,7 +226,7 @@ object CameraTelemetry {
                         .take(8)
                         .map { size ->
                             val mp = (size.width.toDouble() * size.height.toDouble()) / 1000000.0
-                            "${size.width}x${size.height} (${formatMpString(mp)})"
+                            "${size.width}x${size.height} (${formatMpString(context, mp)})"
                         }
                         .toMutableList()
 
@@ -248,13 +248,13 @@ object CameraTelemetry {
                     val compStepStr = if (compStep != null && compRange != null) {
                         val lowerEv = compRange.lower * compStep.toFloat()
                         val upperEv = compRange.upper * compStep.toFloat()
-                        String.format(Locale.US, "1/%.0f EV (%.1f to +%.1f EV)", 1f / compStep.toFloat(), lowerEv, upperEv)
+                        context.getString(R.string.fmt_ev_compensation_step, 1f / compStep.toFloat(), lowerEv, upperEv)
                     } else "1/3 EV (-3.0 to +3.0 EV)"
 
                     val maxAe = chars.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AE) ?: 0
                     val maxAf = chars.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF) ?: 0
                     val maxAwb = chars.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AWB) ?: 0
-                    val regionsStr = "AE: $maxAe, AF: $maxAf, AWB: $maxAwb"
+                    val regionsStr = context.getString(R.string.fmt_ae_af_awb_regions, maxAe, maxAf, maxAwb)
 
                     val thumbnailSizes = chars.get(CameraCharacteristics.JPEG_AVAILABLE_THUMBNAIL_SIZES)?.map {
                         "${it.width}x${it.height}"
@@ -285,7 +285,7 @@ object CameraTelemetry {
                     val maxRaw = chars.get(CameraCharacteristics.REQUEST_MAX_NUM_OUTPUT_RAW) ?: 0
                     val maxProc = chars.get(CameraCharacteristics.REQUEST_MAX_NUM_OUTPUT_PROC) ?: 0
                     val maxStall = chars.get(CameraCharacteristics.REQUEST_MAX_NUM_OUTPUT_PROC_STALLING) ?: 0
-                    val streamsStr = "Raw: $maxRaw, Processed: $maxProc, Stalling: $maxStall"
+                    val streamsStr = context.getString(R.string.fmt_max_output_streams, maxRaw, maxProc, maxStall)
 
                     val cfaStr = when (chars.get(CameraCharacteristics.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT)) {
                         CameraMetadata.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_RGGB -> context.getString(R.string.camera_cfa_rggb)
@@ -445,12 +445,12 @@ object CameraTelemetry {
         return candidates.maxByOrNull { it.first.toLong() * it.second.toLong() } ?: Pair(4096, 3072)
     }
 
-    private fun formatMpString(mp: Double): String {
+    private fun formatMpString(context: Context, mp: Double): String {
         val rounded = Math.round(mp).toInt()
         return if (rounded in listOf(8, 12, 13, 16, 20, 24, 32, 48, 50, 64, 108, 200) && Math.abs(mp - rounded) < 1.2) {
-            "$rounded MP"
+            context.getString(R.string.fmt_mp_int, rounded)
         } else {
-            String.format(Locale.US, "%.1f MP", mp)
+            context.getString(R.string.fmt_mp_float, mp)
         }
     }
 

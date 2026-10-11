@@ -21,31 +21,12 @@ object CpuTelemetry {
             var overallMaxMhz = 0L
 
             for (i in 0 until coresCount) {
-                var curFreq = readFrequencyFile("/sys/devices/system/cpu/cpu$i/cpufreq/scaling_cur_freq")
-                if (curFreq <= 0) {
-                    curFreq = readFrequencyFile("/sys/devices/system/cpu/cpu$i/cpufreq/cpuinfo_cur_freq")
-                }
+                val curMhz = readCoreCurrentFrequency(i)
+                val minMhz = readCoreMinFrequency(i)
+                val maxMhz = readCoreMaxFrequency(i)
 
-                var minFreq = readFrequencyFile("/sys/devices/system/cpu/cpu$i/cpufreq/scaling_min_freq")
-                if (minFreq <= 0) {
-                    minFreq = readFrequencyFile("/sys/devices/system/cpu/cpu$i/cpufreq/cpuinfo_min_freq")
-                }
-
-                var maxFreq = readFrequencyFile("/sys/devices/system/cpu/cpu$i/cpufreq/scaling_max_freq")
-                if (maxFreq <= 0) {
-                    maxFreq = readFrequencyFile("/sys/devices/system/cpu/cpu$i/cpufreq/cpuinfo_max_freq")
-                }
-
-                val minMhz = if (minFreq > 0) minFreq / 1000 else 0L
-                val maxMhz = if (maxFreq > 0) maxFreq / 1000 else 0L
-                val curMhz = if (curFreq > 0) {
-                    curFreq / 1000
-                } else {
-                    minMhz
-                }
-
-                if (minMhz < overallMinMhz) overallMinMhz = minMhz
-                if (maxMhz > overallMaxMhz) overallMaxMhz = maxMhz
+                if (minMhz in 100..20000 && minMhz < overallMinMhz) overallMinMhz = minMhz
+                if (maxMhz in 100..20000 && maxMhz > overallMaxMhz) overallMaxMhz = maxMhz
 
                 coreSpeeds.add(
                     CpuCoreSpeed(
@@ -97,21 +78,51 @@ object CpuTelemetry {
             val coresCount = Runtime.getRuntime().availableProcessors().coerceAtLeast(1)
             val freqs = mutableListOf<Long>()
             for (i in 0 until coresCount) {
-                var curFreq = readFrequencyFile("/sys/devices/system/cpu/cpu$i/cpufreq/scaling_cur_freq")
-                if (curFreq <= 0) {
-                    curFreq = readFrequencyFile("/sys/devices/system/cpu/cpu$i/cpufreq/cpuinfo_cur_freq")
-                }
-                val curMhz = if (curFreq > 0) {
-                    curFreq / 1000
-                } else {
-                    0L
-                }
-                freqs.add(curMhz)
+                freqs.add(readCoreCurrentFrequency(i))
             }
             freqs
         } catch (_: Throwable) {
             emptyList()
         }
+    }
+
+    private fun readCoreCurrentFrequency(coreIndex: Int): Long {
+        if (coreIndex > 0) {
+            val onlineStatus = readFrequencyFile("/sys/devices/system/cpu/cpu$coreIndex/online")
+            if (onlineStatus == 0L) {
+                return 0L
+            }
+        }
+
+        var freq = readFrequencyFile("/sys/devices/system/cpu/cpu$coreIndex/cpufreq/scaling_cur_freq")
+        if (freq <= 0) {
+            freq = readFrequencyFile("/sys/devices/system/cpu/cpu$coreIndex/cpufreq/cpuinfo_cur_freq")
+        }
+        if (freq <= 0) {
+            freq = readFrequencyFile("/sys/devices/system/cpu/cpufreq/policy$coreIndex/scaling_cur_freq")
+        }
+        if (freq <= 0) {
+            freq = readFrequencyFile("/sys/devices/system/cpu/cpufreq/policy$coreIndex/cpuinfo_cur_freq")
+        }
+
+        return if (freq > 0) freq / 1000 else 0L
+    }
+
+    private fun readCoreMinFrequency(coreIndex: Int): Long {
+        var freq = readFrequencyFile("/sys/devices/system/cpu/cpu$coreIndex/cpufreq/scaling_min_freq")
+        if (freq <= 0) freq = readFrequencyFile("/sys/devices/system/cpu/cpu$coreIndex/cpufreq/cpuinfo_min_freq")
+        if (freq <= 0) freq = readFrequencyFile("/sys/devices/system/cpu/cpufreq/policy$coreIndex/scaling_min_freq")
+        if (freq <= 0) freq = readFrequencyFile("/sys/devices/system/cpu/cpufreq/policy$coreIndex/cpuinfo_min_freq")
+        return if (freq > 0) freq / 1000 else 0L
+    }
+
+    private fun readCoreMaxFrequency(coreIndex: Int): Long {
+        var freq = readFrequencyFile("/sys/devices/system/cpu/cpu$coreIndex/scaling_max_freq")
+        if (freq <= 0) freq = readFrequencyFile("/sys/devices/system/cpu/cpu$coreIndex/cpufreq/scaling_max_freq")
+        if (freq <= 0) freq = readFrequencyFile("/sys/devices/system/cpu/cpu$coreIndex/cpufreq/cpuinfo_max_freq")
+        if (freq <= 0) freq = readFrequencyFile("/sys/devices/system/cpu/cpufreq/policy$coreIndex/scaling_max_freq")
+        if (freq <= 0) freq = readFrequencyFile("/sys/devices/system/cpu/cpufreq/policy$coreIndex/cpuinfo_max_freq")
+        return if (freq > 0) freq / 1000 else 0L
     }
 
     private fun readFrequencyFile(path: String): Long {
@@ -233,9 +244,9 @@ object CpuTelemetry {
             // Fallback / If model code is available
             model.isNotBlank() && !model.equals("unknown", ignoreCase = true) -> {
                 if (!model.contains("Qualcomm", true) && !model.contains("Snapdragon", true) && (hw.contains("qcom", true) || hw.contains("sm", true))) {
-                    "Snapdragon $model ($hw)"
+                    ctx?.getString(R.string.cpu_soc_snapdragon_format, model, hw) ?: "Snapdragon $model ($hw)"
                 } else if (!model.contains("(") && hw.isNotBlank() && !hw.equals("unknown", ignoreCase = true)) {
-                    "$model ($hw)"
+                    ctx?.getString(R.string.cpu_soc_model_hw_format, model, hw) ?: "$model ($hw)"
                 } else {
                     model
                 }

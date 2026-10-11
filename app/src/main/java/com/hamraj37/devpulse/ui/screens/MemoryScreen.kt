@@ -161,7 +161,7 @@ fun MemoryStorageProgressCard(
                     color = MaterialTheme.colorScheme.primaryContainer
                 ) {
                     Text(
-                        text = "$pct%",
+                        text = stringResource(R.string.fmt_pct, pct),
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -186,8 +186,8 @@ fun MemoryStorageProgressCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                val usedText = "${String.format(Locale.US, "%.2f", usedGb)} ${stringResource(R.string.memory_gb_of)} ${String.format(Locale.US, "%.2f", totalGb)} ${stringResource(R.string.memory_gb_used)}"
-                val freeText = "${String.format(Locale.US, "%.2f", freeGb)} ${stringResource(R.string.memory_gb_free)}"
+                val usedText = stringResource(R.string.fmt_memory_used_of_total, usedGb, totalGb)
+                val freeText = stringResource(R.string.fmt_memory_free, freeGb)
                 Text(
                     text = usedText,
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
@@ -265,7 +265,7 @@ fun ZramProgressCard(
                     color = MaterialTheme.colorScheme.primaryContainer
                 ) {
                     Text(
-                        text = "$zramPct%",
+                        text = stringResource(R.string.fmt_pct, zramPct),
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onPrimaryContainer,

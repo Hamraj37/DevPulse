@@ -110,9 +110,9 @@ object DeviceAndSystemTelemetry {
                 val countryTag = defaultLocale.country
                 val localeCode = if (countryTag.isNotBlank()) "${langTag}_${countryTag}" else langTag
                 if (countryName.isNotBlank()) {
-                    "$langName ($countryName, $localeCode)"
+                    context.getString(R.string.fmt_language_country, langName, countryName, localeCode)
                 } else {
-                    "$langName ($localeCode)"
+                    context.getString(R.string.fmt_language, langName, localeCode)
                 }
             } catch (_: Throwable) {
                 "English (United States, en_US)"
@@ -127,13 +127,13 @@ object DeviceAndSystemTelemetry {
                 val minutes = (Math.abs(rawOffsetMs) % 3600000) / 60000
                 val sign = if (rawOffsetMs >= 0) "+" else "-"
                 val utcOffset = String.format(Locale.US, "GMT%s%02d:%02d", sign, hours, minutes)
-                "$tzId ($shortName / $utcOffset)"
+                context.getString(R.string.fmt_timezone, tzId, shortName, utcOffset)
             } catch (_: Throwable) {
                 "Asia/Kolkata (IST / GMT+05:30)"
             }
 
             val drm = getWidevineDrmDetails()
-            val uptime = formatUptime(SystemClock.elapsedRealtime())
+            val uptime = formatUptime(context, SystemClock.elapsedRealtime())
 
             SystemInfo(
                 osName = getCustomOsName(),
@@ -301,16 +301,16 @@ object DeviceAndSystemTelemetry {
         }
     }
 
-    private fun formatUptime(ms: Long): String {
+    private fun formatUptime(context: Context, ms: Long): String {
         val seconds = ms / 1000
         val days = seconds / 86400
         val hours = (seconds % 86400) / 3600
         val minutes = (seconds % 3600) / 60
         val secs = seconds % 60
         return if (days > 0) {
-            "${days}d ${hours}h ${minutes}m ${secs}s"
+            context.getString(R.string.fmt_uptime_days, days, hours, minutes, secs)
         } else {
-            "${hours}h ${minutes}m ${secs}s"
+            context.getString(R.string.fmt_uptime_hours, hours, minutes, secs)
         }
     }
 
@@ -361,18 +361,16 @@ object DeviceAndSystemTelemetry {
         }
     }
 
+    @Suppress("MissingPermission")
     private fun getNetworkTypeString(context: Context, tm: TelephonyManager?): String {
         return try {
             if (tm == null) return context.getString(R.string.network_cellular_wifi)
-            val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                try {
-                    tm.dataNetworkType
-                } catch (_: Throwable) {
-                    TelephonyManager.NETWORK_TYPE_UNKNOWN
-                }
-            } else {
-                @Suppress("DEPRECATION")
-                tm.networkType
+            val type = try {
+                tm.dataNetworkType
+            } catch (_: SecurityException) {
+                TelephonyManager.NETWORK_TYPE_UNKNOWN
+            } catch (_: Throwable) {
+                TelephonyManager.NETWORK_TYPE_UNKNOWN
             }
             when (type) {
                 TelephonyManager.NETWORK_TYPE_NR -> "5G NR"

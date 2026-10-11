@@ -40,7 +40,7 @@ object NetworkAndConnectivityTelemetry {
     )
 
     @Synchronized
-    private fun calculateRealTimeSpeed(): RealTimeNetworkSpeed {
+    private fun calculateRealTimeSpeed(context: Context? = null): RealTimeNetworkSpeed {
         val currentTimeMs = System.currentTimeMillis()
         val currentRxBytes = TrafficStats.getTotalRxBytes()
         val currentTxBytes = TrafficStats.getTotalTxBytes()
@@ -75,24 +75,24 @@ object NetworkAndConnectivityTelemetry {
         }
 
         return RealTimeNetworkSpeed(
-            downloadSpeedFormatted = formatSpeed(downloadBytesPerSec),
-            uploadSpeedFormatted = formatSpeed(uploadBytesPerSec),
+            downloadSpeedFormatted = formatSpeed(context, downloadBytesPerSec),
+            uploadSpeedFormatted = formatSpeed(context, uploadBytesPerSec),
             downloadBytesPerSec = downloadBytesPerSec,
             uploadBytesPerSec = uploadBytesPerSec,
             speedHistory = historySnapshot
         )
     }
 
-    private fun formatSpeed(bytesPerSec: Long): String {
-        if (bytesPerSec <= 0L) return "0 KB/s"
+    private fun formatSpeed(context: Context?, bytesPerSec: Long): String {
+        if (bytesPerSec <= 0L) return context?.getString(R.string.fmt_speed_zero) ?: "0 KB/s"
         val kbs = bytesPerSec / 1024f
         return if (kbs >= 1024f) {
             val mbs = kbs / 1024f
-            String.format(Locale.US, "%.1f MB/s", mbs)
+            context?.getString(R.string.fmt_speed_mbs, mbs) ?: String.format(Locale.US, "%.1f MB/s", mbs)
         } else if (kbs >= 1f) {
-            String.format(Locale.US, "%.1f KB/s", kbs)
+            context?.getString(R.string.fmt_speed_kbs, kbs) ?: String.format(Locale.US, "%.1f KB/s", kbs)
         } else {
-            "$bytesPerSec B/s"
+            context?.getString(R.string.fmt_speed_bs, bytesPerSec) ?: "$bytesPerSec B/s"
         }
     }
 
@@ -302,7 +302,7 @@ object NetworkAndConnectivityTelemetry {
         val is5G = networkTypeStr.contains("5G") || networkTypeStr.contains("NR")
         val badgePill = if (is5G) "5G" else "4G LTE"
         val geoLoc = getGeographicalLocation(context)
-        val speed = calculateRealTimeSpeed()
+        val speed = calculateRealTimeSpeed(context)
 
         return NetworkInfo(
             activeConnectionType = "CELLULAR",
@@ -441,14 +441,14 @@ object NetworkAndConnectivityTelemetry {
 
         if (wifiInfo != null) {
             if (wifiInfo.linkSpeed > 0) {
-                linkSpeed = "${wifiInfo.linkSpeed} Mbps"
+                linkSpeed = context.getString(R.string.fmt_link_speed_mbps, wifiInfo.linkSpeed)
             }
 
             val freq = wifiInfo.frequency
             if (freq > 0) {
-                frequency = "$freq MHz"
+                frequency = context.getString(R.string.fmt_freq_mhz, freq)
                 val chNum = getChannelNumberFromFrequency(freq)
-                channel = "CH $chNum"
+                channel = context.getString(R.string.fmt_wifi_channel, chNum)
 
                 val std = try { wifiInfo.wifiStandard } catch (_: Throwable) { -1 }
 
@@ -530,7 +530,7 @@ object NetworkAndConnectivityTelemetry {
         }
 
         val geoLoc = getGeographicalLocation(context)
-        val speed = calculateRealTimeSpeed()
+        val speed = calculateRealTimeSpeed(context)
 
         return NetworkInfo(
             activeConnectionType = "WIFI",

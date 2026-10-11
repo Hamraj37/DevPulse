@@ -865,6 +865,8 @@
     <string name="cpu_soc_mediatek_format">联发科天玑 (%s)</string>
     <string name="cpu_soc_tensor_format">谷歌 Tensor (%s)</string>
     <string name="cpu_soc_arm_format">ARM 处理器 (%s)</string>
+    <string name="cpu_soc_snapdragon_format">Snapdragon %1$s (%2$s)</string>
+    <string name="cpu_soc_model_hw_format">%1$s (%2$s)</string>
 
     <!-- Display Telemetry Strings -->
     <string name="display_brightness_mode_adaptive">自动调节 (Adaptive)</string>
@@ -984,7 +986,7 @@
     <string name="fmt_battery_temp">%.1f ℃</string>
     <string name="fmt_active_count">%d 项活动</string>
     <string name="fmt_installed_count">%d 个已安装</string>
-    <string name="fmt_display_inches_hz">%.1f\" | 120 Hz</string>
+    <string name="fmt_display_inches_hz">%1$.1f\" | %2$s</string>
 
     <!-- System Screen String Resources -->
     <string name="fmt_system_android_version_letter">Android %1$s - %2$s</string>
@@ -1016,4 +1018,52 @@
     <string name="camera_ois_supported">支持 (硬件光学防抖 OIS)</string>
     <string name="camera_flash_hardware">是 (硬件闪光灯/手电筒)</string>
     <string name="camera_flash_none">无闪光灯</string>
+
+    <!-- Display Telemetry Formatting Strings -->
+    <string name="fmt_display_resolution_category">%1$d x %2$d 像素 (%3$s)</string>
+    <string name="fmt_display_density_bucket">%1$d dpi (%2$s)</string>
+    <string name="fmt_refresh_rate_hz">%.1f Hz</string>
+
+    <!-- Camera Telemetry Formatting Strings -->
+    <string name="fmt_camera_res_mp">%1$s • %2$s (%3$d x %4$d)</string>
+    <string name="fmt_camera_effective_mp">%.1f MP (%d x %d)</string>
+    <string name="fmt_pixel_pitch_binned">%.2f µm (%.2f µm 像素九合一)</string>
+    <string name="fmt_pixel_pitch">%.2f µm</string>
+    <string name="fmt_focal_length_equiv">%.2f mm (%dmm 等效焦距)</string>
+    <string name="fmt_focal_length">%.2f mm</string>
+    <string name="fmt_ev_compensation_step">1/%.0f EV (%.1f 至 +%.1f EV)</string>
+    <string name="fmt_ae_af_awb_regions">AE: %1$d, AF: %2$d, AWB: %3$d</string>
+    <string name="fmt_max_output_streams">RAW 原始: %1$d, 处理: %2$d, 阻塞: %3$d</string>
+    <string name="fmt_mp_int">%d MP</string>
+    <string name="fmt_mp_float">%.1f MP</string>
+
+    <!-- System Telemetry Formatting Strings -->
+    <string name="fmt_uptime_days">%1$d天 %2$d小时 %3$d分钟 %4$d秒</string>
+    <string name="fmt_uptime_hours">%1$d小时 %2$d分钟 %3$d秒</string>
+    <string name="fmt_timezone">%1$s (%2$s / %3$s)</string>
+    <string name="fmt_language_country">%1$s (%2$s, %3$s)</string>
+    <string name="fmt_language">%1$s (%2$s)</string>
+
+    <!-- Memory Telemetry Formatting Strings -->
+    <string name="fmt_memory_used_of_total">已用 %1$.2f GB / 共 %2$.2f GB</string>
+    <string name="fmt_memory_free">剩余 %.2f GB</string>
+
+    <!-- Network Telemetry Formatting Strings -->
+    <string name="fmt_speed_mbs">%.1f MB/s</string>
+    <string name="fmt_speed_kbs">%.1f KB/s</string>
+    <string name="fmt_speed_bs">%d B/s</string>
+    <string name="fmt_speed_zero">0 KB/s</string>
+    <string name="fmt_link_speed_mbps">%d Mbps</string>
+    <string name="fmt_freq_mhz">%d MHz</string>
+    <string name="fmt_wifi_channel">信道 %d</string>
+
+    <!-- Thermal Formatting Strings -->
+    <string name="fmt_thermal_zones_count">%d 个区域</string>
+    <string name="fmt_fps">%d FPS</string>
+    <string name="lbl_offline">离线</string>
+
+    <!-- Donate Dialog Strings -->
+    <string name="donate_support_title">捐赠与支持</string>
+    <string name="donate_support_body">DevPulse 完全无广告且开源！您的捐赠将支持项目的持续开发与维护。</string>
+    <string name="donate_upi_id_label">捐赠 UPI ID</string>
 </resources>

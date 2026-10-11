@@ -241,7 +241,7 @@ fun DashboardScreen(
                     maxItemsInEachRow = 4
                 ) {
                     val coreFreqs = dashboardInfo.cpuCoreFrequencies.ifEmpty {
-                        listOf(1800L, 1800L, 1800L, 1800L, 2400L, 2400L, 2400L, 3200L)
+                        List(dashboardInfo.testsTotal.coerceAtMost(8)) { 0L }
                     }
 
                     coreFreqs.forEachIndexed { index, mhz ->
@@ -260,12 +260,12 @@ fun DashboardScreen(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                                 Text(
-                                    text = stringResource(R.string.fmt_mhz, mhz),
+                                    text = if (mhz > 0) stringResource(R.string.fmt_mhz, mhz) else stringResource(R.string.lbl_offline),
                                     style = MaterialTheme.typography.bodyMedium.copy(
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 13.sp
                                     ),
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    color = if (mhz > 0) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }
@@ -453,7 +453,7 @@ fun DashboardScreen(
                     color = MaterialTheme.colorScheme.primaryContainer
                 ) {
                     Text(
-                        text = stringResource(R.string.fmt_display_inches_hz, dashboardInfo.displaySizeInches),
+                        text = stringResource(R.string.fmt_display_inches_hz, dashboardInfo.displaySizeInches, dashboardInfo.refreshRate),
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onPrimaryContainer

@@ -82,7 +82,7 @@ object AppAndTestTelemetry {
                 }
             }
         } catch (_: Exception) {
-            "Unknown"
+            context.getString(R.string.lbl_unknown_capital)
         }
     }
 
@@ -186,7 +186,7 @@ object AppAndTestTelemetry {
                         isSystemApp = false,
                         installedTimeMs = System.currentTimeMillis() - 86400000,
                         updatedTimeMs = System.currentTimeMillis(),
-                        installSource = "Side-loaded / Local Build"
+                        installSource = context.getString(R.string.install_source_side_loaded_unknown)
                     )
                 )
             }

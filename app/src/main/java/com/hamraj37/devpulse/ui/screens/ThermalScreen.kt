@@ -39,7 +39,6 @@ import com.hamraj37.devpulse.data.model.ThermalInfo
 import com.hamraj37.devpulse.data.model.ThermalZone
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.ActiveBadge
-import java.util.Locale
 
 @Composable
 fun ThermalScreen(
@@ -114,7 +113,7 @@ fun ThermalScreen(
                         color = MaterialTheme.colorScheme.primaryContainer
                     ) {
                         Text(
-                            text = "${thermalInfo.thermalZones.size} ${stringResource(R.string.thermal_zones_label)}",
+                            text = stringResource(R.string.fmt_thermal_zones_count, thermalInfo.thermalZones.size),
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -255,7 +254,7 @@ fun ThermalCardItem(
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "${String.format(Locale.US, "%.1f", temp)} °C",
+                text = stringResource(R.string.fmt_battery_temp, temp),
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 22.sp

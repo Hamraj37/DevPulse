@@ -35,6 +35,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Collections
 import java.util.Locale
 
 class FloatingMonitorService : Service() {
@@ -112,24 +113,57 @@ class FloatingMonitorService : Service() {
 
     @Volatile
     private var currentFps = 60
-    private var frameCount = 0
     private var lastFrameTimeNanos = 0L
+    private val frameDeltas = Collections.synchronizedList(mutableListOf<Long>())
+
+    private fun getActiveDisplayRefreshRate(): Float {
+        return try {
+            val dm = getSystemService(Context.DISPLAY_SERVICE) as? android.hardware.display.DisplayManager
+            val defaultDisplayFromDm = try { dm?.getDisplay(android.view.Display.DEFAULT_DISPLAY) } catch (_: Throwable) { null }
+            val display = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                (try { display } catch (_: Throwable) { null }) ?: defaultDisplayFromDm
+            } else {
+                @Suppress("DEPRECATION")
+                (windowManager?.defaultDisplay ?: defaultDisplayFromDm)
+            } ?: defaultDisplayFromDm
+
+            val activeRate = display?.refreshRate ?: 0f
+            if (activeRate > 0f) {
+                activeRate
+            } else {
+                val modeRate = display?.mode?.refreshRate ?: 0f
+                if (modeRate > 0f) modeRate else 60.0f
+            }
+        } catch (_: Throwable) {
+            60.0f
+        }
+    }
 
     private val frameCallback = object : Choreographer.FrameCallback {
         override fun doFrame(frameTimeNanos: Long) {
             if (!fpsEnabled) return
-            frameCount++
-            if (lastFrameTimeNanos == 0L) {
-                lastFrameTimeNanos = frameTimeNanos
-            } else {
-                val deltaMs = (frameTimeNanos - lastFrameTimeNanos) / 1_000_000
-                if (deltaMs >= 1000) {
-                    currentFps = ((frameCount * 1000L) / deltaMs).toInt().coerceIn(1, 144)
-                    frameCount = 0
-                    lastFrameTimeNanos = frameTimeNanos
+
+            if (lastFrameTimeNanos > 0L) {
+                val deltaNanos = frameTimeNanos - lastFrameTimeNanos
+                if (deltaNanos > 0) {
+                    synchronized(frameDeltas) {
+                        frameDeltas.add(deltaNanos)
+                        if (frameDeltas.size > 24) {
+                            frameDeltas.removeAt(0)
+                        }
+                        val avgDeltaNanos = frameDeltas.average()
+                        if (avgDeltaNanos > 0.0) {
+                            val activeDisplayRate = getActiveDisplayRefreshRate().toInt().coerceAtLeast(60)
+                            val calcFps = Math.round(1_000_000_000.0 / avgDeltaNanos).toInt()
+                            currentFps = calcFps.coerceIn(1, activeDisplayRate)
+                        }
+                    }
                 }
             }
+            lastFrameTimeNanos = frameTimeNanos
+
             if (fpsEnabled) {
+                overlayView?.invalidate()
                 Choreographer.getInstance().postFrameCallback(this)
             }
         }
@@ -169,7 +203,7 @@ class FloatingMonitorService : Service() {
         fpsEnabled = showFps
 
         if (fpsEnabled && !previousFpsEnabled) {
-            frameCount = 0
+            synchronized(frameDeltas) { frameDeltas.clear() }
             lastFrameTimeNanos = 0L
             Choreographer.getInstance().postFrameCallback(frameCallback)
         } else if (!fpsEnabled && previousFpsEnabled) {
@@ -331,7 +365,7 @@ class FloatingMonitorService : Service() {
 
             withContext(Dispatchers.Main) {
                 if (fpsEnabled) {
-                    fpsTextView?.text = "$currentFps FPS"
+                    fpsTextView?.text = getString(R.string.fmt_fps, currentFps)
                     fpsTextView?.visibility = View.VISIBLE
                 } else {
                     fpsTextView?.visibility = View.GONE

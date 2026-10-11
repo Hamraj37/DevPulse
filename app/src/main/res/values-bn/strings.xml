@@ -865,6 +865,8 @@
     <string name="cpu_soc_mediatek_format">মিডিয়াটেক ডাইমেনসিটি (%s)</string>
     <string name="cpu_soc_tensor_format">গুগল টেনসর (%s)</string>
     <string name="cpu_soc_arm_format">ARM প্রসেসর (%s)</string>
+    <string name="cpu_soc_snapdragon_format">Snapdragon %1$s (%2$s)</string>
+    <string name="cpu_soc_model_hw_format">%1$s (%2$s)</string>
 
     <!-- Display Telemetry Strings -->
     <string name="display_brightness_mode_adaptive">অ্যাডাপ্টিভ (Adaptive)</string>
@@ -984,7 +986,7 @@
     <string name="fmt_battery_temp">%.1f ℃</string>
     <string name="fmt_active_count">%d সক্রিয়</string>
     <string name="fmt_installed_count">%d ইনস্টল করা</string>
-    <string name="fmt_display_inches_hz">%.1f\" | 120 Hz</string>
+    <string name="fmt_display_inches_hz">%1$.1f\" | %2$s</string>
 
     <!-- System Screen String Resources -->
     <string name="fmt_system_android_version_letter">Android %1$s - %2$s</string>
@@ -1016,4 +1018,52 @@
     <string name="camera_ois_supported">সমর্থিত (হার্ডওয়্যার OIS)</string>
     <string name="camera_flash_hardware">হ্যাঁ (হার্ডওয়্যার টর্চ/ফ্ল্যাশ)</string>
     <string name="camera_flash_none">কোনো ফ্ল্যাশ নেই</string>
+
+    <!-- Display Telemetry Formatting Strings -->
+    <string name="fmt_display_resolution_category">%1$d x %2$d পিক্সেল (%3$s)</string>
+    <string name="fmt_display_density_bucket">%1$d dpi (%2$s)</string>
+    <string name="fmt_refresh_rate_hz">%.1f Hz</string>
+
+    <!-- Camera Telemetry Formatting Strings -->
+    <string name="fmt_camera_res_mp">%1$s • %2$s (%3$d x %4$d)</string>
+    <string name="fmt_camera_effective_mp">%.1f MP (%d x %d)</string>
+    <string name="fmt_pixel_pitch_binned">%.2f µm (%.2f µm binned)</string>
+    <string name="fmt_pixel_pitch">%.2f µm</string>
+    <string name="fmt_focal_length_equiv">%.2f mm (%dmm equiv)</string>
+    <string name="fmt_focal_length">%.2f mm</string>
+    <string name="fmt_ev_compensation_step">1/%.0f EV (%.1f থেকে +%.1f EV)</string>
+    <string name="fmt_ae_af_awb_regions">AE: %1$d, AF: %2$d, AWB: %3$d</string>
+    <string name="fmt_max_output_streams">Raw: %1$d, Processed: %2$d, Stalling: %3$d</string>
+    <string name="fmt_mp_int">%d MP</string>
+    <string name="fmt_mp_float">%.1f MP</string>
+
+    <!-- System Telemetry Formatting Strings -->
+    <string name="fmt_uptime_days">%1$dদিন %2$dঘণ্টা %3$dমিনিট %4$dসেকেন্ড</string>
+    <string name="fmt_uptime_hours">%1$dঘণ্টা %2$dমিনিট %3$dসেকেন্ড</string>
+    <string name="fmt_timezone">%1$s (%2$s / %3$s)</string>
+    <string name="fmt_language_country">%1$s (%2$s, %3$s)</string>
+    <string name="fmt_language">%1$s (%2$s)</string>
+
+    <!-- Memory Telemetry Formatting Strings -->
+    <string name="fmt_memory_used_of_total">%1$.2f GB / %2$.2f GB ব্যবহৃত</string>
+    <string name="fmt_memory_free">%.2f GB ফাঁকা (Free)</string>
+
+    <!-- Network Telemetry Formatting Strings -->
+    <string name="fmt_speed_mbs">%.1f MB/s</string>
+    <string name="fmt_speed_kbs">%.1f KB/s</string>
+    <string name="fmt_speed_bs">%d B/s</string>
+    <string name="fmt_speed_zero">0 KB/s</string>
+    <string name="fmt_link_speed_mbps">%d Mbps</string>
+    <string name="fmt_freq_mhz">%d MHz</string>
+    <string name="fmt_wifi_channel">চ্যানেল %d</string>
+
+    <!-- Thermal Formatting Strings -->
+    <string name="fmt_thermal_zones_count">%d জোন</string>
+    <string name="fmt_fps">%d FPS</string>
+    <string name="lbl_offline">অফলাইন</string>
+
+    <!-- Donate Dialog Strings -->
+    <string name="donate_support_title">ডোনেট ও সাপোর্ট</string>
+    <string name="donate_support_body">DevPulse সম্পূর্ণ বিজ্ঞাপন-মুক্ত এবং ওপেন সোর্স! আপনার অনুদান নিয়মিত বিকাশকে সহায়তা করে।</string>
+    <string name="donate_upi_id_label">অনুদানের জন্য UPI আইডি</string>
 </resources>

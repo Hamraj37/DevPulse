@@ -375,7 +375,7 @@ fun DonateDialog(
         },
         title = {
             Text(
-                text = "Donate & Support",
+                text = stringResource(R.string.donate_support_title),
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
@@ -387,7 +387,7 @@ fun DonateDialog(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "DevPulse is completely ad-free and open source! Your donation supports ongoing development.",
+                    text = stringResource(R.string.donate_support_body),
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -406,7 +406,7 @@ fun DonateDialog(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            text = "UPI ID for Donation",
+                            text = stringResource(R.string.donate_upi_id_label),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

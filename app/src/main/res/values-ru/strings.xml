@@ -865,6 +865,8 @@
     <string name="cpu_soc_mediatek_format">MediaTek Dimensity (%s)</string>
     <string name="cpu_soc_tensor_format">Google Tensor (%s)</string>
     <string name="cpu_soc_arm_format">Процессор ARM (%s)</string>
+    <string name="cpu_soc_snapdragon_format">Snapdragon %1$s (%2$s)</string>
+    <string name="cpu_soc_model_hw_format">%1$s (%2$s)</string>
 
     <!-- Display Telemetry Strings -->
     <string name="display_brightness_mode_adaptive">Автоматическая (Adaptive)</string>
@@ -984,7 +986,7 @@
     <string name="fmt_battery_temp">%.1f ℃</string>
     <string name="fmt_active_count">%d Активных</string>
     <string name="fmt_installed_count">%d Установлено</string>
-    <string name="fmt_display_inches_hz">%.1f\" | 120 Гц</string>
+    <string name="fmt_display_inches_hz">%1$.1f\" | %2$s</string>
 
     <!-- System Screen String Resources -->
     <string name="fmt_system_android_version_letter">Android %1$s - %2$s</string>
@@ -1016,4 +1018,52 @@
     <string name="camera_ois_supported">Поддерживается (Аппаратный OIS)</string>
     <string name="camera_flash_hardware">Да (Аппаратная вспышка/фонарик)</string>
     <string name="camera_flash_none">Нет вспышки</string>
+
+    <!-- Display Telemetry Formatting Strings -->
+    <string name="fmt_display_resolution_category">%1$d x %2$d Пикселей (%3$s)</string>
+    <string name="fmt_display_density_bucket">%1$d dpi (%2$s)</string>
+    <string name="fmt_refresh_rate_hz">%.1f Гц</string>
+
+    <!-- Camera Telemetry Formatting Strings -->
+    <string name="fmt_camera_res_mp">%1$s • %2$s (%3$d x %4$d)</string>
+    <string name="fmt_camera_effective_mp">%.1f МП (%d x %d)</string>
+    <string name="fmt_pixel_pitch_binned">%.2f мкм (%.2f мкм биннинг)</string>
+    <string name="fmt_pixel_pitch">%.2f мкм</string>
+    <string name="fmt_focal_length_equiv">%.2f мм (%d мм экв.)</string>
+    <string name="fmt_focal_length">%.2f мм</string>
+    <string name="fmt_ev_compensation_step">1/%.0f EV (от %.1f до +%.1f EV)</string>
+    <string name="fmt_ae_af_awb_regions">AE: %1$d, AF: %2$d, AWB: %3$d</string>
+    <string name="fmt_max_output_streams">Raw: %1$d, Обработка: %2$d, Ожидание: %3$d</string>
+    <string name="fmt_mp_int">%d МП</string>
+    <string name="fmt_mp_float">%.1f МП</string>
+
+    <!-- System Telemetry Formatting Strings -->
+    <string name="fmt_uptime_days">%1$dд %2$dч %3$dм %4$dс</string>
+    <string name="fmt_uptime_hours">%1$dч %2$dм %3$dс</string>
+    <string name="fmt_timezone">%1$s (%2$s / %3$s)</string>
+    <string name="fmt_language_country">%1$s (%2$s, %3$s)</string>
+    <string name="fmt_language">%1$s (%2$s)</string>
+
+    <!-- Memory Telemetry Formatting Strings -->
+    <string name="fmt_memory_used_of_total">%1$.2f ГБ из %2$.2f ГБ Использовано</string>
+    <string name="fmt_memory_free">%.2f ГБ Свободно</string>
+
+    <!-- Network Telemetry Formatting Strings -->
+    <string name="fmt_speed_mbs">%.1f МБ/с</string>
+    <string name="fmt_speed_kbs">%.1f КБ/с</string>
+    <string name="fmt_speed_bs">%d Б/с</string>
+    <string name="fmt_speed_zero">0 КБ/с</string>
+    <string name="fmt_link_speed_mbps">%d Мбит/с</string>
+    <string name="fmt_freq_mhz">%d МГц</string>
+    <string name="fmt_wifi_channel">Канал %d</string>
+
+    <!-- Thermal Formatting Strings -->
+    <string name="fmt_thermal_zones_count">%d Зон</string>
+    <string name="fmt_fps">%d FPS</string>
+    <string name="lbl_offline">Офлайн</string>
+
+    <!-- Donate Dialog Strings -->
+    <string name="donate_support_title">Поддержать проект</string>
+    <string name="donate_support_body">DevPulse полностью без рекламы и с открытым исходным кодом! Ваше пожертвование поддерживает дальнейшую разработку.</string>
+    <string name="donate_upi_id_label">UPI ID для пожертвования</string>
 </resources>

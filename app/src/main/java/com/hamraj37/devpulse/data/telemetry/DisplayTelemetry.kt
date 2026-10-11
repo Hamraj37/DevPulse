@@ -2,9 +2,11 @@ package com.hamraj37.devpulse.data.telemetry
 
 import android.content.Context
 import android.content.res.Configuration
+import android.hardware.display.DisplayManager
 import android.os.Build
 import android.provider.Settings
 import android.util.DisplayMetrics
+import android.view.Display
 import android.view.WindowManager
 import com.hamraj37.devpulse.R
 import com.hamraj37.devpulse.data.model.DisplayInfo
@@ -18,13 +20,15 @@ object DisplayTelemetry {
         return try {
             val metrics = DisplayMetrics()
             val wm = context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
+            val dm = context.getSystemService(Context.DISPLAY_SERVICE) as? DisplayManager
+            val defaultDisplayFromDm = try { dm?.getDisplay(Display.DEFAULT_DISPLAY) } catch (_: Throwable) { null }
 
             val display = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                try { context.display } catch (_: Throwable) { null }
+                (try { context.display } catch (_: Throwable) { null }) ?: defaultDisplayFromDm
             } else {
                 @Suppress("DEPRECATION")
-                wm?.defaultDisplay
-            }
+                (wm?.defaultDisplay ?: defaultDisplayFromDm)
+            } ?: defaultDisplayFromDm
 
             try {
                 @Suppress("DEPRECATION")
@@ -41,20 +45,23 @@ object DisplayTelemetry {
 
             val rawWidth = metrics.widthPixels
             val rawHeight = metrics.heightPixels
-            val widthPx = maxOf(rawWidth, rawHeight)
-            val heightPx = minOf(rawWidth, rawHeight)
+            val widthPx = if (rawWidth > 0) rawWidth else 1080
+            val heightPx = if (rawHeight > 0) rawHeight else 2400
+
+            val minDim = minOf(widthPx, heightPx)
+            val maxDim = maxOf(widthPx, heightPx)
 
             val category = when {
-                heightPx >= 2160 || widthPx >= 3840 -> "4K UHD"
-                heightPx >= 1440 || widthPx >= 2560 -> "QHD+"
-                heightPx >= 1080 || widthPx >= 1920 -> "FHD+"
+                minDim >= 2160 || maxDim >= 3840 -> "4K UHD"
+                minDim >= 1440 || maxDim >= 2560 -> "QHD+"
+                minDim >= 1080 || maxDim >= 1920 -> "FHD+"
                 else -> "HD+"
             }
-            val resolutionStr = "$widthPx x $heightPx Pixels ($category)"
+            val resolutionStr = context.getString(R.string.fmt_display_resolution_category, widthPx, heightPx, category)
 
             val densityDpi = if (metrics.densityDpi > 0) metrics.densityDpi else 493
             val densityBucket = getDensityBucket(densityDpi)
-            val densityStr = "$densityDpi dpi ($densityBucket)"
+            val densityStr = context.getString(R.string.fmt_display_density_bucket, densityDpi, densityBucket)
 
             val fontScaleVal = config.fontScale
             val fontScaleStr = String.format(Locale.US, "%.1f", fontScaleVal)
@@ -68,7 +75,15 @@ object DisplayTelemetry {
             val physicalSizeStr = context.getString(R.string.display_physical_size_format, diagonalVal)
 
             val refreshRatesSet = mutableSetOf<Float>()
-            val currentRefreshRate = try { display?.refreshRate ?: 120.0f } catch (_: Throwable) { 120.0f }
+            val currentRefreshRate = try {
+                val activeRate = display?.refreshRate ?: 0f
+                if (activeRate > 0f) {
+                    activeRate
+                } else {
+                    val modeRate = display?.mode?.refreshRate ?: 0f
+                    if (modeRate > 0f) modeRate else 60.0f
+                }
+            } catch (_: Throwable) { 60.0f }
             val supportedModes = try { display?.supportedModes } catch (_: Throwable) { null }
 
             if (supportedModes != null && supportedModes.isNotEmpty()) {
@@ -80,12 +95,13 @@ object DisplayTelemetry {
                 }
             }
             if (refreshRatesSet.isEmpty()) {
-                refreshRatesSet.addAll(listOf(60.0f, 90.0f, 120.0f))
+                val roundedCurrent = (round(currentRefreshRate * 10.0) / 10.0).toFloat()
+                if (roundedCurrent > 0f) refreshRatesSet.add(roundedCurrent) else refreshRatesSet.add(60.0f)
             }
 
             val sortedRatesList = refreshRatesSet.sorted()
-            val supportedRefreshRatesList = sortedRatesList.map { String.format(Locale.US, "%.1f Hz", it) }
-            val refreshRateStr = String.format(Locale.US, "%.1f Hz", (round(currentRefreshRate * 10.0) / 10.0).toFloat())
+            val supportedRefreshRatesList = sortedRatesList.map { context.getString(R.string.fmt_refresh_rate_hz, it) }
+            val refreshRateStr = context.getString(R.string.fmt_refresh_rate_hz, (round(currentRefreshRate * 10.0) / 10.0).toFloat())
 
             val hdrCapsList = mutableListOf<String>()
             try {
@@ -133,7 +149,7 @@ object DisplayTelemetry {
                 77
             }
             val brightnessPercent = ((rawBrightness / 255.0f) * 100).toInt().coerceIn(0, 100)
-            val brightnessLevelStr = "$brightnessPercent%"
+            val brightnessLevelStr = context.getString(R.string.fmt_pct, brightnessPercent)
             val brightnessProgressVal = (brightnessPercent / 100.0f).coerceIn(0f, 1f)
 
             val brightnessModeInt = try {
