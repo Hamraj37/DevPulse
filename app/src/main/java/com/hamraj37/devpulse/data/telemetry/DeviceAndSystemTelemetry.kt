@@ -553,6 +553,20 @@ object DeviceAndSystemTelemetry {
         }
     }
 
+    private fun parseMiuiVersion(raw: String): String {
+        val s = raw.trim()
+        val vCodeMatch = Regex("(?i)^V?(\\d{3})$").find(s)
+        if (vCodeMatch != null) {
+            val num = vCodeMatch.groupValues[1].toIntOrNull()
+            if (num != null) {
+                val major = num / 10
+                val minor = num % 10
+                return if (minor > 0) "$major.$minor" else "$major"
+            }
+        }
+        return cleanVersionString(raw)
+    }
+
     private fun cleanVersionString(raw: String): String {
         val s = raw.trim()
         if (s.isBlank() || s.equals("unknown", ignoreCase = true)) return ""
@@ -658,13 +672,19 @@ object DeviceAndSystemTelemetry {
         // 3. Xiaomi / Redmi / Poco (HyperOS / MIUI)
         val hyperOsVersion = getSystemProperty("ro.mi.os.version.name")
         if (!hyperOsVersion.isNullOrBlank()) {
-            val cleaned = cleanVersionString(hyperOsVersion)
+            val cleaned = parseMiuiVersion(hyperOsVersion)
             if (cleaned.isNotBlank()) return cleaned
         }
 
         val miuiVersion = getSystemProperty("ro.miui.ui.version.name")
         if (!miuiVersion.isNullOrBlank()) {
-            val cleaned = cleanVersionString(miuiVersion)
+            val cleaned = parseMiuiVersion(miuiVersion)
+            if (cleaned.isNotBlank()) return cleaned
+        }
+
+        val miuiVersionCode = getSystemProperty("ro.miui.ui.version.code")
+        if (!miuiVersionCode.isNullOrBlank()) {
+            val cleaned = parseMiuiVersion(miuiVersionCode)
             if (cleaned.isNotBlank()) return cleaned
         }
 
