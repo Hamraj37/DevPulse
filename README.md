@@ -1,8 +1,30 @@
+<p align="center">
+  <img src="docs/assets/app_icon.png" width="128" height="128" alt="DevPulse App Icon" />
+</p>
+
 # DevPulse ⚡
 
 **DevPulse** is a modern, native Android system telemetry, hardware diagnostic suite, and real-time performance monitoring application built with **Jetpack Compose** and **Material 3**.
 
 Designed for developers, power users, and QA engineers, DevPulse offers real-time hardware telemetry streams, live per-core CPU monitoring, zRAM swap analytics, dual-SIM network inspection, and a comprehensive hardware diagnostic test suite with persistent test reports.
+
+---
+
+## 📱 App Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/dashboard.png" width="220" alt="Dashboard Screen" />
+  <img src="docs/screenshots/cpu.png" width="220" alt="CPU Telemetry Screen" />
+  <img src="docs/screenshots/battery.png" width="220" alt="Battery Metrics Screen" />
+  <img src="docs/screenshots/display.png" width="220" alt="Display Specs Screen" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/memory.png" width="220" alt="Memory & Storage Screen" />
+  <img src="docs/screenshots/system.png" width="220" alt="System Info Screen" />
+  <img src="docs/screenshots/connectivity.png" width="220" alt="Connectivity Screen" />
+  <img src="docs/screenshots/thermal.png" width="220" alt="Thermal Sensors Screen" />
+</p>
 
 > 🌐 **Web Landing Page & Showcase**: Check out the modern web landing page ([`docs/index.html`](file:///C:/Users/Administrator/AndroidStudioProjects/DevPulse2/docs/index.html)) created for DevPulse (GitHub Pages) featuring all app screenshots across Dashboard, System, CPU, Battery, Connectivity, Display, Memory, and Thermal subsystems!
 
@@ -99,7 +121,6 @@ Interactive and automated hardware diagnostic tests with persistent results save
    To enable Telegram release notifications, configure these secrets in **Repository Settings → Secrets and variables → Actions**:
    * `TELEGRAM_BOT_TOKEN`: Bot token from Telegram's `@BotFather`.
    * `TELEGRAM_CHAT_ID`: Telegram channel or group ID (e.g. `@DevPulseApp`).
-
 
 ---
 
