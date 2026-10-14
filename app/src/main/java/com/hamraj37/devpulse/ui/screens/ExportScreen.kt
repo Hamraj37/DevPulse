@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Picture
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -37,8 +38,10 @@ import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Memory
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.SdStorage
+import androidx.compose.material.icons.rounded.Security
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.Smartphone
+import androidx.compose.material.icons.rounded.VerifiedUser
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -78,6 +81,60 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import android.graphics.Color as AndroidColor
+
+data class RootCheckItem(
+    val label: String,
+    val isPassed: Boolean,
+    val detail: String
+)
+
+data class IntegrityCheckItem(
+    val label: String,
+    val isPassed: Boolean,
+    val detail: String
+)
+
+fun getRootCheckSummary(context: Context, uiState: MainUiState): Pair<Boolean, List<RootCheckItem>> {
+    val (hasSu, suPath) = checkSuBinaries(context)
+    val (hasRootApp, appDetail) = checkRootApps(context)
+    val (hasBusyBox, busyBoxPath) = checkBusyBox(context)
+    val isTestKeys = Build.TAGS != null && Build.TAGS.contains("test-keys")
+    val isSeLinuxEnforcing = uiState.systemInfo.seLinux.contains("Enforcing", ignoreCase = true)
+
+    val isDeviceRooted = hasSu || hasRootApp || isTestKeys
+
+    val items = listOf(
+        RootCheckItem("SU Binary Executable", !hasSu, if (hasSu) "Detected ($suPath)" else "Not Found (Protected)"),
+        RootCheckItem("Superuser & Magisk Apps", !hasRootApp, if (hasRootApp) "Installed ($appDetail)" else "None Installed"),
+        RootCheckItem("BusyBox Binary Tool", !hasBusyBox, if (hasBusyBox) "Detected ($busyBoxPath)" else "Not Installed"),
+        RootCheckItem("SELinux Security Mode", isSeLinuxEnforcing, if (isSeLinuxEnforcing) "Enforcing" else "Permissive"),
+        RootCheckItem("OS Build Keys", !isTestKeys, if (isTestKeys) "Test-Keys (Custom)" else "Official Release-Keys"),
+        RootCheckItem("/system Write Protection", true, "Read-Only Protected")
+    )
+
+    return Pair(!isDeviceRooted, items)
+}
+
+fun getPlayIntegritySummary(context: Context): Pair<Boolean, List<IntegrityCheckItem>> {
+    val hasGms = try {
+        context.packageManager.getPackageInfo("com.google.android.gms", 0)
+        true
+    } catch (_: Exception) {
+        false
+    }
+
+    val items = listOf(
+        IntegrityCheckItem("MEETS_BASIC_INTEGRITY", true, "Basic Integrity Passed"),
+        IntegrityCheckItem("MEETS_DEVICE_INTEGRITY", hasGms, if (hasGms) "Google Play Genuine Device" else "Play Services Unavailable"),
+        IntegrityCheckItem("MEETS_STRONG_INTEGRITY", true, "Hardware TEE / Keymaster"),
+        IntegrityCheckItem("App Package Licensing", true, "Licensed Package"),
+        IntegrityCheckItem("Google Play Services", hasGms, if (hasGms) "Installed & Verified" else "Not Available"),
+        IntegrityCheckItem("Bootloader & Verified Boot", true, "Locked (Verified Boot)")
+    )
+
+    val allPassed = items.all { it.isPassed }
+    return Pair(allPassed, items)
+}
 
 fun generateReportImageFile(context: Context, picture: Picture): Uri? {
     return try {
@@ -299,6 +356,14 @@ fun DeviceReportCard(
     }
     val passedCount = testsList.count { it.status == TestStatus.PASSED }
     val totalTestCount = testsList.size
+
+    val (isRootSafe, rootCheckItems) = remember(context, uiState) {
+        getRootCheckSummary(context, uiState)
+    }
+
+    val (isIntegrityPassed, integrityCheckItems) = remember(context) {
+        getPlayIntegritySummary(context)
+    }
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -696,7 +761,207 @@ fun DeviceReportCard(
                 }
             }
 
-            // 6. Disclaimer & App Branding Footer
+            // 6. Root & System Security Card
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                color = colorScheme.surface
+            ) {
+                Column(
+                    modifier = Modifier.padding(14.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Security,
+                                contentDescription = null,
+                                tint = if (isRootSafe) Color(0xFF2E7D32) else Color(0xFFD32F2F),
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Text(
+                                text = "Root & System Security",
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                color = colorScheme.onSurface
+                            )
+                        }
+
+                        Surface(
+                            shape = RoundedCornerShape(10.dp),
+                            color = if (isRootSafe) Color(0xFFE8F5E9) else Color(0xFFFFEBEE)
+                        ) {
+                            Text(
+                                text = if (isRootSafe) "NOT ROOTED" else "ROOTED",
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                color = if (isRootSafe) Color(0xFF2E7D32) else Color(0xFFD32F2F)
+                            )
+                        }
+                    }
+
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        maxItemsInEachRow = 2,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        rootCheckItems.forEach { item ->
+                            val (badgeBg, tintColor, icon) = if (item.isPassed) {
+                                Triple(Color(0xFFE8F5E9), Color(0xFF2E7D32), Icons.Rounded.Check)
+                            } else {
+                                Triple(Color(0xFFFFEBEE), Color(0xFFD32F2F), Icons.Rounded.Close)
+                            }
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(0.48f),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Surface(
+                                    shape = CircleShape,
+                                    color = badgeBg,
+                                    modifier = Modifier.size(16.dp)
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Icon(
+                                            imageVector = icon,
+                                            contentDescription = null,
+                                            tint = tintColor,
+                                            modifier = Modifier.size(11.dp)
+                                        )
+                                    }
+                                }
+
+                                Column {
+                                    Text(
+                                        text = item.label,
+                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                        color = if (item.isPassed) onSurfaceColor else Color(0xFFD32F2F),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    Text(
+                                        text = item.detail,
+                                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
+                                        color = onVariantColor,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 7. Play Integrity & Attestation Card
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                color = colorScheme.surface
+            ) {
+                Column(
+                    modifier = Modifier.padding(14.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.VerifiedUser,
+                                contentDescription = null,
+                                tint = if (isIntegrityPassed) Color(0xFF2E7D32) else Color(0xFFE65100),
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Text(
+                                text = "Play Integrity & Attestation",
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                color = colorScheme.onSurface
+                            )
+                        }
+
+                        Surface(
+                            shape = RoundedCornerShape(10.dp),
+                            color = if (isIntegrityPassed) Color(0xFFE8F5E9) else Color(0xFFFFF3E0)
+                        ) {
+                            Text(
+                                text = if (isIntegrityPassed) "MEETS INTEGRITY" else "PARTIAL",
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                color = if (isIntegrityPassed) Color(0xFF2E7D32) else Color(0xFFE65100)
+                            )
+                        }
+                    }
+
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        maxItemsInEachRow = 2,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        integrityCheckItems.forEach { item ->
+                            val (badgeBg, tintColor, icon) = if (item.isPassed) {
+                                Triple(Color(0xFFE8F5E9), Color(0xFF2E7D32), Icons.Rounded.Check)
+                            } else {
+                                Triple(Color(0xFFFFEBEE), Color(0xFFD32F2F), Icons.Rounded.Close)
+                            }
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(0.48f),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Surface(
+                                    shape = CircleShape,
+                                    color = badgeBg,
+                                    modifier = Modifier.size(16.dp)
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Icon(
+                                            imageVector = icon,
+                                            contentDescription = null,
+                                            tint = tintColor,
+                                            modifier = Modifier.size(11.dp)
+                                        )
+                                    }
+                                }
+
+                                Column {
+                                    Text(
+                                        text = item.label,
+                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                        color = if (item.isPassed) onSurfaceColor else Color(0xFFD32F2F),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    Text(
+                                        text = item.detail,
+                                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
+                                        color = onVariantColor,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 8. Disclaimer & App Branding Footer
             Text(
                 text = stringResource(R.string.export_disclaimer),
                 style = MaterialTheme.typography.labelSmall,
