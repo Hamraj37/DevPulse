@@ -1,17 +1,16 @@
 package com.hamraj37.devpulse.ui.screens
 
-import com.hamraj37.devpulse.R
-import androidx.compose.ui.res.stringResource
 import android.content.Context
 import android.content.Intent
-import android.graphics.Paint
-import android.graphics.pdf.PdfDocument
+import android.graphics.Bitmap
+import android.graphics.Picture
 import android.net.Uri
+import android.os.Environment
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,79 +23,75 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Android
+import androidx.compose.material.icons.rounded.BatteryChargingFull
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Download
+import androidx.compose.material.icons.rounded.Memory
+import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material.icons.rounded.SdStorage
+import androidx.compose.material.icons.rounded.Share
+import androidx.compose.material.icons.rounded.Smartphone
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.draw
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
+import com.hamraj37.devpulse.R
+import com.hamraj37.devpulse.data.model.TestStatus
+import com.hamraj37.devpulse.data.telemetry.AppAndTestTelemetry
 import com.hamraj37.devpulse.ui.MainUiState
+import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import android.graphics.Color as AndroidColor
 
-fun generatePdfReportFile(context: Context, reportContent: String): Uri? {
+fun generateReportImageFile(context: Context, picture: Picture): Uri? {
     return try {
-        val pdfDocument = PdfDocument()
-        val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
-        val page = pdfDocument.startPage(pageInfo)
-        val canvas = page.canvas
+        val width = picture.width.coerceAtLeast(1)
+        val height = picture.height.coerceAtLeast(1)
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = android.graphics.Canvas(bitmap)
+        canvas.drawColor(AndroidColor.WHITE)
+        picture.draw(canvas)
 
-        val titlePaint = Paint().apply {
-            color = AndroidColor.parseColor("#1A237E")
-            textSize = 18f
-            isFakeBoldText = true
-        }
-
-        val textPaint = Paint().apply {
-            color = AndroidColor.BLACK
-            textSize = 11f
-        }
-
-        canvas.drawText(context.getString(R.string.export_pdf_title), 40f, 50f, titlePaint)
-
-        var y = 85f
-        val lines = reportContent.split("\n")
-        for (line in lines) {
-            if (y > 800f) break
-            canvas.drawText(line, 40f, y, textPaint)
-            y += 16f
-        }
-
-        pdfDocument.finishPage(page)
-
-        val file = File(context.cacheDir, "DevPulse_System_Report.pdf")
+        val file = File(context.cacheDir, "DevPulse_Device_Report.png")
         file.outputStream().use { out ->
-            pdfDocument.writeTo(out)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
         }
-        pdfDocument.close()
 
         FileProvider.getUriForFile(
             context,
@@ -109,18 +104,24 @@ fun generatePdfReportFile(context: Context, reportContent: String): Uri? {
     }
 }
 
-fun generateTextReportFile(context: Context, reportContent: String): Uri? {
+fun saveReportImageToGallery(context: Context, picture: Picture): Boolean {
     return try {
-        val file = File(context.cacheDir, "DevPulse_System_Report.txt")
-        file.writeText(reportContent)
-        FileProvider.getUriForFile(
-            context,
-            "${context.packageName}.fileprovider",
-            file
-        )
+        val width = picture.width.coerceAtLeast(1)
+        val height = picture.height.coerceAtLeast(1)
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = android.graphics.Canvas(bitmap)
+        canvas.drawColor(AndroidColor.WHITE)
+        picture.draw(canvas)
+
+        val dir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir
+        val file = File(dir, "DevPulse_Report_${System.currentTimeMillis()}.png")
+        file.outputStream().use { out ->
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+        }
+        true
     } catch (e: Exception) {
         e.printStackTrace()
-        null
+        false
     }
 }
 
@@ -136,133 +137,7 @@ fun ExportScreen(
         BackHandler { onBack() }
     }
 
-    var reportType by remember { mutableStateOf("Text") } // "Text" or "PDF"
-
-    val allCategories = listOf(
-        Pair("Device", stringResource(R.string.export_cat_device)),
-        Pair("System", stringResource(R.string.export_cat_system)),
-        Pair("CPU", stringResource(R.string.export_cat_cpu)),
-        Pair("Battery", stringResource(R.string.export_cat_battery)),
-        Pair("Network", stringResource(R.string.export_cat_network)),
-        Pair("Connectivity", stringResource(R.string.export_cat_connectivity)),
-        Pair("Display", stringResource(R.string.export_cat_display)),
-        Pair("Memory", stringResource(R.string.export_cat_memory)),
-        Pair("Camera", stringResource(R.string.export_cat_camera)),
-        Pair("Thermal", stringResource(R.string.export_cat_thermal)),
-        Pair("Sensors", stringResource(R.string.export_cat_sensors)),
-        Pair("Apps", stringResource(R.string.export_cat_apps))
-    )
-
-    val selectedCategories = remember {
-        mutableStateListOf<String>().apply { addAll(allCategories.map { it.first }) }
-    }
-
-    fun buildCustomReport(): String {
-        return buildString {
-            appendLine(context.getString(R.string.export_report_header))
-            val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.US)
-            appendLine(context.getString(R.string.export_report_generated, sdf.format(Date())))
-            appendLine()
-
-            if (selectedCategories.contains("Device")) {
-                appendLine("[Device Info]")
-                appendLine("Manufacturer: ${uiState.deviceInfo.manufacturer}")
-                appendLine("Model: ${uiState.deviceInfo.model}")
-                appendLine("Brand: ${uiState.deviceInfo.brand}")
-                appendLine("Board: ${uiState.deviceInfo.board}")
-                appendLine("Hardware: ${uiState.deviceInfo.hardware}")
-                appendLine()
-            }
-
-            if (selectedCategories.contains("System")) {
-                appendLine("[System Info]")
-                appendLine("Android Version: ${uiState.systemInfo.androidVersion} (API ${uiState.systemInfo.apiLevel})")
-                appendLine("Security Patch: ${uiState.systemInfo.securityPatch}")
-                appendLine("Build Number: ${uiState.systemInfo.buildNumber}")
-                appendLine("Kernel Version: ${uiState.systemInfo.kernelVersion}")
-                appendLine()
-            }
-
-            if (selectedCategories.contains("CPU")) {
-                appendLine("[CPU Info]")
-                appendLine("Processor: ${uiState.cpuInfo.processorName}")
-                appendLine("Architecture: ${uiState.cpuInfo.architecture}")
-                appendLine("Cores: ${uiState.cpuInfo.totalCores}")
-                appendLine("Governor: ${uiState.cpuInfo.governor}")
-                appendLine("GPU Renderer: ${uiState.cpuInfo.gpuRenderer}")
-                appendLine()
-            }
-
-            if (selectedCategories.contains("Battery")) {
-                appendLine("[Battery Info]")
-                appendLine("Level: ${uiState.batteryInfo.levelPercent}%")
-                appendLine("Health: ${uiState.batteryInfo.health}")
-                appendLine("Status: ${uiState.batteryInfo.status}")
-                appendLine("Temperature: ${uiState.batteryInfo.temperatureCelsius}°C")
-                appendLine("Voltage: ${uiState.batteryInfo.voltageVolts} V")
-                appendLine()
-            }
-
-            if (selectedCategories.contains("Network")) {
-                appendLine("[Network Info]")
-                appendLine("SSID: ${uiState.networkInfo.ssid}")
-                appendLine("IP Address: ${uiState.networkInfo.ipAddress}")
-                appendLine("Gateway: ${uiState.networkInfo.gateway}")
-                appendLine("Link Speed: ${uiState.networkInfo.linkSpeed}")
-                appendLine()
-            }
-
-            if (selectedCategories.contains("Connectivity")) {
-                appendLine("[Connectivity Info]")
-                appendLine("Connection Type: ${uiState.networkInfo.activeConnectionType}")
-                appendLine("Wi-Fi Direct: ${uiState.connectivityInfo.wifiDirectSupported}")
-                appendLine("Bluetooth: ${uiState.connectivityInfo.bluetoothSupported}")
-                appendLine()
-            }
-
-            if (selectedCategories.contains("Display")) {
-                appendLine("[Display Info]")
-                appendLine("Resolution: ${uiState.displayInfo.resolution}")
-                appendLine("Refresh Rate: ${uiState.displayInfo.refreshRate}")
-                appendLine("Density: ${uiState.displayInfo.densityDpi} DPI")
-                appendLine()
-            }
-
-            if (selectedCategories.contains("Memory")) {
-                appendLine("[Memory & Storage]")
-                appendLine("RAM Total: ${uiState.dashboardInfo.ramTotalBytes / (1024 * 1024 * 1024)} GB")
-                appendLine("RAM Used: ${uiState.dashboardInfo.ramUsedBytes / (1024 * 1024 * 1024)} GB")
-                appendLine()
-            }
-
-            if (selectedCategories.contains("Camera")) {
-                appendLine("[Camera Info]")
-                appendLine("Total Cameras: ${uiState.cameraInfo.cameras.size}")
-                appendLine("Active ID: ${uiState.selectedCameraId}")
-                appendLine()
-            }
-
-            if (selectedCategories.contains("Thermal")) {
-                appendLine("[Thermal Info]")
-                appendLine("Thermal Status: ${uiState.thermalInfo.overallStatus}")
-                appendLine()
-            }
-
-            if (selectedCategories.contains("Sensors")) {
-                appendLine("[Sensors Info]")
-                appendLine("Total Sensors: ${uiState.sensorInfo.sensors.size}")
-                appendLine()
-            }
-
-            if (selectedCategories.contains("Apps")) {
-                appendLine("[Apps Summary]")
-                appendLine("Total Apps: ${uiState.appInfo.totalApps}")
-                appendLine("User Apps: ${uiState.appInfo.userAppsCount}")
-                appendLine("System Apps: ${uiState.appInfo.systemAppsCount}")
-                appendLine()
-            }
-        }
-    }
+    val reportPicture = remember { Picture() }
 
     Column(
         modifier = modifier
@@ -278,254 +153,777 @@ fun ExportScreen(
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .weight(1f)
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(18.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Export Data Intro Card
-        Surface(
-            shape = RoundedCornerShape(20.dp),
-            color = MaterialTheme.colorScheme.surfaceContainerLow,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(
+            // Recorded Printable / Shareable Card Container
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(6.dp)
+                    .drawWithCache {
+                        val width = size.width.toInt()
+                        val height = size.height.toInt()
+                        onDrawWithContent {
+                            val pictureCanvas = Canvas(
+                                reportPicture.beginRecording(width, height)
+                            )
+                            draw(this, layoutDirection, pictureCanvas, size) {
+                                this@onDrawWithContent.drawContent()
+                            }
+                            reportPicture.endRecording()
+                            drawContent()
+                        }
+                    }
             ) {
-                Text(
-                    text = stringResource(R.string.export_subtitle),
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 22.sp
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = stringResource(R.string.export_desc),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
-                )
+                DeviceReportCard(uiState = uiState)
             }
         }
 
-        // Report Type Card
+        // Bottom Fixed Action Bar with Save image & Share
         Surface(
-            shape = RoundedCornerShape(20.dp),
-            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            tonalElevation = 6.dp,
+            shadowElevation = 8.dp,
+            color = MaterialTheme.colorScheme.surface,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(14.dp)
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.export_report_type_title),
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = stringResource(R.string.export_report_type_desc),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
-                )
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    val types = listOf(
-                        "Text" to stringResource(R.string.export_type_text),
-                        "PDF" to stringResource(R.string.export_type_pdf)
-                    )
-                    types.forEach { (typeKey, typeName) ->
-                        val isSelected = reportType == typeKey
-                        Surface(
-                            shape = CircleShape,
-                            color = if (isSelected) MaterialTheme.colorScheme.surfaceContainerHigh else Color.Transparent,
-                            border = if (isSelected) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                            modifier = Modifier.clickable { reportType = typeKey }
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                if (isSelected) {
-                                    Surface(
-                                        shape = CircleShape,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        modifier = Modifier.size(20.dp)
-                                    ) {
-                                        Box(contentAlignment = Alignment.Center) {
-                                            Icon(
-                                                imageVector = Icons.Rounded.Check,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.surface,
-                                                modifier = Modifier.size(14.dp)
-                                            )
-                                        }
-                                    }
-                                }
-                                Text(
-                                    text = typeName,
-                                    style = MaterialTheme.typography.titleMedium.copy(
-                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
-                                    ),
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
+                OutlinedButton(
+                    onClick = {
+                        val success = saveReportImageToGallery(context, reportPicture)
+                        if (success) {
+                            Toast.makeText(context, context.getString(R.string.toast_report_image_saved), Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, context.getString(R.string.toast_failed_generate_report), Toast.LENGTH_SHORT).show()
                         }
+                    },
+                    shape = RoundedCornerShape(24.dp),
+                    border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outlineVariant),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Download,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Text(
+                            text = stringResource(R.string.export_save_image),
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+
+                Button(
+                    onClick = {
+                        val imageUri = generateReportImageFile(context, reportPicture)
+                        if (imageUri != null) {
+                            val sendIntent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                putExtra(Intent.EXTRA_STREAM, imageUri)
+                                type = "image/png"
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            }
+                            val shareIntent = Intent.createChooser(sendIntent, context.getString(R.string.export_share))
+                            context.startActivity(shareIntent)
+                        } else {
+                            Toast.makeText(context, context.getString(R.string.toast_failed_generate_report), Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    shape = RoundedCornerShape(24.dp),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Share,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Text(
+                            text = stringResource(R.string.export_share),
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
                     }
                 }
             }
         }
+    }
+}
 
-        // Categories Selection Card
-        Surface(
-            shape = RoundedCornerShape(20.dp),
-            color = MaterialTheme.colorScheme.surfaceContainerLow,
-            modifier = Modifier.fillMaxWidth()
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun DeviceReportCard(
+    uiState: MainUiState,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val currentFormattedTime = remember { SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(Date()) }
+
+    // Memory & Storage calculation
+    val ramTotalGb = uiState.dashboardInfo.ramTotalBytes / (1024 * 1024 * 1024f)
+    val ramUsedGb = uiState.dashboardInfo.ramUsedBytes / (1024 * 1024 * 1024f)
+    val ramPct = if (ramTotalGb > 0) ((ramUsedGb / ramTotalGb) * 100).toInt() else 77
+
+    val storageTotalGb = uiState.dashboardInfo.storageTotalBytes / (1024 * 1024 * 1024f)
+    val storageUsedGb = uiState.dashboardInfo.storageUsedBytes / (1024 * 1024 * 1024f)
+    val storagePct = if (storageTotalGb > 0) ((storageUsedGb / storageTotalGb) * 100).toInt() else 32
+
+    val maxCpuGhzStr = String.format(
+        Locale.US,
+        "%.2f",
+        if (uiState.cpuInfo.maxFrequencyMhz > 0) uiState.cpuInfo.maxFrequencyMhz / 1000f else 2.80f
+    )
+
+    val testsList = remember(uiState.testsList) {
+        uiState.testsList.ifEmpty { AppAndTestTelemetry.getInitialTestItems(context) }
+    }
+    val passedCount = testsList.count { it.status == TestStatus.PASSED }
+    val totalTestCount = testsList.size
+
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+        shape = RoundedCornerShape(24.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(14.dp)
+            // 1. Header Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = stringResource(R.string.export_categories_title),
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = stringResource(R.string.export_categories_desc),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
-                )
-
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier.fillMaxWidth()
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    allCategories.forEach { category ->
-                        val isSelected = selectedCategories.contains(category.first)
-                        Surface(
-                            shape = CircleShape,
-                            color = if (isSelected) MaterialTheme.colorScheme.surfaceContainerHigh else Color.Transparent,
-                            border = if (isSelected) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                            modifier = Modifier.clickable {
-                                if (isSelected) {
-                                    if (selectedCategories.size > 1) {
-                                        selectedCategories.remove(category.first)
-                                    }
-                                } else {
-                                    selectedCategories.add(category.first)
-                                }
-                            }
+                    Surface(
+                        shape = RoundedCornerShape(10.dp),
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                                contentDescription = stringResource(R.string.app_name),
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                    }
+
+                    Text(
+                        text = stringResource(R.string.export_device_report_title),
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 22.sp
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = stringResource(R.string.export_generated),
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                        color = Color(0xFF2E7D32)
+                    )
+                    Text(
+                        text = currentFormattedTime,
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            // 2. Brand & Chipset Top Cards Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                // Device Brand Card
+                Surface(
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(16.dp),
+                    color = MaterialTheme.colorScheme.surface
+                ) {
+                    Column(
+                        modifier = Modifier.padding(14.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Smartphone,
+                                contentDescription = null,
+                                tint = Color(0xFFE53935),
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Text(
+                                text = uiState.deviceInfo.manufacturer.uppercase().ifBlank { "DEVICE" },
+                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+
+                        Text(
+                            text = uiState.deviceInfo.model.ifBlank { "Unknown Model" },
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 20.sp
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+
+                        val boardHardwareStr = listOf(uiState.deviceInfo.board, uiState.deviceInfo.hardware)
+                            .filter { it.isNotBlank() }
+                            .joinToString(" · ")
+                            .ifBlank { "Hardware" }
+
+                        Text(
+                            text = boardHardwareStr,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+
+                // Chipset Card
+                val processorVendor = when {
+                    uiState.cpuInfo.gpuVendor.contains("Qualcomm", ignoreCase = true) || uiState.cpuInfo.processorName.contains("Snapdragon", ignoreCase = true) -> "Qualcomm®"
+                    uiState.cpuInfo.gpuVendor.contains("ARM", ignoreCase = true) || uiState.cpuInfo.processorName.contains("Dimensity", ignoreCase = true) -> "MediaTek®"
+                    uiState.cpuInfo.gpuVendor.contains("Samsung", ignoreCase = true) || uiState.cpuInfo.processorName.contains("Exynos", ignoreCase = true) -> "Samsung®"
+                    uiState.cpuInfo.gpuVendor.contains("Google", ignoreCase = true) || uiState.cpuInfo.processorName.contains("Tensor", ignoreCase = true) -> "Google®"
+                    else -> uiState.cpuInfo.gpuVendor.ifBlank { "Processor" }
+                }
+
+                Surface(
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(16.dp),
+                    color = MaterialTheme.colorScheme.surface
+                ) {
+                    Column(
+                        modifier = Modifier.padding(14.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Memory,
+                                contentDescription = null,
+                                tint = Color(0xFFD32F2F),
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Text(
+                                text = processorVendor,
+                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+
+                        Text(
+                            text = uiState.cpuInfo.processorName.ifBlank { "ARM Processor" },
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 17.sp
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+
+                        Text(
+                            text = "${uiState.cpuInfo.totalCores} cores · Max $maxCpuGhzStr GHz",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+            }
+
+            // 3. OS Version Banner Card
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surface
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(10.dp),
+                            color = Color(0xFFE8F5E9),
+                            modifier = Modifier.size(38.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Android,
+                                    contentDescription = null,
+                                    tint = Color(0xFF2E7D32),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        }
+
+                        Column {
+                            val androidVerText = uiState.systemInfo.androidVersion.ifBlank { "14.0" }
+                            val codeNameText = uiState.systemInfo.codeName
+                            val osTitleText = if (codeNameText.isNotBlank()) "Android $androidVerText · $codeNameText" else "Android $androidVerText"
+
+                            val customOsName = uiState.systemInfo.osName.ifBlank { "Android" }
+                            val customOsVer = uiState.systemInfo.osVersion.ifBlank { uiState.systemInfo.buildNumber }
+                            val osSubtitleText = when {
+                                customOsVer.isNotBlank() && customOsVer != customOsName -> "$customOsName $customOsVer"
+                                else -> customOsName
+                            }
+
+                            Text(
+                                text = osTitleText,
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Text(
+                                text = osSubtitleText,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh
+                    ) {
+                        Text(
+                            text = "API ${uiState.systemInfo.apiLevel} · Ext 22",
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+
+            // 4. Quick Metrics 2x2 Grid
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                // Top Row: Battery & Internal Storage
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    MetricProgressTile(
+                        icon = Icons.Rounded.BatteryChargingFull,
+                        iconTint = Color(0xFF2E7D32),
+                        title = "Battery · ${uiState.batteryInfo.status}",
+                        value = "${uiState.batteryInfo.levelPercent}%",
+                        subtitle = "${uiState.batteryInfo.capacitySystemMah} mAh · ${uiState.batteryInfo.temperatureCelsius}°C",
+                        progress = uiState.batteryInfo.levelPercent / 100f,
+                        progressColor = Color(0xFF2E7D32),
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    MetricProgressTile(
+                        icon = Icons.Rounded.SdStorage,
+                        iconTint = Color(0xFFE65100),
+                        title = "Internal Storage",
+                        value = "$storagePct%",
+                        subtitle = String.format(Locale.US, "%.1f GB / %.1f GB", storageUsedGb, storageTotalGb),
+                        progress = storagePct / 100f,
+                        progressColor = Color(0xFFE65100),
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
+                // Bottom Row: RAM & Display
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    MetricProgressTile(
+                        icon = Icons.Rounded.Memory,
+                        iconTint = Color(0xFF1565C0),
+                        title = "RAM",
+                        value = "$ramPct%",
+                        subtitle = String.format(Locale.US, "%.2f GB / %.2f GB", ramUsedGb, ramTotalGb),
+                        progress = ramPct / 100f,
+                        progressColor = Color(0xFF1565C0),
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    MetricTileWithoutProgress(
+                        icon = Icons.Rounded.Smartphone,
+                        iconTint = Color(0xFF2E7D32),
+                        title = "Display",
+                        value = "${uiState.displayInfo.resolutionWidthPx} x ${uiState.displayInfo.resolutionHeightPx}",
+                        subtitle = "${uiState.displayInfo.physicalSizeInches}\" · ${uiState.displayInfo.refreshRate} · ${uiState.displayInfo.resolutionCategory}",
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+
+            // 5. System Diagnostic Tests Card
+            val colorScheme = MaterialTheme.colorScheme
+            val notTestedBg = colorScheme.surfaceContainerHigh
+            val notTestedTint = colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+            val onSurfaceColor = colorScheme.onSurface
+            val onVariantColor = colorScheme.onSurfaceVariant
+
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                color = colorScheme.surface
+            ) {
+                Column(
+                    modifier = Modifier.padding(14.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = if (passedCount > 0) "$passedCount/$totalTestCount tests passed" else "$totalTestCount System Tests",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = if (passedCount > 0) Color(0xFF2E7D32) else colorScheme.onSurface
+                        )
+
+                        Text(
+                            text = "${uiState.sensorInfo.sensorCount} sensors · ${uiState.appInfo.totalApps} apps",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = onVariantColor
+                        )
+                    }
+
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        maxItemsInEachRow = 2,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        testsList.forEach { test ->
+                            val (badgeBg, tintColor, icon) = when (test.status) {
+                                TestStatus.PASSED -> Triple(Color(0xFFE8F5E9), Color(0xFF2E7D32), Icons.Rounded.Check)
+                                TestStatus.FAILED -> Triple(Color(0xFFFFEBEE), Color(0xFFD32F2F), Icons.Rounded.Close)
+                                TestStatus.RUNNING -> Triple(Color(0xFFE3F2FD), Color(0xFF1565C0), Icons.Rounded.Refresh)
+                                TestStatus.NOT_TESTED -> Triple(notTestedBg, notTestedTint, Icons.Rounded.Check)
+                            }
+
                             Row(
-                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+                                modifier = Modifier.fillMaxWidth(0.48f),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
-                                if (isSelected) {
-                                    Surface(
-                                        shape = CircleShape,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        modifier = Modifier.size(18.dp)
-                                    ) {
-                                        Box(contentAlignment = Alignment.Center) {
-                                            Icon(
-                                                imageVector = Icons.Rounded.Check,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.surface,
-                                                modifier = Modifier.size(12.dp)
-                                            )
-                                        }
+                                Surface(
+                                    shape = CircleShape,
+                                    color = badgeBg,
+                                    modifier = Modifier.size(16.dp)
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Icon(
+                                            imageVector = icon,
+                                            contentDescription = null,
+                                            tint = tintColor,
+                                            modifier = Modifier.size(11.dp)
+                                        )
                                     }
                                 }
+
                                 Text(
-                                    text = category.second,
-                                    style = MaterialTheme.typography.labelLarge.copy(
-                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
-                                    ),
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    text = test.title,
+                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                    color = when (test.status) {
+                                        TestStatus.PASSED -> onSurfaceColor
+                                        TestStatus.FAILED -> Color(0xFFD32F2F)
+                                        else -> onVariantColor
+                                    },
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
                         }
                     }
                 }
             }
-        }
 
-        // Export Action Button at bottom
-        Button(
-            onClick = {
-                val reportContent = buildCustomReport()
-                val fileUri = if (reportType == "PDF") {
-                    generatePdfReportFile(context, reportContent)
-                } else {
-                    generateTextReportFile(context, reportContent)
-                }
+            // 6. Disclaimer & App Branding Footer
+            Text(
+                text = stringResource(R.string.export_disclaimer),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
 
-                if (fileUri != null) {
-                    val sendIntent = Intent().apply {
-                        action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_STREAM, fileUri)
-                        putExtra(Intent.EXTRA_TEXT, reportContent)
-                        type = if (reportType == "PDF") "application/pdf" else "text/plain"
-                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    }
-                    val shareIntent = Intent.createChooser(sendIntent, context.getString(R.string.chooser_export_report, reportType))
-                    context.startActivity(shareIntent)
-                } else {
-                    Toast.makeText(context, context.getString(R.string.toast_failed_generate_report), Toast.LENGTH_SHORT).show()
-                }
-            },
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-            shape = RoundedCornerShape(14.dp),
-            modifier = Modifier
-                .padding(vertical = 8.dp)
-        ) {
-            Row(
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surface
             ) {
-                Icon(
-                    imageVector = Icons.Rounded.Download,
-                    contentDescription = stringResource(R.string.btn_export),
-                    tint = Color.White,
-                    modifier = Modifier.size(20.dp)
-                )
-                Text(
-                    text = stringResource(R.string.btn_export),
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = Color.White
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(10.dp),
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            modifier = Modifier.size(38.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                                    contentDescription = stringResource(R.string.app_name),
+                                    modifier = Modifier.size(34.dp)
+                                )
+                            }
+                        }
+
+                        Column {
+                            val appVersionName = remember {
+                                try {
+                                    val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+                                    pInfo.versionName ?: "1.0.7"
+                                } catch (_: Throwable) {
+                                    "1.0.7"
+                                }
+                            }
+
+                            Text(
+                                text = "DevPulse v$appVersionName",
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = stringResource(R.string.export_footer_subtitle),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Surface(
+                        shape = RoundedCornerShape(10.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh
+                    ) {
+                        Text(
+                            text = stringResource(R.string.export_available_on),
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
             }
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
     }
 }
+
+@Composable
+fun MetricProgressTile(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    iconTint: Color,
+    title: String,
+    value: String,
+    subtitle: String,
+    progress: Float,
+    progressColor: Color,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surface
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = iconTint,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                Text(
+                    text = value,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            val safeProgress = progress.let { if (it.isNaN() || it.isInfinite()) 0f else it.coerceIn(0f, 1f) }
+            LinearProgressIndicator(
+                progress = { safeProgress },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(5.dp)
+                    .clip(RoundedCornerShape(3.dp)),
+                color = progressColor,
+                trackColor = MaterialTheme.colorScheme.surfaceContainerHighest
+            )
+        }
+    }
+}
+
+@Composable
+fun MetricTileWithoutProgress(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    iconTint: Color,
+    title: String,
+    value: String,
+    subtitle: String,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surface
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = iconTint,
+                    modifier = Modifier.size(16.dp)
+                )
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DeviceReportCardPreview() {
+    DevPulseTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            DeviceReportCard(uiState = MainUiState())
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ExportScreenPreview() {
+    DevPulseTheme {
+        ExportScreen(uiState = MainUiState())
+    }
 }

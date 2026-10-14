@@ -484,6 +484,14 @@
     <string name="export_cat_thermal">Thermal</string>
     <string name="export_cat_sensors">Sensors</string>
     <string name="export_cat_apps">Apps</string>
+    <string name="export_device_report_title">Device report</string>
+    <string name="export_generated">Generated</string>
+    <string name="export_save_image">Save image</string>
+    <string name="export_share">Share</string>
+    <string name="export_disclaimer">Data is returned by system APIs. Accuracy and authenticity are not guaranteed.</string>
+    <string name="export_footer_subtitle">Search DevPulse to explore your device</string>
+    <string name="export_available_on">Diagnostic Tool</string>
+    <string name="toast_report_image_saved">Report image saved!</string>
     <string name="floating_monitors_title">Floating Monitors</string>
     <string name="floating_monitors_subtitle">Display live system performance overlays</string>
     <string name="floating_monitors_perm_hdr">Display Over Apps Permission Required</string>

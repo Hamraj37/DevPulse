@@ -484,6 +484,14 @@
     <string name="export_cat_thermal">温控</string>
     <string name="export_cat_sensors">传感器</string>
     <string name="export_cat_apps">应用</string>
+    <string name="export_device_report_title">设备报告</string>
+    <string name="export_generated">生成于</string>
+    <string name="export_save_image">保存图片</string>
+    <string name="export_share">分享</string>
+    <string name="export_disclaimer">数据由系统 API 返回。不保证准确性和真实性。</string>
+    <string name="export_footer_subtitle">搜索 DevPulse 探索您的设备</string>
+    <string name="export_available_on">诊断工具</string>
+    <string name="toast_report_image_saved">报告图片已保存！</string>
     <string name="floating_monitors_title">悬浮监视器</string>
     <string name="floating_monitors_subtitle">在屏幕上显示实时性能悬浮窗</string>
     <string name="floating_monitors_perm_hdr">需要“显示在其他应用上”权限</string>
