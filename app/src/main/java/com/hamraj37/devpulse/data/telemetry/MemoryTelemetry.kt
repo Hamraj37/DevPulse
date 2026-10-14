@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Environment
 import android.os.StatFs
 import com.hamraj37.devpulse.data.model.MemoryInfo
+import com.hamraj37.devpulse.data.model.StoragePartitionInfo
 import java.io.File
 
 object MemoryTelemetry {
@@ -36,6 +37,13 @@ object MemoryTelemetry {
             val swapStats = getSwapInfoFromMemInfo()
             val zramStats = getZramInfo()
 
+            val (importantPartitions, allPartitions) = getAllAndImportantStoragePartitions()
+            val dataPartition = importantPartitions.firstOrNull { it.mountPoint == "/data" }
+            val internalFs = dataPartition?.fileSystemType ?: "f2fs"
+
+            val sysPartition = importantPartitions.firstOrNull { (it.mountPoint == "/system") || (it.mountPoint == "/") }
+            val systemFs = sysPartition?.fileSystemType ?: "erofs"
+
             MemoryInfo(
                 ramTotalBytes = ramTotal,
                 ramUsedBytes = ramUsed,
@@ -51,9 +59,13 @@ object MemoryTelemetry {
                 systemStorageTotalBytes = systemStorageStats.first,
                 systemStorageUsedBytes = (systemStorageStats.first - systemStorageStats.second).coerceAtLeast(0L),
                 systemStorageFreeBytes = systemStorageStats.second,
+                systemFileSystemType = systemFs,
                 internalStorageTotalBytes = internalStorageStats.first,
                 internalStorageUsedBytes = (internalStorageStats.first - internalStorageStats.second).coerceAtLeast(0L),
                 internalStorageFreeBytes = internalStorageStats.second,
+                internalFileSystemType = internalFs,
+                storagePartitions = importantPartitions,
+                allStoragePartitions = allPartitions,
             )
         } catch (_: Throwable) {
             MemoryInfo()
@@ -143,5 +155,114 @@ object MemoryTelemetry {
         } catch (_: Throwable) {
             0L
         }
+    }
+
+    private fun getAllAndImportantStoragePartitions(): Pair<List<StoragePartitionInfo>, List<StoragePartitionInfo>> {
+        val importantPartitions = mutableListOf<StoragePartitionInfo>()
+        val allPartitions = mutableListOf<StoragePartitionInfo>()
+        val mountsFile = File("/proc/mounts")
+
+        if (!mountsFile.exists() || !mountsFile.canRead()) {
+            val defaults = MemoryInfo().storagePartitions
+            return Pair(defaults, defaults)
+        }
+
+        val seenImportant = mutableSetOf<String>()
+        val seenAll = mutableSetOf<String>()
+
+        val importantMounts = setOf(
+            "/data", "/system", "/vendor", "/product",
+            "/system_ext", "/odm", "/metadata", "/storage/emulated"
+        )
+
+        val virtualFsTypes = setOf(
+            "proc", "sysfs", "cgroup", "cgroup2", "debugfs",
+            "tracefs", "bpf", "devpts", "selinuxfs", "binder", "pstore",
+            "functionfs", "configfs"
+        )
+
+        try {
+            mountsFile.useLines { lines ->
+                for (line in lines) {
+                    val parts = line.trim().split("\\s+".toRegex())
+                    if (parts.size >= 4) {
+                        val device = parts[0]
+                        val mountPoint = parts[1]
+                        val fsType = parts[2]
+                        val options = parts[3].split(",")
+                        val isRo = options.contains("ro")
+
+                        if (virtualFsTypes.contains(fsType)) {
+                            continue
+                        }
+
+                        val file = File(mountPoint)
+                        val (total, free) = getStorageStats(file)
+                        val used = (total - free).coerceAtLeast(0L)
+
+                        val isRemovableSd = mountPoint.startsWith("/storage/") &&
+                                mountPoint != "/storage/emulated" &&
+                                mountPoint.split("/").size == 3 &&
+                                !mountPoint.contains("self")
+
+                        val isRootSystem = mountPoint == "/" && !seenImportant.contains("/system")
+
+                        val friendlyName = when {
+                            mountPoint == "/data" -> "Internal Data (/data)"
+                            mountPoint == "/system" -> "System Partition (/system)"
+                            mountPoint == "/vendor" -> "Vendor Partition (/vendor)"
+                            mountPoint == "/product" -> "Product Partition (/product)"
+                            mountPoint == "/system_ext" -> "System Extensions (/system_ext)"
+                            mountPoint == "/odm" -> "ODM Partition (/odm)"
+                            mountPoint == "/metadata" -> "Metadata Partition (/metadata)"
+                            mountPoint == "/storage/emulated" -> "Emulated Storage (/storage)"
+                            mountPoint == "/" -> "Root System (/)"
+                            isRemovableSd -> "External SD Card ($mountPoint)"
+                            else -> "$mountPoint Partition"
+                        }
+
+                        val partitionInfo = StoragePartitionInfo(
+                            name = friendlyName,
+                            mountPoint = mountPoint,
+                            fileSystemType = fsType,
+                            devicePath = device,
+                            isReadOnly = isRo,
+                            totalBytes = total,
+                            usedBytes = used,
+                            freeBytes = free
+                        )
+
+                        if (!seenAll.contains(mountPoint)) {
+                            seenAll.add(mountPoint)
+                            allPartitions.add(partitionInfo)
+                        }
+
+                        val isImportantNoisyCheck = !mountPoint.startsWith("/apex") &&
+                                !mountPoint.startsWith("/mnt/pass_through") &&
+                                !mountPoint.startsWith("/mnt/runtime") &&
+                                !mountPoint.startsWith("/mnt/user") &&
+                                !mountPoint.startsWith("/mnt/installer") &&
+                                !mountPoint.startsWith("/storage/self") &&
+                                !mountPoint.startsWith("/storage/emulated/")
+
+                        val isImportant = (importantMounts.contains(mountPoint) || isRemovableSd || isRootSystem) && isImportantNoisyCheck
+
+                        if (isImportant && !seenImportant.contains(mountPoint)) {
+                            seenImportant.add(mountPoint)
+                            importantPartitions.add(partitionInfo)
+                        }
+                    }
+                }
+            }
+        } catch (_: Throwable) { }
+
+        if (seenImportant.contains("/system")) {
+            importantPartitions.removeAll { it.mountPoint == "/" }
+        }
+
+        val finalImportant = importantPartitions.ifEmpty { MemoryInfo().storagePartitions }
+        val finalAll = allPartitions.ifEmpty { finalImportant }
+
+        return Pair(finalImportant, finalAll)
     }
 }

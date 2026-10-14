@@ -1052,6 +1052,15 @@
     <!-- Memory Telemetry Formatting Strings -->
     <string name="fmt_memory_used_of_total">%1$.2f GB / %2$.2f GB प्रयुक्त</string>
     <string name="fmt_memory_free">%.2f GB उपलब्ध (Free)</string>
+    <string name="memory_storage_partitions">स्टोरेज विभाजन और फ़ाइलसिस्टम प्रकार</string>
+    <string name="memory_partition_type_chip">FS: %s</string>
+    <string name="memory_partition_mount">माउंट: %s</string>
+    <string name="memory_partition_device">डिवाइस: %s</string>
+    <string name="memory_partition_ro">केवल-पढ़ें (ro)</string>
+    <string name="memory_partition_rw">पढ़ें-लिखें (rw)</string>
+    <string name="memory_partition_count">%d विभाजन पाए गए</string>
+    <string name="memory_partition_show_all">सभी दिखाएं (%d)</string>
+    <string name="memory_partition_show_main">मुख्य दिखाएं (%d)</string>
 
     <!-- Network Telemetry Formatting Strings -->
     <string name="fmt_speed_mbs">%.1f MB/s</string>

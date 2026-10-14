@@ -228,6 +228,18 @@ data class DisplayInfo(
     val screenTimeoutSeconds: Int = 30
 )
 
+// Storage Partition Info
+data class StoragePartitionInfo(
+    val name: String = "Internal Data",
+    val mountPoint: String = "/data",
+    val fileSystemType: String = "f2fs",
+    val devicePath: String = "/dev/block/by-name/userdata",
+    val isReadOnly: Boolean = false,
+    val totalBytes: Long = 256L * 1024 * 1024 * 1024,
+    val usedBytes: Long = 112L * 1024 * 1024 * 1024,
+    val freeBytes: Long = 144L * 1024 * 1024 * 1024
+)
+
 // 9. Memory Info
 data class MemoryInfo(
     val ramTotalBytes: Long = 12L * 1024 * 1024 * 1024,
@@ -244,9 +256,54 @@ data class MemoryInfo(
     val systemStorageTotalBytes: Long = 32L * 1024 * 1024 * 1024,
     val systemStorageUsedBytes: Long = 18L * 1024 * 1024 * 1024,
     val systemStorageFreeBytes: Long = 14L * 1024 * 1024 * 1024,
+    val systemFileSystemType: String = "erofs",
     val internalStorageTotalBytes: Long = 256L * 1024 * 1024 * 1024,
     val internalStorageUsedBytes: Long = 112L * 1024 * 1024 * 1024,
-    val internalStorageFreeBytes: Long = 144L * 1024 * 1024 * 1024
+    val internalStorageFreeBytes: Long = 144L * 1024 * 1024 * 1024,
+    val internalFileSystemType: String = "f2fs",
+    val storagePartitions: List<StoragePartitionInfo> = listOf(
+        StoragePartitionInfo(
+            name = "Internal Data (/data)",
+            mountPoint = "/data",
+            fileSystemType = "f2fs",
+            devicePath = "/dev/block/by-name/userdata",
+            isReadOnly = false,
+            totalBytes = 256L * 1024 * 1024 * 1024,
+            usedBytes = 112L * 1024 * 1024 * 1024,
+            freeBytes = 144L * 1024 * 1024 * 1024
+        ),
+        StoragePartitionInfo(
+            name = "System Partition (/system)",
+            mountPoint = "/system",
+            fileSystemType = "erofs",
+            devicePath = "/dev/block/by-name/system",
+            isReadOnly = true,
+            totalBytes = 32L * 1024 * 1024 * 1024,
+            usedBytes = 18L * 1024 * 1024 * 1024,
+            freeBytes = 14L * 1024 * 1024 * 1024
+        ),
+        StoragePartitionInfo(
+            name = "Vendor Partition (/vendor)",
+            mountPoint = "/vendor",
+            fileSystemType = "erofs",
+            devicePath = "/dev/block/by-name/vendor",
+            isReadOnly = true,
+            totalBytes = 4L * 1024 * 1024 * 1024,
+            usedBytes = 3L * 1024 * 1024 * 1024,
+            freeBytes = 1L * 1024 * 1024 * 1024
+        ),
+        StoragePartitionInfo(
+            name = "Product Partition (/product)",
+            mountPoint = "/product",
+            fileSystemType = "erofs",
+            devicePath = "/dev/block/by-name/product",
+            isReadOnly = true,
+            totalBytes = 3L * 1024 * 1024 * 1024,
+            usedBytes = 2L * 1024 * 1024 * 1024,
+            freeBytes = 1L * 1024 * 1024 * 1024
+        )
+    ),
+    val allStoragePartitions: List<StoragePartitionInfo> = emptyList()
 )
 
 // 10. Camera Info

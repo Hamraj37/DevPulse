@@ -1051,6 +1051,15 @@
     <!-- Memory Telemetry Formatting Strings -->
     <string name="fmt_memory_used_of_total">%1$.2f GB / %2$.2f GB ব্যবহৃত</string>
     <string name="fmt_memory_free">%.2f GB ফাঁকা (Free)</string>
+    <string name="memory_storage_partitions">স্টোরেজ পার্টিশন এবং ফাইলসিস্টেম টাইপ</string>
+    <string name="memory_partition_type_chip">FS: %s</string>
+    <string name="memory_partition_mount">মাউন্ট: %s</string>
+    <string name="memory_partition_device">ডিভাইস: %s</string>
+    <string name="memory_partition_ro">শুধু পঠনযোগ্য (ro)</string>
+    <string name="memory_partition_rw">পঠন-লিখনযোগ্য (rw)</string>
+    <string name="memory_partition_count">%dটি পার্টিশন সনাক্ত করা হয়েছে</string>
+    <string name="memory_partition_show_all">সবগুলো দেখান (%d)</string>
+    <string name="memory_partition_show_main">প্রধানগুলো দেখান (%d)</string>
 
     <!-- Network Telemetry Formatting Strings -->
     <string name="fmt_speed_mbs">%.1f MB/s</string>

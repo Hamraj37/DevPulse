@@ -37,12 +37,42 @@ class TelemetryModelsTest {
         val battery = BatteryInfo()
         val display = DisplayInfo()
         val network = com.hamraj37.devpulse.data.model.NetworkInfo()
+        val memory = com.hamraj37.devpulse.data.model.MemoryInfo()
 
         assertNotNull(device)
         assertNotNull(cpu)
         assertNotNull(battery)
         assertNotNull(display)
         assertNotNull(network)
+        assertNotNull(memory)
+    }
+
+    @Test
+    fun memoryInfo_containsPartitionTypeFields() {
+        val memoryInfo = com.hamraj37.devpulse.data.model.MemoryInfo()
+        assertNotNull(memoryInfo)
+        assertNotNull(memoryInfo.systemFileSystemType)
+        assertNotNull(memoryInfo.internalFileSystemType)
+        assertTrue(memoryInfo.storagePartitions.isNotEmpty())
+
+        val dataPart = memoryInfo.storagePartitions.firstOrNull { it.mountPoint == "/data" }
+        assertNotNull(dataPart)
+        assertEquals("f2fs", dataPart?.fileSystemType)
+
+        val sysPart = memoryInfo.storagePartitions.firstOrNull { it.mountPoint == "/system" }
+        assertNotNull(sysPart)
+        assertEquals("erofs", sysPart?.fileSystemType)
+        assertEquals(true, sysPart?.isReadOnly)
+    }
+
+    @Test
+    fun memoryInfo_containsOnlyImportantPartitions() {
+        val memoryInfo = com.hamraj37.devpulse.data.model.MemoryInfo()
+        assertTrue(memoryInfo.storagePartitions.all {
+            !it.mountPoint.startsWith("/apex") &&
+            !it.mountPoint.startsWith("/mnt/runtime") &&
+            !it.mountPoint.startsWith("/storage/emulated/")
+        })
     }
 
     @Test

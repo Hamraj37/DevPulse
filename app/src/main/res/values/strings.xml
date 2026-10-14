@@ -1052,6 +1052,15 @@
     <!-- Memory Telemetry Formatting Strings -->
     <string name="fmt_memory_used_of_total">%.2f GB of %.2f GB Used</string>
     <string name="fmt_memory_free">%.2f GB Free</string>
+    <string name="memory_storage_partitions">Storage Partitions &amp; Filesystem Types</string>
+    <string name="memory_partition_type_chip">FS: %s</string>
+    <string name="memory_partition_mount">Mount: %s</string>
+    <string name="memory_partition_device">Device: %s</string>
+    <string name="memory_partition_ro">Read-Only (ro)</string>
+    <string name="memory_partition_rw">Read-Write (rw)</string>
+    <string name="memory_partition_count">%d Partitions Detected</string>
+    <string name="memory_partition_show_all">Show All (%d)</string>
+    <string name="memory_partition_show_main">Show Main (%d)</string>
 
     <!-- Network Telemetry Formatting Strings -->
     <string name="fmt_speed_mbs">%.1f MB/s</string>

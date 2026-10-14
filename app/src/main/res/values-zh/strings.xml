@@ -1051,6 +1051,15 @@
     <!-- Memory Telemetry Formatting Strings -->
     <string name="fmt_memory_used_of_total">已用 %1$.2f GB / 共 %2$.2f GB</string>
     <string name="fmt_memory_free">剩余 %.2f GB</string>
+    <string name="memory_storage_partitions">存储分区与文件系统类型</string>
+    <string name="memory_partition_type_chip">文件系统: %s</string>
+    <string name="memory_partition_mount">挂载点: %s</string>
+    <string name="memory_partition_device">设备: %s</string>
+    <string name="memory_partition_ro">只读 (ro)</string>
+    <string name="memory_partition_rw">读写 (rw)</string>
+    <string name="memory_partition_count">已检测到 %d 个分区</string>
+    <string name="memory_partition_show_all">显示全部 (%d)</string>
+    <string name="memory_partition_show_main">显示主要 (%d)</string>
 
     <!-- Network Telemetry Formatting Strings -->
     <string name="fmt_speed_mbs">%.1f MB/s</string>

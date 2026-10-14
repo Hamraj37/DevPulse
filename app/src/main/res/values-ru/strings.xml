@@ -1051,6 +1051,15 @@
     <!-- Memory Telemetry Formatting Strings -->
     <string name="fmt_memory_used_of_total">%1$.2f ГБ из %2$.2f ГБ Использовано</string>
     <string name="fmt_memory_free">%.2f ГБ Свободно</string>
+    <string name="memory_storage_partitions">Разделы хранилища и типы ФС</string>
+    <string name="memory_partition_type_chip">ФС: %s</string>
+    <string name="memory_partition_mount">Монтирование: %s</string>
+    <string name="memory_partition_device">Устройство: %s</string>
+    <string name="memory_partition_ro">Только чтение (ro)</string>
+    <string name="memory_partition_rw">Чтение и запись (rw)</string>
+    <string name="memory_partition_count">Обнаружено разделов: %d</string>
+    <string name="memory_partition_show_all">Показать все (%d)</string>
+    <string name="memory_partition_show_main">Показать основные (%d)</string>
 
     <!-- Network Telemetry Formatting Strings -->
     <string name="fmt_speed_mbs">%.1f МБ/с</string>
