@@ -1,5 +1,6 @@
 package com.hamraj37.devpulse.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -64,17 +67,17 @@ fun SystemScreen(
                     .padding(20.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val logoRes = getAndroidVersionLogoRes(systemInfo.apiLevel, systemInfo.androidVersion)
                 Surface(
                     shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primaryContainer,
+                    color = Color.Transparent,
                     modifier = Modifier.size(56.dp)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Rounded.Android,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(34.dp)
+                        Image(
+                            painter = painterResource(id = logoRes),
+                            contentDescription = "Android Version Logo",
+                            modifier = Modifier.size(50.dp)
                         )
                     }
                 }

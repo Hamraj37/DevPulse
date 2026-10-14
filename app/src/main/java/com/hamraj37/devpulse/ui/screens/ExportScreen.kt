@@ -136,6 +136,38 @@ fun getPlayIntegritySummary(context: Context): Pair<Boolean, List<IntegrityCheck
     return Pair(allPassed, items)
 }
 
+fun getAndroidVersionLogoRes(apiLevel: Int, androidVersionStr: String = ""): Int {
+    val verInt = androidVersionStr.trim().split(".").firstOrNull()?.toIntOrNull()
+    if (verInt != null) {
+        return when (verInt) {
+            10 -> R.drawable.android_10
+            11 -> R.drawable.android_11
+            12 -> R.drawable.android_12
+            13 -> R.drawable.android_13
+            14 -> R.drawable.android_14
+            15 -> R.drawable.android_15
+            16 -> R.drawable.android_16
+            17 -> R.drawable.android_17
+            else -> when {
+                verInt > 17 -> R.drawable.android_17
+                verInt < 10 -> R.drawable.android_10
+                else -> R.drawable.android_14
+            }
+        }
+    }
+
+    return when (apiLevel) {
+        29 -> R.drawable.android_10
+        30 -> R.drawable.android_11
+        31, 32 -> R.drawable.android_12
+        33 -> R.drawable.android_13
+        34 -> R.drawable.android_14
+        35 -> R.drawable.android_15
+        36 -> R.drawable.android_16
+        else -> if (apiLevel > 36) R.drawable.android_17 else R.drawable.android_14
+    }
+}
+
 fun generateReportImageFile(context: Context, picture: Picture): Uri? {
     return try {
         val width = picture.width.coerceAtLeast(1)
@@ -559,17 +591,21 @@ fun DeviceReportCard(
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                         modifier = Modifier.weight(1f)
                     ) {
+                        val logoRes = getAndroidVersionLogoRes(
+                            uiState.systemInfo.apiLevel,
+                            uiState.systemInfo.androidVersion
+                        )
+
                         Surface(
                             shape = RoundedCornerShape(10.dp),
-                            color = Color(0xFFE8F5E9),
+                            color = Color.Transparent,
                             modifier = Modifier.size(38.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Android,
-                                    contentDescription = null,
-                                    tint = Color(0xFF2E7D32),
-                                    modifier = Modifier.size(24.dp)
+                                Image(
+                                    painter = painterResource(id = logoRes),
+                                    contentDescription = "Android ${uiState.systemInfo.androidVersion}",
+                                    modifier = Modifier.size(34.dp)
                                 )
                             }
                         }
