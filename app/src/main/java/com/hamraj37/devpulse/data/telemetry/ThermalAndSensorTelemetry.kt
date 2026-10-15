@@ -131,7 +131,7 @@ object ThermalAndSensorTelemetry {
         }
     }
 
-    private fun cleanSensorName(rawName: String): String {
+    fun cleanSensorName(rawName: String): String {
         if (rawName.isBlank()) return rawName
         var clean = rawName
             .removePrefix("android.sensor.")
