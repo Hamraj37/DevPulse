@@ -170,6 +170,14 @@
     <string name="device_network_type">Network Type</string>
     <string name="device_operator_1">Network Operator 1</string>
     <string name="device_operator_2">Network Operator 2</string>
+    <string name="device_summary_title">Device Overview</string>
+    <string name="device_capabilities_title">Hardware &amp; Feature Capabilities</string>
+    <string name="device_brand_logos_title">Device Brand Ecosystems</string>
+    <string name="device_brand_os_label">OEM Interface</string>
+    <string name="device_brand_active_tag">Active Brand</string>
+    <string name="device_usb_otg">USB OTG / Host Mode</string>
+    <string name="device_nfc_hardware">NFC Hardware</string>
+    <string name="device_biometrics">Biometric Security</string>
 
     <!-- System Specs Screen -->
     <string name="system_architecture_runtime">System Architecture &amp; Runtime</string>

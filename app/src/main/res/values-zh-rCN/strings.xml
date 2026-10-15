@@ -170,6 +170,14 @@
     <string name="device_network_type">网络类型</string>
     <string name="device_operator_1">网络运营商 1</string>
     <string name="device_operator_2">网络运营商 2</string>
+    <string name="device_summary_title">设备概览</string>
+    <string name="device_capabilities_title">硬件与功能特性</string>
+    <string name="device_brand_logos_title">设备品牌生态</string>
+    <string name="device_brand_os_label">OEM 界面</string>
+    <string name="device_brand_active_tag">当前品牌</string>
+    <string name="device_usb_otg">USB OTG / 主机模式</string>
+    <string name="device_nfc_hardware">NFC 硬件</string>
+    <string name="device_biometrics">生物识别安全</string>
 
     <!-- System Specs Screen -->
     <string name="system_architecture_runtime">系统架构与运行时</string>

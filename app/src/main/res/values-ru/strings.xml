@@ -170,6 +170,14 @@
     <string name="device_network_type">Тип сети</string>
     <string name="device_operator_1">Оператор связи 1</string>
     <string name="device_operator_2">Оператор связи 2</string>
+    <string name="device_summary_title">Обзор устройства</string>
+    <string name="device_capabilities_title">Аппаратные возможности и функции</string>
+    <string name="device_brand_logos_title">Экосистемы брендов устройств</string>
+    <string name="device_brand_os_label">Интерфейс OEM</string>
+    <string name="device_brand_active_tag">Активный бренд</string>
+    <string name="device_usb_otg">Режим USB OTG / Host</string>
+    <string name="device_nfc_hardware">Модуль NFC</string>
+    <string name="device_biometrics">Биометрическая защита</string>
 
     <!-- System Specs Screen -->
     <string name="system_architecture_runtime">Архитектура и среда исполнения</string>

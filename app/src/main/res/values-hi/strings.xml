@@ -171,6 +171,14 @@
     <string name="device_network_type">नेटवर्क प्रकार</string>
     <string name="device_operator_1">नेटवर्क ऑपरेटर 1</string>
     <string name="device_operator_2">नेटवर्क ऑपरेटर 2</string>
+    <string name="device_summary_title">डिवाइस अवलोकन</string>
+    <string name="device_capabilities_title">हार्डवेयर और सुविधा क्षमताएं</string>
+    <string name="device_brand_logos_title">डिवाइस ब्रांड इकोसिस्टम</string>
+    <string name="device_brand_os_label">OEM इंटरफ़ेस</string>
+    <string name="device_brand_active_tag">सक्रिय ब्रांड</string>
+    <string name="device_usb_otg">USB OTG / होस्ट मोड</string>
+    <string name="device_nfc_hardware">NFC हार्डवेयर</string>
+    <string name="device_biometrics">बायोमेट्रिक सुरक्षा</string>
 
     <!-- System Specs Screen -->
     <string name="system_architecture_runtime">सिस्टम आर्किटेक्चर और रनटाइम</string>
