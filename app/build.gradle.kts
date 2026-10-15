@@ -45,6 +45,8 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+
+
     signingConfigs {
         create("release") {
             val localPropsFile = rootProject.file("local.properties")
@@ -121,6 +123,7 @@ android {
 
     buildTypes {
         debug {
+            isCrunchPngs = false
             val relConfig = signingConfigs.getByName("release")
             if (relConfig.storeFile != null && relConfig.storeFile!!.exists()) {
                 signingConfig = relConfig
@@ -129,6 +132,7 @@ android {
             }
         }
         release {
+            isCrunchPngs = false
             val relConfig = signingConfigs.getByName("release")
             if (relConfig.storeFile != null && relConfig.storeFile!!.exists()) {
                 signingConfig = relConfig
