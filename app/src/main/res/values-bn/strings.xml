@@ -699,6 +699,8 @@
     <string name="test_item_gps_desc">জিপিএস স্যাটেলাইট এবং লোকেশন সেবা পরীক্ষা।</string>
     <string name="test_item_volume_title">ভলিউম কী টেস্ট</string>
     <string name="test_item_volume_desc">ভলিউম আপ এবং ডাউন বাটনের প্রতিক্রিয়া পরীক্ষা।</string>
+    <string name="test_item_camera_title">ক্যামেরা টেস্ট</string>
+    <string name="test_item_camera_desc">ব্যাক ও ফ্রন্ট ক্যামেরার প্রিভিউ এবং ছবি তোলার পরীক্ষা।</string>
     <string name="test_vibration_question">ডিভাইসটি ঝাঁকান। আপনি কি কম্পন অনুভব করেছেন?</string>
     <string name="test_charging_question">চার্জ হচ্ছে কি?</string>
     <string name="test_vibration_feel_question">আপনি কি ফোন ভাইব্রেট হতে অনুভব করছেন?</string>
@@ -706,6 +708,9 @@
     <string name="test_biometric_question">ফিঙ্গারপ্রিন্ট সেন্সর কি কাজ করছে?</string>
     <string name="test_gps_question">লোকেশন সিগন্যাল কি সনাক্ত হয়েছে?</string>
     <string name="test_volume_question">ভলিউম কি চাপলে কোনো প্রতিক্রিয়া পাচ্ছেন?</string>
+    <string name="test_camera_question">ক্যামেরা প্রিভিউ এবং ছবি তোলা ঠিকমতো কাজ করছে?</string>
+    <string name="camera_permission_required_title">ক্যামেরা অনুমতি প্রয়োজন</string>
+    <string name="camera_permission_required_desc">লাইভ ক্যামেরা প্রিভিউ এবং টেস্ট চালানোর জন্য DevPulse-এর ক্যামেরা অনুমতি প্রয়োজন।</string>
     <string name="test_generic_question">পরীক্ষাটি কি সঠিকভাবে কাজ করছে?</string>
 
     <!-- Services, Widgets & Manifest Properties -->

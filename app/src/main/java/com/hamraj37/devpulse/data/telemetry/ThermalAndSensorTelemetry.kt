@@ -103,9 +103,10 @@ object ThermalAndSensorTelemetry {
             val specs = sensorList.mapNotNull { sensor ->
                 try {
                     val isWakeup = sensor.isWakeUpSensor
+                    val rawName = sensor.name ?: context.getString(R.string.lbl_unknown_sensor)
 
                     SensorSpec(
-                        name = sensor.name ?: context.getString(R.string.lbl_unknown_sensor),
+                        name = cleanSensorName(rawName),
                         vendor = sensor.vendor ?: context.getString(R.string.lbl_generic_vendor),
                         type = sensor.type,
                         typeName = getSensorTypeName(context, sensor.type),
@@ -130,6 +131,30 @@ object ThermalAndSensorTelemetry {
         }
     }
 
+    private fun cleanSensorName(rawName: String): String {
+        if (rawName.isBlank()) return rawName
+        var clean = rawName
+            .removePrefix("android.sensor.")
+            .removePrefix("com.google.sensor.")
+            .removePrefix("com.qti.sensor.")
+            .removePrefix("qti.sensor.")
+            .replace('_', ' ')
+            .replace('-', ' ')
+            .trim()
+
+        if (clean.isBlank()) return rawName
+
+        return clean.split(' ')
+            .filter { it.isNotEmpty() }
+            .joinToString(" ") { word ->
+                if (word.all { it.isLowerCase() }) {
+                    word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(java.util.Locale.US) else it.toString() }
+                } else {
+                    word
+                }
+            }
+    }
+
     private fun getSensorTypeName(context: Context, type: Int): String {
         return when (type) {
             Sensor.TYPE_ACCELEROMETER -> context.getString(R.string.sensor_type_accelerometer)
@@ -149,6 +174,21 @@ object ThermalAndSensorTelemetry {
             Sensor.TYPE_HEART_RATE -> context.getString(R.string.sensor_type_heart_rate)
             Sensor.TYPE_STATIONARY_DETECT -> context.getString(R.string.sensor_type_stationary_detector)
             Sensor.TYPE_MOTION_DETECT -> context.getString(R.string.sensor_type_motion_detector)
+            14 -> "Magnetometer (Uncalibrated)"
+            15 -> "Game Rotation Vector"
+            16 -> "Gyroscope (Uncalibrated)"
+            17 -> "Significant Motion"
+            20 -> "Geomagnetic Rotation Vector"
+            28 -> "Pose 6DOF"
+            31 -> "Heart Beat"
+            34 -> "Off-body Detect"
+            35 -> "Accelerometer (Uncalibrated)"
+            36 -> "Hinge Angle"
+            37 -> "Head Tracker"
+            38 -> "Accelerometer (Limited Axes)"
+            39 -> "Gyroscope (Limited Axes)"
+            40 -> "Accelerometer (Limited Axes Uncalibrated)"
+            41 -> "Gyroscope (Limited Axes Uncalibrated)"
             else -> context.getString(R.string.sensor_type_hardware_format, type)
         }
     }

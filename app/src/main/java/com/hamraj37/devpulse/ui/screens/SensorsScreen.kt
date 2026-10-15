@@ -245,8 +245,16 @@ fun SensorCardItem(
                 Spacer(modifier = Modifier.width(14.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
+                    val formattedName = remember(sensorSpec.name, sensorSpec.typeName) {
+                        if (sensorSpec.name.isBlank() || sensorSpec.name.startsWith("Hardware Sensor (Type", ignoreCase = true)) {
+                            sensorSpec.typeName
+                        } else {
+                            sensorSpec.name
+                        }
+                    }
+
                     Text(
-                        text = sensorSpec.name,
+                        text = formattedName,
                         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 2,
@@ -436,12 +444,13 @@ fun LiveReadingRow(
 
 fun getSensorIcon(sensorType: Int): ImageVector {
     return when (sensorType) {
-        Sensor.TYPE_ACCELEROMETER -> Icons.AutoMirrored.Rounded.DirectionsRun
-        Sensor.TYPE_GYROSCOPE -> Icons.Rounded.Sync
-        Sensor.TYPE_MAGNETIC_FIELD -> Icons.Rounded.Explore
+        Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_LINEAR_ACCELERATION, Sensor.TYPE_GRAVITY, 35, 38, 40 -> Icons.AutoMirrored.Rounded.DirectionsRun
+        Sensor.TYPE_GYROSCOPE, 16, 39, 41 -> Icons.Rounded.Sync
+        Sensor.TYPE_MAGNETIC_FIELD, 14 -> Icons.Rounded.Explore
+        Sensor.TYPE_ROTATION_VECTOR, Sensor.TYPE_ORIENTATION, 15, 20, 28 -> Icons.Rounded.CompassCalibration
         Sensor.TYPE_LIGHT -> Icons.Rounded.LightMode
         Sensor.TYPE_PROXIMITY -> Icons.Rounded.CompassCalibration
-        Sensor.TYPE_STEP_COUNTER, Sensor.TYPE_STEP_DETECTOR -> Icons.AutoMirrored.Rounded.DirectionsWalk
+        Sensor.TYPE_STEP_COUNTER, Sensor.TYPE_STEP_DETECTOR, Sensor.TYPE_MOTION_DETECT, Sensor.TYPE_STATIONARY_DETECT, 17 -> Icons.AutoMirrored.Rounded.DirectionsWalk
         else -> Icons.Rounded.Sensors
     }
 }

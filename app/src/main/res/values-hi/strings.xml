@@ -700,6 +700,8 @@
     <string name="test_item_gps_desc">GPS उपग्रह और नेटवर्क स्थान प्रदाता डायग्नोस्टिक जांच।</string>
     <string name="test_item_volume_title">वॉल्यूम अप / डाउन बटन परीक्षण</string>
     <string name="test_item_volume_desc">हार्डवेयर वॉल्यूम नियंत्रण के लिए की-इवेंट लिसनर परीक्षण।</string>
+    <string name="test_item_camera_title">कैमरा परीक्षण</string>
+    <string name="test_item_camera_desc">बैक और फ्रंट कैमरों के लिए कैमरा पूर्वावलोकन और फोटो कैप्चर जांच।</string>
     <string name="test_vibration_question">अपनी डिवाइस को हिलाएं। क्या आपने कंपन महसूस किया?</string>
     <string name="test_charging_question">क्या यह चार्ज हो रहा है?</string>
     <string name="test_vibration_feel_question">क्या आप फोन को कंपन करते हुए महसूस कर सकते हैं?</string>
@@ -707,6 +709,9 @@
     <string name="test_biometric_question">क्या फिंगरप्रिंट / बायोमेट्रिक सेंसर काम कर रहा है?</string>
     <string name="test_gps_question">क्या स्थान / GPS सिग्नल मिला?</string>
     <string name="test_volume_question">वॉल्यूम अप या डाउन बटन दबाएं, क्या कोई प्रतिक्रिया मिलती है?</string>
+    <string name="test_camera_question">क्या कैमरा पूर्वावलोकन और फोटो कैप्चर काम कर रहा है?</string>
+    <string name="camera_permission_required_title">कैमरा अनुमति आवश्यक है</string>
+    <string name="camera_permission_required_desc">DevPulse को लाइव कैमरा पूर्वावलोकन और परीक्षण चलाने के लिए कैमरा अनुमति की आवश्यकता है।</string>
     <string name="test_generic_question">क्या परीक्षण ठीक से काम कर रहा है?</string>
 
     <!-- Services, Widgets & Manifest Properties -->

@@ -220,7 +220,14 @@ object AppAndTestTelemetry {
                 status = TestStatus.NOT_TESTED
             ),
 
-            // Interactive Section (14 Tests)
+            // Interactive Section (15 Tests)
+            TestItem(
+                id = "test_camera",
+                title = getString(R.string.test_item_camera_title, "Camera Test"),
+                category = "Interactive",
+                description = getString(R.string.test_item_camera_desc, "Camera preview and photo capture check for back and front cameras."),
+                status = TestStatus.NOT_TESTED
+            ),
             TestItem(
                 id = "test_display",
                 title = getString(R.string.test_item_display_title, "Display Test"),

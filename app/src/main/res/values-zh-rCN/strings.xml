@@ -699,6 +699,8 @@
     <string name="test_item_gps_desc">GPS 卫星与网络定位提供程序诊断检查。</string>
     <string name="test_item_volume_title">音量加/减按键测试</string>
     <string name="test_item_volume_desc">硬件音量按键事件侦听测试。</string>
+    <string name="test_item_camera_title">相机测试</string>
+    <string name="test_item_camera_desc">前后相机的预览与拍照功能检测。</string>
     <string name="test_vibration_question">摇晃您的设备。您感受到振动了吗？</string>
     <string name="test_charging_question">设备是否正在充电？</string>
     <string name="test_vibration_feel_question">您能感受到手机在振动吗？</string>
@@ -706,6 +708,9 @@
     <string name="test_biometric_question">指纹/生物识别传感器是否工作正常？</string>
     <string name="test_gps_question">是否检测到位置/GPS 信号？</string>
     <string name="test_volume_question">按下音量加或音量减按键，您是否有收到反馈？</string>
+    <string name="test_camera_question">相机预览与拍照功能是否正常？</string>
+    <string name="camera_permission_required_title">需要相机权限</string>
+    <string name="camera_permission_required_desc">DevPulse 需要相机权限以显示实时相机预览并运行诊断测试。</string>
     <string name="test_generic_question">该测试项目是否工作正常？</string>
 
     <!-- Services, Widgets & Manifest Properties -->

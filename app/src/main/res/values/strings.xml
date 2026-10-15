@@ -699,6 +699,8 @@
     <string name="test_item_gps_desc">GPS satellite &amp; network location provider diagnostic check.</string>
     <string name="test_item_volume_title">Volume Up / Down Button Test</string>
     <string name="test_item_volume_desc">Key event listener test for hardware volume controls.</string>
+    <string name="test_item_camera_title">Camera Test</string>
+    <string name="test_item_camera_desc">Camera preview and photo capture check for back and front cameras.</string>
     <string name="test_vibration_question">Shake your device. Did you feel the vibration?</string>
     <string name="test_charging_question">Is it charging?</string>
     <string name="test_vibration_feel_question">Can you feel the phone vibrating?</string>
@@ -706,6 +708,9 @@
     <string name="test_biometric_question">Is the fingerprint / biometric sensor working?</string>
     <string name="test_gps_question">Is location / GPS fix detected?</string>
     <string name="test_volume_question">Press the volume up or down key, do you get any feedback?</string>
+    <string name="test_camera_question">Is the camera preview and photo capture working?</string>
+    <string name="camera_permission_required_title">Camera Permission Required</string>
+    <string name="camera_permission_required_desc">DevPulse needs camera permission to display live camera preview and run diagnostic tests.</string>
     <string name="test_generic_question">Is the test working properly?</string>
 
     <!-- Services, Widgets & Manifest Properties -->

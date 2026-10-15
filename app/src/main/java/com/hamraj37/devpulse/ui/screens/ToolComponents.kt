@@ -106,6 +106,7 @@ fun DevPulseTopAppBar(
 
 fun getQuestionResForTest(testId: String): Int {
     return when (testId) {
+        "test_camera" -> R.string.test_camera_question
         "test_touch" -> R.string.test_multitouch_question
         "test_display" -> R.string.test_display_color_question
         "test_flashlight" -> R.string.test_flashlight_question

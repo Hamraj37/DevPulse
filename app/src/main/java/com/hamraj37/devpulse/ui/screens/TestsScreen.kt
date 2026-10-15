@@ -173,6 +173,7 @@ fun TestsScreen(
 fun getTestTitleRes(testId: String): Int {
     return when (testId) {
         "test_automatic" -> R.string.test_item_auto_title
+        "test_camera" -> R.string.test_item_camera_title
         "test_display" -> R.string.test_item_display_title
         "test_touch" -> R.string.test_item_touch_title
         "test_flashlight" -> R.string.test_item_flashlight_title
@@ -195,6 +196,7 @@ fun getTestTitleRes(testId: String): Int {
 fun getTestDescRes(testId: String): Int {
     return when (testId) {
         "test_automatic" -> R.string.test_item_auto_desc
+        "test_camera" -> R.string.test_item_camera_desc
         "test_display" -> R.string.test_item_display_desc
         "test_touch" -> R.string.test_item_touch_desc
         "test_flashlight" -> R.string.test_item_flashlight_desc

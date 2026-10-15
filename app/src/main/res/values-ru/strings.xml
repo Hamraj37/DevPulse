@@ -707,6 +707,11 @@
     <string name="test_item_gps_desc">Проверка спутников GPS и провайдера сетевой геолокации.</string>
     <string name="test_item_volume_title">Тест клавиш громкости</string>
     <string name="test_item_volume_desc">Проверка перехвата событий нажатий физических клавиш громкости.</string>
+    <string name="test_item_camera_title">Тест камеры</string>
+    <string name="test_item_camera_desc">Проверка предварительного просмотра и съемки фото для основной и фронтальной камер.</string>
+    <string name="test_camera_question">Предварительный просмотр и съемка фото работают корректно?</string>
+    <string name="camera_permission_required_title">Требуется разрешение на использование камеры</string>
+    <string name="camera_permission_required_desc">DevPulse требуется разрешение на использование камеры для отображения предварительного просмотра и проведения тестов.</string>
 
     <!-- Services, Widgets & Manifest Properties -->
     <string name="notification_channel_floating_monitor">Плавающий индикатор монитора</string>

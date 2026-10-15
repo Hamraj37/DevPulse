@@ -89,6 +89,7 @@ import com.hamraj37.devpulse.ui.screens.AccelerometerTestScreen
 import com.hamraj37.devpulse.ui.screens.AutomaticTestsScreen
 import com.hamraj37.devpulse.ui.screens.BiometricTestScreen
 import com.hamraj37.devpulse.ui.screens.BluetoothTestScreen
+import com.hamraj37.devpulse.ui.screens.CameraTestScreen
 import com.hamraj37.devpulse.ui.screens.ChargingTestScreen
 import com.hamraj37.devpulse.ui.screens.DisplayTestScreen
 import com.hamraj37.devpulse.ui.screens.EarSpeakerTestScreen
@@ -498,6 +499,11 @@ fun MainScreen(
                 val testId = uiState.activeTestId!!
                 when (testId) {
                     "automatic" -> AutomaticTestsScreen(onBack = { viewModel.closeActiveTest() })
+                    "test_camera" -> CameraTestScreen(
+                        onBack = { viewModel.closeActiveTest() },
+                        onPass = { viewModel.updateTestStatus("test_camera", TestStatus.PASSED); viewModel.closeActiveTest() },
+                        onFail = { viewModel.updateTestStatus("test_camera", TestStatus.FAILED); viewModel.closeActiveTest() }
+                    )
                     "test_touch" -> MultitouchTestScreen(
                         onBack = { viewModel.closeActiveTest() },
                         onPass = { viewModel.updateTestStatus("test_touch", TestStatus.PASSED); viewModel.closeActiveTest() },
