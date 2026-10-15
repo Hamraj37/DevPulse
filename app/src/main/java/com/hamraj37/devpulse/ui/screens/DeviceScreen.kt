@@ -1,11 +1,8 @@
 package com.hamraj37.devpulse.ui.screens
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +16,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CellTower
 import androidx.compose.material.icons.rounded.PhoneAndroid
-import androidx.compose.material.icons.rounded.Smartphone
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -60,10 +56,7 @@ fun DeviceScreen(
         // Card 1: Device Overview Hero Card View with Brand Logo
         DeviceOverviewCard(deviceInfo = deviceInfo)
 
-        // Card 2: Brand Logos Ecosystems Showcase
-        BrandLogosCard(deviceInfo = deviceInfo)
-
-        // Card 3: Basic Hardware Identity Card View
+        // Card 2: Basic Hardware Identity Card View
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
@@ -286,139 +279,6 @@ fun DeviceOverviewCard(
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                         color = if (deviceInfo.esimSupported) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun BrandLogosCard(
-    deviceInfo: DeviceInfo
-) {
-    val activeBrand = BrandUtils.getBrandInfo(deviceInfo.manufacturer, deviceInfo.brand)
-    val dividerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
-        shape = RoundedCornerShape(20.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Smartphone,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = stringResource(R.string.device_brand_logos_title),
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-
-            HorizontalDivider(color = dividerColor)
-
-            // Active Device Brand Banner
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(14.dp),
-                color = activeBrand.brandColor.copy(alpha = 0.12f),
-                border = BorderStroke(1.dp, activeBrand.brandColor.copy(alpha = 0.4f))
-            ) {
-                Row(
-                    modifier = Modifier.padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Surface(
-                        shape = RoundedCornerShape(10.dp),
-                        color = MaterialTheme.colorScheme.surface,
-                        modifier = Modifier.size(40.dp)
-                    ) {
-                        Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(6.dp)) {
-                            Icon(
-                                painter = painterResource(id = activeBrand.logoResId),
-                                contentDescription = activeBrand.name,
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(26.dp)
-                            )
-                        }
-                    }
-
-                    Column(modifier = Modifier.weight(1f)) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            Text(
-                                text = activeBrand.name,
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Surface(
-                                shape = RoundedCornerShape(6.dp),
-                                color = activeBrand.brandColor
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.device_brand_active_tag),
-                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                    color = Color.White
-                                )
-                            }
-                        }
-                        Text(
-                            text = "${stringResource(R.string.device_brand_os_label)}: ${activeBrand.customOs}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            }
-
-            // Grid of All Brand Logos
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                BrandUtils.ALL_BRANDS.forEach { brand ->
-                    val isActive = brand.id == activeBrand.id
-                    Surface(
-                        shape = RoundedCornerShape(12.dp),
-                        color = if (isActive) brand.brandColor.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceContainerHighest,
-                        border = if (isActive) BorderStroke(1.5.dp, brand.brandColor) else null
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = brand.logoResId),
-                                contentDescription = brand.name,
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Text(
-                                text = brand.name,
-                                style = MaterialTheme.typography.labelMedium.copy(
-                                    fontWeight = if (isActive) FontWeight.Bold else FontWeight.Medium
-                                ),
-                                color = if (isActive) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
                 }
             }
         }
