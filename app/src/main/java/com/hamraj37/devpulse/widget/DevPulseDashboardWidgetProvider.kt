@@ -82,8 +82,7 @@ class DevPulseDashboardWidgetProvider : AppWidgetProvider() {
                 // 4. Processor / SoC Info
                 try {
                     val cpuInfo = CpuTelemetry.getCpuInfo(context)
-                    val (socVendor, socIconRes, socModel) = parseSocDetails(cpuInfo.hardwareName, cpuInfo.processorName)
-                    views.setTextViewText(R.id.widget_soc_vendor, socVendor)
+                    val (socIconRes, socModel) = parseSocDetails(cpuInfo.hardwareName, cpuInfo.processorName)
                     views.setImageViewResource(R.id.widget_soc_icon, socIconRes)
                     views.setTextViewText(R.id.widget_soc_model, socModel)
                 } catch (_: Throwable) {}
@@ -220,16 +219,8 @@ class DevPulseDashboardWidgetProvider : AppWidgetProvider() {
             }
         }
 
-        private fun parseSocDetails(hardware: String, processorName: String): Triple<String, Int, String> {
+        private fun parseSocDetails(hardware: String, processorName: String): Pair<Int, String> {
             val combined = "$hardware $processorName".lowercase()
-            val socVendor = when {
-                combined.contains("snapdragon") || combined.contains("qualcomm") || combined.contains("qcom") || combined.contains("sm8") -> "Qualcomm®"
-                combined.contains("mediatek") || combined.contains("mt") || combined.contains("dimensity") -> "MediaTek®"
-                combined.contains("tensor") || combined.contains("google") || combined.contains("gs") -> "Google"
-                combined.contains("exynos") || combined.contains("samsung") -> "Samsung"
-                combined.contains("unisoc") || combined.contains("spreadtrum") -> "UNISOC"
-                else -> "ARM®"
-            }
 
             val socIcon = when {
                 combined.contains("snapdragon") || combined.contains("qualcomm") || combined.contains("qcom") || combined.contains("sm8") -> R.drawable.ic_proc_snapdragon
@@ -242,7 +233,7 @@ class DevPulseDashboardWidgetProvider : AppWidgetProvider() {
 
             val socModelName = processorName.ifBlank { hardware.ifBlank { "Processor" } }
 
-            return Triple(socVendor, socIcon, socModelName)
+            return Pair(socIcon, socModelName)
         }
 
         private fun parseDeviceDetails(): Pair<Int, String> {

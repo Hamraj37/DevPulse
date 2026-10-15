@@ -445,36 +445,25 @@ fun WidgetsScreen(
                                         color = mintBg,
                                         modifier = Modifier.fillMaxWidth().height(38.dp)
                                     ) {
-                                        Column(
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.Center,
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.Center,
                                             modifier = Modifier.padding(horizontal = 4.dp)
                                         ) {
-                                            Text(
-                                                text = socVendor,
-                                                fontSize = 9.sp,
-                                                color = textSocVendor
+                                            Image(
+                                                painter = painterResource(id = socIconRes),
+                                                contentDescription = "SoC Logo",
+                                                modifier = Modifier.size(15.dp)
                                             )
-                                            Row(
-                                                verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.Center,
-                                                modifier = Modifier.padding(top = 1.dp)
-                                            ) {
-                                                Image(
-                                                    painter = painterResource(id = socIconRes),
-                                                    contentDescription = "SoC Logo",
-                                                    modifier = Modifier.size(13.dp)
-                                                )
-                                                Spacer(modifier = Modifier.width(3.dp))
-                                                Text(
-                                                    text = (uiState.cpuInfo.processorName ?: "").ifEmpty { "Processor" },
-                                                    fontSize = 10.sp,
-                                                    fontWeight = FontWeight.Bold,
-                                                    color = textPrimary,
-                                                    maxLines = 1,
-                                                    overflow = TextOverflow.Ellipsis
-                                                )
-                                            }
+                                            Spacer(modifier = Modifier.width(4.dp))
+                                            Text(
+                                                text = (uiState.cpuInfo.processorName ?: "").ifEmpty { "Processor" },
+                                                fontSize = 10.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = textPrimary,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis
+                                            )
                                         }
                                     }
                                     Surface(
