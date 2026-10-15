@@ -151,9 +151,9 @@ class TelemetryModelsTest {
     @Test
     fun initialTestItems_hasSixteenTests() {
         val tests = AppAndTestTelemetry.getInitialTestItems()
-        assertEquals(16, tests.size)
+        assertEquals(17, tests.size)
         assertTrue(tests.any { it.category == "Automatic" })
-        assertEquals(15, tests.count { it.category == "Interactive" })
+        assertEquals(16, tests.count { it.category == "Interactive" })
         assertTrue(tests.any { it.id == "test_gps" })
     }
 

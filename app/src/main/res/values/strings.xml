@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- App & General -->
     <string name="app_name">DevPulse</string>
     <string name="app_description">Comprehensive hardware telemetry, system diagnostics, and developer toolkit for Android.</string>
@@ -140,6 +140,7 @@
     <string name="support_upi_payment">UPI Payment</string>
 
     <!-- Widget Previews -->
+    <string name="widget_dashboard_preview" tools:ignore="MissingTranslation">Dashboard Control Widget Preview</string>
     <string name="widget_clock_preview">Clock Widget Preview</string>
     <string name="widget_large_preview">Large System Widget Preview</string>
     <string name="widget_medium_preview">Medium Status Widget Preview</string>

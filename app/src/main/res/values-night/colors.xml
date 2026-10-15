@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Widget Colors (Dark Mode) -->
+    <color name="widget_outer_bg">#181A1D</color>
+    <color name="widget_card_bg">#25282C</color>
+    <color name="widget_card_mint_bg">#1A3224</color>
+    <color name="widget_progress_track">#3A3E42</color>
+    <color name="widget_active_green">#57C28B</color>
+    <color name="widget_inactive_grey">#6C7278</color>
+    <color name="widget_text_primary">#F0F2F5</color>
+    <color name="widget_text_secondary">#A0A5AB</color>
+    <color name="widget_text_soc_vendor">#B5D8C3</color>
+</resources>
