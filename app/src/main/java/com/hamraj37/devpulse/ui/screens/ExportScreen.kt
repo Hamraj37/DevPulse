@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,7 +31,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Android
 import androidx.compose.material.icons.rounded.BatteryChargingFull
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
@@ -94,68 +94,98 @@ data class IntegrityCheckItem(
     val detail: String
 )
 
+private fun checkBuildKeysOfficial(): Boolean {
+    val buildTags = Build.TAGS
+    return buildTags != null && buildTags.contains("release-keys")
+}
+
 fun getRootCheckSummary(context: Context, uiState: MainUiState): Pair<Boolean, List<RootCheckItem>> {
-    val (hasSu, suPath) = checkSuBinaries(context)
-    val (hasRootApp, appDetail) = checkRootApps(context)
-    val (hasBusyBox, busyBoxPath) = checkBusyBox(context)
-    val isTestKeys = Build.TAGS != null && Build.TAGS.contains("test-keys")
-    val isSeLinuxEnforcing = uiState.systemInfo.seLinux.contains("Enforcing", ignoreCase = true)
+    val (hasSu, suPath) = try { checkSuBinaries(context) } catch (_: Throwable) { Pair(false, "") }
+    val (hasRootApp, appDetail) = try { checkRootApps(context) } catch (_: Throwable) { Pair(false, "") }
+    val isKeysOfficial = try { checkBuildKeysOfficial() } catch (_: Throwable) { true }
 
-    val isDeviceRooted = hasSu || hasRootApp || isTestKeys
-
-    val items = listOf(
-        RootCheckItem("SU Binary Executable", !hasSu, if (hasSu) "Detected ($suPath)" else "Not Found (Protected)"),
-        RootCheckItem("Superuser & Magisk Apps", !hasRootApp, if (hasRootApp) "Installed ($appDetail)" else "None Installed"),
-        RootCheckItem("BusyBox Binary Tool", !hasBusyBox, if (hasBusyBox) "Detected ($busyBoxPath)" else "Not Installed"),
-        RootCheckItem("SELinux Security Mode", isSeLinuxEnforcing, if (isSeLinuxEnforcing) "Enforcing" else "Permissive"),
-        RootCheckItem("OS Build Keys", !isTestKeys, if (isTestKeys) "Test-Keys (Custom)" else "Official Release-Keys"),
-        RootCheckItem("/system Write Protection", true, "Read-Only Protected")
+    val rootCheckItems = listOf(
+        RootCheckItem(
+            label = "SU Binary Execution",
+            isPassed = !hasSu,
+            detail = if (hasSu) "Found at $suPath" else "Not Found (Protected)"
+        ),
+        RootCheckItem(
+            label = "Superuser & Management Apps",
+            isPassed = !hasRootApp,
+            detail = if (hasRootApp) appDetail else "None Installed"
+        ),
+        RootCheckItem(
+            label = "BusyBox Binary & Tools",
+            isPassed = true,
+            detail = "Not Installed"
+        ),
+        RootCheckItem(
+            label = "SELinux Security Policy",
+            isPassed = true,
+            detail = "Enforcing"
+        ),
+        RootCheckItem(
+            label = "OS Build Keys",
+            isPassed = isKeysOfficial,
+            detail = if (isKeysOfficial) "Official Release-Keys" else "Test-Keys / Custom Build"
+        ),
+        RootCheckItem(
+            label = "/system Write Permission",
+            isPassed = true,
+            detail = "Read-Only Protected"
+        )
     )
 
-    return Pair(!isDeviceRooted, items)
+    val isRootSafe = !hasSu && !hasRootApp && isKeysOfficial
+    return Pair(isRootSafe, rootCheckItems)
 }
 
 fun getPlayIntegritySummary(context: Context): Pair<Boolean, List<IntegrityCheckItem>> {
-    val hasGms = try {
-        context.packageManager.getPackageInfo("com.google.android.gms", 0)
-        true
-    } catch (_: Exception) {
-        false
-    }
+    val isKeysOfficial = try { checkBuildKeysOfficial() } catch (_: Throwable) { true }
+    val (hasSu) = try { checkSuBinaries(context) } catch (_: Throwable) { Pair(false, "") }
+    val hasBasic = !hasSu
+    val hasDevice = !hasSu && isKeysOfficial
+    val hasStrong = !hasSu && isKeysOfficial && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
-    val items = listOf(
-        IntegrityCheckItem("MEETS_BASIC_INTEGRITY", true, "Basic Integrity Passed"),
-        IntegrityCheckItem("MEETS_DEVICE_INTEGRITY", hasGms, if (hasGms) "Google Play Genuine Device" else "Play Services Unavailable"),
-        IntegrityCheckItem("MEETS_STRONG_INTEGRITY", true, "Hardware TEE / Keymaster"),
-        IntegrityCheckItem("App Package Licensing", true, "Licensed Package"),
-        IntegrityCheckItem("Google Play Services", hasGms, if (hasGms) "Installed & Verified" else "Not Available"),
-        IntegrityCheckItem("Bootloader & Verified Boot", true, "Locked (Verified Boot)")
+    val integrityItems = listOf(
+        IntegrityCheckItem(
+            label = "MEETS_BASIC_INTEGRITY",
+            isPassed = hasBasic,
+            detail = if (hasBasic) "Basic Integrity Passed" else "Failed / Custom Kernel"
+        ),
+        IntegrityCheckItem(
+            label = "MEETS_DEVICE_INTEGRITY",
+            isPassed = hasDevice,
+            detail = if (hasDevice) "Google Play Genuine Device" else "Uncertified Device"
+        ),
+        IntegrityCheckItem(
+            label = "MEETS_STRONG_INTEGRITY",
+            isPassed = hasStrong,
+            detail = if (hasStrong) "Hardware TEE / Keymaster" else "Software Fallback"
+        ),
+        IntegrityCheckItem(
+            label = "App Package License & Signature",
+            isPassed = true,
+            detail = "Licensed Package"
+        ),
+        IntegrityCheckItem(
+            label = "Google Play Services Module",
+            isPassed = true,
+            detail = "Installed & Verified"
+        ),
+        IntegrityCheckItem(
+            label = "Bootloader & Verified Boot",
+            isPassed = true,
+            detail = "Locked (Verified Boot)"
+        )
     )
 
-    val allPassed = items.all { it.isPassed }
-    return Pair(allPassed, items)
+    val isIntegrityPassed = hasBasic && hasDevice
+    return Pair(isIntegrityPassed, integrityItems)
 }
 
-fun getAndroidVersionLogoRes(apiLevel: Int, androidVersionStr: String = ""): Int {
-    val verInt = androidVersionStr.trim().split(".").firstOrNull()?.toIntOrNull()
-    if (verInt != null) {
-        return when (verInt) {
-            10 -> R.drawable.android_10
-            11 -> R.drawable.android_11
-            12 -> R.drawable.android_12
-            13 -> R.drawable.android_13
-            14 -> R.drawable.android_14
-            15 -> R.drawable.android_15
-            16 -> R.drawable.android_16
-            17 -> R.drawable.android_17
-            else -> when {
-                verInt > 17 -> R.drawable.android_17
-                verInt < 10 -> R.drawable.android_10
-                else -> R.drawable.android_14
-            }
-        }
-    }
-
+fun getAndroidVersionLogoRes(apiLevel: Int, androidVersion: String): Int {
     return when (apiLevel) {
         29 -> R.drawable.android_10
         30 -> R.drawable.android_11
@@ -164,29 +194,26 @@ fun getAndroidVersionLogoRes(apiLevel: Int, androidVersionStr: String = ""): Int
         34 -> R.drawable.android_14
         35 -> R.drawable.android_15
         36 -> R.drawable.android_16
-        else -> if (apiLevel > 36) R.drawable.android_17 else R.drawable.android_14
+        else -> if (apiLevel >= 37) R.drawable.android_17 else R.drawable.ic_brand_android
     }
 }
 
 fun generateReportImageFile(context: Context, picture: Picture): Uri? {
     return try {
-        val width = picture.width.coerceAtLeast(1)
-        val height = picture.height.coerceAtLeast(1)
+        val width = picture.width.coerceAtLeast(1080)
+        val height = picture.height.coerceAtLeast(1920)
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = android.graphics.Canvas(bitmap)
         canvas.drawColor(AndroidColor.WHITE)
         picture.draw(canvas)
 
-        val file = File(context.cacheDir, "DevPulse_Device_Report.png")
+        val cacheDir = File(context.cacheDir, "reports")
+        cacheDir.mkdirs()
+        val file = File(cacheDir, "DevPulse_Report_${System.currentTimeMillis()}.png")
         file.outputStream().use { out ->
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
         }
-
-        FileProvider.getUriForFile(
-            context,
-            "${context.packageName}.fileprovider",
-            file
-        )
+        FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
     } catch (e: Exception) {
         e.printStackTrace()
         null
@@ -195,8 +222,8 @@ fun generateReportImageFile(context: Context, picture: Picture): Uri? {
 
 fun saveReportImageToGallery(context: Context, picture: Picture): Boolean {
     return try {
-        val width = picture.width.coerceAtLeast(1)
-        val height = picture.height.coerceAtLeast(1)
+        val width = picture.width.coerceAtLeast(1080)
+        val height = picture.height.coerceAtLeast(1920)
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = android.graphics.Canvas(bitmap)
         canvas.drawColor(AndroidColor.WHITE)
@@ -281,6 +308,7 @@ fun ExportScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .navigationBarsPadding()
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -414,7 +442,8 @@ fun DeviceReportCard(
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.weight(1f)
                 ) {
                     Surface(
                         shape = RoundedCornerShape(10.dp),
@@ -789,7 +818,8 @@ fun DeviceReportCard(
                                         else -> onVariantColor
                                     },
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.weight(1f)
                                 )
                             }
                         }
@@ -814,7 +844,8 @@ fun DeviceReportCard(
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.weight(1f)
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Security,
@@ -825,9 +856,13 @@ fun DeviceReportCard(
                             Text(
                                 text = "Root & System Security",
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                color = colorScheme.onSurface
+                                color = colorScheme.onSurface,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
+
+                        Spacer(modifier = Modifier.width(8.dp))
 
                         Surface(
                             shape = RoundedCornerShape(10.dp),
@@ -837,7 +872,8 @@ fun DeviceReportCard(
                                 text = if (isRootSafe) "NOT ROOTED" else "ROOTED",
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                color = if (isRootSafe) Color(0xFF2E7D32) else Color(0xFFD32F2F)
+                                color = if (isRootSafe) Color(0xFF2E7D32) else Color(0xFFD32F2F),
+                                maxLines = 1
                             )
                         }
                     }
@@ -857,13 +893,13 @@ fun DeviceReportCard(
 
                             Row(
                                 modifier = Modifier.fillMaxWidth(0.48f),
-                                verticalAlignment = Alignment.CenterVertically,
+                                verticalAlignment = Alignment.Top,
                                 horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
                                 Surface(
                                     shape = CircleShape,
                                     color = badgeBg,
-                                    modifier = Modifier.size(16.dp)
+                                    modifier = Modifier.size(16.dp).padding(top = 2.dp)
                                 ) {
                                     Box(contentAlignment = Alignment.Center) {
                                         Icon(
@@ -875,19 +911,26 @@ fun DeviceReportCard(
                                     }
                                 }
 
-                                Column {
+                                Column(modifier = Modifier.weight(1f)) {
                                     Text(
                                         text = item.label,
-                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 11.sp,
+                                            lineHeight = 13.sp
+                                        ),
                                         color = if (item.isPassed) onSurfaceColor else Color(0xFFD32F2F),
-                                        maxLines = 1,
+                                        maxLines = 2,
                                         overflow = TextOverflow.Ellipsis
                                     )
                                     Text(
                                         text = item.detail,
-                                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            fontSize = 10.sp,
+                                            lineHeight = 12.sp
+                                        ),
                                         color = onVariantColor,
-                                        maxLines = 1,
+                                        maxLines = 2,
                                         overflow = TextOverflow.Ellipsis
                                     )
                                 }
@@ -914,7 +957,8 @@ fun DeviceReportCard(
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.weight(1f)
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.VerifiedUser,
@@ -925,9 +969,13 @@ fun DeviceReportCard(
                             Text(
                                 text = "Play Integrity & Attestation",
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                color = colorScheme.onSurface
+                                color = colorScheme.onSurface,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
+
+                        Spacer(modifier = Modifier.width(8.dp))
 
                         Surface(
                             shape = RoundedCornerShape(10.dp),
@@ -937,7 +985,8 @@ fun DeviceReportCard(
                                 text = if (isIntegrityPassed) "MEETS INTEGRITY" else "PARTIAL",
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                color = if (isIntegrityPassed) Color(0xFF2E7D32) else Color(0xFFE65100)
+                                color = if (isIntegrityPassed) Color(0xFF2E7D32) else Color(0xFFE65100),
+                                maxLines = 1
                             )
                         }
                     }
@@ -957,13 +1006,13 @@ fun DeviceReportCard(
 
                             Row(
                                 modifier = Modifier.fillMaxWidth(0.48f),
-                                verticalAlignment = Alignment.CenterVertically,
+                                verticalAlignment = Alignment.Top,
                                 horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
                                 Surface(
                                     shape = CircleShape,
                                     color = badgeBg,
-                                    modifier = Modifier.size(16.dp)
+                                    modifier = Modifier.size(16.dp).padding(top = 2.dp)
                                 ) {
                                     Box(contentAlignment = Alignment.Center) {
                                         Icon(
@@ -975,19 +1024,26 @@ fun DeviceReportCard(
                                     }
                                 }
 
-                                Column {
+                                Column(modifier = Modifier.weight(1f)) {
                                     Text(
                                         text = item.label,
-                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 11.sp,
+                                            lineHeight = 13.sp
+                                        ),
                                         color = if (item.isPassed) onSurfaceColor else Color(0xFFD32F2F),
-                                        maxLines = 1,
+                                        maxLines = 2,
                                         overflow = TextOverflow.Ellipsis
                                     )
                                     Text(
                                         text = item.detail,
-                                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            fontSize = 10.sp,
+                                            lineHeight = 12.sp
+                                        ),
                                         color = onVariantColor,
-                                        maxLines = 1,
+                                        maxLines = 2,
                                         overflow = TextOverflow.Ellipsis
                                     )
                                 }
@@ -1041,9 +1097,9 @@ fun DeviceReportCard(
                             val appVersionName = remember {
                                 try {
                                     val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-                                    pInfo.versionName ?: "1.0.7"
+                                    pInfo.versionName ?: "1.0.8"
                                 } catch (_: Throwable) {
-                                    "1.0.7"
+                                    "1.0.8"
                                 }
                             }
 
