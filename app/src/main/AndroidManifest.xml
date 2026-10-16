@@ -70,17 +70,6 @@
                 android:value="@string/manifest_fgs_special_use_subtype" />
         </service>
 
-        <service
-            android:name=".widget.WidgetUpdateService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="specialUse"
-            tools:targetApi="34">
-            <property
-                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="@string/manifest_fgs_special_use_subtype" />
-        </service>
-
         <receiver
             android:name=".widget.WidgetBootReceiver"
             android:enabled="true"

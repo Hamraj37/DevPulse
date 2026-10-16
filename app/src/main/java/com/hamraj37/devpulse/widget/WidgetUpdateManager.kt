@@ -3,9 +3,13 @@ package com.hamraj37.devpulse.widget
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 object WidgetUpdateManager {
+
+    private val managerScope = CoroutineScope(Dispatchers.Default)
 
     fun hasActiveWidgets(context: Context): Boolean {
         return try {
@@ -76,18 +80,15 @@ object WidgetUpdateManager {
     }
 
     fun startWidgetUpdateLoop(context: Context) {
-        try {
+        managerScope.launch {
             if (hasActiveWidgets(context)) {
-                val intent = Intent(context, WidgetUpdateService::class.java)
-                context.startForegroundService(intent)
+                updateAllWidgets(context)
             }
-        } catch (_: Throwable) {}
+        }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun stopWidgetUpdateLoop(context: Context) {
-        try {
-            val intent = Intent(context, WidgetUpdateService::class.java)
-            context.stopService(intent)
-        } catch (_: Throwable) {}
+        // No-op: background foreground service is no longer required for widget updates
     }
 }
