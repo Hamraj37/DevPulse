@@ -241,6 +241,136 @@ fun saveReportImageToGallery(context: Context, picture: Picture): Boolean {
     }
 }
 
+@Composable
+fun MetricProgressTile(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    iconTint: Color,
+    title: String,
+    value: String,
+    subtitle: String,
+    progress: Float,
+    progressColor: Color,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surface
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = iconTint,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                Text(
+                    text = value,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            val safeProgress = progress.let { if (it.isNaN() || it.isInfinite()) 0f else it.coerceIn(0f, 1f) }
+            LinearProgressIndicator(
+                progress = { safeProgress },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(5.dp)
+                    .clip(RoundedCornerShape(3.dp)),
+                color = progressColor,
+                trackColor = MaterialTheme.colorScheme.surfaceContainerHighest
+            )
+        }
+    }
+}
+
+@Composable
+fun MetricTileWithoutProgress(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    iconTint: Color,
+    title: String,
+    value: String,
+    subtitle: String,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surface
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = iconTint,
+                    modifier = Modifier.size(16.dp)
+                )
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ExportScreen(
@@ -425,6 +555,47 @@ fun DeviceReportCard(
         getPlayIntegritySummary(context)
     }
 
+    val (brandIconRes, brandName) = remember(uiState.deviceInfo) {
+        val brand = uiState.deviceInfo.manufacturer.lowercase()
+        val brandIcon = when {
+            brand.contains("oneplus") -> R.drawable.ic_brand_oneplus
+            brand.contains("samsung") -> R.drawable.ic_brand_samsung
+            brand.contains("google") -> R.drawable.ic_brand_google
+            brand.contains("xiaomi") || brand.contains("redmi") || brand.contains("mi ") -> R.drawable.ic_brand_xiaomi
+            brand.contains("realme") -> R.drawable.ic_brand_realme
+            brand.contains("oppo") -> R.drawable.ic_brand_oppo
+            brand.contains("vivo") || brand.contains("iqoo") -> R.drawable.ic_brand_vivo
+            brand.contains("motorola") || brand.contains("moto") -> R.drawable.ic_brand_motorola
+            brand.contains("nothing") -> R.drawable.ic_brand_nothing
+            brand.contains("asus") -> R.drawable.ic_brand_asus
+            brand.contains("sony") -> R.drawable.ic_brand_sony
+            else -> R.drawable.ic_brand_android
+        }
+        val rawModel = uiState.deviceInfo.manufacturer.uppercase().ifBlank { "DEVICE" }
+        Pair(brandIcon, rawModel)
+    }
+
+    val (procIconRes, processorVendor) = remember(uiState.cpuInfo) {
+        val combined = "${uiState.cpuInfo.gpuVendor} ${uiState.cpuInfo.processorName}".lowercase()
+        val icon = when {
+            combined.contains("snapdragon") || combined.contains("qualcomm") || combined.contains("qcom") || combined.contains("sm8") -> R.drawable.ic_proc_snapdragon
+            combined.contains("mediatek") || combined.contains("mt") || combined.contains("dimensity") -> R.drawable.ic_proc_mediatek
+            combined.contains("tensor") || combined.contains("google") || combined.contains("gs") -> R.drawable.ic_proc_tensor
+            combined.contains("exynos") || combined.contains("samsung") -> R.drawable.ic_proc_exynos
+            combined.contains("unisoc") || combined.contains("spreadtrum") -> R.drawable.ic_proc_unisoc
+            else -> R.drawable.ic_proc_arm
+        }
+        val vendor = when {
+            combined.contains("snapdragon") || combined.contains("qualcomm") -> "Qualcomm®"
+            combined.contains("mediatek") || combined.contains("dimensity") -> "MediaTek®"
+            combined.contains("tensor") || combined.contains("google") -> "Google®"
+            combined.contains("exynos") || combined.contains("samsung") -> "Samsung®"
+            combined.contains("unisoc") -> "UNISOC®"
+            else -> uiState.cpuInfo.gpuVendor.ifBlank { "Processor" }
+        }
+        Pair(icon, vendor)
+    }
+
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
@@ -502,14 +673,13 @@ fun DeviceReportCard(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Smartphone,
-                                contentDescription = null,
-                                tint = Color(0xFFE53935),
-                                modifier = Modifier.size(18.dp)
+                            Image(
+                                painter = painterResource(id = brandIconRes),
+                                contentDescription = brandName,
+                                modifier = Modifier.size(20.dp)
                             )
                             Text(
-                                text = uiState.deviceInfo.manufacturer.uppercase().ifBlank { "DEVICE" },
+                                text = brandName,
                                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 maxLines = 1,
@@ -544,14 +714,6 @@ fun DeviceReportCard(
                 }
 
                 // Chipset Card
-                val processorVendor = when {
-                    uiState.cpuInfo.gpuVendor.contains("Qualcomm", ignoreCase = true) || uiState.cpuInfo.processorName.contains("Snapdragon", ignoreCase = true) -> "Qualcomm®"
-                    uiState.cpuInfo.gpuVendor.contains("ARM", ignoreCase = true) || uiState.cpuInfo.processorName.contains("Dimensity", ignoreCase = true) -> "MediaTek®"
-                    uiState.cpuInfo.gpuVendor.contains("Samsung", ignoreCase = true) || uiState.cpuInfo.processorName.contains("Exynos", ignoreCase = true) -> "Samsung®"
-                    uiState.cpuInfo.gpuVendor.contains("Google", ignoreCase = true) || uiState.cpuInfo.processorName.contains("Tensor", ignoreCase = true) -> "Google®"
-                    else -> uiState.cpuInfo.gpuVendor.ifBlank { "Processor" }
-                }
-
                 Surface(
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(16.dp),
@@ -565,11 +727,10 @@ fun DeviceReportCard(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Memory,
-                                contentDescription = null,
-                                tint = Color(0xFFD32F2F),
-                                modifier = Modifier.size(18.dp)
+                            Image(
+                                painter = painterResource(id = procIconRes),
+                                contentDescription = processorVendor,
+                                modifier = Modifier.size(20.dp)
                             )
                             Text(
                                 text = processorVendor,
@@ -1133,136 +1294,6 @@ fun DeviceReportCard(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun MetricProgressTile(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    iconTint: Color,
-    title: String,
-    value: String,
-    subtitle: String,
-    progress: Float,
-    progressColor: Color,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surface
-    ) {
-        Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = iconTint,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-
-                Text(
-                    text = value,
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            val safeProgress = progress.let { if (it.isNaN() || it.isInfinite()) 0f else it.coerceIn(0f, 1f) }
-            LinearProgressIndicator(
-                progress = { safeProgress },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(5.dp)
-                    .clip(RoundedCornerShape(3.dp)),
-                color = progressColor,
-                trackColor = MaterialTheme.colorScheme.surfaceContainerHighest
-            )
-        }
-    }
-}
-
-@Composable
-fun MetricTileWithoutProgress(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    iconTint: Color,
-    title: String,
-    value: String,
-    subtitle: String,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surface
-    ) {
-        Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = iconTint,
-                    modifier = Modifier.size(16.dp)
-                )
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-
-            Text(
-                text = value,
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
         }
     }
 }
