@@ -24,6 +24,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        com.hamraj37.devpulse.widget.WidgetUpdateManager.startWidgetUpdateLoop(this)
+
         setContent {
             val uiState by mainViewModel.uiState.collectAsStateWithLifecycle()
             val systemDark = isSystemInDarkTheme()

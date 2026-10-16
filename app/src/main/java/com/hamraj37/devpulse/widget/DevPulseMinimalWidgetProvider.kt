@@ -22,6 +22,19 @@ class DevPulseMinimalWidgetProvider : AppWidgetProvider() {
                 updateWidget(context, appWidgetManager, id)
             } catch (_: Throwable) {}
         }
+        WidgetUpdateManager.startWidgetUpdateLoop(context)
+    }
+
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        WidgetUpdateManager.startWidgetUpdateLoop(context)
+    }
+
+    override fun onDisabled(context: Context) {
+        super.onDisabled(context)
+        if (!WidgetUpdateManager.hasActiveWidgets(context)) {
+            WidgetUpdateManager.stopWidgetUpdateLoop(context)
+        }
     }
 
     companion object {
