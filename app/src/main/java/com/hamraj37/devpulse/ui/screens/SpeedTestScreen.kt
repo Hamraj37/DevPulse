@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -43,6 +44,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -70,6 +72,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.R
@@ -171,6 +174,7 @@ fun SpeedTestScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .navigationBarsPadding()
                 .padding(horizontal = 12.dp, vertical = 4.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -187,6 +191,18 @@ fun SpeedTestScreen(
                 phase = state.phase,
                 progress = state.progress
             )
+
+            if (state.phase == SpeedTestPhase.PING || state.phase == SpeedTestPhase.DOWNLOAD || state.phase == SpeedTestPhase.UPLOAD) {
+                LinearProgressIndicator(
+                    progress = { state.progress },
+                    modifier = Modifier
+                        .fillMaxWidth(0.75f)
+                        .height(6.dp),
+                    color = if (state.phase == SpeedTestPhase.UPLOAD) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
+                    trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                    strokeCap = StrokeCap.Round
+                )
+            }
 
             // Primary Control Action Button (START / STOP / RETEST)
             SpeedTestActionButton(
@@ -401,14 +417,14 @@ private fun SpeedometerDialView(
                 topLeft = Offset(center.x - radius, center.y - radius)
             )
 
-            // 3. Draw Speed Scale Ticks and Labels (0, 1, 5, 10, 50, 100, 250, 500, 1000)
-            val scaleValues = listOf(0f, 1f, 10f, 50f, 100f, 500f, 1000f)
-            scaleValues.forEach { speedVal ->
+            // 3. Draw Speed Scale Ticks and Labels (0, 1, 10, 50, 100, 500, 1K)
+            val scaleLabels = listOf(0f to "0", 1f to "1", 10f to "10", 50f to "50", 100f to "100", 500f to "500", 1000f to "1K")
+            scaleLabels.forEach { (speedVal, labelStr) ->
                 val frac = speedToGaugeFraction(speedVal)
                 val angleDeg = startAngle + (totalSweepAngle * frac)
                 val angleRad = Math.toRadians(angleDeg.toDouble())
 
-                val tickInnerRadius = radius - (strokeWidth / 2f) - 6.dp.toPx()
+                val tickInnerRadius = radius - (strokeWidth / 2f) - 4.dp.toPx()
                 val tickOuterRadius = tickInnerRadius - 8.dp.toPx()
 
                 val x1 = center.x + tickInnerRadius * cos(angleRad).toFloat()
@@ -417,11 +433,31 @@ private fun SpeedometerDialView(
                 val y2 = center.y + tickOuterRadius * sin(angleRad).toFloat()
 
                 drawLine(
-                    color = textVariantColor.copy(alpha = 0.4f),
+                    color = textVariantColor.copy(alpha = 0.5f),
                     start = Offset(x1, y1),
                     end = Offset(x2, y2),
                     strokeWidth = 2.dp.toPx(),
                     cap = StrokeCap.Round
+                )
+
+                val textRadius = tickOuterRadius - 10.dp.toPx()
+                val tx = center.x + textRadius * cos(angleRad).toFloat()
+                val ty = center.y + textRadius * sin(angleRad).toFloat()
+
+                val textLayoutResult = textMeasurer.measure(
+                    text = labelStr,
+                    style = TextStyle(
+                        color = textVariantColor.copy(alpha = 0.75f),
+                        fontSize = 9.5.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                drawText(
+                    textLayoutResult = textLayoutResult,
+                    topLeft = Offset(
+                        tx - (textLayoutResult.size.width / 2f),
+                        ty - (textLayoutResult.size.height / 2f)
+                    )
                 )
             }
 
@@ -659,11 +695,13 @@ private fun MetricCard(
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
 
                 Spacer(modifier = Modifier.height(2.dp))
@@ -674,14 +712,18 @@ private fun MetricCard(
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
                     ),
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
 
                 if (subtitle != null) {
                     Text(
                         text = subtitle,
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
