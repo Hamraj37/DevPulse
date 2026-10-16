@@ -790,6 +790,7 @@
     <string name="toast_app_up_to_date">DevPulse %s 已是最新版本</string>
     <string name="toast_app_data_cleared">应用数据和偏好设置已清除</string>
     <string name="toast_upi_copied">UPI ID 已复制到剪贴板</string>
+    <string name="toast_package_name_copied">包名已复制到剪贴板</string>
     <string name="toast_tools_refreshed">工具已刷新</string>
     <string name="toast_widget_pin_request_sent">已向桌面发射器发送小组件添加请求</string>
     <string name="toast_widget_long_press_home">请长按桌面并选择小组件以添加 DevPulse</string>

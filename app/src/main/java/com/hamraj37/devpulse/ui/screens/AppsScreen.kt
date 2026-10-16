@@ -34,6 +34,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Analytics
 import androidx.compose.material.icons.rounded.Android
 import androidx.compose.material.icons.rounded.Clear
+import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.PlayArrow
@@ -67,7 +68,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -279,7 +282,13 @@ fun AppDetailBottomSheet(
     onDismissRequest: () -> Unit
 ) {
     val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
     val coroutineScope = rememberCoroutineScope()
+
+    val copyPackageName = {
+        clipboardManager.setText(AnnotatedString(app.packageName))
+        Toast.makeText(context, context.getString(R.string.toast_package_name_copied), Toast.LENGTH_SHORT).show()
+    }
 
     val installSource = remember(app.packageName, app.installSource) {
         if (app.installSource.isNotEmpty()) {
@@ -314,13 +323,30 @@ fun AppDetailBottomSheet(
                         text = app.appName,
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                     )
-                    Text(
-                        text = app.packageName,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .clickable { copyPackageName() }
+                            .padding(vertical = 2.dp)
+                    ) {
+                        Text(
+                            text = app.packageName,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f, fill = false)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(
+                            imageVector = Icons.Rounded.ContentCopy,
+                            contentDescription = stringResource(R.string.btn_copy_package_name),
+                            modifier = Modifier.size(13.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             }
 
@@ -334,6 +360,7 @@ fun AppDetailBottomSheet(
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
+                    AppDetailRow(stringResource(R.string.play_integrity_package_name_label), app.packageName)
                     AppDetailRow(stringResource(R.string.lbl_version), "${app.versionName} (${app.versionCode})")
                     AppDetailRow(stringResource(R.string.lbl_apk_size), formatApkSize(app.appSizeBytes))
                     AppDetailRow(stringResource(R.string.lbl_app_type), if (app.isSystemApp) stringResource(R.string.lbl_system_app) else stringResource(R.string.lbl_user_app))
@@ -425,11 +452,33 @@ fun AppDetailBottomSheet(
                     }
                 }
 
-                // Row 2: Google Play & App Settings
+                // Row 2: Copy Package & Google Play
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
+                    // Copy Package Name
+                    OutlinedButton(
+                        onClick = copyPackageName,
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.ContentCopy,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Text(
+                                text = stringResource(R.string.btn_copy_package_name),
+                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
+                            )
+                        }
+                    }
+
                     // Google Play
                     OutlinedButton(
                         onClick = {
@@ -467,37 +516,37 @@ fun AppDetailBottomSheet(
                             )
                         }
                     }
+                }
 
-                    // App Settings
-                    OutlinedButton(
-                        onClick = {
-                            try {
-                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                    data = Uri.fromParts("package", app.packageName, null)
-                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                }
-                                context.startActivity(intent)
-                            } catch (_: Exception) {
+                // Row 3: App Settings
+                OutlinedButton(
+                    onClick = {
+                        try {
+                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                data = Uri.fromParts("package", app.packageName, null)
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             }
-                            onDismissRequest()
-                        },
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(16.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.OpenInNew,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Text(
-                                text = stringResource(R.string.btn_app_settings),
-                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
-                            )
+                            context.startActivity(intent)
+                        } catch (_: Exception) {
                         }
+                        onDismissRequest()
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.OpenInNew,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Text(
+                            text = stringResource(R.string.btn_app_settings),
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
+                        )
                     }
                 }
             }

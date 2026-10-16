@@ -57,6 +57,7 @@
     <string name="btn_done">पूर्ण</string>
     <string name="btn_pin">पिन करें</string>
     <string name="btn_copy_id">ID कॉपी करें</string>
+    <string name="btn_copy_package_name">पैकेज कॉपी करें</string>
     <string name="btn_pay_upi">UPI से भुगतान करें</string>
     <string name="btn_add_widget_to_home">होम स्क्रीन पर विजेट जोड़ें</string>
     <string name="btn_refresh_tools">टूल्स रीफ्रेश करें</string>
@@ -791,6 +792,7 @@
     <string name="toast_app_up_to_date">DevPulse %s अप टू डेट है</string>
     <string name="toast_app_data_cleared">ऐप डेटा और प्राथमिकताएँ साफ़ की गईं</string>
     <string name="toast_upi_copied">UPI ID क्लिपबोर्ड पर कॉपी की गई</string>
+    <string name="toast_package_name_copied">पैकेज का नाम क्लिपबोर्ड पर कॉपी किया गया</string>
     <string name="toast_tools_refreshed">टूल्स रीफ्रेश किए गए</string>
     <string name="toast_widget_pin_request_sent">लॉन्चर को विजेट पिन अनुरोध भेजा गया</string>
     <string name="toast_widget_long_press_home">DevPulse जोड़ने के लिए कृपया होम स्क्रीन पर लॉन्ग-प्रेस करें और विगेट्स चुनें</string>

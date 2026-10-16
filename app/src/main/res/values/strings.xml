@@ -56,6 +56,7 @@
     <string name="btn_done">Done</string>
     <string name="btn_pin">Pin</string>
     <string name="btn_copy_id">Copy ID</string>
+    <string name="btn_copy_package_name">Copy Package</string>
     <string name="btn_pay_upi">Pay UPI</string>
     <string name="btn_add_widget_to_home">Add Widget to Home Screen</string>
     <string name="btn_refresh_tools">Refresh Tools</string>
@@ -792,6 +793,7 @@
     <string name="toast_app_up_to_date">DevPulse %s is up to date</string>
     <string name="toast_app_data_cleared">App data &amp; preferences cleared</string>
     <string name="toast_upi_copied">UPI ID copied to clipboard</string>
+    <string name="toast_package_name_copied">Package name copied to clipboard</string>
     <string name="toast_tools_refreshed">Tools refreshed</string>
     <string name="toast_widget_pin_request_sent">Widget pin request sent to launcher</string>
     <string name="toast_widget_long_press_home">Please long-press your home screen and select Widgets to add DevPulse</string>

@@ -790,6 +790,7 @@
     <string name="toast_app_up_to_date">DevPulse %s — установлена последняя версия</string>
     <string name="toast_app_data_cleared">Данные приложения и настройки очищены</string>
     <string name="toast_upi_copied">UPI ID скопирован в буфер обмена</string>
+    <string name="toast_package_name_copied">Имя пакета скопировано в буфер обмена</string>
     <string name="toast_tools_refreshed">Инструменты обновлены</string>
     <string name="toast_widget_pin_request_sent">Запрос на добавление виджета отправлен</string>
     <string name="toast_widget_long_press_home">Удерживайте палец на главном экране и выберите «Виджеты»</string>
