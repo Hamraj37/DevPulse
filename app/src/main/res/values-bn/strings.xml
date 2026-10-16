@@ -772,6 +772,7 @@
     <string name="toast_no_email_client">কোনো ইমেইল ক্লায়েন্ট পাওয়া যায়নি</string>
     <string name="toast_no_launch_activity">%s এর জন্য কোনো অ্যাক্টিভিটি পাওয়া যায়নি</string>
     <string name="toast_cannot_launch_app">অ্যাপ চালু করা যাচ্ছে না: %s</string>
+    <string name="toast_cannot_uninstall_app">অ্যাপ আনইনস্টল করা যাচ্ছে না: %s</string>
     <string name="toast_could_not_open_play_store">প্লে স্টোর খোলা সম্ভব হয়নি</string>
     <string name="toast_apk_extracted">APK সফলভাবে এক্সট্র্যাক্ট করা হয়েছে</string>
     <string name="toast_failed_extract_apk">APK এক্সট্র্যাক্ট করতে ব্যর্থ: %s</string>

@@ -771,6 +771,7 @@
     <string name="toast_no_email_client">未找到邮件客户端</string>
     <string name="toast_no_launch_activity">未找到 %s 的启动 Activity</string>
     <string name="toast_cannot_launch_app">无法打开应用：%s</string>
+    <string name="toast_cannot_uninstall_app">无法卸载应用：%s</string>
     <string name="toast_could_not_open_play_store">无法打开 Google Play 商店</string>
     <string name="toast_apk_extracted">APK 提取成功</string>
     <string name="toast_failed_extract_apk">提取 APK 失败：%s</string>

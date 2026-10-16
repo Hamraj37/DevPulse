@@ -771,6 +771,7 @@
     <string name="toast_no_email_client">Почтовый клиент не найден</string>
     <string name="toast_no_launch_activity">Не найдено главное окно для %s</string>
     <string name="toast_cannot_launch_app">Не удалось запустить приложение: %s</string>
+    <string name="toast_cannot_uninstall_app">Невозможно удалить приложение: %s</string>
     <string name="toast_could_not_open_play_store">Не удалось открыть Play Маркет</string>
     <string name="toast_apk_extracted">APK успешно извлечен</string>
     <string name="toast_failed_extract_apk">Ошибка извлечения APK: %s</string>

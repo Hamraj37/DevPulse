@@ -57,6 +57,7 @@
     <string name="btn_pin">Pin</string>
     <string name="btn_copy_id">Copy ID</string>
     <string name="btn_copy_package_name">Copy Package</string>
+    <string name="btn_uninstall_app">Uninstall</string>
     <string name="btn_pay_upi">Pay UPI</string>
     <string name="btn_add_widget_to_home">Add Widget to Home Screen</string>
     <string name="btn_refresh_tools">Refresh Tools</string>
@@ -774,6 +775,7 @@
     <string name="toast_no_email_client">No email client found</string>
     <string name="toast_no_launch_activity">No launch activity found for %s</string>
     <string name="toast_cannot_launch_app">Cannot launch app: %s</string>
+    <string name="toast_cannot_uninstall_app">Cannot uninstall app: %s</string>
     <string name="toast_could_not_open_play_store">Could not open Play Store</string>
     <string name="toast_apk_extracted">APK extracted successfully</string>
     <string name="toast_failed_extract_apk">Failed to extract APK: %s</string>
