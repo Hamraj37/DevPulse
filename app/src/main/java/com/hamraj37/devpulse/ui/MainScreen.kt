@@ -935,7 +935,8 @@ fun TabContentScreen(
             AppTab.MEMORY -> MemoryScreen(uiState.memoryInfo)
             AppTab.NETWORK -> NetworkScreen(
                 networkInfo = uiState.networkInfo,
-                onNavigateToDataUsage = { onOpenTool(ToolType.DATA_USAGE) }
+                onNavigateToDataUsage = { onOpenTool(ToolType.DATA_USAGE) },
+                onNavigateToSpeedTest = { onOpenTool(ToolType.SPEED_TEST) }
             )
             AppTab.CONNECTIVITY -> ConnectivityScreen(uiState.connectivityInfo)
             AppTab.DISPLAY -> DisplayScreen(uiState.displayInfo)

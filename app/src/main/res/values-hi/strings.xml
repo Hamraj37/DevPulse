@@ -612,6 +612,23 @@
     <string name="wifi_analyzer_subtitle">Wi-Fi नेटवर्क विश्लेषक</string>
     <string name="wifi_analyzer_desc">आस-पास के Wi-Fi सिग्नल, चैनल और सुरक्षा</string>
     <string name="wifi_analyzer_search_placeholder">Wi-Fi नेटवर्क खोजें...</string>
+    <string name="speed_test_title">स्पीड टेस्ट</string>
+    <string name="speed_test_subtitle">नेटवर्क स्पीड चेकर</string>
+    <string name="speed_test_desc">इंटरनेट डाउनलोड, अपलोड स्पीड, पिंग और जिटर मापें</string>
+    <string name="speed_test_start">टेस्ट शुरू करें</string>
+    <string name="speed_test_stop">रोकें</string>
+    <string name="speed_test_restart">पुनः टेस्ट</string>
+    <string name="speed_test_ping">पिंग</string>
+    <string name="speed_test_jitter">जिटर</string>
+    <string name="speed_test_download">डाउनलोड</string>
+    <string name="speed_test_upload">अपलोड</string>
+    <string name="speed_test_peak">पीक</string>
+    <string name="speed_test_status_idle">स्पीड टेस्ट शुरू करने के लिए "टेस्ट शुरू करें" दबाएं</string>
+    <string name="speed_test_status_ping">लेटेंसी और जिटर मापा जा रहा है...</string>
+    <string name="speed_test_status_download">डाउनलोड स्पीड टेस्ट हो रही है...</string>
+    <string name="speed_test_status_upload">अपलोड स्पीड टेस्ट हो रही है...</string>
+    <string name="speed_test_status_completed">स्पीड टेस्ट पूरा हुआ</string>
+    <string name="speed_test_error_offline">कोई सक्रिय इंटरनेट कनेक्शन नहीं है</string>
 
     <!-- Settings & About Screens -->
     <string name="settings_title">सेटिंग्स</string>

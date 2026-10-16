@@ -612,6 +612,23 @@
     <string name="wifi_analyzer_subtitle">Wi-Fi Network Analyzer</string>
     <string name="wifi_analyzer_desc">Nearby Wi-Fi signals, channels &amp; security</string>
     <string name="wifi_analyzer_search_placeholder">Search Wi-Fi networks...</string>
+    <string name="speed_test_title">Speed Test</string>
+    <string name="speed_test_subtitle">Network Speed Checker</string>
+    <string name="speed_test_desc">Measure internet download &amp; upload speed, ping and jitter like Speedtest</string>
+    <string name="speed_test_start">START TEST</string>
+    <string name="speed_test_stop">STOP</string>
+    <string name="speed_test_restart">RETEST</string>
+    <string name="speed_test_ping">Ping</string>
+    <string name="speed_test_jitter">Jitter</string>
+    <string name="speed_test_download">Download</string>
+    <string name="speed_test_upload">Upload</string>
+    <string name="speed_test_peak">Peak</string>
+    <string name="speed_test_status_idle">Tap START TEST to check network speed</string>
+    <string name="speed_test_status_ping">Measuring Latency &amp; Jitter...</string>
+    <string name="speed_test_status_download">Testing Download Speed...</string>
+    <string name="speed_test_status_upload">Testing Upload Speed...</string>
+    <string name="speed_test_status_completed">Speed Test Completed</string>
+    <string name="speed_test_error_offline">No active internet connection</string>
 
     <!-- Settings & About Screens -->
     <string name="settings_title">Settings</string>

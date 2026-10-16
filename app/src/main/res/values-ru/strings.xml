@@ -611,6 +611,23 @@
     <string name="wifi_analyzer_subtitle">Анализатор сетей Wi-Fi</string>
     <string name="wifi_analyzer_desc">Ближайшие сети Wi-Fi, каналы и типы шифрования</string>
     <string name="wifi_analyzer_search_placeholder">Поиск сетей Wi-Fi...</string>
+    <string name="speed_test_title">Тест скорости</string>
+    <string name="speed_test_subtitle">Проверка скорости сети</string>
+    <string name="speed_test_desc">Измерение скорости загрузки, отдачи, пинга и джиттера</string>
+    <string name="speed_test_start">НАЧАТЬ ТЕСТ</string>
+    <string name="speed_test_stop">СТОП</string>
+    <string name="speed_test_restart">ПОВТОРИТЬ</string>
+    <string name="speed_test_ping">Пинг</string>
+    <string name="speed_test_jitter">Джиттер</string>
+    <string name="speed_test_download">Загрузка</string>
+    <string name="speed_test_upload">Отдача</string>
+    <string name="speed_test_peak">Пик</string>
+    <string name="speed_test_status_idle">Нажмите НАЧАТЬ ТЕСТ для проверки скорости</string>
+    <string name="speed_test_status_ping">Измерение задержки и джиттера...</string>
+    <string name="speed_test_status_download">Тестирование скорости загрузки...</string>
+    <string name="speed_test_status_upload">Тестирование скорости отдачи...</string>
+    <string name="speed_test_status_completed">Тест скорости завершен</string>
+    <string name="speed_test_error_offline">Нет активного подключения к Интернету</string>
 
     <!-- Settings & About Screens -->
     <string name="settings_title">Настройки</string>

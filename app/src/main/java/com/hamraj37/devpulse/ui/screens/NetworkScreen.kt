@@ -24,6 +24,7 @@ import androidx.compose.material.icons.rounded.CellTower
 import androidx.compose.material.icons.rounded.DataUsage
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Language
+import androidx.compose.material.icons.rounded.Speed
 import androidx.compose.material.icons.rounded.Upload
 import androidx.compose.material.icons.rounded.Wifi
 import androidx.compose.material.icons.rounded.WifiOff
@@ -60,6 +61,7 @@ import com.hamraj37.devpulse.ui.theme.ActiveBadge
 fun NetworkScreen(
     networkInfo: NetworkInfo,
     onNavigateToDataUsage: () -> Unit = {},
+    onNavigateToSpeedTest: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -318,18 +320,32 @@ fun NetworkScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Action Buttons ("Usage", "Public IP")
+                // Action Buttons ("Speed Test", "Usage", "Public IP")
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Button(
+                        onClick = onNavigateToSpeedTest,
+                        modifier = Modifier.weight(1.1f),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Speed,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = stringResource(R.string.speed_test_title), fontWeight = FontWeight.Bold, maxLines = 1, softWrap = false)
+                    }
+
+                    OutlinedButton(
                         onClick = onNavigateToDataUsage,
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                        ),
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Icon(
@@ -337,7 +353,7 @@ fun NetworkScreen(
                             contentDescription = null,
                             modifier = Modifier.size(18.dp)
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
                         Text(text = stringResource(R.string.network_usage), fontWeight = FontWeight.SemiBold, maxLines = 1, softWrap = false)
                     }
 

@@ -611,6 +611,23 @@
     <string name="wifi_analyzer_subtitle">无线网络分析器</string>
     <string name="wifi_analyzer_desc">附近的 Wi-Fi 信号、信道与安全分析</string>
     <string name="wifi_analyzer_search_placeholder">搜索 Wi-Fi 网络…</string>
+    <string name="speed_test_title">网速测试</string>
+    <string name="speed_test_subtitle">网络测速仪</string>
+    <string name="speed_test_desc">测量下载与上传速度、延迟和抖动</string>
+    <string name="speed_test_start">开始测试</string>
+    <string name="speed_test_stop">停止</string>
+    <string name="speed_test_restart">重新测试</string>
+    <string name="speed_test_ping">延迟</string>
+    <string name="speed_test_jitter">抖动</string>
+    <string name="speed_test_download">下载</string>
+    <string name="speed_test_upload">上传</string>
+    <string name="speed_test_peak">峰值</string>
+    <string name="speed_test_status_idle">点击“开始测试”以检测网络速度</string>
+    <string name="speed_test_status_ping">正在测量延迟和抖动…</string>
+    <string name="speed_test_status_download">正在测试下载速度…</string>
+    <string name="speed_test_status_upload">正在测试上传速度…</string>
+    <string name="speed_test_status_completed">测速完成</string>
+    <string name="speed_test_error_offline">未连接到互联网</string>
 
     <!-- Settings & About Screens -->
     <string name="settings_title">设置</string>

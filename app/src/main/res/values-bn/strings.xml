@@ -611,6 +611,23 @@
     <string name="wifi_analyzer_subtitle">ওয়াই-ফাই নেটওয়ার্ক অ্যানালাইজার</string>
     <string name="wifi_analyzer_desc">কাছাকাছি ওয়াই-ফাই সিগন্যাল ও সিকিউরিটি অ্যানালাইসিস</string>
     <string name="wifi_analyzer_search_placeholder">ওয়াই-ফাই নেটওয়ার্ক খুঁজুন…</string>
+    <string name="speed_test_title">স্পিড টেস্ট</string>
+    <string name="speed_test_subtitle">নেটওয়ার্ক স্পিড চেকার</string>
+    <string name="speed_test_desc">ইন্টারনেট ডাউনলোড, আপলোড স্পিড, পিং এবং জিটার পরিমাপ করুন</string>
+    <string name="speed_test_start">টেস্ট শুরু করুন</string>
+    <string name="speed_test_stop">থামান</string>
+    <string name="speed_test_restart">পুনরায় টেস্ট</string>
+    <string name="speed_test_ping">পিং</string>
+    <string name="speed_test_jitter">জিটার</string>
+    <string name="speed_test_download">ডাউনলোড</string>
+    <string name="speed_test_upload">আপলোড</string>
+    <string name="speed_test_peak">সর্বোচ্চ</string>
+    <string name="speed_test_status_idle">স্পিড টেস্ট শুরু করতে "টেস্ট শুরু করুন" ট্যাপ করুন</string>
+    <string name="speed_test_status_ping">লেটেন্সি ও জিটার পরিমাপ করা হচ্ছে...</string>
+    <string name="speed_test_status_download">ডাউনলোড স্পিড টেস্ট করা হচ্ছে...</string>
+    <string name="speed_test_status_upload">আপলোড স্পিড টেস্ট করা হচ্ছে...</string>
+    <string name="speed_test_status_completed">স্পিড টেস্ট সম্পন্ন হয়েছে</string>
+    <string name="speed_test_error_offline">কোনো সক্রিয় ইন্টারনেট সংযোগ নেই</string>
 
     <!-- Settings & About Screens -->
     <string name="settings_title">সেটিংস</string>

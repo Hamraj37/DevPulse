@@ -31,6 +31,7 @@ import androidx.compose.material.icons.rounded.PictureAsPdf
 import androidx.compose.material.icons.rounded.Router
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.Smartphone
+import androidx.compose.material.icons.rounded.Speed
 import androidx.compose.material.icons.rounded.SsidChart
 import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material.icons.rounded.VerifiedUser
@@ -66,6 +67,7 @@ import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 
 enum class ToolType {
     FLOATING_MONITORS,
+    SPEED_TEST,
     PERMISSIONS,
     WIFI_ANALYZER,
     DATA_USAGE,
@@ -114,6 +116,12 @@ fun ToolsScreen(
                 titleRes = R.string.floating_monitors_title,
                 descriptionRes = R.string.floating_monitors_subtitle,
                 icon = Icons.Rounded.SsidChart
+            ),
+            ToolItemData(
+                type = ToolType.SPEED_TEST,
+                titleRes = R.string.speed_test_title,
+                descriptionRes = R.string.speed_test_desc,
+                icon = Icons.Rounded.Speed
             ),
             ToolItemData(
                 type = ToolType.PERMISSIONS,
@@ -188,6 +196,7 @@ fun ToolsScreen(
 
     when (selectedTool) {
         ToolType.FLOATING_MONITORS -> FloatingMonitorsScreen(onBack = handleToolBack)
+        ToolType.SPEED_TEST -> SpeedTestScreen(uiState = uiState, onBack = handleToolBack)
         ToolType.PERMISSIONS -> PermissionsScreen(onBack = handleToolBack)
         ToolType.WIFI_ANALYZER -> WifiAnalyzerScreen(uiState = uiState, onBack = handleToolBack)
         ToolType.DATA_USAGE -> DataUsageScreen(uiState = uiState, onBack = handleToolBack)
