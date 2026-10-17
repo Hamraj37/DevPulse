@@ -220,28 +220,6 @@ fun QrCodeScreen(
             title = stringResource(R.string.qr_create),
             onBack = onBack,
             actions = {
-                OutlinedButton(
-                    onClick = {
-                        if (finalContent.isBlank()) {
-                            Toast.makeText(context, context.getString(R.string.toast_qr_enter_content), Toast.LENGTH_SHORT).show()
-                        } else if (qrBitmap != null) {
-                            val success = saveQrImageToDownloads(context, qrBitmap)
-                            if (success) {
-                                Toast.makeText(context, context.getString(R.string.toast_report_image_saved), Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    },
-                    shape = RoundedCornerShape(20.dp),
-                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
-                ) {
-                    Icon(Icons.Rounded.Download, contentDescription = null, modifier = Modifier.size(16.dp))
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = stringResource(R.string.export_save_image),
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
-                    )
-                }
-                Spacer(modifier = Modifier.width(6.dp))
                 Button(
                     onClick = {
                         if (finalContent.isBlank()) {
