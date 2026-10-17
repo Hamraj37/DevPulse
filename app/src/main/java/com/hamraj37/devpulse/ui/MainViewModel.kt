@@ -38,7 +38,8 @@ data class GithubReleaseInfo(
     val tagName: String,
     val name: String,
     val body: String,
-    val htmlUrl: String
+    val htmlUrl: String,
+    val apkUrl: String = "https://github.com/Hamraj37/DevPulse/releases/download/$tagName/app-release.apk"
 )
 
 data class MainUiState(
@@ -347,12 +348,23 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 val name = extractJsonField(response, "name") ?: tagName
                 val body = extractJsonField(response, "body") ?: "Bug fixes and performance improvements."
                 val htmlUrl = extractJsonField(response, "html_url") ?: "https://github.com/Hamraj37/DevPulse/releases"
-                return@withContext GithubReleaseInfo(tagName, name, body, htmlUrl)
+                val apkUrl = extractApkAssetUrl(response) ?: "https://github.com/Hamraj37/DevPulse/releases/download/$tagName/app-release.apk"
+                return@withContext GithubReleaseInfo(tagName, name, body, htmlUrl, apkUrl)
             }
             null
         } catch (_: Throwable) {
             null
         }
+    }
+
+    private fun extractApkAssetUrl(json: String): String? {
+        val pattern = "\"browser_download_url\"\\s*:\\s*\"([^\"]*app-release\\.apk)\"".toRegex()
+        val match = pattern.find(json)
+        if (match != null) return match.groupValues[1]
+
+        val fallbackPattern = "\"browser_download_url\"\\s*:\\s*\"([^\"]*\\.apk)\"".toRegex()
+        val fallbackMatch = fallbackPattern.find(json)
+        return fallbackMatch?.groupValues?.get(1)
     }
 
     private fun extractJsonField(json: String, field: String): String? {

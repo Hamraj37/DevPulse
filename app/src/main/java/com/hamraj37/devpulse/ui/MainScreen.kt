@@ -285,7 +285,8 @@ fun MainScreen(
                     Button(
                         onClick = {
                             try {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(release.htmlUrl))
+                                val downloadUrl = release.apkUrl.ifEmpty { "https://github.com/Hamraj37/DevPulse/releases/download/${release.tagName}/app-release.apk" }
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl))
                                 context.startActivity(intent)
                             } catch (_: Exception) {}
                             viewModel.dismissUpdateDialog()
