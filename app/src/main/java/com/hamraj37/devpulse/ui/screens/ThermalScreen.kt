@@ -64,6 +64,19 @@ fun ThermalScreen(
             shape = RoundedCornerShape(20.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
+            val cpuZone = thermalInfo.thermalZones.firstOrNull { it.type.contains("cpu", ignoreCase = true) || it.name.contains("cpu", ignoreCase = true) }
+            val cpuTemp = cpuZone?.tempCelsius ?: thermalInfo.thermalZones.firstOrNull()?.tempCelsius ?: 36.5f
+
+            val highLabel = stringResource(R.string.thermal_label_high)
+            val warmLabel = stringResource(R.string.thermal_label_warm)
+            val normalLabel = stringResource(R.string.thermal_label_normal)
+
+            val (statusColor, statusText) = when {
+                cpuTemp >= 48f -> Color(0xFFE53935) to highLabel
+                cpuTemp >= 40f -> Color(0xFFFB8C00) to warmLabel
+                else -> ActiveBadge to normalLabel
+            }
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -83,8 +96,6 @@ fun ThermalScreen(
                             overflow = TextOverflow.Ellipsis
                         )
                         Spacer(modifier = Modifier.height(4.dp))
-                        val cpuZone = thermalInfo.thermalZones.firstOrNull { it.type.contains("cpu", ignoreCase = true) || it.name.contains("cpu", ignoreCase = true) }
-                        val cpuTemp = cpuZone?.tempCelsius ?: thermalInfo.thermalZones.firstOrNull()?.tempCelsius ?: 36.5f
                         Text(
                             text = stringResource(R.string.fmt_battery_temp, cpuTemp),
                             style = MaterialTheme.typography.displaySmall.copy(
@@ -123,16 +134,16 @@ fun ThermalScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    // Status Badge
+                    // Status Badge (driven by CPU temp)
                     Surface(
                         shape = RoundedCornerShape(16.dp),
-                        color = MaterialTheme.colorScheme.primary
+                        color = statusColor
                     ) {
                         Text(
-                            text = thermalInfo.overallStatus,
+                            text = statusText,
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.onPrimary
+                            color = Color.White
                         )
                     }
 
@@ -161,9 +172,6 @@ fun ThermalScreen(
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
-
-                val cpuZone = thermalInfo.thermalZones.firstOrNull { it.type.contains("cpu", ignoreCase = true) || it.name.contains("cpu", ignoreCase = true) }
-                val cpuTemp = cpuZone?.tempCelsius ?: thermalInfo.thermalZones.firstOrNull()?.tempCelsius ?: 36.5f
 
                 val cpuTempHistory = remember {
                     mutableStateListOf<Float>().apply {
