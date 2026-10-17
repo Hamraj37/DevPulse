@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,6 +52,7 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
+import com.hamraj37.devpulse.R
 import java.io.File
 import java.io.FileOutputStream
 
@@ -114,7 +116,7 @@ fun QrCodeScreen(
     var wifiSsid by remember { mutableStateOf("MyNetwork") }
     var wifiPassword by remember { mutableStateOf("") }
     var wifiSecurity by remember { mutableStateOf("WPA") }
-    var emailTo by remember { mutableStateOf("support@devpulse.app") }
+    var emailTo by remember { mutableStateOf("skhamraj37@gmail.com") }
     var emailSubject by remember { mutableStateOf("Hello") }
     var emailBody by remember { mutableStateOf("") }
 
@@ -148,13 +150,13 @@ fun QrCodeScreen(
     ) {
         // Top App Bar
         DevPulseTopAppBar(
-            title = "Create",
+            title = stringResource(R.string.qr_create),
             onBack = onBack,
             actions = {
                 Button(
                     onClick = {
                         if (finalContent.isBlank()) {
-                            Toast.makeText(context, "Please enter content first", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.toast_qr_enter_content), Toast.LENGTH_SHORT).show()
                         } else if (qrBitmap != null) {
                             saveAndShareQr(context, qrBitmap)
                         }
@@ -169,7 +171,7 @@ fun QrCodeScreen(
                     Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "Share",
+                        text = stringResource(R.string.qr_share),
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 }
@@ -201,7 +203,7 @@ fun QrCodeScreen(
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "Choose QR Code Type",
+                    text = stringResource(R.string.qr_choose_type),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 17.sp
@@ -295,7 +297,7 @@ fun QrCodeScreen(
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "Enter Content",
+                    text = stringResource(R.string.qr_enter_content),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 17.sp
@@ -322,14 +324,14 @@ fun QrCodeScreen(
                     when (selectedTypeIndex) {
                         0 -> {
                             Text(
-                                text = "Text Content:",
+                                text = stringResource(R.string.qr_text_content),
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             OutlinedTextField(
                                 value = textContent,
                                 onValueChange = { textContent = it },
-                                placeholder = { Text("Enter any text") },
+                                placeholder = { Text(stringResource(R.string.qr_text_placeholder)) },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .heightIn(min = 120.dp),
@@ -339,14 +341,14 @@ fun QrCodeScreen(
                         }
                         1 -> {
                             Text(
-                                text = "Website URL:",
+                                text = stringResource(R.string.qr_website_url),
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             OutlinedTextField(
                                 value = websiteUrl,
                                 onValueChange = { websiteUrl = it },
-                                placeholder = { Text("https://example.com") },
+                                placeholder = { Text(stringResource(R.string.qr_website_placeholder)) },
                                 modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(14.dp),
                                 colors = textFieldColors(),
@@ -355,14 +357,14 @@ fun QrCodeScreen(
                         }
                         2 -> {
                             Text(
-                                text = "Wi-Fi Network Name (SSID):",
+                                text = stringResource(R.string.qr_wifi_ssid),
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             OutlinedTextField(
                                 value = wifiSsid,
                                 onValueChange = { wifiSsid = it },
-                                placeholder = { Text("Network SSID") },
+                                placeholder = { Text(stringResource(R.string.qr_wifi_ssid_placeholder)) },
                                 modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(14.dp),
                                 colors = textFieldColors(),
@@ -371,14 +373,14 @@ fun QrCodeScreen(
 
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Password:",
+                                text = stringResource(R.string.qr_wifi_pass),
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             OutlinedTextField(
                                 value = wifiPassword,
                                 onValueChange = { wifiPassword = it },
-                                placeholder = { Text("Network Password (leave blank if open)") },
+                                placeholder = { Text(stringResource(R.string.qr_wifi_pass_placeholder)) },
                                 modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(14.dp),
                                 colors = textFieldColors(),
@@ -387,7 +389,7 @@ fun QrCodeScreen(
 
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Security Type:",
+                                text = stringResource(R.string.qr_wifi_security),
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -407,14 +409,14 @@ fun QrCodeScreen(
                         }
                         3 -> {
                             Text(
-                                text = "Email Address:",
+                                text = stringResource(R.string.qr_email_address),
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             OutlinedTextField(
                                 value = emailTo,
                                 onValueChange = { emailTo = it },
-                                placeholder = { Text("recipient@example.com") },
+                                placeholder = { Text(stringResource(R.string.qr_email_placeholder)) },
                                 modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(14.dp),
                                 colors = textFieldColors(),
@@ -423,14 +425,14 @@ fun QrCodeScreen(
 
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Subject (Optional):",
+                                text = stringResource(R.string.qr_email_subject),
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             OutlinedTextField(
                                 value = emailSubject,
                                 onValueChange = { emailSubject = it },
-                                placeholder = { Text("Email subject") },
+                                placeholder = { Text(stringResource(R.string.qr_email_subject_placeholder)) },
                                 modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(14.dp),
                                 colors = textFieldColors(),
@@ -439,14 +441,14 @@ fun QrCodeScreen(
 
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Body (Optional):",
+                                text = stringResource(R.string.qr_email_body),
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             OutlinedTextField(
                                 value = emailBody,
                                 onValueChange = { emailBody = it },
-                                placeholder = { Text("Email message body") },
+                                placeholder = { Text(stringResource(R.string.qr_email_body_placeholder)) },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .heightIn(min = 90.dp),
@@ -475,7 +477,7 @@ fun QrCodeScreen(
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "Live QR Preview & Styling",
+                    text = stringResource(R.string.qr_live_preview),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 17.sp
@@ -516,7 +518,7 @@ fun QrCodeScreen(
                             )
                         } else {
                             Text(
-                                text = "Enter content above",
+                                text = stringResource(R.string.qr_enter_content_placeholder),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -527,7 +529,7 @@ fun QrCodeScreen(
 
                     // QR Dot Color Presets & Dot Image Overlay Option
                     Text(
-                        text = "QR Code Dot Color & Overlay",
+                        text = stringResource(R.string.qr_dot_color),
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -591,7 +593,7 @@ fun QrCodeScreen(
                         ) {
                             Icon(Icons.Rounded.Texture, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text(if (dotImageUri != null) "Change Dot Image" else "Add Dot Image Overlay")
+                            Text(stringResource(if (dotImageUri != null) R.string.qr_change_dot_image else R.string.qr_add_dot_image))
                         }
 
                         if (dotImageUri != null) {
@@ -612,7 +614,7 @@ fun QrCodeScreen(
 
                     // QR Background Color Presets
                     Text(
-                        text = "Background Color",
+                        text = stringResource(R.string.qr_bg_color),
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -676,7 +678,7 @@ fun QrCodeScreen(
                         ) {
                             Icon(Icons.Rounded.Image, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text(if (bgImageUri != null) "Change BG Image" else "Add BG Image")
+                            Text(stringResource(if (bgImageUri != null) R.string.qr_change_bg_image else R.string.qr_add_bg_image))
                         }
 
                         if (bgImageUri != null) {
@@ -697,7 +699,7 @@ fun QrCodeScreen(
                     if (bgImageUri != null) {
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = "Background Image Opacity: ${(bgImageAlpha * 100).toInt()}%",
+                            text = stringResource(R.string.qr_bg_opacity, (bgImageAlpha * 100).toInt()),
                             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -727,7 +729,7 @@ fun QrCodeScreen(
                         ) {
                             Icon(Icons.Rounded.QrCode2, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text(if (logoUri != null) "Change Logo" else "Add Logo")
+                            Text(stringResource(if (logoUri != null) R.string.qr_change_logo else R.string.qr_add_logo))
                         }
 
                         if (logoUri != null) {
@@ -748,7 +750,7 @@ fun QrCodeScreen(
                     if (logoUri != null) {
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = "Logo Size: ${(logoSizeRatio * 100).toInt()}%",
+                            text = stringResource(R.string.qr_logo_size, (logoSizeRatio * 100).toInt()),
                             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -761,7 +763,7 @@ fun QrCodeScreen(
 
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Logo Position",
+                            text = stringResource(R.string.qr_logo_position),
                             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -773,11 +775,11 @@ fun QrCodeScreen(
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
                             listOf(
-                                LogoPosition.CENTER to "Center",
-                                LogoPosition.TOP_LEFT to "Top Left",
-                                LogoPosition.TOP_RIGHT to "Top Right",
-                                LogoPosition.BOTTOM_LEFT to "Bottom Left",
-                                LogoPosition.BOTTOM_RIGHT to "Bottom Right"
+                                LogoPosition.CENTER to stringResource(R.string.qr_pos_center),
+                                LogoPosition.TOP_LEFT to stringResource(R.string.qr_pos_top_left),
+                                LogoPosition.TOP_RIGHT to stringResource(R.string.qr_pos_top_right),
+                                LogoPosition.BOTTOM_LEFT to stringResource(R.string.qr_pos_bottom_left),
+                                LogoPosition.BOTTOM_RIGHT to stringResource(R.string.qr_pos_bottom_right)
                             ).forEach { (pos, label) ->
                                 FilterChip(
                                     selected = logoPosition == pos,
@@ -806,7 +808,7 @@ fun QrCodeScreen(
                     ) {
                         Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(10.dp))
-                        Text("Share Image", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Text(stringResource(R.string.qr_share_image), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                     }
                 }
             }
@@ -1009,8 +1011,8 @@ fun saveAndShareQr(context: Context, bitmap: Bitmap) {
             putExtra(Intent.EXTRA_STREAM, uri)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        context.startActivity(Intent.createChooser(intent, "Share QR Code"))
+        context.startActivity(Intent.createChooser(intent, context.getString(R.string.qr_share_chooser_title)))
     } catch (e: Exception) {
-        Toast.makeText(context, "Failed to share: ${e.message}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.toast_qr_share_failed, e.message), Toast.LENGTH_SHORT).show()
     }
 }
