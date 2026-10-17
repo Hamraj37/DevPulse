@@ -427,6 +427,19 @@
     <!-- Tools & Inspector Screens -->
     <string name="tools_hdr">Tools &amp; Utilities</string>
     <string name="tools_desc">System analysis, overlays, integrity checks, &amp; exports</string>
+    <string name="qr_code_generator_title">QR Code Generator</string>
+    <string name="qr_code_generator_desc">Generate custom QR codes for text, URLs, Wi-Fi &amp; contacts</string>
+    <string name="qr_code_input_hint">Enter text, URL or data to encode&#8230;</string>
+    <string name="qr_code_error_correction">Error Correction Level</string>
+    <string name="qr_code_btn_share">Share QR Image</string>
+    <string name="qr_code_btn_copy">Copy Text</string>
+    <string name="qr_code_btn_save">Save to Gallery</string>
+    <string name="qr_code_preset_url">Website URL</string>
+    <string name="qr_code_preset_wifi">Wi-Fi Config</string>
+    <string name="qr_code_preset_device">Device Info</string>
+    <string name="qr_code_preset_email">Email Address</string>
+    <string name="toast_qr_copied">Text copied to clipboard</string>
+    <string name="toast_qr_saved">QR Code saved successfully</string>
     <string name="app_analyzer_title">App Analyzer</string>
     <string name="app_analyzer_subtitle">App Architecture &amp; Component Inspector</string>
     <string name="app_analyzer_desc">Deep inspection of components, permissions, SDKs &amp; security</string>

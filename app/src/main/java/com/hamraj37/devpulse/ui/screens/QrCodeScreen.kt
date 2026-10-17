@@ -1,0 +1,1016 @@
+package com.hamraj37.devpulse.ui.screens
+
+import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.BitmapShader
+import android.graphics.Canvas
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.RectF
+import android.graphics.Shader
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.net.Uri
+import android.net.wifi.WifiManager
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.EncodeHintType
+import com.google.zxing.qrcode.QRCodeWriter
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
+import java.io.File
+import java.io.FileOutputStream
+
+data class QrTypeItem(
+    val name: String,
+    val icon: ImageVector,
+    val iconTint: Color
+)
+
+enum class LogoPosition {
+    CENTER, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT
+}
+
+@Composable
+fun QrCodeScreen(
+    onBack: (() -> Unit)? = null,
+    modifier: Modifier = Modifier
+) {
+    if (onBack != null) {
+        BackHandler { onBack() }
+    }
+
+    val context = LocalContext.current
+    var selectedTypeIndex by remember { mutableStateOf(0) }
+    var selectedColorInt by remember { mutableStateOf(android.graphics.Color.BLACK) }
+    var selectedBgColorInt by remember { mutableStateOf(android.graphics.Color.WHITE) }
+    var bgImageUri by remember { mutableStateOf<Uri?>(null) }
+    var bgImageAlpha by remember { mutableStateOf(0.75f) }
+    var dotImageUri by remember { mutableStateOf<Uri?>(null) }
+    var logoUri by remember { mutableStateOf<Uri?>(null) }
+    var logoSizeRatio by remember { mutableStateOf(0.22f) }
+    var logoPosition by remember { mutableStateOf(LogoPosition.CENTER) }
+
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            bgImageUri = uri
+        }
+    }
+
+    val dotImagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            dotImageUri = uri
+        }
+    }
+
+    val logoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            logoUri = uri
+        }
+    }
+
+    // State for each type
+    var textContent by remember { mutableStateOf("Hello from DevPulse!") }
+    var websiteUrl by remember { mutableStateOf("https://github.com/hamraj37/DevPulse") }
+    var wifiSsid by remember { mutableStateOf("MyNetwork") }
+    var wifiPassword by remember { mutableStateOf("") }
+    var wifiSecurity by remember { mutableStateOf("WPA") }
+    var emailTo by remember { mutableStateOf("support@devpulse.app") }
+    var emailSubject by remember { mutableStateOf("Hello") }
+    var emailBody by remember { mutableStateOf("") }
+
+    val qrTypes = remember {
+        listOf(
+            QrTypeItem("Text", Icons.Rounded.Edit, Color(0xFF3B82F6)),
+            QrTypeItem("Website", Icons.Rounded.Language, Color(0xFF10B981)),
+            QrTypeItem("WiFi", Icons.Rounded.Wifi, Color(0xFFF59E0B)),
+            QrTypeItem("Email", Icons.Rounded.Email, Color(0xFFEF4444))
+        )
+    }
+
+    val finalContent = remember(selectedTypeIndex, textContent, websiteUrl, wifiSsid, wifiPassword, wifiSecurity, emailTo, emailSubject, emailBody) {
+        when (selectedTypeIndex) {
+            0 -> textContent
+            1 -> websiteUrl
+            2 -> "WIFI:S:$wifiSsid;T:$wifiSecurity;P:$wifiPassword;;"
+            3 -> "mailto:$emailTo?subject=${Uri.encode(emailSubject)}&body=${Uri.encode(emailBody)}"
+            else -> textContent
+        }
+    }
+
+    val qrBitmap = remember(finalContent, selectedColorInt, selectedBgColorInt, bgImageUri, bgImageAlpha, dotImageUri, logoUri, logoSizeRatio, logoPosition) {
+        generateCustomQrBitmap(finalContent, 512, selectedColorInt, selectedBgColorInt, bgImageUri, bgImageAlpha, dotImageUri, logoUri, logoSizeRatio, logoPosition, context)
+    }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        // Top App Bar
+        DevPulseTopAppBar(
+            title = "Create",
+            onBack = onBack,
+            actions = {
+                Button(
+                    onClick = {
+                        if (finalContent.isBlank()) {
+                            Toast.makeText(context, "Please enter content first", Toast.LENGTH_SHORT).show()
+                        } else if (qrBitmap != null) {
+                            saveAndShareQr(context, qrBitmap)
+                        }
+                    },
+                    shape = RoundedCornerShape(20.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF10B981),
+                        contentColor = Color.White
+                    ),
+                    contentPadding = PaddingValues(horizontal = 18.dp, vertical = 6.dp)
+                ) {
+                    Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "Share",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            // Step 1 Header
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(26.dp)
+                        .background(Color(0xFF10B981), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "1",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sp
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = "Choose QR Code Type",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 17.sp
+                    ),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+
+            // Grid of QR Types (1 row of 4 with uniform circular icon containers)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                qrTypes.forEachIndexed { index, qrType ->
+                    val isSelected = selectedTypeIndex == index
+                    Card(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(104.dp)
+                            .clickable {
+                                selectedTypeIndex = index
+                                if (index == 2) {
+                                    val connectedSsid = getConnectedSsid(context)
+                                    if (connectedSsid.isNotBlank()) {
+                                        wifiSsid = connectedSsid
+                                    }
+                                }
+                            },
+                        shape = RoundedCornerShape(20.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isSelected)
+                                MaterialTheme.colorScheme.surfaceContainerHigh
+                            else
+                                MaterialTheme.colorScheme.surfaceContainerLow
+                        ),
+                        border = if (isSelected)
+                            androidx.compose.foundation.BorderStroke(2.dp, Color(0xFF10B981))
+                        else
+                            null,
+                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(vertical = 12.dp, horizontal = 4.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(42.dp)
+                                    .background(qrType.iconTint.copy(alpha = 0.15f), CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = qrType.icon,
+                                    contentDescription = qrType.name,
+                                    tint = qrType.iconTint,
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Text(
+                                text = qrType.name,
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 13.sp
+                                ),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                maxLines = 1
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Step 2 Header
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(26.dp)
+                        .background(Color(0xFF10B981), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "2",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sp
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = "Enter Content",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 17.sp
+                    ),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+
+            // Enter Content Card with dynamic input fields based on selectedTypeIndex
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(18.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    when (selectedTypeIndex) {
+                        0 -> {
+                            Text(
+                                text = "Text Content:",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            OutlinedTextField(
+                                value = textContent,
+                                onValueChange = { textContent = it },
+                                placeholder = { Text("Enter any text") },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(min = 120.dp),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = textFieldColors()
+                            )
+                        }
+                        1 -> {
+                            Text(
+                                text = "Website URL:",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            OutlinedTextField(
+                                value = websiteUrl,
+                                onValueChange = { websiteUrl = it },
+                                placeholder = { Text("https://example.com") },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = textFieldColors(),
+                                singleLine = true
+                            )
+                        }
+                        2 -> {
+                            Text(
+                                text = "Wi-Fi Network Name (SSID):",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            OutlinedTextField(
+                                value = wifiSsid,
+                                onValueChange = { wifiSsid = it },
+                                placeholder = { Text("Network SSID") },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = textFieldColors(),
+                                singleLine = true
+                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Password:",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            OutlinedTextField(
+                                value = wifiPassword,
+                                onValueChange = { wifiPassword = it },
+                                placeholder = { Text("Network Password (leave blank if open)") },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = textFieldColors(),
+                                singleLine = true
+                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Security Type:",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                listOf("WPA", "WEP", "nopass").forEach { sec ->
+                                    FilterChip(
+                                        selected = wifiSecurity == sec,
+                                        onClick = { wifiSecurity = sec },
+                                        label = { Text(sec) },
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+                            }
+                        }
+                        3 -> {
+                            Text(
+                                text = "Email Address:",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            OutlinedTextField(
+                                value = emailTo,
+                                onValueChange = { emailTo = it },
+                                placeholder = { Text("recipient@example.com") },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = textFieldColors(),
+                                singleLine = true
+                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Subject (Optional):",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            OutlinedTextField(
+                                value = emailSubject,
+                                onValueChange = { emailSubject = it },
+                                placeholder = { Text("Email subject") },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = textFieldColors(),
+                                singleLine = true
+                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Body (Optional):",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            OutlinedTextField(
+                                value = emailBody,
+                                onValueChange = { emailBody = it },
+                                placeholder = { Text("Email message body") },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(min = 90.dp),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = textFieldColors()
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Step 3 / Live QR Preview Card
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(26.dp)
+                        .background(Color(0xFF10B981), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "3",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sp
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = "Live QR Preview & Styling",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 17.sp
+                    ),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(200.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(selectedBgColorInt))
+                            .border(2.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(16.dp))
+                            .padding(12.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (qrBitmap != null) {
+                            Image(
+                                bitmap = qrBitmap.asImageBitmap(),
+                                contentDescription = "Live QR Code",
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        } else {
+                            Text(
+                                text = "Enter content above",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // QR Dot Color Presets & Dot Image Overlay Option
+                    Text(
+                        text = "QR Code Dot Color & Overlay",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        val colorPresets = listOf(
+                            "Black" to android.graphics.Color.BLACK,
+                            "Blue" to android.graphics.Color.parseColor("#3B82F6"),
+                            "Green" to android.graphics.Color.parseColor("#10B981"),
+                            "Purple" to android.graphics.Color.parseColor("#8B5CF6"),
+                            "Red" to android.graphics.Color.parseColor("#EF4444"),
+                            "Charcoal" to android.graphics.Color.parseColor("#1F2937")
+                        )
+                        colorPresets.forEach { (_, colorInt) ->
+                            val isSelected = dotImageUri == null && selectedColorInt == colorInt
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .background(Color(colorInt), CircleShape)
+                                    .border(
+                                        width = if (isSelected) 3.dp else 1.dp,
+                                        color = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray,
+                                        shape = CircleShape
+                                    )
+                                    .clickable {
+                                        dotImageUri = null
+                                        selectedColorInt = colorInt
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (isSelected) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Check,
+                                        contentDescription = null,
+                                        tint = Color.White,
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // QR Dot Image Overlay Option
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Button(
+                            onClick = { dotImagePickerLauncher.launch("image/*") },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        ) {
+                            Icon(Icons.Rounded.Texture, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(if (dotImageUri != null) "Change Dot Image" else "Add Dot Image Overlay")
+                        }
+
+                        if (dotImageUri != null) {
+                            Button(
+                                onClick = { dotImageUri = null },
+                                shape = RoundedCornerShape(12.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                                    contentColor = MaterialTheme.colorScheme.onErrorContainer
+                                )
+                            ) {
+                                Icon(Icons.Rounded.Close, contentDescription = null, modifier = Modifier.size(16.dp))
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // QR Background Color Presets
+                    Text(
+                        text = "Background Color",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        val bgColorPresets = listOf(
+                            "White" to android.graphics.Color.WHITE,
+                            "Light Gray" to android.graphics.Color.parseColor("#F3F4F6"),
+                            "Cream" to android.graphics.Color.parseColor("#FEF3C7"),
+                            "Light Blue" to android.graphics.Color.parseColor("#E0F2FE"),
+                            "Light Green" to android.graphics.Color.parseColor("#D1FAE5"),
+                            "Light Pink" to android.graphics.Color.parseColor("#FCE7F3")
+                        )
+                        bgColorPresets.forEach { (_, colorInt) ->
+                            val isSelected = bgImageUri == null && selectedBgColorInt == colorInt
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .background(Color(colorInt), CircleShape)
+                                    .border(
+                                        width = if (isSelected) 3.dp else 1.dp,
+                                        color = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray,
+                                        shape = CircleShape
+                                    )
+                                    .clickable {
+                                        bgImageUri = null
+                                        selectedBgColorInt = colorInt
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (isSelected) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Check,
+                                        contentDescription = null,
+                                        tint = if (colorInt == android.graphics.Color.WHITE) Color.Black else Color.DarkGray,
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Background Image Option
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Button(
+                            onClick = { imagePickerLauncher.launch("image/*") },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        ) {
+                            Icon(Icons.Rounded.Image, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(if (bgImageUri != null) "Change BG Image" else "Add BG Image")
+                        }
+
+                        if (bgImageUri != null) {
+                            Button(
+                                onClick = { bgImageUri = null },
+                                shape = RoundedCornerShape(12.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                                    contentColor = MaterialTheme.colorScheme.onErrorContainer
+                                )
+                            ) {
+                                Icon(Icons.Rounded.Close, contentDescription = null, modifier = Modifier.size(16.dp))
+                            }
+                        }
+                    }
+
+                    // Background Image Opacity Slider (if bg image is set)
+                    if (bgImageUri != null) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = "Background Image Opacity: ${(bgImageAlpha * 100).toInt()}%",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Slider(
+                            value = bgImageAlpha,
+                            onValueChange = { bgImageAlpha = it },
+                            valueRange = 0.1f..1.0f,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Center Logo Option
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Button(
+                            onClick = { logoPickerLauncher.launch("image/*") },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        ) {
+                            Icon(Icons.Rounded.QrCode2, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(if (logoUri != null) "Change Logo" else "Add Logo")
+                        }
+
+                        if (logoUri != null) {
+                            Button(
+                                onClick = { logoUri = null },
+                                shape = RoundedCornerShape(12.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                                    contentColor = MaterialTheme.colorScheme.onErrorContainer
+                                )
+                            ) {
+                                Icon(Icons.Rounded.Close, contentDescription = null, modifier = Modifier.size(16.dp))
+                            }
+                        }
+                    }
+
+                    // Logo Size and Position Controls (if logo is set)
+                    if (logoUri != null) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = "Logo Size: ${(logoSizeRatio * 100).toInt()}%",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Slider(
+                            value = logoSizeRatio,
+                            onValueChange = { logoSizeRatio = it },
+                            valueRange = 0.15f..0.30f,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Logo Position",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .horizontalScroll(rememberScrollState()),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            listOf(
+                                LogoPosition.CENTER to "Center",
+                                LogoPosition.TOP_LEFT to "Top Left",
+                                LogoPosition.TOP_RIGHT to "Top Right",
+                                LogoPosition.BOTTOM_LEFT to "Bottom Left",
+                                LogoPosition.BOTTOM_RIGHT to "Bottom Right"
+                            ).forEach { (pos, label) ->
+                                FilterChip(
+                                    selected = logoPosition == pos,
+                                    onClick = { logoPosition = pos },
+                                    label = { Text(label) }
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    // Share Image Button
+                    Button(
+                        onClick = {
+                            if (qrBitmap != null) {
+                                saveAndShareQr(context, qrBitmap)
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF10B981),
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text("Share Image", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+        }
+    }
+}
+
+@Composable
+fun textFieldColors() = OutlinedTextFieldDefaults.colors(
+    focusedBorderColor = Color(0xFF10B981),
+    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+    focusedContainerColor = MaterialTheme.colorScheme.surface,
+    unfocusedContainerColor = MaterialTheme.colorScheme.surface
+)
+
+@Suppress("DEPRECATION")
+fun getConnectedSsid(context: Context): String {
+    try {
+        val hasPerm = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        if (hasPerm) {
+            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+            val activeNetwork = connectivityManager?.activeNetwork
+            val caps = connectivityManager?.getNetworkCapabilities(activeNetwork)
+            if (caps != null && caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as? WifiManager
+                val wifiInfo = wifiManager?.connectionInfo
+                val ssid = wifiInfo?.ssid?.removePrefix("\"")?.removeSuffix("\"")
+                if (!ssid.isNullOrBlank() && ssid != "<unknown ssid>") {
+                    return ssid
+                }
+            }
+        }
+    } catch (_: Throwable) {}
+    return ""
+}
+
+fun generateCustomQrBitmap(
+    text: String,
+    size: Int,
+    qrColor: Int,
+    bgColor: Int,
+    bgImageUri: Uri?,
+    bgImageAlpha: Float,
+    dotImageUri: Uri?,
+    logoUri: Uri?,
+    logoSizeRatio: Float,
+    logoPosition: LogoPosition,
+    context: Context
+): Bitmap? {
+    if (text.isBlank()) return null
+    return try {
+        val hints = mapOf(EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.H)
+        val bitMatrix = QRCodeWriter().encode(text, BarcodeFormat.QR_CODE, size, size, hints)
+        val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+
+        if (bgImageUri != null) {
+            try {
+                val inputStream = context.contentResolver.openInputStream(bgImageUri)
+                val rawImage = BitmapFactory.decodeStream(inputStream)
+                inputStream?.close()
+                if (rawImage != null) {
+                    val srcRect = Rect(0, 0, rawImage.width, rawImage.height)
+                    val destRect = Rect(0, 0, size, size)
+                    val paint = Paint().apply {
+                        isAntiAlias = true
+                        isFilterBitmap = true
+                        alpha = (bgImageAlpha * 255).toInt().coerceIn(0, 255)
+                    }
+                    canvas.drawBitmap(rawImage, srcRect, destRect, paint)
+                    rawImage.recycle()
+                } else {
+                    canvas.drawColor(bgColor)
+                }
+            } catch (_: Throwable) {
+                canvas.drawColor(bgColor)
+            }
+        } else {
+            canvas.drawColor(bgColor)
+        }
+
+        val dotPaint = Paint().apply {
+            color = qrColor
+            isAntiAlias = true
+        }
+
+        if (dotImageUri != null) {
+            try {
+                val inputStream = context.contentResolver.openInputStream(dotImageUri)
+                val rawDotImage = BitmapFactory.decodeStream(inputStream)
+                inputStream?.close()
+                if (rawDotImage != null) {
+                    val shader = BitmapShader(rawDotImage, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT)
+                    val matrix = Matrix()
+                    matrix.setScale(size.toFloat() / rawDotImage.width, size.toFloat() / rawDotImage.height)
+                    shader.setLocalMatrix(matrix)
+                    dotPaint.shader = shader
+                }
+            } catch (_: Throwable) {}
+        }
+
+        val matrixWidth = bitMatrix.width
+        val matrixHeight = bitMatrix.height
+        val scaleX = size.toFloat() / matrixWidth
+        val scaleY = size.toFloat() / matrixHeight
+
+        // Find exact bounding box of the QR code data matrix modules
+        var minX = size
+        var minY = size
+        var maxX = 0
+        var maxY = 0
+        for (x in 0 until matrixWidth) {
+            for (y in 0 until matrixHeight) {
+                if (bitMatrix[x, y]) {
+                    val px = (x * scaleX).toInt()
+                    val py = (y * scaleY).toInt()
+                    if (px < minX) minX = px
+                    if (py < minY) minY = py
+                    if (px > maxX) maxX = px
+                    if (py > maxY) maxY = px
+                }
+            }
+        }
+
+        for (x in 0 until matrixWidth) {
+            for (y in 0 until matrixHeight) {
+                if (bitMatrix[x, y]) {
+                    val left = x * scaleX
+                    val top = y * scaleY
+                    val right = (x + 1) * scaleX
+                    val bottom = (y + 1) * scaleY
+                    canvas.drawRect(left, top, right, bottom, dotPaint)
+                }
+            }
+        }
+
+        // Draw Logo if present
+        if (logoUri != null) {
+            try {
+                val inputStream = context.contentResolver.openInputStream(logoUri)
+                val rawLogo = BitmapFactory.decodeStream(inputStream)
+                inputStream?.close()
+                if (rawLogo != null) {
+                    val logoSize = (size * logoSizeRatio).toInt()
+                    val (left, top) = when (logoPosition) {
+                        LogoPosition.CENTER -> Pair((minX + maxX - logoSize) / 2, (minY + maxY - logoSize) / 2)
+                        LogoPosition.TOP_LEFT -> Pair(minX + 4, minY + 4)
+                        LogoPosition.TOP_RIGHT -> Pair(maxX - logoSize - 4, minY + 4)
+                        LogoPosition.BOTTOM_LEFT -> Pair(minX + 4, maxY - logoSize - 4)
+                        LogoPosition.BOTTOM_RIGHT -> Pair(maxX - logoSize - 4, maxY - logoSize - 4)
+                    }
+
+                    val clampedFx = left.coerceIn(minX, maxX - logoSize)
+                    val clampedFy = top.coerceIn(minY, maxY - logoSize)
+                    val right = clampedFx + logoSize
+                    val bottom = clampedFy + logoSize
+
+                    val backingPaint = Paint().apply {
+                        color = android.graphics.Color.WHITE
+                        isAntiAlias = true
+                    }
+                    val cornerRadius = 16f
+                    canvas.drawRoundRect(
+                        RectF(clampedFx.toFloat() - 4, clampedFy.toFloat() - 4, right.toFloat() + 4, bottom.toFloat() + 4),
+                        cornerRadius, cornerRadius, backingPaint
+                    )
+
+                    val srcRect = Rect(0, 0, rawLogo.width, rawLogo.height)
+                    val destRect = Rect(clampedFx, clampedFy, right, bottom)
+                    val logoPaint = Paint().apply {
+                        isAntiAlias = true
+                        isFilterBitmap = true
+                    }
+                    canvas.drawBitmap(rawLogo, srcRect, destRect, logoPaint)
+                    rawLogo.recycle()
+                }
+            } catch (_: Throwable) {}
+        }
+
+        bitmap
+    } catch (_: Throwable) {
+        null
+    }
+}
+
+fun saveAndShareQr(context: Context, bitmap: Bitmap) {
+    try {
+        val cachePath = File(context.cacheDir, "images")
+        cachePath.mkdirs()
+        val file = File(cachePath, "devpulse_qr.png")
+        FileOutputStream(file).use { stream ->
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        }
+        val uri: Uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "image/png"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        context.startActivity(Intent.createChooser(intent, "Share QR Code"))
+    } catch (e: Exception) {
+        Toast.makeText(context, "Failed to share: ${e.message}", Toast.LENGTH_SHORT).show()
+    }
+}

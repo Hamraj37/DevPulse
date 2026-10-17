@@ -28,6 +28,7 @@ import androidx.compose.material.icons.rounded.Explore
 import androidx.compose.material.icons.rounded.GridView
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.PictureAsPdf
+import androidx.compose.material.icons.rounded.QrCode2
 import androidx.compose.material.icons.rounded.Router
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.Smartphone
@@ -74,6 +75,7 @@ enum class ToolType {
     SCREEN_TIME,
     WIDGETS,
     COMPASS,
+    QR_CODE_GENERATOR,
     EXPORT,
     APP_ANALYZER,
     PLAY_INTEGRITY,
@@ -160,6 +162,12 @@ fun ToolsScreen(
                 icon = Icons.Rounded.Explore
             ),
             ToolItemData(
+                type = ToolType.QR_CODE_GENERATOR,
+                titleRes = R.string.qr_code_generator_title,
+                descriptionRes = R.string.qr_code_generator_desc,
+                icon = Icons.Rounded.QrCode2
+            ),
+            ToolItemData(
                 type = ToolType.APP_ANALYZER,
                 titleRes = R.string.app_analyzer_title,
                 descriptionRes = R.string.app_analyzer_desc,
@@ -203,6 +211,7 @@ fun ToolsScreen(
         ToolType.SCREEN_TIME -> ScreenTimeScreen(onBack = handleToolBack)
         ToolType.WIDGETS -> WidgetsScreen(uiState = uiState, onBack = handleToolBack)
         ToolType.COMPASS -> CompassScreen(onBack = handleToolBack)
+        ToolType.QR_CODE_GENERATOR -> QrCodeScreen(onBack = handleToolBack)
         ToolType.EXPORT -> ExportScreen(uiState = uiState, onBack = handleToolBack)
         ToolType.APP_ANALYZER -> AppAnalyzerScreen(uiState = uiState, onBack = handleToolBack)
         ToolType.PLAY_INTEGRITY -> PlayIntegrityScreen(onBack = handleToolBack)
