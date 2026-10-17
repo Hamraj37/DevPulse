@@ -296,25 +296,10 @@ fun MainScreen(
                     }
                 },
                 dismissButton = {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    TextButton(
+                        onClick = { viewModel.dismissUpdateDialog() }
                     ) {
-                        TextButton(
-                            onClick = {
-                                try {
-                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/DevPulseApp"))
-                                    context.startActivity(intent)
-                                } catch (_: Exception) {}
-                            }
-                        ) {
-                            Text(stringResource(R.string.about_telegram))
-                        }
-                        TextButton(
-                            onClick = { viewModel.dismissUpdateDialog() }
-                        ) {
-                            Text(stringResource(R.string.btn_later))
-                        }
+                        Text(stringResource(R.string.btn_later))
                     }
                 }
             )
