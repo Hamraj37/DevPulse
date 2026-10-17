@@ -42,6 +42,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.annotation.DrawableRes
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -58,7 +60,8 @@ import java.io.FileOutputStream
 
 data class QrTypeItem(
     val name: String,
-    val icon: ImageVector,
+    val icon: ImageVector? = null,
+    @DrawableRes val iconRes: Int? = null,
     val iconTint: Color
 )
 
@@ -111,31 +114,91 @@ fun QrCodeScreen(
     }
 
     // State for each type
-    var textContent by remember { mutableStateOf("Hello from DevPulse!") }
-    var websiteUrl by remember { mutableStateOf("https://github.com/hamraj37/DevPulse") }
-    var wifiSsid by remember { mutableStateOf("MyNetwork") }
+    var textContent by remember { mutableStateOf("") }
+    var websiteUrl by remember { mutableStateOf("") }
+    var wifiSsid by remember { mutableStateOf("") }
     var wifiPassword by remember { mutableStateOf("") }
     var wifiSecurity by remember { mutableStateOf("WPA") }
-    var emailTo by remember { mutableStateOf("skhamraj37@gmail.com") }
-    var emailSubject by remember { mutableStateOf("Hello") }
+    var emailTo by remember { mutableStateOf("") }
+    var emailSubject by remember { mutableStateOf("") }
     var emailBody by remember { mutableStateOf("") }
+    var upiId by remember { mutableStateOf("") }
+    var upiName by remember { mutableStateOf("") }
+    var upiAmount by remember { mutableStateOf("") }
+    var waPhone by remember { mutableStateOf("") }
+    var waMessage by remember { mutableStateOf("") }
+    var igUsername by remember { mutableStateOf("") }
+    var contactName by remember { mutableStateOf("") }
+    var contactPhone by remember { mutableStateOf("") }
+    var contactEmail by remember { mutableStateOf("") }
+    var contactOrg by remember { mutableStateOf("") }
+    var contactUrl by remember { mutableStateOf("") }
 
     val qrTypes = remember {
         listOf(
-            QrTypeItem("Text", Icons.Rounded.Edit, Color(0xFF3B82F6)),
-            QrTypeItem("Website", Icons.Rounded.Language, Color(0xFF10B981)),
-            QrTypeItem("WiFi", Icons.Rounded.Wifi, Color(0xFFF59E0B)),
-            QrTypeItem("Email", Icons.Rounded.Email, Color(0xFFEF4444))
+            QrTypeItem("Text", icon = Icons.Rounded.Edit, iconTint = Color(0xFF3B82F6)),
+            QrTypeItem("Website", icon = Icons.Rounded.Language, iconTint = Color(0xFF10B981)),
+            QrTypeItem("WiFi", icon = Icons.Rounded.Wifi, iconTint = Color(0xFFF59E0B)),
+            QrTypeItem("Email", icon = Icons.Rounded.Email, iconTint = Color(0xFFEF4444)),
+            QrTypeItem("UPI", icon = Icons.Rounded.Payment, iconTint = Color(0xFF8B5CF6)),
+            QrTypeItem("WhatsApp", iconRes = R.drawable.ic_whatsapp, iconTint = Color(0xFF25D366)),
+            QrTypeItem("Instagram", iconRes = R.drawable.ic_instagram, iconTint = Color(0xFFE1306C)),
+            QrTypeItem("Contact", icon = Icons.Rounded.Contacts, iconTint = Color(0xFFA855F7))
         )
     }
 
-    val finalContent = remember(selectedTypeIndex, textContent, websiteUrl, wifiSsid, wifiPassword, wifiSecurity, emailTo, emailSubject, emailBody) {
+    val finalContent = remember(selectedTypeIndex, textContent, websiteUrl, wifiSsid, wifiPassword, wifiSecurity, emailTo, emailSubject, emailBody, upiId, upiName, upiAmount, waPhone, waMessage, igUsername, contactName, contactPhone, contactEmail, contactOrg, contactUrl) {
         when (selectedTypeIndex) {
-            0 -> textContent
-            1 -> websiteUrl
-            2 -> "WIFI:S:$wifiSsid;T:$wifiSecurity;P:$wifiPassword;;"
-            3 -> "mailto:$emailTo?subject=${Uri.encode(emailSubject)}&body=${Uri.encode(emailBody)}"
-            else -> textContent
+            0 -> textContent.ifBlank { "Hello from DevPulse!" }
+            1 -> websiteUrl.ifBlank { "https://github.com/hamraj37/DevPulse" }
+            2 -> {
+                val ssid = wifiSsid.ifBlank { "MyNetwork" }
+                "WIFI:S:$ssid;T:$wifiSecurity;P:$wifiPassword;;"
+            }
+            3 -> {
+                val to = emailTo.ifBlank { "skhamraj37@gmail.com" }
+                val subj = emailSubject.ifBlank { "Hello" }
+                "mailto:$to?subject=${Uri.encode(subj)}&body=${Uri.encode(emailBody)}"
+            }
+            4 -> {
+                val id = upiId.ifBlank { "merchant@upi" }
+                val name = upiName.ifBlank { "Merchant Name" }
+                val sb = StringBuilder("upi://pay?pa=$id&pn=${Uri.encode(name)}")
+                if (upiAmount.isNotBlank()) {
+                    sb.append("&am=$upiAmount&cu=INR")
+                }
+                sb.toString()
+            }
+            5 -> {
+                val phone = waPhone.ifBlank { "919876543210" }
+                val msg = waMessage.ifBlank { "Hello from DevPulse!" }
+                val encodedMsg = Uri.encode(msg)
+                if (encodedMsg.isNotBlank()) {
+                    "https://wa.me/$phone?text=$encodedMsg"
+                } else {
+                    "https://wa.me/$phone"
+                }
+            }
+            6 -> {
+                val user = igUsername.ifBlank { "hamraj37" }
+                "https://instagram.com/$user"
+            }
+            7 -> {
+                val name = contactName.ifBlank { "John Doe" }
+                val phone = contactPhone.ifBlank { "+1 234 567 890" }
+                val email = contactEmail.ifBlank { "john@example.com" }
+                val org = contactOrg.ifBlank { "DevPulse" }
+                val url = contactUrl.ifBlank { "https://github.com/hamraj37" }
+                val sb = StringBuilder("BEGIN:VCARD\nVERSION:3.0\n")
+                if (name.isNotBlank()) sb.append("FN:$name\n")
+                if (phone.isNotBlank()) sb.append("TEL:$phone\n")
+                if (email.isNotBlank()) sb.append("EMAIL:$email\n")
+                if (org.isNotBlank()) sb.append("ORG:$org\n")
+                if (url.isNotBlank()) sb.append("URL:$url\n")
+                sb.append("END:VCARD")
+                sb.toString()
+            }
+            else -> textContent.ifBlank { "Hello from DevPulse!" }
         }
     }
 
@@ -212,69 +275,90 @@ fun QrCodeScreen(
                 )
             }
 
-            // Grid of QR Types (1 row of 4 with uniform circular icon containers)
-            Row(
+            // Grid of QR Types (2 rows of up to 4 with uniform circular icon containers)
+            val chunkedQrTypes = remember { qrTypes.chunked(4) }
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                qrTypes.forEachIndexed { index, qrType ->
-                    val isSelected = selectedTypeIndex == index
-                    Card(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(104.dp)
-                            .clickable {
-                                selectedTypeIndex = index
-                                if (index == 2) {
-                                    val connectedSsid = getConnectedSsid(context)
-                                    if (connectedSsid.isNotBlank()) {
-                                        wifiSsid = connectedSsid
-                                    }
-                                }
-                            },
-                        shape = RoundedCornerShape(20.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = if (isSelected)
-                                MaterialTheme.colorScheme.surfaceContainerHigh
-                            else
-                                MaterialTheme.colorScheme.surfaceContainerLow
-                        ),
-                        border = if (isSelected)
-                            androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
-                        else
-                            null,
-                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                chunkedQrTypes.forEach { rowTypes ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(vertical = 12.dp, horizontal = 4.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Box(
+                        rowTypes.forEach { qrType ->
+                            val index = qrTypes.indexOf(qrType)
+                            val isSelected = selectedTypeIndex == index
+                            Card(
                                 modifier = Modifier
-                                    .size(42.dp)
-                                    .background(qrType.iconTint.copy(alpha = 0.15f), CircleShape),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = qrType.icon,
-                                    contentDescription = qrType.name,
-                                    tint = qrType.iconTint,
-                                    modifier = Modifier.size(22.dp)
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(10.dp))
-                            Text(
-                                text = qrType.name,
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontSize = 13.sp
+                                    .weight(1f)
+                                    .height(104.dp)
+                                    .clickable {
+                                        selectedTypeIndex = index
+                                        if (index == 2) {
+                                            val connectedSsid = getConnectedSsid(context)
+                                            if (connectedSsid.isNotBlank()) {
+                                                wifiSsid = connectedSsid
+                                            }
+                                        }
+                                    },
+                                shape = RoundedCornerShape(20.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = if (isSelected)
+                                        MaterialTheme.colorScheme.surfaceContainerHigh
+                                    else
+                                        MaterialTheme.colorScheme.surfaceContainerLow
                                 ),
-                                color = MaterialTheme.colorScheme.onSurface,
-                                maxLines = 1
-                            )
+                                border = if (isSelected)
+                                    androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+                                else
+                                    null,
+                                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(vertical = 12.dp, horizontal = 4.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(42.dp)
+                                            .background(qrType.iconTint.copy(alpha = 0.15f), CircleShape),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        if (qrType.iconRes != null) {
+                                            Icon(
+                                                painter = painterResource(id = qrType.iconRes),
+                                                contentDescription = qrType.name,
+                                                tint = qrType.iconTint,
+                                                modifier = Modifier.size(22.dp)
+                                            )
+                                        } else if (qrType.icon != null) {
+                                            Icon(
+                                                imageVector = qrType.icon,
+                                                contentDescription = qrType.name,
+                                                tint = qrType.iconTint,
+                                                modifier = Modifier.size(22.dp)
+                                            )
+                                        }
+                                    }
+                                    Spacer(modifier = Modifier.height(10.dp))
+                                    Text(
+                                        text = qrType.name,
+                                        style = MaterialTheme.typography.bodyMedium.copy(
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 13.sp
+                                        ),
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        maxLines = 1
+                                    )
+                                }
+                            }
+                        }
+                        repeat(4 - rowTypes.size) {
+                            Spacer(modifier = Modifier.weight(1f))
                         }
                     }
                 }
@@ -454,6 +538,183 @@ fun QrCodeScreen(
                                     .heightIn(min = 90.dp),
                                 shape = RoundedCornerShape(14.dp),
                                 colors = textFieldColors()
+                            )
+                        }
+                        4 -> {
+                            Text(
+                                text = "UPI ID (VPA)",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            OutlinedTextField(
+                                value = upiId,
+                                onValueChange = { upiId = it },
+                                placeholder = { Text("merchant@okaxis") },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = textFieldColors(),
+                                singleLine = true
+                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Payee Name",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            OutlinedTextField(
+                                value = upiName,
+                                onValueChange = { upiName = it },
+                                placeholder = { Text("Store Name") },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = textFieldColors(),
+                                singleLine = true
+                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Amount (Optional)",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            OutlinedTextField(
+                                value = upiAmount,
+                                onValueChange = { upiAmount = it },
+                                placeholder = { Text("100.00") },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = textFieldColors(),
+                                singleLine = true
+                            )
+                        }
+                        5 -> {
+                            Text(
+                                text = "WhatsApp Phone Number (with Country Code)",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            OutlinedTextField(
+                                value = waPhone,
+                                onValueChange = { waPhone = it },
+                                placeholder = { Text("919876543210") },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = textFieldColors(),
+                                singleLine = true
+                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Pre-filled Message (Optional)",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            OutlinedTextField(
+                                value = waMessage,
+                                onValueChange = { waMessage = it },
+                                placeholder = { Text("Hello!") },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(min = 90.dp),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = textFieldColors()
+                            )
+                        }
+                        6 -> {
+                            Text(
+                                text = "Instagram Username",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            OutlinedTextField(
+                                value = igUsername,
+                                onValueChange = { igUsername = it },
+                                placeholder = { Text("username") },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = textFieldColors(),
+                                singleLine = true
+                            )
+                        }
+                        7 -> {
+                            Text(
+                                text = "Full Name",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            OutlinedTextField(
+                                value = contactName,
+                                onValueChange = { contactName = it },
+                                placeholder = { Text("John Doe") },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = textFieldColors(),
+                                singleLine = true
+                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Phone Number",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            OutlinedTextField(
+                                value = contactPhone,
+                                onValueChange = { contactPhone = it },
+                                placeholder = { Text("+1 234 567 890") },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = textFieldColors(),
+                                singleLine = true
+                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Email Address",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            OutlinedTextField(
+                                value = contactEmail,
+                                onValueChange = { contactEmail = it },
+                                placeholder = { Text("john@example.com") },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = textFieldColors(),
+                                singleLine = true
+                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Organization / Company",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            OutlinedTextField(
+                                value = contactOrg,
+                                onValueChange = { contactOrg = it },
+                                placeholder = { Text("DevPulse") },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = textFieldColors(),
+                                singleLine = true
+                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Website URL",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            OutlinedTextField(
+                                value = contactUrl,
+                                onValueChange = { contactUrl = it },
+                                placeholder = { Text("https://example.com") },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = textFieldColors(),
+                                singleLine = true
                             )
                         }
                     }
