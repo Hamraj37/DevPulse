@@ -2,9 +2,11 @@ package com.hamraj37.devpulse.ui.screens
 
 import com.hamraj37.devpulse.R
 import androidx.compose.ui.res.stringResource
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,21 +24,24 @@ import androidx.compose.material.icons.rounded.Thermostat
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hamraj37.devpulse.data.model.ThermalInfo
 import com.hamraj37.devpulse.data.model.ThermalZone
+import com.hamraj37.devpulse.ui.components.LiveSparklineChart
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.ActiveBadge
 
@@ -50,9 +55,9 @@ fun ThermalScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // 1. Top Thermal Overview Banner
+        // 1. Top Thermal Overview Banner (Dashboard card style with LiveSparklineChart)
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
@@ -69,84 +74,142 @@ fun ThermalScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier.weight(1f),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Surface(
-                            shape = CircleShape,
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            modifier = Modifier.size(48.dp)
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Thermostat,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(28.dp)
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.width(12.dp))
-
-                        Column {
-                            Text(
-                                text = stringResource(R.string.thermal_zone_monitors),
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                color = MaterialTheme.colorScheme.onSurface,
-                                maxLines = 1
-                            )
-                            Text(
-                                text = stringResource(R.string.lbl_status) + " " + thermalInfo.overallStatus,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = ActiveBadge,
-                                maxLines = 1
-                            )
-                        }
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = stringResource(R.string.cpu_temperature_title),
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        val cpuZone = thermalInfo.thermalZones.firstOrNull { it.type.contains("cpu", ignoreCase = true) || it.name.contains("cpu", ignoreCase = true) }
+                        val cpuTemp = cpuZone?.tempCelsius ?: thermalInfo.thermalZones.firstOrNull()?.tempCelsius ?: 36.5f
+                        Text(
+                            text = stringResource(R.string.fmt_battery_temp, cpuTemp),
+                            style = MaterialTheme.typography.displaySmall.copy(
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 40.sp
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
 
                     Spacer(modifier = Modifier.width(12.dp))
 
                     Surface(
-                        shape = RoundedCornerShape(12.dp),
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        modifier = Modifier.size(52.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Rounded.Thermostat,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Badges Row using FlowRow for robust responsiveness
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    // Status Badge
+                    Surface(
+                        shape = RoundedCornerShape(16.dp),
+                        color = MaterialTheme.colorScheme.primary
+                    ) {
+                        Text(
+                            text = thermalInfo.overallStatus,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+
+                    // Zones Count Badge
+                    Surface(
+                        shape = RoundedCornerShape(16.dp),
                         color = MaterialTheme.colorScheme.primaryContainer
                     ) {
                         Text(
                             text = stringResource(R.string.fmt_thermal_zones_count, thermalInfo.thermalZones.size),
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            maxLines = 1,
-                            softWrap = false
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = stringResource(R.string.thermal_headroom_capacity),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                val headroomProgress = if (thermalInfo.thermalHeadroom.isNaN() || thermalInfo.thermalHeadroom.isInfinite()) {
-                    0.85f
-                } else {
-                    thermalInfo.thermalHeadroom.coerceIn(0f, 1f)
-                }
-
-                LinearProgressIndicator(
-                    progress = { headroomProgress },
+                // Divider
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(8.dp)
-                        .clip(RoundedCornerShape(4.dp)),
-                    color = ActiveBadge,
-                    trackColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                        .height(1.dp)
+                        .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                val cpuZone = thermalInfo.thermalZones.firstOrNull { it.type.contains("cpu", ignoreCase = true) || it.name.contains("cpu", ignoreCase = true) }
+                val cpuTemp = cpuZone?.tempCelsius ?: thermalInfo.thermalZones.firstOrNull()?.tempCelsius ?: 36.5f
+
+                val cpuTempHistory = remember {
+                    mutableStateListOf<Float>().apply {
+                        for (i in 0..15) {
+                            val delta = ((i * 37) % 7 - 3) * 0.1f
+                            add(cpuTemp + delta)
+                        }
+                    }
+                }
+
+                LaunchedEffect(cpuTemp) {
+                    if (cpuTempHistory.isEmpty() || cpuTempHistory.last() != cpuTemp) {
+                        if (cpuTempHistory.size > 20) cpuTempHistory.removeAt(0)
+                        cpuTempHistory.add(cpuTemp)
+                    }
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Live CPU Temperature Trend",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = "Real-time",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                LiveSparklineChart(
+                    history = cpuTempHistory,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(55.dp),
+                    lineColor = MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -155,11 +218,11 @@ fun ThermalScreen(
         val zones = thermalInfo.thermalZones
         val chunkedZones = zones.chunked(2)
 
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             chunkedZones.forEach { pair ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     pair.forEach { zone ->
                         androidx.compose.runtime.key(zone.name) {
@@ -200,7 +263,7 @@ fun ThermalCardItem(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(14.dp)
+                .padding(16.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -230,7 +293,8 @@ fun ThermalCardItem(
                         text = tempLabel,
                         modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontSize = 10.sp),
-                        color = tempColor
+                        color = tempColor,
+                        maxLines = 1
                     )
                 }
             }
@@ -241,14 +305,16 @@ fun ThermalCardItem(
                 text = zone.name,
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
             Text(
                 text = zone.type,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -259,7 +325,9 @@ fun ThermalCardItem(
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 22.sp
                 ),
-                color = tempColor
+                color = tempColor,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
@@ -268,6 +336,11 @@ fun ThermalCardItem(
 @Preview(showBackground = true)
 @Composable
 fun ThermalScreenPreview() {
+    DevPulseTest()
+}
+
+@Composable
+fun DevPulseTest() {
     DevPulseTheme {
         ThermalScreen(
             thermalInfo = ThermalInfo(

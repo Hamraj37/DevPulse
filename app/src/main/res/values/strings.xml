@@ -203,6 +203,7 @@
 
     <!-- CPU Specs Screen -->
     <string name="cpu_core_status">CPU Core Status</string>
+    <string name="cpu_temperature_title">CPU Temperature</string>
     <string name="cpu_core_frequencies">Core Frequencies</string>
     <string name="cpu_processor_architecture">Processor &amp; Graphics Architecture</string>
     <string name="cpu_processor">Processor</string>
@@ -366,6 +367,9 @@
     <!-- Thermal & Sensor Specs Screens -->
     <string name="thermal_zone_monitors">Thermal Zone Monitors</string>
     <string name="thermal_headroom_capacity">Thermal Headroom Capacity</string>
+    <string name="thermal_status_title">Thermal Status</string>
+    <string name="thermal_headroom_label">Thermal headroom</string>
+    <string name="thermal_headroom_desc">Plenty of headroom · %d%%</string>
     <string name="thermal_zones_label">Zones</string>
     <string name="thermal_label_high">HIGH</string>
     <string name="thermal_label_warm">WARM</string>
@@ -1014,7 +1018,7 @@
     <string name="install_source_side_loaded_unknown">Side-loaded / Unknown</string>
 
     <!-- Thermal & Sensor Telemetry Strings -->
-    <string name="thermal_status_normal_cool">Normal (Cool)</string>
+    <string name="thermal_status_normal_cool">Normal</string>
     <string name="thermal_status_warm">Warm</string>
     <string name="thermal_status_elevated">Elevated Temperature</string>
     <string name="thermal_zone_type_soc">System On Chip</string>
@@ -1170,6 +1174,7 @@
 
     <!-- Thermal Formatting Strings -->
     <string name="fmt_thermal_zones_count">%d Zones</string>
+    <string name="fmt_thermal_sensors_count">%d Sensors</string>
     <string name="fmt_fps">%d FPS</string>
     <string name="lbl_offline">Offline</string>
 

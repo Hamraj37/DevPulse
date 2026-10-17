@@ -360,7 +360,8 @@ data class CameraSpec(
 data class ThermalInfo(
     val overallStatus: String = "Normal",
     val thermalHeadroom: Float = 1.0f,
-    val thermalZones: List<ThermalZone> = emptyList()
+    val thermalZones: List<ThermalZone> = emptyList(),
+    val sensorCount: Int = 42
 )
 
 data class ThermalZone(

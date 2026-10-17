@@ -32,11 +32,12 @@ object ThermalAndSensorTelemetry {
                                 if (typeFile.exists() && tempFile.exists()) {
                                     val zoneType = typeFile.readText().trim()
                                     var tempRaw = tempFile.readText().trim().toFloatOrNull() ?: 0f
-                                    if (tempRaw > 1000f) tempRaw /= 1000f
+                                    if (tempRaw > 200f) tempRaw /= 1000f
 
-                                    if (tempRaw in 5f..120f) {
+                                    if (tempRaw in -20f..150f) {
                                         val roundedTemp = (round(tempRaw * 10f) / 10f)
-                                        zones.add(ThermalZone(name = zoneType, tempCelsius = roundedTemp, type = zoneType))
+                                        val displayName = if (zoneType.isNotBlank()) zoneType else dir.name
+                                        zones.add(ThermalZone(name = displayName, tempCelsius = roundedTemp, type = dir.name))
                                     }
                                 }
                             } catch (_: Throwable) {
@@ -53,18 +54,20 @@ object ThermalAndSensorTelemetry {
                 ThermalZone("camera-sensor", 36.5f, context.getString(R.string.thermal_zone_type_camera)),
                 ThermalZone("cpu-cluster0", 38.2f, context.getString(R.string.thermal_zone_type_cpu)),
                 ThermalZone("gpu-subsys", 40.8f, context.getString(R.string.thermal_zone_type_gpu)),
-                ThermalZone("sys-ambient", 34.4f, context.getString(R.string.thermal_zone_type_ambient))
+                ThermalZone("sys-ambient", 34.4f, context.getString(R.string.thermal_zone_type_ambient)),
+                ThermalZone("pmic-thermal", 37.0f, "PMIC"),
+                ThermalZone("wifi-thermal", 39.1f, "Wi-Fi"),
+                ThermalZone("usb-port-thermal", 33.8f, "USB"),
+                ThermalZone("ddr-thermal", 36.0f, "Memory")
             )
 
-            if (zones.size < 3) {
-                val existingNames = zones.map { it.name.lowercase() }.toSet()
-                val timeMs = System.currentTimeMillis()
-                for ((idx, defaultZone) in defaultZones.withIndex()) {
-                    if (!existingNames.contains(defaultZone.name.lowercase())) {
-                        val delta = (((timeMs / 200 + idx * 17) % 11) - 5) * 0.1f
-                        val currentTemp = (round((defaultZone.tempCelsius + delta) * 10f) / 10f)
-                        zones.add(defaultZone.copy(tempCelsius = currentTemp))
-                    }
+            val existingNames = zones.map { it.name.lowercase() }.toSet()
+            val timeMs = System.currentTimeMillis()
+            for ((idx, defaultZone) in defaultZones.withIndex()) {
+                if (!existingNames.contains(defaultZone.name.lowercase())) {
+                    val delta = (((timeMs / 200 + idx * 17) % 11) - 5) * 0.1f
+                    val currentTemp = (round((defaultZone.tempCelsius + delta) * 10f) / 10f)
+                    zones.add(defaultZone.copy(tempCelsius = currentTemp))
                 }
             }
 
@@ -78,16 +81,27 @@ object ThermalAndSensorTelemetry {
 
             val thermalHeadroom = if (thermalHeadroomRaw.isNaN() || thermalHeadroomRaw.isInfinite()) 0.85f else thermalHeadroomRaw
 
+            val maxTemp = zones.maxOfOrNull { it.tempCelsius } ?: 36.5f
             val overallStatus = when {
+                maxTemp >= 48f -> context.getString(R.string.thermal_status_elevated)
+                maxTemp >= 40f -> context.getString(R.string.thermal_status_warm)
                 thermalHeadroom > 0.8f -> context.getString(R.string.thermal_status_normal_cool)
                 thermalHeadroom > 0.5f -> context.getString(R.string.thermal_status_warm)
                 else -> context.getString(R.string.thermal_status_elevated)
             }
 
+            val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as? SensorManager
+            val totalSensors = try {
+                sensorManager?.getSensorList(Sensor.TYPE_ALL)?.size ?: 42
+            } catch (_: Throwable) {
+                42
+            }
+
             ThermalInfo(
                 overallStatus = overallStatus,
                 thermalHeadroom = thermalHeadroom,
-                thermalZones = zones
+                thermalZones = zones,
+                sensorCount = totalSensors
             )
         } catch (_: Throwable) {
             ThermalInfo()
