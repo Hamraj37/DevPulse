@@ -23,7 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CellTower
 import androidx.compose.material.icons.rounded.DataUsage
 import androidx.compose.material.icons.rounded.Download
-import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.Speed
 import androidx.compose.material.icons.rounded.Upload
 import androidx.compose.material.icons.rounded.Wifi
@@ -65,7 +64,6 @@ fun NetworkScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    var showPublicIpDialog by remember { mutableStateOf(false) }
     var showUsageDialog by remember { mutableStateOf(false) }
     val dividerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
 
@@ -356,23 +354,6 @@ fun NetworkScreen(
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(text = stringResource(R.string.network_usage), fontWeight = FontWeight.SemiBold, maxLines = 1, softWrap = false)
                     }
-
-                    OutlinedButton(
-                        onClick = { showPublicIpDialog = true },
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.primary
-                        )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.Language,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(text = stringResource(R.string.network_public_ip), fontWeight = FontWeight.SemiBold, maxLines = 1, softWrap = false)
-                    }
                 }
             }
         }
@@ -550,26 +531,7 @@ fun NetworkScreen(
         )
     }
 
-    if (showPublicIpDialog) {
-        val carrierOrIsp = if (isCellular) networkInfo.networkOperatorName else networkInfo.networkOperatorName.ifEmpty { stringResource(R.string.network_wi_fi) }
-        AlertDialog(
-            onDismissRequest = { showPublicIpDialog = false },
-            title = { Text(text = stringResource(R.string.network_public_ip_title), fontWeight = FontWeight.Bold) },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(text = stringResource(R.string.network_detected_public_ip, networkInfo.publicIp), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = stringResource(R.string.network_isp_carrier, carrierOrIsp), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text(text = stringResource(R.string.network_location_label, networkInfo.location), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showPublicIpDialog = false }) {
-                    Text(stringResource(R.string.btn_ok))
-                }
-            }
-        )
-    }
+
 }
 
 @Composable
