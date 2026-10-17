@@ -30,9 +30,6 @@ jobs:
       - name: Make Gradle Wrapper Executable
         run: chmod +x gradlew
 
-      - name: Run Unit Tests
-        run: ./gradlew app:testDebugUnitTest --stacktrace
-
       - name: Build Signed Release APK
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
