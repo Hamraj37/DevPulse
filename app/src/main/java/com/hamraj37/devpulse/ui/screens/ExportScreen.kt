@@ -1,5 +1,6 @@
 package com.hamraj37.devpulse.ui.screens
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -7,6 +8,7 @@ import android.graphics.Picture
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -150,17 +153,17 @@ fun getPlayIntegritySummary(context: Context): Pair<Boolean, List<IntegrityCheck
 
     val integrityItems = listOf(
         IntegrityCheckItem(
-            label = "MEETS_BASIC_INTEGRITY",
+            label = "Basic Integrity",
             isPassed = hasBasic,
             detail = if (hasBasic) "Basic Integrity Passed" else "Failed / Custom Kernel"
         ),
         IntegrityCheckItem(
-            label = "MEETS_DEVICE_INTEGRITY",
+            label = "Device Integrity",
             isPassed = hasDevice,
             detail = if (hasDevice) "Google Play Genuine Device" else "Uncertified Device"
         ),
         IntegrityCheckItem(
-            label = "MEETS_STRONG_INTEGRITY",
+            label = "Strong Integrity",
             isPassed = hasStrong,
             detail = if (hasStrong) "Hardware TEE / Keymaster" else "Software Fallback"
         ),
@@ -200,8 +203,8 @@ fun getAndroidVersionLogoRes(apiLevel: Int, androidVersion: String): Int {
 
 fun generateReportImageFile(context: Context, picture: Picture): Uri? {
     return try {
-        val width = picture.width.coerceAtLeast(1080)
-        val height = picture.height.coerceAtLeast(1920)
+        val width = if (picture.width > 0) picture.width else 1080
+        val height = if (picture.height > 0) picture.height else 1920
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = android.graphics.Canvas(bitmap)
         canvas.drawColor(AndroidColor.WHITE)
@@ -222,22 +225,57 @@ fun generateReportImageFile(context: Context, picture: Picture): Uri? {
 
 fun saveReportImageToGallery(context: Context, picture: Picture): Boolean {
     return try {
-        val width = picture.width.coerceAtLeast(1080)
-        val height = picture.height.coerceAtLeast(1920)
+        val width = if (picture.width > 0) picture.width else 1080
+        val height = if (picture.height > 0) picture.height else 1920
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = android.graphics.Canvas(bitmap)
         canvas.drawColor(AndroidColor.WHITE)
         picture.draw(canvas)
 
-        val dir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir
-        val file = File(dir, "DevPulse_Report_${System.currentTimeMillis()}.png")
+        val fileName = "DevPulse_Report_${System.currentTimeMillis()}.png"
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val contentValues = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+            }
+            val uri = context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+                ?: context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+            if (uri != null) {
+                context.contentResolver.openOutputStream(uri)?.use { out ->
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+                }
+                true
+            } else {
+                saveToPublicDownloadsFile(context, bitmap, fileName)
+            }
+        } else {
+            saveToPublicDownloadsFile(context, bitmap, fileName)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        false
+    }
+}
+
+private fun saveToPublicDownloadsFile(context: Context, bitmap: Bitmap, fileName: String): Boolean {
+    return try {
+        val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        if (!downloadsDir.exists()) downloadsDir.mkdirs()
+        val file = File(downloadsDir, fileName)
         file.outputStream().use { out ->
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
         }
         true
-    } catch (e: Exception) {
-        e.printStackTrace()
-        false
+    } catch (_: Exception) {
+        val fallbackDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: context.cacheDir
+        val file = File(fallbackDir, fileName)
+        file.outputStream().use { out ->
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+        }
+        true
     }
 }
 
@@ -440,7 +478,8 @@ fun ExportScreen(
                     .fillMaxWidth()
                     .navigationBarsPadding()
                     .padding(horizontal = 16.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 OutlinedButton(
                     onClick = {
@@ -451,25 +490,32 @@ fun ExportScreen(
                             Toast.makeText(context, context.getString(R.string.toast_failed_generate_report), Toast.LENGTH_SHORT).show()
                         }
                     },
-                    shape = RoundedCornerShape(24.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(50.dp),
+                    shape = RoundedCornerShape(25.dp),
                     border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outlineVariant),
-                    modifier = Modifier.weight(1f)
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.padding(vertical = 4.dp)
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Download,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(20.dp)
                         )
                         Text(
                             text = stringResource(R.string.export_save_image),
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.onSurface
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
@@ -490,25 +536,32 @@ fun ExportScreen(
                             Toast.makeText(context, context.getString(R.string.toast_failed_generate_report), Toast.LENGTH_SHORT).show()
                         }
                     },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(50.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                    shape = RoundedCornerShape(24.dp),
-                    modifier = Modifier.weight(1f)
+                    shape = RoundedCornerShape(25.dp),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.padding(vertical = 4.dp)
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Share,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(20.dp)
                         )
                         Text(
                             text = stringResource(R.string.export_share),
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.onPrimary
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp
+                            ),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
@@ -688,7 +741,7 @@ fun DeviceReportCard(
                         }
 
                         Text(
-                            text = uiState.deviceInfo.model.ifBlank { "Unknown Model" },
+                            text = uiState.deviceInfo.deviceName.ifBlank { uiState.deviceInfo.model.ifBlank { "Unknown Device" } },
                             style = MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.ExtraBold,
                                 fontSize = 20.sp
@@ -698,8 +751,9 @@ fun DeviceReportCard(
                             overflow = TextOverflow.Ellipsis
                         )
 
-                        val boardHardwareStr = listOf(uiState.deviceInfo.board, uiState.deviceInfo.hardware)
-                            .filter { it.isNotBlank() }
+                        val boardHardwareStr = listOf(uiState.deviceInfo.model, uiState.deviceInfo.board, uiState.deviceInfo.hardware)
+                            .filter { it.isNotBlank() && it != uiState.deviceInfo.deviceName }
+                            .distinct()
                             .joinToString(" · ")
                             .ifBlank { "Hardware" }
 
@@ -1016,7 +1070,10 @@ fun DeviceReportCard(
                             )
                             Text(
                                 text = "Root & System Security",
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 14.sp
+                                ),
                                 color = colorScheme.onSurface,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
@@ -1129,7 +1186,10 @@ fun DeviceReportCard(
                             )
                             Text(
                                 text = "Play Integrity & Attestation",
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 14.sp
+                                ),
                                 color = colorScheme.onSurface,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis

@@ -1,6 +1,7 @@
 package com.hamraj37.devpulse.ui.screens
 
 import android.Manifest
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -17,6 +18,9 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.net.wifi.WifiManager
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -216,6 +220,28 @@ fun QrCodeScreen(
             title = stringResource(R.string.qr_create),
             onBack = onBack,
             actions = {
+                OutlinedButton(
+                    onClick = {
+                        if (finalContent.isBlank()) {
+                            Toast.makeText(context, context.getString(R.string.toast_qr_enter_content), Toast.LENGTH_SHORT).show()
+                        } else if (qrBitmap != null) {
+                            val success = saveQrImageToDownloads(context, qrBitmap)
+                            if (success) {
+                                Toast.makeText(context, context.getString(R.string.toast_report_image_saved), Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    },
+                    shape = RoundedCornerShape(20.dp),
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
+                ) {
+                    Icon(Icons.Rounded.Download, contentDescription = null, modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = stringResource(R.string.export_save_image),
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                    )
+                }
+                Spacer(modifier = Modifier.width(6.dp))
                 Button(
                     onClick = {
                         if (finalContent.isBlank()) {
@@ -229,10 +255,10 @@ fun QrCodeScreen(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
                     ),
-                    contentPadding = PaddingValues(horizontal = 18.dp, vertical = 6.dp)
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
                 ) {
                     Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(16.dp))
-                    Spacer(modifier = Modifier.width(6.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = stringResource(R.string.qr_share),
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
@@ -1053,23 +1079,47 @@ fun QrCodeScreen(
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    // Share Image Button
-                    Button(
-                        onClick = {
-                            if (qrBitmap != null) {
-                                saveAndShareQr(context, qrBitmap)
-                            }
-                        },
+                    // Save & Share Action Buttons
+                    Row(
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        )
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Text(stringResource(R.string.qr_share_image), fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        OutlinedButton(
+                            onClick = {
+                                if (qrBitmap != null) {
+                                    val success = saveQrImageToDownloads(context, qrBitmap)
+                                    if (success) {
+                                        Toast.makeText(context, context.getString(R.string.toast_report_image_saved), Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        Toast.makeText(context, context.getString(R.string.toast_qr_share_failed, "Failed to save"), Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Icon(Icons.Rounded.Download, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(stringResource(R.string.export_save_image), fontWeight = FontWeight.Bold, fontSize = 14.sp, maxLines = 1)
+                        }
+
+                        Button(
+                            onClick = {
+                                if (qrBitmap != null) {
+                                    saveAndShareQr(context, qrBitmap)
+                                }
+                            },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            )
+                        ) {
+                            Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(stringResource(R.string.qr_share_image), fontWeight = FontWeight.Bold, fontSize = 14.sp, maxLines = 1)
+                        }
                     }
                 }
             }
@@ -1255,6 +1305,54 @@ fun generateCustomQrBitmap(
         bitmap
     } catch (_: Throwable) {
         null
+    }
+}
+
+fun saveQrImageToDownloads(context: Context, bitmap: Bitmap): Boolean {
+    return try {
+        val fileName = "DevPulse_QR_${System.currentTimeMillis()}.png"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val contentValues = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+            }
+            val uri = context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+                ?: context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+            if (uri != null) {
+                context.contentResolver.openOutputStream(uri)?.use { out ->
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+                }
+                true
+            } else {
+                saveQrToPublicDownloadsFile(context, bitmap, fileName)
+            }
+        } else {
+            saveQrToPublicDownloadsFile(context, bitmap, fileName)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        false
+    }
+}
+
+private fun saveQrToPublicDownloadsFile(context: Context, bitmap: Bitmap, fileName: String): Boolean {
+    return try {
+        val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        if (!downloadsDir.exists()) downloadsDir.mkdirs()
+        val file = File(downloadsDir, fileName)
+        file.outputStream().use { out ->
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+        }
+        true
+    } catch (_: Exception) {
+        val fallbackDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: context.cacheDir
+        val file = File(fallbackDir, fileName)
+        file.outputStream().use { out ->
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+        }
+        true
     }
 }
 

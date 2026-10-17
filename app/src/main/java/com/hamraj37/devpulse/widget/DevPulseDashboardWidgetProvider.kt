@@ -129,7 +129,7 @@ class DevPulseDashboardWidgetProvider : AppWidgetProvider() {
 
                 // 7. Device Brand & Model
                 try {
-                    val (brandIconRes, modelName) = parseDeviceDetails()
+                    val (brandIconRes, modelName) = parseDeviceDetails(context)
                     views.setImageViewResource(R.id.widget_brand_icon, brandIconRes)
                     views.setTextViewText(R.id.widget_device_model, modelName)
                 } catch (_: Throwable) {}
@@ -250,7 +250,7 @@ class DevPulseDashboardWidgetProvider : AppWidgetProvider() {
             return Pair(socIcon, socModelName)
         }
 
-        private fun parseDeviceDetails(): Pair<Int, String> {
+        private fun parseDeviceDetails(context: Context): Pair<Int, String> {
             val brand = Build.MANUFACTURER.lowercase()
             val brandIcon = when {
                 brand.contains("oneplus") -> R.drawable.ic_brand_oneplus
@@ -267,13 +267,20 @@ class DevPulseDashboardWidgetProvider : AppWidgetProvider() {
                 else -> R.drawable.ic_brand_android
             }
 
-            val rawModel = Build.MODEL
-            val modelName = when {
-                rawModel.startsWith(Build.MANUFACTURER, ignoreCase = true) -> rawModel.substring(Build.MANUFACTURER.length).trim()
-                else -> rawModel
+            val deviceName = try {
+                val name = android.provider.Settings.Global.getString(context.contentResolver, "device_name")
+                    ?: android.provider.Settings.Secure.getString(context.contentResolver, "bluetooth_name")
+                if (!name.isNullOrBlank()) {
+                    name
+                } else {
+                    val mfr = Build.MANUFACTURER.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+                    if (Build.MODEL.startsWith(mfr, ignoreCase = true)) Build.MODEL else "$mfr ${Build.MODEL}"
+                }
+            } catch (_: Throwable) {
+                Build.MODEL
             }
 
-            return Pair(brandIcon, if (modelName.isNotBlank()) modelName else "Device")
+            return Pair(brandIcon, if (deviceName.isNotBlank()) deviceName else "Device")
         }
     }
 }

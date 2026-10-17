@@ -54,8 +54,14 @@ class DevPulseMinimalWidgetProvider : AppWidgetProvider() {
                     }
                     views.setTextViewText(R.id.widget_minimal_battery_pct, "$batteryLevel%")
 
-                    val modelName = Build.MODEL.replace(Build.MANUFACTURER, "", ignoreCase = true).trim()
-                    val tempAndModel = String.format(Locale.US, "%.0f ℃ • %s", battery.temperatureCelsius, if (modelName.isNotBlank()) modelName else Build.MODEL)
+                    val devName = try {
+                        val name = android.provider.Settings.Global.getString(context.contentResolver, "device_name")
+                            ?: android.provider.Settings.Secure.getString(context.contentResolver, "bluetooth_name")
+                        if (!name.isNullOrBlank()) name else Build.MODEL
+                    } catch (_: Throwable) {
+                        Build.MODEL
+                    }
+                    val tempAndModel = String.format(Locale.US, "%.0f ℃ • %s", battery.temperatureCelsius, if (devName.isNotBlank()) devName else "Device")
                     views.setTextViewText(R.id.widget_minimal_temp_model, tempAndModel)
                 } catch (_: Throwable) {}
 

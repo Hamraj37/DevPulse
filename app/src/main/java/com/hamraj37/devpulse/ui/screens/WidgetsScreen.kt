@@ -136,9 +136,9 @@ fun WidgetsScreen(
         } catch (_: Throwable) { "Today" }
     }
 
-    val (brandIconRes, modelName) = remember {
+    val (brandIconRes, modelName) = remember(uiState.deviceInfo) {
         try {
-            val brand = Build.MANUFACTURER.lowercase()
+            val brand = uiState.deviceInfo.manufacturer.lowercase().ifBlank { Build.MANUFACTURER.lowercase() }
             val brandIcon = when {
                 brand.contains("oneplus") -> R.drawable.ic_brand_oneplus
                 brand.contains("samsung") -> R.drawable.ic_brand_samsung
@@ -153,11 +153,8 @@ fun WidgetsScreen(
                 brand.contains("sony") -> R.drawable.ic_brand_sony
                 else -> R.drawable.ic_brand_android
             }
-            val rawModel = Build.MODEL
-            val cleanModel = if (rawModel.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
-                rawModel.substring(Build.MANUFACTURER.length).trim()
-            } else rawModel
-            Pair(brandIcon, if (cleanModel.isNotBlank()) cleanModel else "Device")
+            val devName = uiState.deviceInfo.deviceName.ifBlank { uiState.deviceInfo.model.ifBlank { "Device" } }
+            Pair(brandIcon, devName)
         } catch (_: Throwable) {
             Pair(R.drawable.ic_brand_android, "Device")
         }
