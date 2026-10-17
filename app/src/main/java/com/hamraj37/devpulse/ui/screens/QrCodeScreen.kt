@@ -146,7 +146,7 @@ fun QrCodeScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         // Top App Bar
         DevPulseTopAppBar(
@@ -163,8 +163,8 @@ fun QrCodeScreen(
                     },
                     shape = RoundedCornerShape(20.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF10B981),
-                        contentColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     ),
                     contentPadding = PaddingValues(horizontal = 18.dp, vertical = 6.dp)
                 ) {
@@ -191,12 +191,12 @@ fun QrCodeScreen(
                 Box(
                     modifier = Modifier
                         .size(26.dp)
-                        .background(Color(0xFF10B981), CircleShape),
+                        .background(MaterialTheme.colorScheme.primary, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "1",
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.Bold,
                         fontSize = 13.sp
                     )
@@ -208,7 +208,7 @@ fun QrCodeScreen(
                         fontWeight = FontWeight.Bold,
                         fontSize = 17.sp
                     ),
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -240,7 +240,7 @@ fun QrCodeScreen(
                                 MaterialTheme.colorScheme.surfaceContainerLow
                         ),
                         border = if (isSelected)
-                            androidx.compose.foundation.BorderStroke(2.dp, Color(0xFF10B981))
+                            androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
                         else
                             null,
                         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
@@ -285,12 +285,12 @@ fun QrCodeScreen(
                 Box(
                     modifier = Modifier
                         .size(26.dp)
-                        .background(Color(0xFF10B981), CircleShape),
+                        .background(MaterialTheme.colorScheme.primary, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "2",
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.Bold,
                         fontSize = 13.sp
                     )
@@ -302,7 +302,7 @@ fun QrCodeScreen(
                         fontWeight = FontWeight.Bold,
                         fontSize = 17.sp
                     ),
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -465,12 +465,12 @@ fun QrCodeScreen(
                 Box(
                     modifier = Modifier
                         .size(26.dp)
-                        .background(Color(0xFF10B981), CircleShape),
+                        .background(MaterialTheme.colorScheme.primary, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "3",
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.Bold,
                         fontSize = 13.sp
                     )
@@ -482,7 +482,7 @@ fun QrCodeScreen(
                         fontWeight = FontWeight.Bold,
                         fontSize = 17.sp
                     ),
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -802,8 +802,8 @@ fun QrCodeScreen(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF10B981),
-                            contentColor = Color.White
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
                         )
                     ) {
                         Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(16.dp))
@@ -820,7 +820,7 @@ fun QrCodeScreen(
 
 @Composable
 fun textFieldColors() = OutlinedTextFieldDefaults.colors(
-    focusedBorderColor = Color(0xFF10B981),
+    focusedBorderColor = MaterialTheme.colorScheme.primary,
     unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
     focusedContainerColor = MaterialTheme.colorScheme.surface,
     unfocusedContainerColor = MaterialTheme.colorScheme.surface
