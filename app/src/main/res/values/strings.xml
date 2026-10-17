@@ -1175,6 +1175,7 @@
     <!-- Thermal Formatting Strings -->
     <string name="fmt_thermal_zones_count">%d Zones</string>
     <string name="fmt_thermal_sensors_count">%d Sensors</string>
+    <string name="battery_dual_cell">Dual-Cell Pack</string>
     <string name="fmt_fps">%d FPS</string>
     <string name="lbl_offline">Offline</string>
 

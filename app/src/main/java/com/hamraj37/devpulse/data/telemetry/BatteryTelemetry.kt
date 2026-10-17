@@ -97,9 +97,11 @@ object BatteryTelemetry {
                 else -> context.getString(R.string.battery_health_good)
             }
 
-            val tech = batteryStatus?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY)?.takeIf { it.isNotBlank() } ?: context.getString(R.string.battery_tech_li_ion)
+            val techBase = batteryStatus?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY)?.takeIf { it.isNotBlank() } ?: context.getString(R.string.battery_tech_li_ion)
             val voltageRaw = batteryStatus?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1) ?: 4150
             val voltageVolts = if (voltageRaw > 0) voltageRaw / 1000f else 4.15f
+            val isDualCell = voltageVolts > 6.0f
+            val tech = if (isDualCell) "$techBase (${context.getString(R.string.battery_dual_cell)})" else techBase
 
             val tempRaw = batteryStatus?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1) ?: 320
             val tempCelsius = if (tempRaw != -1) tempRaw / 10f else 32.0f
@@ -158,7 +160,10 @@ object BatteryTelemetry {
                 if (cycleCount > 0) chargeCycles = cycleCount
             }
 
-            val capacitySystemMah = getBatteryCapacity(context, batteryStatus)
+            var capacitySystemMah = getBatteryCapacity(context, batteryStatus)
+            if (voltageVolts > 6.0f && capacitySystemMah < 3500) {
+                capacitySystemMah *= 2
+            }
             val healthPercent = when (healthInt) {
                 BatteryManager.BATTERY_HEALTH_GOOD -> if (chargeCycles > 0) (100 - (chargeCycles / 60)).coerceIn(80, 100) else 100
                 BatteryManager.BATTERY_HEALTH_OVERHEAT, BatteryManager.BATTERY_HEALTH_COLD -> 90
