@@ -2,7 +2,7 @@ package com.hamraj37.devpulse.widget
 
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
-import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -157,7 +157,8 @@ class DevPulseDashboardWidgetProvider : AppWidgetProvider() {
 
         private fun isBluetoothActive(context: Context): Boolean {
             return try {
-                val adapter = BluetoothAdapter.getDefaultAdapter()
+                val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
+                val adapter = bluetoothManager?.adapter
                 adapter?.isEnabled == true
             } catch (_: Throwable) {
                 false

@@ -29,13 +29,13 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.BarChart
 import androidx.compose.material.icons.rounded.Bluetooth
-import androidx.compose.material.icons.rounded.BluetoothSearching
+import androidx.compose.material.icons.automirrored.rounded.BluetoothSearching
 import androidx.compose.material.icons.rounded.CalendarToday
 import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material.icons.rounded.CameraAlt
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Contacts
-import androidx.compose.material.icons.rounded.DirectionsRun
+import androidx.compose.material.icons.automirrored.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.Event
 import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.FolderZip
@@ -45,16 +45,16 @@ import androidx.compose.material.icons.rounded.Layers
 import androidx.compose.material.icons.rounded.LibraryMusic
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.LocationSearching
-import androidx.compose.material.icons.rounded.Message
+import androidx.compose.material.icons.automirrored.rounded.Message
 import androidx.compose.material.icons.rounded.Mic
 import androidx.compose.material.icons.rounded.Movie
 import androidx.compose.material.icons.rounded.MyLocation
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.PersonAdd
 import androidx.compose.material.icons.rounded.Phone
-import androidx.compose.material.icons.rounded.PhoneCallback
+import androidx.compose.material.icons.automirrored.rounded.PhoneCallback
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material.icons.rounded.Send
+import androidx.compose.material.icons.automirrored.rounded.Send
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.Sms
@@ -160,7 +160,7 @@ fun PermissionsScreen(
                 PermissionItemInfo("Read Media Video", "read video files from shared storage", if (Build.VERSION.SDK_INT >= 33) Manifest.permission.READ_MEDIA_VIDEO else "android.permission.READ_MEDIA_VIDEO", false, Icons.Rounded.Movie),
                 PermissionItemInfo("Read Media Audio", "read audio files from shared storage", if (Build.VERSION.SDK_INT >= 33) Manifest.permission.READ_MEDIA_AUDIO else "android.permission.READ_MEDIA_AUDIO", false, Icons.Rounded.LibraryMusic),
                 PermissionItemInfo("Bluetooth Connect", "connect to paired Bluetooth devices", if (Build.VERSION.SDK_INT >= 31) Manifest.permission.BLUETOOTH_CONNECT else "android.permission.BLUETOOTH_CONNECT", false, Icons.Rounded.Bluetooth),
-                PermissionItemInfo("Bluetooth Scan", "discover and pair nearby Bluetooth devices", if (Build.VERSION.SDK_INT >= 31) Manifest.permission.BLUETOOTH_SCAN else "android.permission.BLUETOOTH_SCAN", false, Icons.Rounded.BluetoothSearching),
+                PermissionItemInfo("Bluetooth Scan", "discover and pair nearby Bluetooth devices", if (Build.VERSION.SDK_INT >= 31) Manifest.permission.BLUETOOTH_SCAN else "android.permission.BLUETOOTH_SCAN", false, Icons.AutoMirrored.Rounded.BluetoothSearching),
                 PermissionItemInfo("Get Accounts", "find accounts on the device", Manifest.permission.GET_ACCOUNTS, false, Icons.Rounded.AccountCircle),
                 PermissionItemInfo("Read Contacts", "read your contacts", Manifest.permission.READ_CONTACTS, false, Icons.Rounded.Contacts),
                 PermissionItemInfo("Write Contacts", "modify your contacts", Manifest.permission.WRITE_CONTACTS, false, Icons.Rounded.PersonAdd),
@@ -168,11 +168,11 @@ fun PermissionsScreen(
                 PermissionItemInfo("Write Calendar", "add or modify calendar events", Manifest.permission.WRITE_CALENDAR, false, Icons.Rounded.Event),
                 PermissionItemInfo("Call Phone", "directly call phone numbers", Manifest.permission.CALL_PHONE, false, Icons.Rounded.Call),
                 PermissionItemInfo("Receive Sms", "receive text messages (SMS)", Manifest.permission.RECEIVE_SMS, false, Icons.Rounded.Sms),
-                PermissionItemInfo("Read Sms", "read your text messages (SMS or MMS)", Manifest.permission.READ_SMS, false, Icons.Rounded.Message),
-                PermissionItemInfo("Send Sms", "send SMS messages", Manifest.permission.SEND_SMS, false, Icons.Rounded.Send),
+                PermissionItemInfo("Read Sms", "read your text messages (SMS or MMS)", Manifest.permission.READ_SMS, false, Icons.AutoMirrored.Rounded.Message),
+                PermissionItemInfo("Send Sms", "send SMS messages", Manifest.permission.SEND_SMS, false, Icons.AutoMirrored.Rounded.Send),
                 PermissionItemInfo("Nearby Wifi Devices", "interact with nearby Wi-Fi devices", if (Build.VERSION.SDK_INT >= 33) Manifest.permission.NEARBY_WIFI_DEVICES else "android.permission.NEARBY_WIFI_DEVICES", false, Icons.Rounded.Wifi),
-                PermissionItemInfo("Read Call Log", "read call log", Manifest.permission.READ_CALL_LOG, false, Icons.Rounded.PhoneCallback),
-                PermissionItemInfo("Activity Recognition", "recognise physical activity", if (Build.VERSION.SDK_INT >= 29) Manifest.permission.ACTIVITY_RECOGNITION else "android.permission.ACTIVITY_RECOGNITION", false, Icons.Rounded.DirectionsRun),
+                PermissionItemInfo("Read Call Log", "read call log", Manifest.permission.READ_CALL_LOG, false, Icons.AutoMirrored.Rounded.PhoneCallback),
+                PermissionItemInfo("Activity Recognition", "recognise physical activity", if (Build.VERSION.SDK_INT >= 29) Manifest.permission.ACTIVITY_RECOGNITION else "android.permission.ACTIVITY_RECOGNITION", false, Icons.AutoMirrored.Rounded.DirectionsRun),
                 PermissionItemInfo("Access Background Location", "access location in the background", if (Build.VERSION.SDK_INT >= 29) Manifest.permission.ACCESS_BACKGROUND_LOCATION else "android.permission.ACCESS_BACKGROUND_LOCATION", false, Icons.Rounded.LocationSearching),
 
                 // Signature / Special Permissions

@@ -797,7 +797,6 @@
     <string name="widget_title_devpulse_status">DevPulse 状态</string>
     <string name="widget_lbl_storage_used">已用存储</string>
     <string name="widget_lbl_ram_used">已用 RAM</string>
-    <string name="manifest_fgs_special_use_subtype">用于实时遥测显示的覆盖监视器</string>
 
     <!-- Additional About & Component Strings -->
     <string name="about_title">关于 DevPulse</string>
@@ -1129,12 +1128,12 @@
 
     <!-- Camera Telemetry Formatting Strings -->
     <string name="fmt_camera_res_mp">%1$s • %2$s (%3$d x %4$d)</string>
-    <string name="fmt_camera_effective_mp">%.1f MP (%d x %d)</string>
-    <string name="fmt_pixel_pitch_binned">%.2f µm (%.2f µm 像素合并)</string>
+    <string name="fmt_camera_effective_mp" formatted="false">%.1f MP (%d x %d)</string>
+    <string name="fmt_pixel_pitch_binned" formatted="false">%.2f µm (%.2f µm 像素合并)</string>
     <string name="fmt_pixel_pitch">%.2f µm</string>
-    <string name="fmt_focal_length_equiv">%.2f mm (相当于 %dmm)</string>
+    <string name="fmt_focal_length_equiv" formatted="false">%.2f mm (相当于 %dmm)</string>
     <string name="fmt_focal_length">%.2f mm</string>
-    <string name="fmt_ev_compensation_step">1/%.0f EV (%.1f 至 +%.1f EV)</string>
+    <string name="fmt_ev_compensation_step" formatted="false">1/%.0f EV (%.1f 至 +%.1f EV)</string>
     <string name="fmt_ae_af_awb_regions">AE：%1$d, AF：%2$d, AWB：%3$d</string>
     <string name="fmt_max_output_streams">Raw：%1$d, 已处理：%2$d, 停滞：%3$d</string>
     <string name="fmt_mp_int">%d MP</string>
@@ -1148,7 +1147,7 @@
     <string name="fmt_language">%1$s (%2$s)</string>
 
     <!-- Memory Telemetry Formatting Strings -->
-    <string name="fmt_memory_used_of_total">已用 %.2f GB / 共 %.2f GB</string>
+    <string name="fmt_memory_used_of_total" formatted="false">已用 %.2f GB / 共 %.2f GB</string>
     <string name="fmt_memory_free">可用 %.2f GB</string>
     <string name="memory_storage_partitions">存储分区与文件系统类型</string>
     <string name="memory_partition_type_chip">文件系统：%s</string>

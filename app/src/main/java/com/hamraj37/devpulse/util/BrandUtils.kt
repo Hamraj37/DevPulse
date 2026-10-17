@@ -7,7 +7,7 @@ import com.hamraj37.devpulse.R
 data class BrandInfo(
     val id: String,
     val name: String,
-    @DrawableRes val logoResId: Int,
+    @param:DrawableRes val logoResId: Int,
     val brandColor: Color,
     val customOs: String,
     val aliases: List<String>

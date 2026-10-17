@@ -1132,12 +1132,12 @@
 
     <!-- Camera Telemetry Formatting Strings -->
     <string name="fmt_camera_res_mp">%1$s • %2$s (%3$d x %4$d)</string>
-    <string name="fmt_camera_effective_mp">%.1f MP (%d x %d)</string>
-    <string name="fmt_pixel_pitch_binned">%.2f µm (%.2f µm binned)</string>
+    <string name="fmt_camera_effective_mp" formatted="false">%.1f MP (%d x %d)</string>
+    <string name="fmt_pixel_pitch_binned" formatted="false">%.2f µm (%.2f µm binned)</string>
     <string name="fmt_pixel_pitch">%.2f µm</string>
-    <string name="fmt_focal_length_equiv">%.2f mm (%dmm equiv)</string>
+    <string name="fmt_focal_length_equiv" formatted="false">%.2f mm (%dmm equiv)</string>
     <string name="fmt_focal_length">%.2f mm</string>
-    <string name="fmt_ev_compensation_step">1/%.0f EV (%.1f to +%.1f EV)</string>
+    <string name="fmt_ev_compensation_step" formatted="false">1/%.0f EV (%.1f to +%.1f EV)</string>
     <string name="fmt_ae_af_awb_regions">AE: %1$d, AF: %2$d, AWB: %3$d</string>
     <string name="fmt_max_output_streams">Raw: %1$d, Processed: %2$d, Stalling: %3$d</string>
     <string name="fmt_mp_int">%d MP</string>
@@ -1151,7 +1151,7 @@
     <string name="fmt_language">%1$s (%2$s)</string>
 
     <!-- Memory Telemetry Formatting Strings -->
-    <string name="fmt_memory_used_of_total">%.2f GB of %.2f GB Used</string>
+    <string name="fmt_memory_used_of_total" formatted="false">%.2f GB of %.2f GB Used</string>
     <string name="fmt_memory_free">%.2f GB Free</string>
     <string name="memory_storage_partitions">Storage Partitions &amp; Filesystem Types</string>
     <string name="memory_partition_type_chip">FS: %s</string>
