@@ -45,6 +45,11 @@ import com.hamraj37.devpulse.ui.components.LiveSparklineChart
 import com.hamraj37.devpulse.ui.theme.DevPulseTheme
 import com.hamraj37.devpulse.ui.theme.ActiveBadge
 
+import androidx.compose.ui.draw.clip
+import androidx.compose.material.icons.rounded.Speed
+import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material3.LinearProgressIndicator
+
 @Composable
 fun ThermalScreen(
     thermalInfo: ThermalInfo,
@@ -57,7 +62,10 @@ fun ThermalScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // 1. Top Thermal Overview Banner (Dashboard card style with LiveSparklineChart)
+        // 1. Thermal Throttling & Headroom Card (Moved to top)
+        ThermalThrottlingCard(thermalInfo = thermalInfo)
+
+        // 2. CPU Temperature & Thermal Overview Banner (Dashboard card style with LiveSparklineChart)
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
@@ -222,7 +230,7 @@ fun ThermalScreen(
             }
         }
 
-        // 2. Grid of Thermal Cards (2 columns, equal width)
+        // 3. Grid of Thermal Cards (2 columns, equal width)
         val zones = thermalInfo.thermalZones
         val chunkedZones = zones.chunked(2)
 
@@ -241,6 +249,203 @@ fun ThermalScreen(
                     }
                     if (pair.size == 1) {
                         Spacer(modifier = Modifier.weight(1f))
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ThermalThrottlingCard(
+    thermalInfo: ThermalInfo,
+    modifier: Modifier = Modifier
+) {
+    val (statusLabel, statusColor) = when (thermalInfo.thermalStatusInt) {
+        0 -> stringResource(R.string.thermal_throttling_none) to ActiveBadge
+        1 -> stringResource(R.string.thermal_throttling_light) to Color(0xFFF59E0B)
+        2 -> stringResource(R.string.thermal_throttling_moderate) to Color(0xFFFB8C00)
+        3 -> stringResource(R.string.thermal_throttling_severe) to Color(0xFFE53935)
+        4 -> stringResource(R.string.thermal_throttling_critical) to Color(0xFFD32F2F)
+        else -> stringResource(R.string.thermal_throttling_emergency) to Color(0xFFB71C1C)
+    }
+
+    val headroomRatio = thermalInfo.thermalHeadroom.coerceIn(0f, 1f)
+    val headroomPct = (headroomRatio * 100).toInt()
+
+    val barColor = when {
+        headroomRatio >= 0.95f || thermalInfo.thermalStatusInt >= 2 -> Color(0xFFE53935)
+        headroomRatio >= 0.75f || thermalInfo.thermalStatusInt == 1 -> Color(0xFFFB8C00)
+        else -> ActiveBadge
+    }
+
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
+        shape = RoundedCornerShape(20.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            // Header Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Surface(
+                        shape = CircleShape,
+                        color = statusColor.copy(alpha = 0.15f),
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = if (thermalInfo.thermalStatusInt > 0) Icons.Rounded.Warning else Icons.Rounded.Speed,
+                                contentDescription = null,
+                                tint = statusColor,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+                    }
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = stringResource(R.string.thermal_throttling_title),
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = stringResource(R.string.thermal_throttling_desc),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+            }
+
+            // Status Badge & Headroom percentage display
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = statusColor.copy(alpha = 0.15f)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .background(statusColor, CircleShape)
+                        )
+                        Text(
+                            text = statusLabel,
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                            color = statusColor
+                        )
+                    }
+                }
+
+                Text(
+                    text = "$headroomPct% Headroom",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            // Linear Progress Indicator for Headroom
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = stringResource(R.string.thermal_headroom_capacity),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = if (headroomRatio >= 1.0f) "Threshold Reached" else "${100 - headroomPct}% Margin",
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                        color = if (headroomRatio >= 1.0f) Color(0xFFE53935) else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                LinearProgressIndicator(
+                    progress = { headroomRatio },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(10.dp)
+                        .clip(RoundedCornerShape(5.dp)),
+                    color = barColor,
+                    trackColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                )
+            }
+
+            // Info Details Grid
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                // Performance Status Card
+                Surface(
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(14.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerLow
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text(
+                            text = "Performance State",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = if (thermalInfo.thermalStatusInt == 0) "Optimal (Unthrottled)" else "Frequency Scaled",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                            color = if (thermalInfo.thermalStatusInt == 0) ActiveBadge else Color(0xFFFB8C00)
+                        )
+                    }
+                }
+
+                // Overall System Thermal
+                Surface(
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(14.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerLow
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text(
+                            text = "Overall System",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = thermalInfo.overallStatus,
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
                     }
                 }
             }

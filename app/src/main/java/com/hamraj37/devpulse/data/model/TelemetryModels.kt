@@ -361,7 +361,8 @@ data class ThermalInfo(
     val overallStatus: String = "Normal",
     val thermalHeadroom: Float = 1.0f,
     val thermalZones: List<ThermalZone> = emptyList(),
-    val sensorCount: Int = 42
+    val sensorCount: Int = 42,
+    val thermalStatusInt: Int = 0
 )
 
 data class ThermalZone(

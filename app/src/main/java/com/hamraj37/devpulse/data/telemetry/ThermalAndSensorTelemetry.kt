@@ -82,6 +82,19 @@ object ThermalAndSensorTelemetry {
             val thermalHeadroom = if (thermalHeadroomRaw.isNaN() || thermalHeadroomRaw.isInfinite()) 0.85f else thermalHeadroomRaw
 
             val maxTemp = zones.maxOfOrNull { it.tempCelsius } ?: 36.5f
+
+            val thermalStatusInt = try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && pm != null) {
+                    pm.currentThermalStatus
+                } else {
+                    when {
+                        maxTemp >= 50f -> 2 // MODERATE
+                        maxTemp >= 42f -> 1 // LIGHT
+                        else -> 0 // NONE
+                    }
+                }
+            } catch (_: Throwable) { 0 }
+
             val overallStatus = when {
                 maxTemp >= 48f -> context.getString(R.string.thermal_status_elevated)
                 maxTemp >= 40f -> context.getString(R.string.thermal_status_warm)
@@ -101,7 +114,8 @@ object ThermalAndSensorTelemetry {
                 overallStatus = overallStatus,
                 thermalHeadroom = thermalHeadroom,
                 thermalZones = zones,
-                sensorCount = totalSensors
+                sensorCount = totalSensors,
+                thermalStatusInt = thermalStatusInt
             )
         } catch (_: Throwable) {
             ThermalInfo()

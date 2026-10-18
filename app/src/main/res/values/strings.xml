@@ -374,6 +374,15 @@
     <string name="thermal_label_high">HIGH</string>
     <string name="thermal_label_warm">WARM</string>
     <string name="thermal_label_normal">NORMAL</string>
+    <string name="thermal_throttling_title">Thermal Throttling &amp; Headroom</string>
+    <string name="thermal_throttling_status">Throttling Status</string>
+    <string name="thermal_throttling_none">No Throttling</string>
+    <string name="thermal_throttling_light">Light Throttling</string>
+    <string name="thermal_throttling_moderate">Moderate Throttling</string>
+    <string name="thermal_throttling_severe">Severe Throttling</string>
+    <string name="thermal_throttling_critical">Critical Throttling</string>
+    <string name="thermal_throttling_emergency">Emergency Throttling</string>
+    <string name="thermal_throttling_desc">System monitors thermal load to throttle CPU/GPU frequencies and prevent hardware damage.</string>
     <string name="sensors_available_hdr">Sensors are available on your device</string>
     <string name="sensors_realtime_stream">Real-time stream &amp; live event listener</string>
     <string name="sensors_live_stream_hdr">LIVE SENSOR STREAM DATA</string>
