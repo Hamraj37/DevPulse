@@ -492,6 +492,7 @@
     <string name="toast_qr_share_failed">Failed to share: %1$s</string>
     <string name="qr_share_chooser_title">Share QR Code</string>
     <string name="qr_share">Share</string>
+    <string name="qr_scan">Scan</string>
     <string name="qr_add_dot_image">Add Dot Image Overlay</string>
     <string name="qr_change_dot_image">Change Dot Image</string>
     <string name="app_analyzer_title">App Analyzer</string>

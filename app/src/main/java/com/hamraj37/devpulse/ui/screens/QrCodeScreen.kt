@@ -46,14 +46,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
@@ -116,6 +124,9 @@ fun QrCodeScreen(
             logoUri = uri
         }
     }
+
+    var scannedResultText by remember { mutableStateOf<String?>(null) }
+    var isScanning by remember { mutableStateOf(false) }
 
     // State for each type
     var textContent by remember { mutableStateOf("") }
@@ -215,11 +226,38 @@ fun QrCodeScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
     ) {
+        if (isScanning) {
+            QrScannerContent(
+                onScanResult = { decoded ->
+                    isScanning = false
+                    scannedResultText = decoded
+                    Toast.makeText(context, "QR Code scanned successfully", Toast.LENGTH_SHORT).show()
+                },
+                onClose = { isScanning = false }
+            )
+            return@Column
+        }
         // Top App Bar
         DevPulseTopAppBar(
             title = stringResource(R.string.qr_create),
             onBack = onBack,
             actions = {
+                OutlinedButton(
+                    onClick = { isScanning = true },
+                    shape = RoundedCornerShape(20.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                ) {
+                    Icon(Icons.Rounded.QrCodeScanner, contentDescription = null, modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = stringResource(R.string.qr_scan),
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
                 Button(
                     onClick = {
                         if (finalContent.isBlank()) {
@@ -245,6 +283,52 @@ fun QrCodeScreen(
                 Spacer(modifier = Modifier.width(8.dp))
             }
         )
+
+        if (scannedResultText != null) {
+            AlertDialog(
+                onDismissRequest = { scannedResultText = null },
+                title = { Text("Scanned QR Code") },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(
+                            text = scannedResultText ?: "",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            val text = scannedResultText ?: ""
+                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                            clipboard.setPrimaryClip(android.content.ClipData.newPlainText("Scanned QR", text))
+                            Toast.makeText(context, context.getString(R.string.toast_qr_copied), Toast.LENGTH_SHORT).show()
+                        }
+                    ) {
+                        Text(stringResource(R.string.qr_code_btn_copy))
+                    }
+                },
+                dismissButton = {
+                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        TextButton(
+                            onClick = {
+                                val text = scannedResultText ?: ""
+                                textContent = text
+                                selectedTypeIndex = 0 // Text type
+                                scannedResultText = null
+                                Toast.makeText(context, "Loaded into generator", Toast.LENGTH_SHORT).show()
+                            }
+                        ) {
+                            Text("Use")
+                        }
+                        TextButton(onClick = { scannedResultText = null }) {
+                            Text("Close")
+                        }
+                    }
+                }
+            )
+        }
 
         Column(
             modifier = Modifier
@@ -1352,4 +1436,264 @@ fun saveAndShareQr(context: Context, bitmap: Bitmap) {
     } catch (e: Exception) {
         Toast.makeText(context, context.getString(R.string.toast_qr_share_failed, e.message), Toast.LENGTH_SHORT).show()
     }
+}
+
+private fun decodeQrFromBitmap(bitmap: Bitmap): String? {
+    return try {
+        val width = bitmap.width
+        val height = bitmap.height
+        val pixels = IntArray(width * height)
+        bitmap.getPixels(pixels, 0, width, 0, 0, width, height)
+        val source = com.google.zxing.RGBLuminanceSource(width, height, pixels)
+        val binaryBitmap = com.google.zxing.BinaryBitmap(com.google.zxing.common.HybridBinarizer(source))
+        val result = com.google.zxing.MultiFormatReader().decode(binaryBitmap)
+        result.text
+    } catch (e: Exception) {
+        null
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun QrScannerContent(
+    onScanResult: (String) -> Unit,
+    onClose: () -> Unit
+) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    var hasCameraPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+        )
+    }
+
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        hasCameraPermission = granted
+    }
+
+    LaunchedEffect(Unit) {
+        if (!hasCameraPermission) {
+            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    val galleryPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            try {
+                val inputStream = context.contentResolver.openInputStream(uri)
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                inputStream?.close()
+                if (bitmap != null) {
+                    val decoded = decodeQrFromBitmap(bitmap)
+                    bitmap.recycle()
+                    if (decoded != null) {
+                        onScanResult(decoded)
+                    } else {
+                        Toast.makeText(context, "No QR code found in image", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                Toast.makeText(context, "Error reading image", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    var isTorchOn by remember { mutableStateOf(false) }
+    var cameraControl by remember { mutableStateOf<androidx.camera.core.CameraControl?>(null) }
+    var previewView by remember { mutableStateOf<PreviewView?>(null) }
+
+    DisposableEffect(lifecycleOwner) {
+        onDispose {
+            try {
+                val provider = ProcessCameraProvider.getInstance(context).get()
+                provider.unbindAll()
+            } catch (_: Exception) {}
+        }
+    }
+
+    LaunchedEffect(previewView, hasCameraPermission) {
+        val pView = previewView ?: return@LaunchedEffect
+        if (!hasCameraPermission) return@LaunchedEffect
+
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+        cameraProviderFuture.addListener({
+            try {
+                val cameraProvider = cameraProviderFuture.get()
+                val cameraSelector = CameraSelector.Builder()
+                    .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+                    .build()
+
+                val preview = Preview.Builder().build().also {
+                    it.setSurfaceProvider(pView.surfaceProvider)
+                }
+
+                val imageAnalysis = ImageAnalysis.Builder()
+                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                    .build()
+                    .also { analysis ->
+                        analysis.setAnalyzer(ContextCompat.getMainExecutor(context)) { imageProxy ->
+                            val bitmap = imageProxyToBitmap(imageProxy)
+                            imageProxy.close()
+                            if (bitmap != null) {
+                                val rotationDegrees = imageProxy.imageInfo.rotationDegrees
+                                val rotatedBitmap = if (rotationDegrees != 0) {
+                                    val matrix = android.graphics.Matrix().apply { postRotate(rotationDegrees.toFloat()) }
+                                    Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+                                } else {
+                                    bitmap
+                                }
+                                val decoded = decodeQrFromBitmap(rotatedBitmap)
+                                if (rotatedBitmap != bitmap) rotatedBitmap.recycle()
+                                bitmap.recycle()
+
+                                if (decoded != null) {
+                                    onScanResult(decoded)
+                                }
+                            }
+                        }
+                    }
+
+                cameraProvider.unbindAll()
+                val camera = cameraProvider.bindToLifecycle(
+                    lifecycleOwner,
+                    cameraSelector,
+                    preview,
+                    imageAnalysis
+                )
+                cameraControl = camera.cameraControl
+                camera.cameraControl.enableTorch(isTorchOn)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }, ContextCompat.getMainExecutor(context))
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+    ) {
+        if (hasCameraPermission) {
+            AndroidView(
+                factory = { ctx ->
+                    PreviewView(ctx).apply {
+                        implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+                        scaleType = PreviewView.ScaleType.FILL_CENTER
+                        previewView = this
+                    }
+                },
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Camera permission is required to scan QR codes",
+                    color = Color.White,
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(onClick = { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) }) {
+                    Text("Grant Permission")
+                }
+            }
+        }
+
+        // Overlay & Viewfinder
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(48.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(240.dp)
+                    .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(16.dp))
+            )
+        }
+
+        // Top App Bar / Controls
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            TopAppBar(
+                title = { Text("Scan QR Code", color = Color.White) },
+                navigationIcon = {
+                    IconButton(onClick = onClose) {
+                        Icon(Icons.Rounded.Close, contentDescription = "Close", tint = Color.White)
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            isTorchOn = !isTorchOn
+                            cameraControl?.enableTorch(isTorchOn)
+                        }
+                    ) {
+                        Icon(
+                            imageVector = if (isTorchOn) Icons.Rounded.FlashOn else Icons.Rounded.FlashOff,
+                            contentDescription = "Flash",
+                            tint = Color.White
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black.copy(alpha = 0.5f))
+            )
+        }
+
+        // Bottom Controls
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 36.dp),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            Button(
+                onClick = { galleryPickerLauncher.launch("image/*") },
+                shape = RoundedCornerShape(24.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                ),
+                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp)
+            ) {
+                Icon(Icons.Rounded.Image, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Scan from Gallery", fontWeight = FontWeight.Bold)
+            }
+        }
+    }
+}
+
+private fun imageProxyToBitmap(image: androidx.camera.core.ImageProxy): Bitmap? {
+    val yBuffer = image.planes[0].buffer // Y
+    val uBuffer = image.planes[1].buffer // U
+    val vBuffer = image.planes[2].buffer // V
+
+    val ySize = yBuffer.remaining()
+    val uSize = uBuffer.remaining()
+    val vSize = vBuffer.remaining()
+
+    val nv21 = ByteArray(ySize + uSize + vSize)
+
+    yBuffer.get(nv21, 0, ySize)
+    vBuffer.get(nv21, ySize, vSize)
+    uBuffer.get(nv21, ySize + vSize, uSize)
+
+    val yuvImage = android.graphics.YuvImage(nv21, android.graphics.ImageFormat.NV21, image.width, image.height, null)
+    val out = java.io.ByteArrayOutputStream()
+    yuvImage.compressToJpeg(android.graphics.Rect(0, 0, image.width, image.height), 100, out)
+    val imageBytes = out.toByteArray()
+    return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
 }
